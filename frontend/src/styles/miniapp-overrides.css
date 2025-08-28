@@ -1,0 +1,173 @@
+/* Mini App Positioning Overrides */
+/* This file ensures all mini apps render in the dropdown instead of as full-screen overlays */
+
+/* CRITICAL: Force all mini app overlays to be static */
+.miniapp-content-wrapper .miniapp-overlay,
+.miniapp-content-wrapper div[style*="position: fixed"],
+.miniapp-content-wrapper div[style*="position:fixed"] {
+  position: static !important;
+  background: none !important;
+  backdrop-filter: none !important;
+  z-index: auto !important;
+  animation: none !important;
+  display: block !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+}
+
+/* CRITICAL: Force all mini app containers to be static */
+.miniapp-content-wrapper .miniapp-container,
+.miniapp-content-wrapper .nothing-calculator,
+.miniapp-content-wrapper .timer-app,
+.miniapp-content-wrapper .weather-app,
+.miniapp-content-wrapper .task-manager-app,
+.miniapp-content-wrapper .password-app,
+.miniapp-content-wrapper .qr-app,
+.miniapp-content-wrapper .finance-app,
+.miniapp-content-wrapper .notes-app,
+.miniapp-content-wrapper .media-app,
+.miniapp-content-wrapper .calendar-app,
+.miniapp-content-wrapper .file-manager-app,
+.miniapp-content-wrapper .recipe-app,
+.miniapp-content-wrapper .translator-app,
+.miniapp-content-wrapper .whiteboard-app,
+.miniapp-content-wrapper .dairy-farm-app,
+.miniapp-content-wrapper .tuition-app {
+  position: static !important;
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  max-height: none !important;
+  overflow: visible !important;
+  box-shadow: none !important;
+  animation: none !important;
+  transform: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: auto !important;
+}
+
+/* Hide all individual app headers since we have our own */
+.miniapp-content-wrapper .miniapp-header,
+.miniapp-content-wrapper .calc-header,
+.miniapp-content-wrapper .timer-header,
+.miniapp-content-wrapper .app-header {
+  display: none !important;
+}
+
+/* Override close buttons in individual apps since we have our own */
+.miniapp-content-wrapper .miniapp-close,
+.miniapp-content-wrapper .close-btn,
+.miniapp-content-wrapper .help-close,
+.miniapp-content-wrapper button[title*="Close"],
+.miniapp-content-wrapper button[aria-label*="Close"] {
+  display: none !important;
+}
+
+/* Targeted overrides for main app containers only */
+.miniapp-content-wrapper > .miniapp-content-container > * {
+  position: static !important;
+  z-index: auto !important;
+}
+
+/* Allow modals and interactive elements to work properly */
+.miniapp-content-wrapper .modal,
+.miniapp-content-wrapper .popup,
+.miniapp-content-wrapper .dropdown,
+.miniapp-content-wrapper .tooltip,
+.miniapp-content-wrapper .help-modal-overlay,
+.miniapp-content-wrapper .help-modal,
+.miniapp-content-wrapper .settings-panel,
+.miniapp-content-wrapper .history-panel,
+.miniapp-content-wrapper .converter-panel {
+  position: relative !important;
+  z-index: 1 !important;
+  background: var(--bg, #ffffff) !important;
+  border: 1px solid var(--border, #e0e0e0) !important;
+  border-radius: 8px !important;
+  margin: 1rem 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  animation: none !important;
+  display: block !important;
+}
+
+/* Allow interactive elements to work properly */
+.miniapp-content-wrapper .progress-ring,
+.miniapp-content-wrapper .chart-container,
+.miniapp-content-wrapper .canvas-container,
+.miniapp-content-wrapper .modal,
+.miniapp-content-wrapper .popup,
+.miniapp-content-wrapper .dropdown,
+.miniapp-content-wrapper .tooltip,
+.miniapp-content-wrapper .help-modal-overlay,
+.miniapp-content-wrapper .help-modal,
+.miniapp-content-wrapper .settings-panel,
+.miniapp-content-wrapper .history-panel,
+.miniapp-content-wrapper .converter-panel,
+.miniapp-content-wrapper .mode-tabs,
+.miniapp-content-wrapper .calc-display,
+.miniapp-content-wrapper .timer-display,
+.miniapp-content-wrapper .weather-display,
+.miniapp-content-wrapper .task-form,
+.miniapp-content-wrapper .note-editor,
+.miniapp-content-wrapper .calendar-grid,
+.miniapp-content-wrapper .file-browser,
+.miniapp-content-wrapper .recipe-card,
+.miniapp-content-wrapper .translation-box,
+.miniapp-content-wrapper .canvas-area,
+.miniapp-content-wrapper .farm-dashboard {
+  position: relative !important;
+  z-index: auto !important;
+  display: block !important;
+}
+
+/* Remove this section - it's now handled above */
+
+/* Override any inline styles with position fixed */
+.miniapp-content-wrapper [style*="position: fixed"],
+.miniapp-content-wrapper [style*="position:fixed"] {
+  position: static !important;
+}
+
+/* Override any inline styles with high z-index */
+.miniapp-content-wrapper [style*="z-index: 1000"],
+.miniapp-content-wrapper [style*="z-index:1000"],
+.miniapp-content-wrapper [style*="z-index: 9999"],
+.miniapp-content-wrapper [style*="z-index:9999"],
+.miniapp-content-wrapper [style*="z-index: 10000"],
+.miniapp-content-wrapper [style*="z-index:10000"],
+.miniapp-content-wrapper [style*="z-index: 99999"],
+.miniapp-content-wrapper [style*="z-index:99999"],
+.miniapp-content-wrapper [style*="z-index: 999999"],
+.miniapp-content-wrapper [style*="z-index:999999"] {
+  z-index: auto !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .miniapp-dropdown {
+    width: 95vw !important;
+    top: 56px !important;
+    max-height: calc(100vh - 70px) !important;
+  }
+  
+  .miniapp-content-wrapper {
+    padding: 1rem !important;
+  }
+}

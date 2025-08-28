@@ -1,0 +1,210 @@
+# Kubernetes Deployment for Echo API
+# Optimized for 10K concurrent users
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: echo-production
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: echo-config
+  namespace: echo-production
+data:
+  ENVIRONMENT: "production"
+  WORKERS: "16"
+  DATABASE_POOL_SIZE: "120"
+  DATABASE_MAX_OVERFLOW: "80"
+  REDIS_MAX_CONNECTIONS: "300"
+  RATE_LIMIT_REQUESTS: "300"
+  ENABLE_METRICS: "true"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: echo-secrets
+  namespace: echo-production
+type: Opaque
+stringData:
+  DATABASE_URL: "postgresql+asyncpg://user:password@postgres:5432/echo_prod"
+  REDIS_URL: "redis://redis:6379/0"
+  SECRET_KEY: "your-secret-key-change-in-production"
+  SMTP_USERNAME: "your-email@gmail.com"
+  SMTP_PASSWORD: "your-app-password"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo-api
+  namespace: echo-production
+  labels:
+    app: echo-api
+    tier: backend
+spec:
+  replicas: 3  # Horizontal scaling for 10K users
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: echo-api
+  template:
+    metadata:
+      labels:
+        app: echo-api
+        tier: backend
+    spec:
+      containers:
+      - name: echo-api
+        image: echo-api:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: echo-config
+        - secretRef:
+            name: echo-secrets
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1000m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8000
+          initialDelaySeconds: 20
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 0
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 12
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo-api-service
+  namespace: echo-production
+  labels:
+    app: echo-api
+spec:
+  type: ClusterIP
+  selector:
+    app: echo-api
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: echo-api-hpa
+  namespace: echo-production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: echo-api
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 30
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: echo-ingress
+  namespace: echo-production
+  annotations:
+    nginx.ingress.kubernetes.io/rate-limit: "300"
+    nginx.ingress.kubernetes.io/limit-connections: "20"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - api.echo.com
+    secretName: echo-tls
+  rules:
+  - host: api.echo.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: echo-api-service
+            port:
+              number: 80
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: echo-api-pdb
+  namespace: echo-production
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: echo-api

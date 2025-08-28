@@ -1,0 +1,641 @@
+/**
+ * Comprehensive tests for UniversalModal component
+ * Tests form handling, validation, accessibility, and user interactions
+ */
+
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import UniversalModal, { ModalField, ModalAction } from '../miniapps/UniversalModal';
+
+// Mock IntersectionObserver for animations
+const mockIntersectionObserver = jest.fn();
+mockIntersectionObserver.mockReturnValue({
+  observe: () => null,
+  unobserve: () => null,
+  disconnect: () => null,
+});
+window.IntersectionObserver = mockIntersectionObserver;
+
+describe('UniversalModal', () => {
+  const defaultProps = {
+    isVisible: true,
+    onClose: jest.fn(),
+    title: 'Test Modal',
+    icon: '🧪',
+    fields: [],
+    actions: [],
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('Basic Rendering', () => {
+    test('should render when visible', () => {
+      render(<UniversalModal {...defaultProps} />);
+
+      expect(screen.getByText('Test Modal')).toBeInTheDocument();
+      expect(screen.getByText('🧪')).toBeInTheDocument();
+    });
+
+    test('should not render when not visible', () => {
+      render(<UniversalModal {...defaultProps} isVisible={false} />);
+
+      expect(screen.queryByText('Test Modal')).not.toBeInTheDocument();
+    });
+
+    test('should render description when provided', () => {
+      const description = 'This is a test modal description';
+      render(<UniversalModal {...defaultProps} description={description} />);
+
+      expect(screen.getByText(description)).toBeInTheDocument();
+    });
+
+    test('should apply correct size classes', () => {
+      const { rerender } = render(<UniversalModal {...defaultProps} size="sm" />);
+      expect(document.querySelector('.modal-sm')).toBeInTheDocument();
+
+      rerender(<UniversalModal {...defaultProps} size="lg" />);
+      expect(document.querySelector('.modal-lg')).toBeInTheDocument();
+
+      rerender(<UniversalModal {...defaultProps} size="xl" />);
+      expect(document.querySelector('.modal-xl')).toBeInTheDocument();
+    });
+
+    test('should apply dark mode styles', () => {
+      render(<UniversalModal {...defaultProps} isDarkMode={true} />);
+      expect(document.querySelector('.dark-mode')).toBeInTheDocument();
+    });
+  });
+
+  describe('Form Fields', () => {
+    test('should render text input field', () => {
+      const fields: ModalField[] = [
+        {
+          id: 'name',
+          label: 'Name',
+          type: 'text',
+          required: true,
+          placeholder: 'Enter your name'
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} />);
+
+      expect(screen.getByLabelText('Name *')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Enter your name')).toBeInTheDocument();
+    });
+
+    test('should render textarea field', () => {
+      const fields: ModalField[] = [
+        {
+          id: 'description',
+          label: 'Description',
+          type: 'textarea',
+          rows: 5
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} />);
+
+      const textarea = screen.getByLabelText('Description');
+      expect(textarea).toBeInTheDocument();
+      expect(textarea.tagName).toBe('TEXTAREA');
+      expect(textarea).toHaveAttribute('rows', '5');
+    });
+
+    test('should render select field with options', () => {
+      const fields: ModalField[] = [
+        {
+          id: 'category',
+          label: 'Category',
+          type: 'select',
+          options: [
+            { value: 'option1', label: 'Option 1' },
+            { value: 'option2', label: 'Option 2' }
+          ]
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} />);
+
+      expect(screen.getByLabelText('Category')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('Select an option...')).toBeInTheDocument();
+    });
+
+    test('should render number input field', () => {
+      const fields: ModalField[] = [
+        {
+          id: 'age',
+          label: 'Age',
+          type: 'number',
+          min: 0,
+          max: 150
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} />);
+
+      const numberInput = screen.getByLabelText('Age');
+      expect(numberInput).toBeInTheDocument();
+      expect(numberInput).toHaveAttribute('type', 'number');
+      expect(numberInput).toHaveAttribute('min', '0');
+      expect(numberInput).toHaveAttribute('max', '150');
+    });
+
+    test('should render email input field', () => {
+      const fields: ModalField[] = [
+        {
+          id: 'email',
+          label: 'Email',
+          type: 'email',
+          required: true
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} />);
+
+      const emailInput = screen.getByLabelText('Email *');
+      expect(emailInput).toBeInTheDocument();
+      expect(emailInput).toHaveAttribute('type', 'email');
+    });
+
+    test('should render password input field', () => {
+      const fields: ModalField[] = [
+        {
+          id: 'password',
+          label: 'Password',
+          type: 'password',
+          required: true
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} />);
+
+      const passwordInput = screen.getByLabelText('Password *');
+      expect(passwordInput).toBeInTheDocument();
+      expect(passwordInput).toHaveAttribute('type', 'password');
+    });
+
+    test('should render checkbox field', () => {
+      const fields: ModalField[] = [
+        {
+          id: 'agree',
+          label: 'I agree to terms',
+          type: 'checkbox'
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} />);
+
+      const checkbox = screen.getByLabelText('I agree to terms');
+      expect(checkbox).toBeInTheDocument();
+      expect(checkbox).toHaveAttribute('type', 'checkbox');
+    });
+
+    test('should set default values for fields', () => {
+      const fields: ModalField[] = [
+        {
+          id: 'name',
+          label: 'Name',
+          type: 'text',
+          defaultValue: 'John Doe'
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} />);
+
+      expect(screen.getByDisplayValue('John Doe')).toBeInTheDocument();
+    });
+  });
+
+  describe('Form Validation', () => {
+    test('should show required field validation errors', async () => {
+      const user = userEvent.setup();
+      const fields: ModalField[] = [
+        {
+          id: 'name',
+          label: 'Name',
+          type: 'text',
+          required: true
+        }
+      ];
+
+      const actions: ModalAction[] = [
+        {
+          label: 'Submit',
+          type: 'primary',
+          onClick: jest.fn()
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} actions={actions} />);
+
+      const submitButton = screen.getByText('Submit');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('This field is required')).toBeInTheDocument();
+      });
+    });
+
+    test('should validate email format', async () => {
+      const user = userEvent.setup();
+      const fields: ModalField[] = [
+        {
+          id: 'email',
+          label: 'Email',
+          type: 'email',
+          required: true
+        }
+      ];
+
+      const actions: ModalAction[] = [
+        {
+          label: 'Submit',
+          type: 'primary',
+          onClick: jest.fn()
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} actions={actions} />);
+
+      const emailInput = screen.getByLabelText('Email *');
+      const submitButton = screen.getByText('Submit');
+
+      await user.type(emailInput, 'invalid-email');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Please enter a valid email address')).toBeInTheDocument();
+      });
+    });
+
+    test('should validate field length constraints', async () => {
+      const user = userEvent.setup();
+      const fields: ModalField[] = [
+        {
+          id: 'username',
+          label: 'Username',
+          type: 'text',
+          minLength: 3,
+          maxLength: 10,
+          required: true
+        }
+      ];
+
+      const actions: ModalAction[] = [
+        {
+          label: 'Submit',
+          type: 'primary',
+          onClick: jest.fn()
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} actions={actions} />);
+
+      const usernameInput = screen.getByLabelText('Username *');
+      const submitButton = screen.getByText('Submit');
+
+      // Test minimum length
+      await user.type(usernameInput, 'ab');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Must be at least 3 characters')).toBeInTheDocument();
+      });
+
+      // Clear and test maximum length
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'verylongusername');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Must be no more than 10 characters')).toBeInTheDocument();
+      });
+    });
+
+    test('should validate number range constraints', async () => {
+      const user = userEvent.setup();
+      const fields: ModalField[] = [
+        {
+          id: 'age',
+          label: 'Age',
+          type: 'number',
+          min: 18,
+          max: 65,
+          required: true
+        }
+      ];
+
+      const actions: ModalAction[] = [
+        {
+          label: 'Submit',
+          type: 'primary',
+          onClick: jest.fn()
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} actions={actions} />);
+
+      const ageInput = screen.getByLabelText('Age *');
+      const submitButton = screen.getByText('Submit');
+
+      // Test minimum value
+      await user.type(ageInput, '16');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Must be at least 18')).toBeInTheDocument();
+      });
+
+      // Clear and test maximum value
+      await user.clear(ageInput);
+      await user.type(ageInput, '70');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Must be no more than 65')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Actions and Interactions', () => {
+    test('should call action onClick handler with form data', async () => {
+      const user = userEvent.setup();
+      const mockAction = jest.fn();
+
+      const fields: ModalField[] = [
+        {
+          id: 'name',
+          label: 'Name',
+          type: 'text',
+          required: true
+        }
+      ];
+
+      const actions: ModalAction[] = [
+        {
+          label: 'Submit',
+          type: 'primary',
+          onClick: mockAction
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} actions={actions} />);
+
+      const nameInput = screen.getByLabelText('Name *');
+      const submitButton = screen.getByText('Submit');
+
+      await user.type(nameInput, 'John Doe');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockAction).toHaveBeenCalledWith({ name: 'John Doe' });
+      });
+    });
+
+    test('should handle secondary action clicks', async () => {
+      const user = userEvent.setup();
+      const mockSecondaryAction = jest.fn();
+
+      const actions: ModalAction[] = [
+        {
+          label: 'Cancel',
+          type: 'secondary',
+          onClick: mockSecondaryAction
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} actions={actions} />);
+
+      const cancelButton = screen.getByText('Cancel');
+      await user.click(cancelButton);
+
+      expect(mockSecondaryAction).toHaveBeenCalled();
+    });
+
+    test('should handle danger action clicks', async () => {
+      const user = userEvent.setup();
+      const mockDangerAction = jest.fn();
+
+      const actions: ModalAction[] = [
+        {
+          label: 'Delete',
+          type: 'danger',
+          onClick: mockDangerAction
+        }
+      ];
+
+      render(<UniversalModal {...defaultProps} actions={actions} />);
+
+      const deleteButton = screen.getByText('Delete');
+      await user.click(deleteButton);
+
+      expect(mockDangerAction).toHaveBeenCalled();
+    });
+
+    test('should call onClose when close button is clicked', async () => {
+      const user = userEvent.setup();
+      const mockOnClose = jest.fn();
+
+      render(<UniversalModal {...defaultProps} onClose={mockOnClose} />);
+
+      const closeButton = screen.getByRole('button', { name: /close/i });
+      await user.click(closeButton);
+
+      expect(mockOnClose).toHaveBeenCalled();
+    });
+
+    test('should call onClose when overlay is clicked', async () => {
+      const user = userEvent.setup();
+      const mockOnClose = jest.fn();
+
+      render(<UniversalModal {...defaultProps} onClose={mockOnClose} />);
+
+      // Click on the overlay (modal background)
+      const overlay = document.querySelector('.modal-overlay');
+      expect(overlay).toBeInTheDocument();
+
+      if (overlay) {
+        fireEvent.click(overlay);
+      }
+
+      expect(mockOnClose).toHaveBeenCalled();
+    });
+
+    test('should not call onClose when modal content is clicked', async () => {
+      const user = userEvent.setup();
+      const mockOnClose = jest.fn();
+
+      render(<UniversalModal {...defaultProps} onClose={mockOnClose} />);
+
+      const modalContent = document.querySelector('.modal-content');
+      expect(modalContent).toBeInTheDocument();
+
+      if (modalContent) {
+        fireEvent.click(modalContent);
+      }
+
+      expect(mockOnClose).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Accessibility', () => {
+    test('should have proper ARIA attributes', () => {
+      render(<UniversalModal {...defaultProps} />);
+
+      const modal = screen.getByRole('dialog');
+      expect(modal).toBeInTheDocument();
+      expect(modal).toHaveAttribute('aria-modal', 'true');
+      expect(modal).toHaveAttribute('aria-labelledby');
+    });
+
+    test('should support keyboard navigation with Tab', async () => {
+      const user = userEvent.setup();
+      const fields: ModalField[] = [
+        { id: 'field1', label: 'Field 1', type: 'text' },
+        { id: 'field2', label: 'Field 2', type: 'text' }
+      ];
+
+      const actions: ModalAction[] = [
+        { label: 'Cancel', type: 'secondary', onClick: jest.fn() },
+        { label: 'Submit', type: 'primary', onClick: jest.fn() }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} actions={actions} />);
+
+      // Tab through focusable elements
+      await user.tab();
+      expect(screen.getByLabelText('Field 1')).toHaveFocus();
+
+      await user.tab();
+      expect(screen.getByLabelText('Field 2')).toHaveFocus();
+
+      await user.tab();
+      expect(screen.getByText('Cancel')).toHaveFocus();
+
+      await user.tab();
+      expect(screen.getByText('Submit')).toHaveFocus();
+    });
+
+    test('should handle Escape key to close modal', async () => {
+      const user = userEvent.setup();
+      const mockOnClose = jest.fn();
+
+      render(<UniversalModal {...defaultProps} onClose={mockOnClose} />);
+
+      await user.keyboard('{Escape}');
+
+      expect(mockOnClose).toHaveBeenCalled();
+    });
+
+    test('should trap focus within modal', async () => {
+      const user = userEvent.setup();
+      const fields: ModalField[] = [
+        { id: 'field1', label: 'Field 1', type: 'text' }
+      ];
+
+      const actions: ModalAction[] = [
+        { label: 'Submit', type: 'primary', onClick: jest.fn() }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} actions={actions} />);
+
+      const firstFocusable = screen.getByLabelText('Field 1');
+      const lastFocusable = screen.getByText('Submit');
+
+      // Focus should be trapped within modal
+      firstFocusable.focus();
+      expect(firstFocusable).toHaveFocus();
+
+      // Shift+Tab from first element should go to last
+      await user.keyboard('{Shift>}{Tab}{/Shift}');
+      expect(lastFocusable).toHaveFocus();
+
+      // Tab from last element should go to first
+      await user.tab();
+      expect(firstFocusable).toHaveFocus();
+    });
+  });
+
+  describe('Performance and Edge Cases', () => {
+    test('should handle large number of fields efficiently', () => {
+      const manyFields: ModalField[] = Array.from({ length: 100 }, (_, i) => ({
+        id: `field${i}`,
+        label: `Field ${i}`,
+        type: 'text' as const
+      }));
+
+      const { container } = render(<UniversalModal {...defaultProps} fields={manyFields} />);
+
+      expect(container.querySelectorAll('input')).toHaveLength(100);
+    });
+
+    test('should handle special characters in field values', async () => {
+      const user = userEvent.setup();
+      const mockAction = jest.fn();
+
+      const fields: ModalField[] = [
+        { id: 'special', label: 'Special', type: 'text' }
+      ];
+
+      const actions: ModalAction[] = [
+        { label: 'Submit', type: 'primary', onClick: mockAction }
+      ];
+
+      render(<UniversalModal {...defaultProps} fields={fields} actions={actions} />);
+
+      const input = screen.getByLabelText('Special');
+      const specialText = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+      await user.type(input, specialText);
+      await user.click(screen.getByText('Submit'));
+
+      await waitFor(() => {
+        expect(mockAction).toHaveBeenCalledWith({ special: specialText });
+      });
+    });
+
+    test('should handle rapid consecutive actions', async () => {
+      const user = userEvent.setup();
+      const mockAction = jest.fn();
+
+      const actions: ModalAction[] = [
+        { label: 'Submit', type: 'primary', onClick: mockAction }
+      ];
+
+      render(<UniversalModal {...defaultProps} actions={actions} />);
+
+      const submitButton = screen.getByText('Submit');
+
+      // Rapid clicks
+      await user.click(submitButton);
+      await user.click(submitButton);
+      await user.click(submitButton);
+
+      // Should handle multiple calls gracefully
+      expect(mockAction).toHaveBeenCalledTimes(3);
+    });
+
+    test('should maintain form state during re-renders', async () => {
+      const user = userEvent.setup();
+      const fields: ModalField[] = [
+        { id: 'persistent', label: 'Persistent', type: 'text' }
+      ];
+
+      const { rerender } = render(<UniversalModal {...defaultProps} fields={fields} />);
+
+      const input = screen.getByLabelText('Persistent');
+      await user.type(input, 'test value');
+
+      expect(input).toHaveValue('test value');
+
+      // Re-render with same props
+      rerender(<UniversalModal {...defaultProps} fields={fields} />);
+
+      expect(screen.getByLabelText('Persistent')).toHaveValue('test value');
+    });
+  });
+});

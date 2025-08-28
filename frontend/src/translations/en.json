@@ -1,0 +1,106 @@
+{
+  "common": {
+    "home": "Home",
+    "feed": "Feed",
+    "discover": "Discover",
+    "live": "Live",
+    "messages": "Messages",
+    "profile": "Profile",
+    "settings": "Settings",
+    "post": "Post",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "share": "Share",
+    "like": "Like",
+    "comment": "Comment",
+    "follow": "Follow",
+    "following": "Following",
+    "followers": "Followers",
+    "posts": "Posts",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "header": {
+    "apps": "Apps",
+    "miniApps": "Mini Apps",
+    "appCount": "{{count}} apps"
+  },
+  "feed": {
+    "yourFeed": "Your Feed",
+    "whatsOnMind": "What's on your mind, {{name}}?",
+    "shareThoughts": "Share your thoughts...",
+    "attachedMedia": "Attached Media ({{count}})",
+    "clearAll": "Clear All",
+    "photo": "Photo",
+    "video": "Video",
+    "audio": "Audio",
+    "goLive": "Go Live",
+    "processingMedia": "Processing media files...",
+    "uploadTooltips": {
+      "photo": "Upload Images (PNG, JPEG, WebP, TIFF, BMP, SVG)\nSupports exceptional quality up to 50MP",
+      "video": "Upload Videos (MP4, MOV, AVI, MKV, WebM)\nSupports 4K resolution and high bitrates",
+      "audio": "Upload Audio (WAV, FLAC, AIFF, MP3, AAC, OGG)\nSupports lossless quality up to 24-bit/192kHz"
+    }
+  },
+  "discover": {
+    "discoverCreators": "Discover Creators",
+    "searchCreators": "Search creators...",
+    "shuffle": "Shuffle"
+  },
+  "live": {
+    "liveSessions": "Live Sessions",
+    "createLiveStream": "🔴 Live Stream Created!\n\nTitle: {{title}}\nCategory: {{category}}\n\nYour stream would now be broadcasting to viewers.",
+    "enterTitle": "Enter your live stream title:",
+    "chooseCategory": "Choose category:\n1. Technology\n2. Cooking\n3. Music\n4. Gaming\n5. Other\n\nEnter number (1-5):",
+    "watch": "Watch"
+  },
+  "messages": {
+    "searchConversations": "Search conversations...",
+    "newChat": "New Chat",
+    "typeMessage": "Type a message...",
+    "attachmentUploaded": "📎 {{fileName}} ({{size}})",
+    "emojiAdded": "😊 Added to message"
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "about": "About {{name}}",
+    "activity": "Activity",
+    "thisMonth": "This Month",
+    "engagement": "Engagement",
+    "bio": "Bio",
+    "location": "Location",
+    "website": "Website",
+    "memberSince": "Member Since",
+    "joinedDate": "Joined {{date}}",
+    "noMediaYet": "No media yet",
+    "mediaPostsWillAppear": "Media posts will appear here",
+    "noLikedPosts": "No liked posts yet",
+    "likedPostsWillAppear": "Posts you like will appear here",
+    "displayName": "Display Name",
+    "profileUpdated": "Profile updated successfully! ✅"
+  },
+  "settings": {
+    "accountSettings": "Account Settings",
+    "personalInformation": "Personal Information",
+    "privacyControls": "Privacy Controls",
+    "notificationPreferences": "Notification Preferences",
+    "languageAndRegion": "Language and Region",
+    "accessibilityOptions": "Accessibility Options",
+    "publicProfile": "Public Profile",
+    "showOnlineStatus": "Show Online Status",
+    "allowTagging": "Allow Tagging",
+    "pushNotifications": "Push Notifications",
+    "emailNotifications": "Email Notifications",
+    "smsNotifications": "SMS Notifications",
+    "language": "Language",
+    "region": "Region",
+    "timezone": "Timezone",
+    "highContrast": "High Contrast",
+    "largeText": "Large Text",
+    "reduceMotion": "Reduce Motion",
+    "screenReader": "Screen Reader Support"
+  }
+}

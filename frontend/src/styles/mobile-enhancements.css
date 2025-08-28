@@ -1,0 +1,245 @@
+/**
+ * Mobile-first touch enhancements
+ * Optimized for touch devices with proper feedback
+ */
+
+/* === WCAG 2.1 Level AA Touch Targets === */
+@media (max-width: 768px) {
+  /* Minimum 44x44px touch targets on mobile */
+  button,
+  [role="button"],
+  a[href],
+  input[type="submit"],
+  input[type="button"] {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation; /* Prevents double-tap zoom */
+  }
+
+  /* Comfortable spacing for touch elements */
+  button + button,
+  a + a {
+    margin-left: 8px;
+  }
+}
+
+/* === Touch Feedback === */
+/* Active state feedback for better tactile response */
+@media (hover: none) and (pointer: coarse) {
+  /* Mobile devices only */
+  button:active,
+  [role="button"]:active,
+  a:active {
+    transform: scale(0.97);
+    transition: transform 100ms ease-out;
+  }
+
+  /* Card press feedback */
+  .card:active,
+  .nothing-widget:active {
+    transform: scale(0.98);
+    transition: transform 100ms ease-out;
+  }
+
+  /* Disable hover effects on touch devices */
+  .hover\:scale-105:hover,
+  .hover\:bg-gray-100:hover {
+    transform: none;
+    background-color: transparent;
+  }
+}
+
+/* === Pull-to-Refresh Visual Indicator === */
+.pull-to-refresh-indicator {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pull-to-refresh-indicator.active {
+  transform: translateX(-50%) translateY(20px);
+}
+
+/* === Swipe Gesture Feedback === */
+.swipe-hint {
+  position: relative;
+  overflow: hidden;
+}
+
+.swipe-hint::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 300ms ease-out;
+}
+
+.swipe-hint.swiping::after {
+  left: 100%;
+}
+
+/* === Tablet Optimizations (768px - 1024px) === */
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Slightly larger touch targets for tablets */
+  button,
+  [role="button"] {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  /* Optimized grid layouts */
+  .grid-auto {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  /* Better spacing */
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* === Gesture Indicators === */
+.gesture-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.gesture-indicator.visible {
+  opacity: 1;
+}
+
+/* === Mobile Navigation Enhancements === */
+@media (max-width: 768px) {
+  /* Bottom navigation safe area */
+  .bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Full-width buttons on mobile */
+  .button-group-mobile button {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Stack form inputs */
+  .form-row-mobile {
+    flex-direction: column;
+  }
+
+  .form-row-mobile > * {
+    width: 100%;
+  }
+}
+
+/* === Touch Ripple Effect === */
+.touch-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(0);
+  animation: ripple 600ms ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* === Improved Scrolling === */
+@media (max-width: 768px) {
+  /* Smooth momentum scrolling on iOS */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Hide scrollbars but keep functionality */
+  .scroll-container {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+
+  .scroll-container::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+}
+
+/* === Safe Area Insets === */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+
+  .safe-top {
+    padding-top: calc(1rem + env(safe-area-inset-top));
+  }
+}
+
+/* === Haptic Feedback Indicator (Visual) === */
+.haptic-pulse {
+  animation: haptic-pulse 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes haptic-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* === Loading Skeleton for Mobile === */
+@media (max-width: 768px) {
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      #f0f0f0 25%,
+      #e0e0e0 50%,
+      #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: loading 1.5s ease-in-out infinite;
+  }
+
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+}
