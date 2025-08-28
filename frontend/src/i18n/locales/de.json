@@ -1,0 +1,46 @@
+{
+  "common": {
+    "welcome": "Willkommen",
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "register": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submit": "Absenden",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "search": "Suchen",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg"
+  },
+  "nav": {
+    "home": "Startseite",
+    "profile": "Profil",
+    "settings": "Einstellungen",
+    "messages": "Nachrichten",
+    "notifications": "Benachrichtigungen"
+  },
+  "auth": {
+    "sign_in": "Anmelden",
+    "sign_up": "Registrieren",
+    "forgot_password": "Passwort vergessen?",
+    "remember_me": "Angemeldet bleiben",
+    "create_account": "Konto erstellen",
+    "already_have_account": "Bereits ein Konto?"
+  },
+  "messages": {
+    "new_message": "Neue Nachricht",
+    "send_message": "Nachricht senden",
+    "type_message": "Nachricht eingeben...",
+    "no_messages": "Noch keine Nachrichten"
+  },
+  "profile": {
+    "edit_profile": "Profil bearbeiten",
+    "change_password": "Passwort ändern",
+    "account_settings": "Kontoeinstellungen",
+    "preferences": "Einstellungen"
+  }
+}

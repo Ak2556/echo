@@ -1,0 +1,15 @@
+{
+  "common": {
+    "welcome": "Bienvenue",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "submit": "Soumettre"
+  },
+  "nav": {
+    "home": "Accueil",
+    "profile": "Profil",
+    "settings": "Paramètres"
+  }
+}

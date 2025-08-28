@@ -1,0 +1,28 @@
+{
+  "name": "echo-fullstack",
+  "version": "1.0.0",
+  "description": "Full-stack Echo application with Next.js, FastAPI, ChromaDB, and OpenRouter",
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && python run.py",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "install:all": "cd frontend && npm install && cd ../backend && pip install -r requirements.txt",
+    "build": "cd frontend && npm run build",
+    "start": "cd frontend && npm start",
+    "test:frontend": "cd frontend && npm test",
+    "test:backend": "cd backend && pytest",
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:watch": "cd frontend && npm run test:watch",
+    "test:coverage": "npm run test:frontend -- --coverage && cd backend && pytest --cov=app",
+    "test:e2e": "cd frontend && npx playwright test",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && flake8 app && black --check app",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "format:frontend": "cd frontend && npx prettier --write .",
+    "format:backend": "cd backend && black app && isort app",
+    "format": "npm run format:frontend && npm run format:backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

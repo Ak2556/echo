@@ -1,0 +1,15 @@
+{
+  "common": {
+    "welcome": "Bienvenido",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "submit": "Enviar"
+  },
+  "nav": {
+    "home": "Inicio",
+    "profile": "Perfil",
+    "settings": "Configuración"
+  }
+}
