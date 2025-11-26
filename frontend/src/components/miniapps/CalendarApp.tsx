@@ -780,7 +780,7 @@ const CalendarApp = memo(({ isVisible, onClose }: CalendarAppProps) => {
     textMuted: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.5)',
     textLight: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
     textVeryLight: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)',
-    textExtremeLightght: isDark
+    textExtremeLight: isDark
       ? 'rgba(255, 255, 255, 0.3)'
       : 'rgba(0, 0, 0, 0.25)',
     border: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',

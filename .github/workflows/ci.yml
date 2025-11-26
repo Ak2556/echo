@@ -62,7 +62,7 @@ jobs:
           NEXT_PUBLIC_API_URL: http://localhost:8000
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-build
           path: frontend/.next
@@ -152,7 +152,7 @@ jobs:
           name: backend-coverage
 
       - name: Upload coverage HTML report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: backend-coverage-report
           path: backend/htmlcov
@@ -178,7 +178,7 @@ jobs:
           output: 'trivy-results.sarif'
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
 
@@ -229,7 +229,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: frontend/playwright-report

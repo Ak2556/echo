@@ -38,7 +38,7 @@ export default function Footer({ onNavigate }: FooterProps) {
     uptime: '99.9%',
     lastChecked: new Date(),
   });
-  const [appStats, setAppStats] = useState({
+  const [appStats, setAppStats] = useState<{users: string | number, posts: string | number, countries: string | number}>({
     users: 0,
     posts: 0,
     countries: 0,
