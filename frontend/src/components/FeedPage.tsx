@@ -160,7 +160,7 @@ const PostCard = memo(function PostCard({
 
   return (
     <div
-      ref={ref}
+      ref={ref as React.RefObject<HTMLDivElement>}
       className="nothing-widget modern-card hover-lift transition-smooth"
       style={{
         opacity: hasBeenInView ? 1 : 0,

@@ -194,6 +194,14 @@ class APIClient {
   async verifyEmail(data: { email: string; code: string }): Promise<any> {
     return this.post('/api/auth/verify-email', data);
   }
+
+  async setup2FA(): Promise<any> {
+    return this.post('/api/auth/totp/setup', {}, { requiresAuth: true });
+  }
+
+  async verify2FASetup(data: { code: string }): Promise<any> {
+    return this.post('/api/auth/totp/verify-setup', data, { requiresAuth: true });
+  }
 }
 
 export const apiClient = new APIClient();
