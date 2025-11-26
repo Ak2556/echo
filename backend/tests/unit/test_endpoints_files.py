@@ -63,7 +63,8 @@ class TestFileEndpoints:
     @pytest.mark.asyncio
     async def test_download_file_success(self):
         """Test downloading existing file."""
-        file_id = "test-file-123"
+        # Use valid UUID format for security validation
+        file_id = "550e8400-e29b-41d4-a716-446655440000"
 
         with patch('app.api.v1.endpoints.files.os.listdir', return_value=[f"{file_id}.txt"]):
             response = await download_file(file_id)
@@ -74,7 +75,8 @@ class TestFileEndpoints:
     @pytest.mark.asyncio
     async def test_download_file_not_found(self):
         """Test downloading non-existent file."""
-        file_id = "nonexistent"
+        # Use valid UUID format for security validation
+        file_id = "550e8400-e29b-41d4-a716-446655440001"
 
         with patch('app.api.v1.endpoints.files.os.listdir', return_value=[]):
             with pytest.raises(HTTPException) as exc_info:
@@ -85,7 +87,8 @@ class TestFileEndpoints:
     @pytest.mark.asyncio
     async def test_delete_file_success(self):
         """Test successful file deletion."""
-        file_id = "test-file-123"
+        # Use valid UUID format for security validation
+        file_id = "550e8400-e29b-41d4-a716-446655440002"
 
         with patch('app.api.v1.endpoints.files.os.listdir', return_value=[f"{file_id}.txt"]):
             with patch('app.api.v1.endpoints.files.os.remove') as mock_remove:
@@ -97,7 +100,8 @@ class TestFileEndpoints:
     @pytest.mark.asyncio
     async def test_delete_file_not_found(self):
         """Test deleting non-existent file."""
-        file_id = "nonexistent"
+        # Use valid UUID format for security validation
+        file_id = "550e8400-e29b-41d4-a716-446655440003"
 
         with patch('app.api.v1.endpoints.files.os.listdir', return_value=[]):
             with pytest.raises(HTTPException) as exc_info:

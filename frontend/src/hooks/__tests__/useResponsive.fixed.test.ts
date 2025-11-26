@@ -30,12 +30,14 @@ const mockWindowDimensions = (width: number, height: number) => {
   }
 };
 
-// Mock resize event safely
-const mockResizeEvent = (width: number, height: number) => {
+// Mock resize event safely with proper async handling
+const mockResizeEvent = async (width: number, height: number) => {
   mockWindowDimensions(width, height);
   if (typeof window !== 'undefined') {
-    act(() => {
+    await act(async () => {
       window.dispatchEvent(new Event('resize'));
+      // Wait for requestAnimationFrame to complete
+      await new Promise(resolve => requestAnimationFrame(resolve));
     });
   }
 };
@@ -136,27 +138,27 @@ describe('useResponsive', () => {
   });
 
   describe('Responsive Updates', () => {
-    it('updates breakpoint on window resize', () => {
+    it('updates breakpoint on window resize', async () => {
       const { result } = renderHook(() => useResponsive());
 
       // Start with desktop
       expect(result.current.breakpoint).toBe('lg');
 
       // Resize to mobile
-      mockResizeEvent(375, 667);
+      await mockResizeEvent(375, 667);
       expect(result.current.breakpoint).toBe('sm');
       expect(result.current.isMobile).toBe(true);
 
       // Resize to tablet
-      mockResizeEvent(768, 1024);
+      await mockResizeEvent(768, 1024);
       expect(result.current.breakpoint).toBe('md');
       expect(result.current.isTablet).toBe(true);
     });
 
-    it('updates dimensions on resize', () => {
+    it('updates dimensions on resize', async () => {
       const { result } = renderHook(() => useResponsive());
 
-      mockResizeEvent(1200, 800);
+      await mockResizeEvent(1200, 800);
       expect(result.current.width).toBe(1200);
       expect(result.current.height).toBe(800);
     });
@@ -195,14 +197,14 @@ describe('useBreakpoint', () => {
     expect(result.current).toBe(false);
   });
 
-  it('updates when window resizes', () => {
+  it('updates when window resizes', async () => {
     const { result } = renderHook(() => useBreakpoint('lg'));
 
     // Start with desktop (lg+)
     expect(result.current).toBe(true);
 
     // Resize to mobile
-    mockResizeEvent(375, 667);
+    await mockResizeEvent(375, 667);
     expect(result.current).toBe(false);
   });
 });
@@ -224,10 +226,10 @@ describe('useWindowSize', () => {
     expect(result.current.height).toBe(800);
   });
 
-  it('updates dimensions on resize', () => {
+  it('updates dimensions on resize', async () => {
     const { result } = renderHook(() => useWindowSize());
 
-    mockResizeEvent(800, 600);
+    await mockResizeEvent(800, 600);
     expect(result.current.width).toBe(800);
     expect(result.current.height).toBe(600);
   });
@@ -261,15 +263,15 @@ describe('useOrientation', () => {
     expect(result.current).toBe('landscape');
   });
 
-  it('updates orientation on resize', () => {
+  it('updates orientation on resize', async () => {
     const { result } = renderHook(() => useOrientation());
 
     // Start with portrait
-    mockResizeEvent(375, 667);
+    await mockResizeEvent(375, 667);
     expect(result.current).toBe('portrait');
 
     // Rotate to landscape
-    mockResizeEvent(667, 375);
+    await mockResizeEvent(667, 375);
     expect(result.current).toBe('landscape');
   });
 });
