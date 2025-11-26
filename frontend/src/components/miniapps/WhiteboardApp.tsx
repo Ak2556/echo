@@ -37,7 +37,7 @@ export default function WhiteboardApp({
   const [brushSize, setBrushSize] = useState(3);
   const [showGrid, setShowGrid] = useState(false);
 
-  const colors = [
+  const colorOptions = [
     'colors.brand.primary',
     'colors.brand.tertiary',
     '#ff6b6b',
@@ -381,7 +381,7 @@ export default function WhiteboardApp({
         {/* Colors */}
         {selectedTool !== 'eraser' && (
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-            {colors.map((color) => (
+            {colorOptions.map((color) => (
               <button
                 key={color}
                 onClick={() => setSelectedColor(color)}
