@@ -1,7 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, X, MessageCircle, Camera, Edit, Share2, Heart, Bookmark } from 'lucide-react';
+import {
+  Plus,
+  X,
+  MessageCircle,
+  Camera,
+  Edit,
+  Share2,
+  Heart,
+  Bookmark,
+} from 'lucide-react';
 
 /**
  * Floating Action Button (FAB) Component
@@ -36,7 +45,7 @@ export default function FloatingActionButton({
   position = 'bottom-right',
   icon = <Plus size={24} />,
   tooltip = 'Quick Actions',
-  show = true
+  show = true,
 }: FloatingActionButtonProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -54,7 +63,7 @@ export default function FloatingActionButton({
   const getPositionStyles = () => {
     const baseStyles = {
       position: 'fixed' as const,
-      zIndex: 1000
+      zIndex: 1000,
     };
 
     switch (position) {
@@ -85,7 +94,7 @@ export default function FloatingActionButton({
             bottom: 0,
             background: 'rgba(0, 0, 0, 0.3)',
             backdropFilter: 'blur(2px)',
-            zIndex: -1
+            zIndex: -1,
           }}
         />
       )}
@@ -102,7 +111,7 @@ export default function FloatingActionButton({
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
-            alignItems: position.includes('right') ? 'flex-end' : 'flex-start'
+            alignItems: position.includes('right') ? 'flex-end' : 'flex-start',
           }}
         >
           {actions.map((action, index) => (
@@ -113,9 +122,11 @@ export default function FloatingActionButton({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '1rem',
-                flexDirection: position.includes('right') ? 'row-reverse' : 'row',
+                flexDirection: position.includes('right')
+                  ? 'row-reverse'
+                  : 'row',
                 animationDelay: `${index * 0.05}s`,
-                animationFillMode: 'backwards'
+                animationFillMode: 'backwards',
               }}
             >
               {/* Action Label */}
@@ -128,7 +139,7 @@ export default function FloatingActionButton({
                   fontSize: '0.875rem',
                   fontWeight: 600,
                   whiteSpace: 'nowrap',
-                  color: 'var(--fg)'
+                  color: 'var(--fg)',
                 }}
               >
                 {action.label}
@@ -152,7 +163,7 @@ export default function FloatingActionButton({
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  boxShadow: 'var(--elevation-3)'
+                  boxShadow: 'var(--elevation-3)',
                 }}
               >
                 {action.icon}
@@ -170,7 +181,7 @@ export default function FloatingActionButton({
         className="fab hover-lift"
         style={{
           transform: isExpanded ? 'rotate(45deg)' : 'rotate(0deg)',
-          transition: 'all var(--transition-base)'
+          transition: 'all var(--transition-base)',
         }}
         aria-label={tooltip}
       >
@@ -197,7 +208,7 @@ export default function FloatingActionButton({
             fontWeight: 600,
             whiteSpace: 'nowrap',
             boxShadow: 'var(--elevation-3)',
-            pointerEvents: 'none'
+            pointerEvents: 'none',
           }}
         >
           {tooltip}
@@ -227,7 +238,7 @@ export function QuickActionsFAB({
   onMessage,
   onCamera,
   onShare,
-  onLike
+  onLike,
 }: {
   onMessage?: () => void;
   onCamera?: () => void;
@@ -241,7 +252,7 @@ export function QuickActionsFAB({
       icon: <MessageCircle size={20} />,
       label: 'Message',
       onClick: onMessage,
-      color: '#3b82f6'
+      color: '#3b82f6',
     });
   }
 
@@ -250,7 +261,7 @@ export function QuickActionsFAB({
       icon: <Camera size={20} />,
       label: 'Camera',
       onClick: onCamera,
-      color: '#8b5cf6'
+      color: '#8b5cf6',
     });
   }
 
@@ -259,7 +270,7 @@ export function QuickActionsFAB({
       icon: <Share2 size={20} />,
       label: 'Share',
       onClick: onShare,
-      color: '#10b981'
+      color: '#10b981',
     });
   }
 
@@ -268,16 +279,11 @@ export function QuickActionsFAB({
       icon: <Heart size={20} />,
       label: 'Like',
       onClick: onLike,
-      color: '#ef4444'
+      color: '#ef4444',
     });
   }
 
-  return (
-    <FloatingActionButton
-      actions={actions}
-      tooltip="Quick Actions"
-    />
-  );
+  return <FloatingActionButton actions={actions} tooltip="Quick Actions" />;
 }
 
 // Social Actions FAB
@@ -285,7 +291,7 @@ export function SocialActionsFAB({
   onCreatePost,
   onStartLive,
   onUploadPhoto,
-  onShareStory
+  onShareStory,
 }: {
   onCreatePost?: () => void;
   onStartLive?: () => void;
@@ -299,7 +305,7 @@ export function SocialActionsFAB({
       icon: <Edit size={20} />,
       label: 'Create Post',
       onClick: onCreatePost,
-      color: 'var(--accent)'
+      color: 'var(--accent)',
     });
   }
 
@@ -308,7 +314,7 @@ export function SocialActionsFAB({
       icon: <Camera size={20} />,
       label: 'Upload Photo',
       onClick: onUploadPhoto,
-      color: '#8b5cf6'
+      color: '#8b5cf6',
     });
   }
 
@@ -317,7 +323,7 @@ export function SocialActionsFAB({
       icon: <Bookmark size={20} />,
       label: 'Share Story',
       onClick: onShareStory,
-      color: '#f59e0b'
+      color: '#f59e0b',
     });
   }
 
@@ -326,7 +332,7 @@ export function SocialActionsFAB({
       icon: <span style={{ fontSize: '20px' }}>📡</span>,
       label: 'Go Live',
       onClick: onStartLive,
-      color: '#ef4444'
+      color: '#ef4444',
     });
   }
 
@@ -343,7 +349,7 @@ export function SocialActionsFAB({
 export function ShoppingFAB({
   onViewCart,
   onQuickOrder,
-  onScanProduct
+  onScanProduct,
 }: {
   onViewCart?: () => void;
   onQuickOrder?: () => void;
@@ -356,7 +362,7 @@ export function ShoppingFAB({
       icon: <span style={{ fontSize: '20px' }}>🛒</span>,
       label: 'View Cart',
       onClick: onViewCart,
-      color: 'var(--accent)'
+      color: 'var(--accent)',
     });
   }
 
@@ -365,7 +371,7 @@ export function ShoppingFAB({
       icon: <span style={{ fontSize: '20px' }}>⚡</span>,
       label: 'Quick Order',
       onClick: onQuickOrder,
-      color: '#10b981'
+      color: '#10b981',
     });
   }
 
@@ -374,7 +380,7 @@ export function ShoppingFAB({
       icon: <Camera size={20} />,
       label: 'Scan Product',
       onClick: onScanProduct,
-      color: '#8b5cf6'
+      color: '#8b5cf6',
     });
   }
 

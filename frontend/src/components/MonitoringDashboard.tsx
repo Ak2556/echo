@@ -36,8 +36,9 @@ export default function MonitoringDashboard() {
     track('monitoring_dashboard_viewed');
 
     // Check if admin/debug mode
-    const isDebugMode = localStorage.getItem('echo_debug_mode') === 'true' ||
-                       window.location.search.includes('debug=true');
+    const isDebugMode =
+      localStorage.getItem('echo_debug_mode') === 'true' ||
+      window.location.search.includes('debug=true');
 
     setIsVisible(isDebugMode);
 
@@ -63,9 +64,7 @@ export default function MonitoringDashboard() {
       };
 
       setStats(mockStats);
-    } catch (error) {
-
-    }
+    } catch (error) {}
   };
 
   const toggleDebugMode = () => {
@@ -90,17 +89,17 @@ export default function MonitoringDashboard() {
   const testErrorReporting = () => {
     const testType = confirm(
       'Choose error test type:\n\n' +
-      'OK = Simulate error reporting (safe, no error created)\n' +
-      'Cancel = Real error (tests ErrorBoundary)'
+        'OK = Simulate error reporting (safe, no error created)\n' +
+        'Cancel = Real error (tests ErrorBoundary)'
     );
-    
+
     if (testType) {
       // Simulate error reporting flow without creating actual Error
       track('error_reporting_test_simulated');
-      
+
       try {
         console.log('🧪 Testing error reporting system (simulated)...');
-        
+
         // Simulate error data without creating Error object
         const simulatedErrorData = {
           message: 'Test error for monitoring system',
@@ -108,9 +107,9 @@ export default function MonitoringDashboard() {
           testType: 'simulated',
           component: 'MonitoringDashboard',
           userAgent: navigator.userAgent,
-          url: window.location.href
+          url: window.location.href,
         };
-        
+
         // Log as info instead of error to avoid triggering error monitoring
 
         // Send to analytics (this is the actual test)
@@ -119,32 +118,30 @@ export default function MonitoringDashboard() {
             description: simulatedErrorData.message,
             fatal: false,
             custom_parameter_1: 'test_error_simulated',
-            custom_parameter_2: 'monitoring_dashboard_test'
+            custom_parameter_2: 'monitoring_dashboard_test',
           });
         }
-        
+
         // Also test custom error tracking
         track('test_error_simulated', simulatedErrorData);
-        
+
         alert(
           '✅ Error reporting test completed!\n\n' +
-          'Simulated error data sent to analytics.\n' +
-          'Check console (info level) and analytics dashboard.\n\n' +
-          'No actual error was created or thrown.'
+            'Simulated error data sent to analytics.\n' +
+            'Check console (info level) and analytics dashboard.\n\n' +
+            'No actual error was created or thrown.'
         );
-        
       } catch (error) {
-
         alert('❌ Error reporting test failed. Check console for details.');
       }
     } else {
       // Real error (tests ErrorBoundary)
       const confirmed = confirm(
         'This will throw a REAL error to test the ErrorBoundary.\n\n' +
-        'The component will crash and show an error UI.\n\n' +
-        'Continue?'
+          'The component will crash and show an error UI.\n\n' +
+          'Continue?'
       );
-      
+
       if (confirmed) {
         track('error_reporting_test_real');
 
@@ -194,17 +191,29 @@ export default function MonitoringDashboard() {
 
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-sm">
-      <div className="card" style={{
-        background: 'rgba(0, 0, 0, 0.9)',
-        border: '1px solid rgba(59, 130, 246, 0.3)',
-        borderRadius: '12px',
-        padding: '16px',
-        color: '#fff',
-        fontSize: '12px',
-      }}>
+      <div
+        className="card"
+        style={{
+          background: 'rgba(0, 0, 0, 0.9)',
+          border: '1px solid rgba(59, 130, 246, 0.3)',
+          borderRadius: '12px',
+          padding: '16px',
+          color: '#fff',
+          fontSize: '12px',
+        }}
+      >
         <div className="card-header" style={{ marginBottom: '12px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h3 className="card-title" style={{ margin: 0, fontSize: '14px', color: '#3b82f6' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <h3
+              className="card-title"
+              style={{ margin: 0, fontSize: '14px', color: '#3b82f6' }}
+            >
               📊 Monitoring
             </h3>
             <button
@@ -227,40 +236,56 @@ export default function MonitoringDashboard() {
           <div style={{ display: 'grid', gap: '8px', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Page Views:</span>
-              <span style={{ color: '#3b82f6' }}>{stats.pageViews.toLocaleString()}</span>
+              <span style={{ color: '#3b82f6' }}>
+                {stats.pageViews.toLocaleString()}
+              </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Unique Users:</span>
-              <span style={{ color: '#10b981' }}>{stats.uniqueUsers.toLocaleString()}</span>
+              <span style={{ color: '#10b981' }}>
+                {stats.uniqueUsers.toLocaleString()}
+              </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Avg Session:</span>
-              <span style={{ color: '#f59e0b' }}>{Math.floor(stats.sessionDuration / 60)}m</span>
+              <span style={{ color: '#f59e0b' }}>
+                {Math.floor(stats.sessionDuration / 60)}m
+              </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Error Rate:</span>
-              <span style={{ color: stats.errorRate > 1 ? '#ef4444' : '#10b981' }}>
+              <span
+                style={{ color: stats.errorRate > 1 ? '#ef4444' : '#10b981' }}
+              >
                 {stats.errorRate.toFixed(2)}%
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Performance:</span>
-              <span style={{
-                color: stats.performanceScore > 90 ? '#10b981' :
-                       stats.performanceScore > 70 ? '#f59e0b' : '#ef4444'
-              }}>
+              <span
+                style={{
+                  color:
+                    stats.performanceScore > 90
+                      ? '#10b981'
+                      : stats.performanceScore > 70
+                        ? '#f59e0b'
+                        : '#ef4444',
+                }}
+              >
                 {stats.performanceScore}/100
               </span>
             </div>
           </div>
 
-          <div style={{
-            fontSize: '10px',
-            color: '#666',
-            marginBottom: '12px',
-            paddingTop: '8px',
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)'
-          }}>
+          <div
+            style={{
+              fontSize: '10px',
+              color: '#666',
+              marginBottom: '12px',
+              paddingTop: '8px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
             Updated: {new Date(stats.lastUpdated).toLocaleTimeString()}
           </div>
 

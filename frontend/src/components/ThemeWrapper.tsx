@@ -16,12 +16,21 @@ export default function ThemeWrapper({ children }: ThemeWrapperProps) {
 
     // Apply theme to HTML element
     html.setAttribute('data-theme', actualColorMode);
-    
+
     // Apply accessibility preferences
-    html.setAttribute('data-reduced-motion', accessibilityPrefs.reducedMotion.toString());
-    html.setAttribute('data-high-contrast', accessibilityPrefs.highContrast.toString());
-    html.setAttribute('data-forced-colors', accessibilityPrefs.forcedColors.toString());
-    
+    html.setAttribute(
+      'data-reduced-motion',
+      accessibilityPrefs.reducedMotion.toString()
+    );
+    html.setAttribute(
+      'data-high-contrast',
+      accessibilityPrefs.highContrast.toString()
+    );
+    html.setAttribute(
+      'data-forced-colors',
+      accessibilityPrefs.forcedColors.toString()
+    );
+
     // Apply transition class for smooth theme changes
     if (!accessibilityPrefs.reducedMotion && isTransitioning) {
       html.classList.add('theme-transitioning');
@@ -36,11 +45,10 @@ export default function ThemeWrapper({ children }: ThemeWrapperProps) {
     // Ensure body has proper background and text color
     body.style.backgroundColor = 'var(--bg-primary)';
     body.style.color = 'var(--fg-primary)';
-    
+
     // Apply theme class to body for legacy support
     body.className = body.className.replace(/theme-\w+/g, '');
     body.classList.add('theme-nothing');
-    
   }, [actualColorMode, accessibilityPrefs, isTransitioning]);
 
   return <>{children}</>;

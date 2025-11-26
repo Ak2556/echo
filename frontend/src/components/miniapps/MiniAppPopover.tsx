@@ -9,7 +9,11 @@ interface MiniAppPopoverProps {
   children: React.ReactNode;
 }
 
-export default function MiniAppPopover({ isVisible, onClose, children }: MiniAppPopoverProps) {
+export default function MiniAppPopover({
+  isVisible,
+  onClose,
+  children,
+}: MiniAppPopoverProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -22,14 +26,14 @@ export default function MiniAppPopover({ isVisible, onClose, children }: MiniApp
   const modalContent = (
     <>
       {/* Background overlay for closing */}
-      <div
-        className="miniapp-backdrop"
-        onClick={onClose}
-      />
+      <div className="miniapp-backdrop" onClick={onClose} />
 
       {/* Popover content - centered modal */}
       <div className="miniapp-popover-wrapper" onClick={onClose}>
-        <div className="miniapp-popover-content" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="miniapp-popover-content"
+          onClick={(e) => e.stopPropagation()}
+        >
           <button
             onClick={onClose}
             className="miniapp-close-button"
@@ -108,8 +112,12 @@ export default function MiniAppPopover({ isVisible, onClose, children }: MiniApp
         }
 
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
 
         @keyframes slideUp {

@@ -159,8 +159,12 @@ export function getThemedStyles(isDark: boolean) {
       color: isDark ? '#f8fafc' : '#1e1b4b',
     },
     card: {
-      background: isDark ? 'rgba(30, 20, 50, 0.98)' : 'rgba(255, 255, 255, 0.98)',
-      border: isDark ? '1px solid rgba(167, 139, 250, 0.2)' : '1px solid rgba(139, 92, 246, 0.15)',
+      background: isDark
+        ? 'rgba(30, 20, 50, 0.98)'
+        : 'rgba(255, 255, 255, 0.98)',
+      border: isDark
+        ? '1px solid rgba(167, 139, 250, 0.2)'
+        : '1px solid rgba(139, 92, 246, 0.15)',
       boxShadow: isDark
         ? '0 4px 16px rgba(167, 139, 250, 0.2)'
         : '0 4px 16px rgba(139, 92, 246, 0.16)',
@@ -172,9 +176,13 @@ export function getThemedStyles(isDark: boolean) {
         boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
       },
       secondary: {
-        background: isDark ? 'rgba(167, 139, 250, 0.15)' : 'rgba(139, 92, 246, 0.1)',
+        background: isDark
+          ? 'rgba(167, 139, 250, 0.15)'
+          : 'rgba(139, 92, 246, 0.1)',
         color: isDark ? '#a78bfa' : '#8b5cf6',
-        border: isDark ? '1px solid rgba(167, 139, 250, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
+        border: isDark
+          ? '1px solid rgba(167, 139, 250, 0.3)'
+          : '1px solid rgba(139, 92, 246, 0.2)',
       },
       success: {
         background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
@@ -182,14 +190,20 @@ export function getThemedStyles(isDark: boolean) {
         boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
       },
       danger: {
-        background: isDark ? 'rgba(248, 113, 113, 0.15)' : 'rgba(239, 68, 68, 0.1)',
+        background: isDark
+          ? 'rgba(248, 113, 113, 0.15)'
+          : 'rgba(239, 68, 68, 0.1)',
         color: isDark ? '#f87171' : '#ef4444',
-        border: isDark ? '1px solid rgba(248, 113, 113, 0.3)' : '1px solid rgba(239, 68, 68, 0.2)',
+        border: isDark
+          ? '1px solid rgba(248, 113, 113, 0.3)'
+          : '1px solid rgba(239, 68, 68, 0.2)',
       },
     },
     input: {
       background: isDark ? 'rgba(30, 20, 50, 0.8)' : 'rgba(255, 255, 255, 0.9)',
-      border: isDark ? '1px solid rgba(167, 139, 250, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
+      border: isDark
+        ? '1px solid rgba(167, 139, 250, 0.3)'
+        : '1px solid rgba(139, 92, 246, 0.2)',
       color: isDark ? '#f8fafc' : '#1e1b4b',
       placeholder: isDark ? '#94a3b8' : '#6366f1',
     },

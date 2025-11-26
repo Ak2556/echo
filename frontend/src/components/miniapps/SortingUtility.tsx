@@ -1,7 +1,12 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { OptimizedSorting, SearchAlgorithms, PerformanceAnalytics, MemoryOptimizedOperations } from '../../utils/DSAUtils';
+import {
+  OptimizedSorting,
+  SearchAlgorithms,
+  PerformanceAnalytics,
+  MemoryOptimizedOperations,
+} from '../../utils/DSAUtils';
 
 export type SortDirection = 'asc' | 'desc';
 export type SortType = 'string' | 'number' | 'date' | 'boolean' | 'custom';
@@ -42,14 +47,14 @@ class AdvancedSorting {
     if (arr.length <= 1) return arr;
 
     const pivot = arr[Math.floor(arr.length / 2)];
-    const left = arr.filter(x => compareFn(x, pivot) < 0);
-    const middle = arr.filter(x => compareFn(x, pivot) === 0);
-    const right = arr.filter(x => compareFn(x, pivot) > 0);
+    const left = arr.filter((x) => compareFn(x, pivot) < 0);
+    const middle = arr.filter((x) => compareFn(x, pivot) === 0);
+    const right = arr.filter((x) => compareFn(x, pivot) > 0);
 
     return [
       ...AdvancedSorting.quickSort(left, compareFn),
       ...middle,
-      ...AdvancedSorting.quickSort(right, compareFn)
+      ...AdvancedSorting.quickSort(right, compareFn),
     ];
   }
 
@@ -63,7 +68,11 @@ class AdvancedSorting {
     return AdvancedSorting.merge(left, right, compareFn);
   }
 
-  private static merge<T>(left: T[], right: T[], compareFn: (a: T, b: T) => number): T[] {
+  private static merge<T>(
+    left: T[],
+    right: T[],
+    compareFn: (a: T, b: T) => number
+  ): T[] {
     const result: T[] = [];
     let leftIndex = 0;
     let rightIndex = 0;
@@ -117,7 +126,9 @@ class AdvancedSorting {
     let result = [...arr];
 
     for (let digit = 0; digit < maxDigits; digit++) {
-      const buckets: number[][] = Array(10).fill(null).map(() => []);
+      const buckets: number[][] = Array(10)
+        .fill(null)
+        .map(() => []);
 
       for (const num of result) {
         const digitValue = Math.floor(num / Math.pow(10, digit)) % 10;
@@ -163,7 +174,9 @@ class AdvancedSorting {
     const max = Math.max(...arr);
     const bucketSize = (max - min) / bucketCount;
 
-    const buckets: number[][] = Array(bucketCount).fill(null).map(() => []);
+    const buckets: number[][] = Array(bucketCount)
+      .fill(null)
+      .map(() => []);
 
     // Distribute elements into buckets
     for (const num of arr) {
@@ -176,7 +189,7 @@ class AdvancedSorting {
 
     // Sort each bucket and concatenate
     return buckets
-      .map(bucket => AdvancedSorting.insertionSort(bucket, (a, b) => a - b))
+      .map((bucket) => AdvancedSorting.insertionSort(bucket, (a, b) => a - b))
       .flat();
   }
 
@@ -198,7 +211,12 @@ class AdvancedSorting {
     return result;
   }
 
-  private static heapify<T>(arr: T[], n: number, i: number, compareFn: (a: T, b: T) => number): void {
+  private static heapify<T>(
+    arr: T[],
+    n: number,
+    i: number,
+    compareFn: (a: T, b: T) => number
+  ): void {
     let largest = i;
     const left = 2 * i + 1;
     const right = 2 * i + 2;
@@ -231,13 +249,19 @@ export default function SortingUtility({
   showFilters = true,
   showSort = true,
   compact = false,
-  isDarkMode = true
+  isDarkMode = true,
 }: SortingUtilityProps) {
-  const [sortField, setSortField] = useState(initialSort?.field || sortFields[0]?.key || '');
-  const [sortDirection, setSortDirection] = useState<SortDirection>(initialSort?.direction || 'asc');
+  const [sortField, setSortField] = useState(
+    initialSort?.field || sortFields[0]?.key || ''
+  );
+  const [sortDirection, setSortDirection] = useState<SortDirection>(
+    initialSort?.direction || 'asc'
+  );
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, any>>({});
-  const [sortAlgorithm, setSortAlgorithm] = useState<'quick' | 'merge' | 'heap' | 'tim'>('tim');
+  const [sortAlgorithm, setSortAlgorithm] = useState<
+    'quick' | 'merge' | 'heap' | 'tim'
+  >('tim');
 
   const createCompareFn = (field: SortField, direction: SortDirection) => {
     return (a: any, b: any): number => {
@@ -245,7 +269,9 @@ export default function SortingUtility({
       let bVal = field.getValue ? field.getValue(b) : b[field.key];
 
       if (field.customSort) {
-        return direction === 'asc' ? field.customSort(a, b) : field.customSort(b, a);
+        return direction === 'asc'
+          ? field.customSort(a, b)
+          : field.customSort(b, a);
       }
 
       // Handle null/undefined values
@@ -286,27 +312,31 @@ export default function SortingUtility({
         if (searchTerm.length < 3) {
           // Use simple substring search for short queries
           const searchLower = searchTerm.toLowerCase();
-          result = result.filter(item =>
-            searchFields.some(field => {
+          result = result.filter((item) =>
+            searchFields.some((field) => {
               const value = String(item[field] || '').toLowerCase();
               return value.includes(searchLower);
             })
           );
         } else {
           // Use fuzzy search for longer queries to handle typos
-          const candidates = result.map(item => ({
+          const candidates = result.map((item) => ({
             item,
-            searchText: searchFields.map(field => String(item[field] || '')).join(' ')
+            searchText: searchFields
+              .map((field) => String(item[field] || ''))
+              .join(' '),
           }));
 
           const fuzzyResults = SearchAlgorithms.fuzzySearch(
             searchTerm,
-            candidates.map(c => c.searchText),
+            candidates.map((c) => c.searchText),
             0.3 // Lower threshold for more lenient matching
           );
 
-          result = fuzzyResults.map(fuzzyResult => {
-            const candidateIndex = candidates.findIndex(c => c.searchText === fuzzyResult.item);
+          result = fuzzyResults.map((fuzzyResult) => {
+            const candidateIndex = candidates.findIndex(
+              (c) => c.searchText === fuzzyResult.item
+            );
             return candidates[candidateIndex].item;
           });
         }
@@ -322,17 +352,25 @@ export default function SortingUtility({
 
       // Apply filters
       Object.entries(filters).forEach(([filterKey, filterValue]) => {
-        if (!filterValue || (Array.isArray(filterValue) && filterValue.length === 0)) return;
+        if (
+          !filterValue ||
+          (Array.isArray(filterValue) && filterValue.length === 0)
+        )
+          return;
 
-        const filterField = filterFields.find(f => f.key === filterKey);
+        const filterField = filterFields.find((f) => f.key === filterKey);
         if (!filterField) return;
 
-        result = result.filter(item => {
-          const itemValue = filterField.getValue ? filterField.getValue(item) : item[filterKey];
+        result = result.filter((item) => {
+          const itemValue = filterField.getValue
+            ? filterField.getValue(item)
+            : item[filterKey];
 
           switch (filterField.type) {
             case 'text':
-              return String(itemValue).toLowerCase().includes(String(filterValue).toLowerCase());
+              return String(itemValue)
+                .toLowerCase()
+                .includes(String(filterValue).toLowerCase());
             case 'select':
               return itemValue === filterValue;
             case 'boolean':
@@ -344,7 +382,10 @@ export default function SortingUtility({
             case 'date-range':
               const [startDate, endDate] = filterValue;
               const itemDate = new Date(itemValue).getTime();
-              return itemDate >= new Date(startDate).getTime() && itemDate <= new Date(endDate).getTime();
+              return (
+                itemDate >= new Date(startDate).getTime() &&
+                itemDate <= new Date(endDate).getTime()
+              );
             default:
               return true;
           }
@@ -361,7 +402,7 @@ export default function SortingUtility({
 
       // Apply intelligent sorting using optimized algorithms
       if (sortField) {
-        const field = sortFields.find(f => f.key === sortField);
+        const field = sortFields.find((f) => f.key === sortField);
         if (field) {
           const compareFn = createCompareFn(field, sortDirection);
 
@@ -373,11 +414,18 @@ export default function SortingUtility({
       onDataChange?.(result);
       return result;
     });
-  }, [filteredData, sortField, sortDirection, sortFields, createCompareFn, onDataChange]);
+  }, [
+    filteredData,
+    sortField,
+    sortDirection,
+    sortFields,
+    createCompareFn,
+    onDataChange,
+  ]);
 
   const handleSortChange = (field: string) => {
     if (field === sortField) {
-      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortField(field);
       setSortDirection('asc');
@@ -385,7 +433,7 @@ export default function SortingUtility({
   };
 
   const handleFilterChange = (key: string, value: any) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const clearFilters = () => {
@@ -394,7 +442,9 @@ export default function SortingUtility({
   };
 
   return (
-    <div className={`sorting-utility ${compact ? 'compact' : ''} ${isDarkMode ? 'dark' : 'light'}`}>
+    <div
+      className={`sorting-utility ${compact ? 'compact' : ''} ${isDarkMode ? 'dark' : 'light'}`}
+    >
       <div className="sorting-controls">
         {showSearch && searchFields.length > 0 && (
           <div className="search-section">
@@ -416,14 +466,18 @@ export default function SortingUtility({
               className="sort-select"
             >
               <option value="">No Sorting</option>
-              {sortFields.map(field => (
-                <option key={field.key} value={field.key}>{field.label}</option>
+              {sortFields.map((field) => (
+                <option key={field.key} value={field.key}>
+                  {field.label}
+                </option>
               ))}
             </select>
 
             {sortField && (
               <button
-                onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
+                onClick={() =>
+                  setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))
+                }
                 className="sort-direction"
                 title={`Sort ${sortDirection === 'asc' ? 'Ascending' : 'Descending'}`}
               >
@@ -447,17 +501,19 @@ export default function SortingUtility({
 
         {showFilters && filterFields.length > 0 && (
           <div className="filters-section">
-            {filterFields.map(field => (
+            {filterFields.map((field) => (
               <div key={field.key} className="filter-field">
                 <label>{field.label}</label>
                 {field.type === 'select' ? (
                   <select
                     value={filters[field.key] || ''}
-                    onChange={(e) => handleFilterChange(field.key, e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange(field.key, e.target.value)
+                    }
                     className="filter-select"
                   >
                     <option value="">All</option>
-                    {field.options?.map(option => (
+                    {field.options?.map((option) => (
                       <option key={option.value} value={option.value}>
                         {option.label}
                       </option>
@@ -466,7 +522,14 @@ export default function SortingUtility({
                 ) : field.type === 'boolean' ? (
                   <select
                     value={filters[field.key] ?? ''}
-                    onChange={(e) => handleFilterChange(field.key, e.target.value === '' ? undefined : e.target.value === 'true')}
+                    onChange={(e) =>
+                      handleFilterChange(
+                        field.key,
+                        e.target.value === ''
+                          ? undefined
+                          : e.target.value === 'true'
+                      )
+                    }
                     className="filter-select"
                   >
                     <option value="">All</option>
@@ -477,7 +540,9 @@ export default function SortingUtility({
                   <input
                     type="text"
                     value={filters[field.key] || ''}
-                    onChange={(e) => handleFilterChange(field.key, e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange(field.key, e.target.value)
+                    }
                     className="filter-input"
                     placeholder={`Filter by ${field.label}`}
                   />
@@ -493,9 +558,14 @@ export default function SortingUtility({
       </div>
 
       <div className="results-info">
-        <span>Showing {sortedData.length} of {data.length} items</span>
+        <span>
+          Showing {sortedData.length} of {data.length} items
+        </span>
         {sortField && (
-          <span>Sorted by {sortFields.find(f => f.key === sortField)?.label} ({sortDirection})</span>
+          <span>
+            Sorted by {sortFields.find((f) => f.key === sortField)?.label} (
+            {sortDirection})
+          </span>
         )}
       </div>
 
@@ -514,13 +584,19 @@ export default function SortingUtility({
           margin-bottom: 1rem;
         }
 
-        .search-section, .sort-section, .filters-section {
+        .search-section,
+        .sort-section,
+        .filters-section {
           display: flex;
           align-items: center;
           gap: 0.5rem;
         }
 
-        .search-input, .sort-select, .algorithm-select, .filter-select, .filter-input {
+        .search-input,
+        .sort-select,
+        .algorithm-select,
+        .filter-select,
+        .filter-input {
           padding: 0.5rem 0.75rem;
           border: 1px solid var(--border);
           border-radius: 8px;
@@ -618,7 +694,8 @@ export default function SortingUtility({
             align-items: stretch;
           }
 
-          .sort-section, .filters-section {
+          .sort-section,
+          .filters-section {
             flex-wrap: wrap;
           }
 

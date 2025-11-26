@@ -14,12 +14,12 @@ interface ProfileQRCodeProps {
   avatar?: string;
 }
 
-export default function ProfileQRCode({ 
-  isOpen, 
-  onClose, 
-  username, 
-  displayName, 
-  avatar 
+export default function ProfileQRCode({
+  isOpen,
+  onClose,
+  username,
+  displayName,
+  avatar,
 }: ProfileQRCodeProps) {
   const { user } = useUser();
   const toast = useToast();
@@ -28,7 +28,10 @@ export default function ProfileQRCode({
   // Use provided props or fallback to current user
   const profileUsername = username || user?.username || 'demo_user';
   const profileDisplayName = displayName || user?.displayName || 'Demo User';
-  const profileAvatar = avatar || user?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=DemoUser';
+  const profileAvatar =
+    avatar ||
+    user?.avatar ||
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=DemoUser';
 
   const profileUrl = `https://echo.app/@${profileUsername}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(profileUrl)}&bgcolor=ffffff&color=000000&margin=10`;
@@ -58,7 +61,7 @@ export default function ProfileQRCode({
         await navigator.share({
           title: `${profileDisplayName} on Echo`,
           text: `Check out ${profileDisplayName}'s profile on Echo!`,
-          url: profileUrl
+          url: profileUrl,
         });
       } catch (error) {
         // User cancelled or error
@@ -84,7 +87,7 @@ export default function ProfileQRCode({
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 1000,
-        padding: '1rem'
+        padding: '1rem',
       }}
       onClick={onClose}
     >
@@ -98,7 +101,7 @@ export default function ProfileQRCode({
           width: '100%',
           position: 'relative',
           boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
-          border: '1px solid var(--border)'
+          border: '1px solid var(--border)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -118,7 +121,7 @@ export default function ProfileQRCode({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transition: 'background 0.2s'
+            transition: 'background 0.2s',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = 'rgba(0, 0, 0, 0.2)';
@@ -132,34 +135,40 @@ export default function ProfileQRCode({
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h2 style={{ 
-            margin: '0 0 0.5rem 0', 
-            fontSize: '1.5rem', 
-            fontWeight: 700,
-            color: 'var(--fg)'
-          }}>
+          <h2
+            style={{
+              margin: '0 0 0.5rem 0',
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              color: 'var(--fg)',
+            }}
+          >
             Share Profile
           </h2>
-          <p style={{ 
-            margin: 0, 
-            color: 'var(--muted)', 
-            fontSize: '0.9rem' 
-          }}>
+          <p
+            style={{
+              margin: 0,
+              color: 'var(--muted)',
+              fontSize: '0.9rem',
+            }}
+          >
             Scan this QR code to follow {profileDisplayName}
           </p>
         </div>
 
         {/* Profile Preview */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem',
-          marginBottom: '2rem',
-          padding: '1rem',
-          background: 'var(--surface)',
-          borderRadius: '12px',
-          border: '1px solid var(--border)'
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            marginBottom: '2rem',
+            padding: '1rem',
+            background: 'var(--surface)',
+            borderRadius: '12px',
+            border: '1px solid var(--border)',
+          }}
+        >
           <Image
             src={profileAvatar}
             alt={profileDisplayName}
@@ -168,69 +177,81 @@ export default function ProfileQRCode({
             style={{ borderRadius: '50%', border: '2px solid var(--border)' }}
           />
           <div style={{ flex: 1 }}>
-            <div style={{ 
-              fontWeight: 600, 
-              fontSize: '1rem',
-              color: 'var(--fg)',
-              marginBottom: '0.25rem'
-            }}>
+            <div
+              style={{
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: 'var(--fg)',
+                marginBottom: '0.25rem',
+              }}
+            >
               {profileDisplayName}
             </div>
-            <div style={{ 
-              fontSize: '0.85rem', 
-              color: 'var(--muted)' 
-            }}>
+            <div
+              style={{
+                fontSize: '0.85rem',
+                color: 'var(--muted)',
+              }}
+            >
               @{profileUsername}
             </div>
           </div>
         </div>
 
         {/* QR Code */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: '2rem'
-        }}>
-          <div style={{
-            padding: '1rem',
-            background: '#ffffff',
-            borderRadius: '16px',
-            border: '1px solid var(--border)',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-          }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: '2rem',
+          }}
+        >
+          <div
+            style={{
+              padding: '1rem',
+              background: '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid var(--border)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            }}
+          >
             <img
               src={qrCodeUrl}
               alt="Profile QR Code"
               style={{
                 width: '200px',
                 height: '200px',
-                display: 'block'
+                display: 'block',
               }}
             />
           </div>
         </div>
 
         {/* URL Display */}
-        <div style={{
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-          borderRadius: '8px',
-          padding: '0.75rem',
-          marginBottom: '1.5rem',
-          fontSize: '0.85rem',
-          color: 'var(--muted)',
-          textAlign: 'center',
-          fontFamily: 'monospace'
-        }}>
+        <div
+          style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: '8px',
+            padding: '0.75rem',
+            marginBottom: '1.5rem',
+            fontSize: '0.85rem',
+            color: 'var(--muted)',
+            textAlign: 'center',
+            fontFamily: 'monospace',
+          }}
+        >
           {profileUrl}
         </div>
 
         {/* Action Buttons */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gap: '0.75rem'
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '0.75rem',
+          }}
+        >
           <button
             onClick={handleCopyLink}
             style={{
@@ -246,7 +267,7 @@ export default function ProfileQRCode({
               transition: 'all 0.2s',
               fontSize: '0.8rem',
               fontWeight: 500,
-              color: 'var(--fg)'
+              color: 'var(--fg)',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'var(--accent)';
@@ -278,7 +299,7 @@ export default function ProfileQRCode({
               transition: 'all 0.2s',
               fontSize: '0.8rem',
               fontWeight: 500,
-              color: 'var(--fg)'
+              color: 'var(--fg)',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'var(--accent)';
@@ -310,7 +331,7 @@ export default function ProfileQRCode({
               transition: 'all 0.2s',
               fontSize: '0.8rem',
               fontWeight: 500,
-              color: 'var(--fg)'
+              color: 'var(--fg)',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'var(--accent)';
@@ -329,13 +350,15 @@ export default function ProfileQRCode({
         </div>
 
         {/* Footer */}
-        <div style={{
-          textAlign: 'center',
-          marginTop: '1.5rem',
-          fontSize: '0.75rem',
-          color: 'var(--muted)',
-          opacity: 0.7
-        }}>
+        <div
+          style={{
+            textAlign: 'center',
+            marginTop: '1.5rem',
+            fontSize: '0.75rem',
+            color: 'var(--muted)',
+            opacity: 0.7,
+          }}
+        >
           QR code works with any camera app
         </div>
       </div>

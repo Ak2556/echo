@@ -12,8 +12,18 @@
   --accent-hover: #0284c7;
   --accent-rgb: 14, 165, 233;
 
-  --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #14b8a6 100%);
-  --gradient-hero: linear-gradient(135deg, #0c4a6e 0%, #155e75 50%, #0f766e 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    #0ea5e9 0%,
+    #06b6d4 50%,
+    #14b8a6 100%
+  );
+  --gradient-hero: linear-gradient(
+    135deg,
+    #0c4a6e 0%,
+    #155e75 50%,
+    #0f766e 100%
+  );
 
   --theme-overlay: rgba(14, 165, 233, 0.05);
   --theme-glow: 0 0 40px rgba(14, 165, 233, 0.3);
@@ -21,8 +31,16 @@
 
 [data-theme='ocean-breeze'] body {
   background-image:
-    radial-gradient(circle at 20% 50%, rgba(14, 165, 233, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(14, 165, 233, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(6, 182, 212, 0.1) 0%,
+      transparent 50%
+    );
 }
 
 /* ===================================
@@ -34,8 +52,18 @@
   --accent-hover: #ea580c;
   --accent-rgb: 249, 115, 22;
 
-  --gradient-primary: linear-gradient(135deg, #f97316 0%, #fb923c 50%, #fb7185 100%);
-  --gradient-hero: linear-gradient(135deg, #9a3412 0%, #be123c 50%, #9f1239 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    #f97316 0%,
+    #fb923c 50%,
+    #fb7185 100%
+  );
+  --gradient-hero: linear-gradient(
+    135deg,
+    #9a3412 0%,
+    #be123c 50%,
+    #9f1239 100%
+  );
 
   --theme-overlay: rgba(249, 115, 22, 0.05);
   --theme-glow: 0 0 40px rgba(249, 115, 22, 0.3);
@@ -43,8 +71,16 @@
 
 [data-theme='sunset-glow'] body {
   background-image:
-    radial-gradient(circle at 30% 40%, rgba(249, 115, 22, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 70% 70%, rgba(251, 113, 133, 0.1) 0%, transparent 50%);
+    radial-gradient(
+      circle at 30% 40%,
+      rgba(249, 115, 22, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 70% 70%,
+      rgba(251, 113, 133, 0.1) 0%,
+      transparent 50%
+    );
 }
 
 /* ===================================
@@ -56,8 +92,18 @@
   --accent-hover: #059669;
   --accent-rgb: 16, 185, 129;
 
-  --gradient-primary: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
-  --gradient-hero: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    #10b981 0%,
+    #34d399 50%,
+    #6ee7b7 100%
+  );
+  --gradient-hero: linear-gradient(
+    135deg,
+    #064e3b 0%,
+    #065f46 50%,
+    #047857 100%
+  );
 
   --theme-overlay: rgba(16, 185, 129, 0.05);
   --theme-glow: 0 0 40px rgba(16, 185, 129, 0.3);
@@ -65,8 +111,16 @@
 
 [data-theme='forest-mystique'] body {
   background-image:
-    radial-gradient(circle at 25% 35%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(52, 211, 153, 0.1) 0%, transparent 50%);
+    radial-gradient(
+      circle at 25% 35%,
+      rgba(16, 185, 129, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(52, 211, 153, 0.1) 0%,
+      transparent 50%
+    );
 }
 
 /* ===================================
@@ -78,8 +132,18 @@
   --accent-hover: #9333ea;
   --accent-rgb: 168, 85, 247;
 
-  --gradient-primary: linear-gradient(135deg, #a855f7 0%, #c084fc 50%, #e9d5ff 100%);
-  --gradient-hero: linear-gradient(135deg, #581c87 0%, #6b21a8 50%, #7e22ce 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    #a855f7 0%,
+    #c084fc 50%,
+    #e9d5ff 100%
+  );
+  --gradient-hero: linear-gradient(
+    135deg,
+    #581c87 0%,
+    #6b21a8 50%,
+    #7e22ce 100%
+  );
 
   --theme-overlay: rgba(168, 85, 247, 0.05);
   --theme-glow: 0 0 40px rgba(168, 85, 247, 0.3);
@@ -87,8 +151,16 @@
 
 [data-theme='royal-purple'] body {
   background-image:
-    radial-gradient(circle at 40% 30%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 60% 80%, rgba(192, 132, 252, 0.1) 0%, transparent 50%);
+    radial-gradient(
+      circle at 40% 30%,
+      rgba(168, 85, 247, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 60% 80%,
+      rgba(192, 132, 252, 0.1) 0%,
+      transparent 50%
+    );
 }
 
 /* ===================================
@@ -100,8 +172,18 @@
   --accent-hover: #db2777;
   --accent-rgb: 236, 72, 153;
 
-  --gradient-primary: linear-gradient(135deg, #ec4899 0%, #f472b6 50%, #fbbf24 100%);
-  --gradient-hero: linear-gradient(135deg, #831843 0%, #9f1239 50%, #92400e 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    #ec4899 0%,
+    #f472b6 50%,
+    #fbbf24 100%
+  );
+  --gradient-hero: linear-gradient(
+    135deg,
+    #831843 0%,
+    #9f1239 50%,
+    #92400e 100%
+  );
 
   --theme-overlay: rgba(236, 72, 153, 0.05);
   --theme-glow: 0 0 40px rgba(236, 72, 153, 0.3);
@@ -109,8 +191,16 @@
 
 [data-theme='rose-gold'] body {
   background-image:
-    radial-gradient(circle at 35% 45%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 65% 65%, rgba(251, 191, 36, 0.1) 0%, transparent 50%);
+    radial-gradient(
+      circle at 35% 45%,
+      rgba(236, 72, 153, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 65% 65%,
+      rgba(251, 191, 36, 0.1) 0%,
+      transparent 50%
+    );
 }
 
 /* ===================================
@@ -122,8 +212,18 @@
   --accent-hover: #4f46e5;
   --accent-rgb: 99, 102, 241;
 
-  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-  --gradient-hero: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    #6366f1 0%,
+    #8b5cf6 50%,
+    #a855f7 100%
+  );
+  --gradient-hero: linear-gradient(
+    135deg,
+    #1e1b4b 0%,
+    #312e81 50%,
+    #4c1d95 100%
+  );
 
   --theme-overlay: rgba(99, 102, 241, 0.05);
   --theme-glow: 0 0 40px rgba(99, 102, 241, 0.3);
@@ -131,9 +231,21 @@
 
 [data-theme='midnight-galaxy'] body {
   background-image:
-    radial-gradient(circle at 20% 40%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 60%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+    radial-gradient(
+      circle at 20% 40%,
+      rgba(99, 102, 241, 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 60%,
+      rgba(139, 92, 246, 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 50% 90%,
+      rgba(168, 85, 247, 0.1) 0%,
+      transparent 50%
+    );
 }
 
 /* ===================================
@@ -145,8 +257,18 @@
   --accent-hover: #d90062;
   --accent-rgb: 255, 0, 110;
 
-  --gradient-primary: linear-gradient(135deg, #ff006e 0%, #8338ec 50%, #06ffa5 100%);
-  --gradient-hero: linear-gradient(135deg, #560027 0%, #3c096c 50%, #007f5f 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    #ff006e 0%,
+    #8338ec 50%,
+    #06ffa5 100%
+  );
+  --gradient-hero: linear-gradient(
+    135deg,
+    #560027 0%,
+    #3c096c 50%,
+    #007f5f 100%
+  );
 
   --theme-overlay: rgba(255, 0, 110, 0.05);
   --theme-glow: 0 0 40px rgba(255, 0, 110, 0.4);
@@ -156,10 +278,26 @@
 
 [data-theme='cyberpunk'] body {
   background-image:
-    linear-gradient(90deg, transparent 0%, rgba(255, 0, 110, 0.05) 50%, transparent 100%),
-    radial-gradient(circle at 30% 30%, rgba(131, 56, 236, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 70% 70%, rgba(6, 255, 165, 0.1) 0%, transparent 50%);
-  background-size: 100% 2px, 100% 100%, 100% 100%;
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 0, 110, 0.05) 50%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle at 30% 30%,
+      rgba(131, 56, 236, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 70% 70%,
+      rgba(6, 255, 165, 0.1) 0%,
+      transparent 50%
+    );
+  background-size:
+    100% 2px,
+    100% 100%,
+    100% 100%;
 }
 
 [data-theme='cyberpunk'] .modern-card {
@@ -176,15 +314,30 @@
   --accent-hover: #1f1f1f;
   --accent-rgb: 0, 0, 0;
 
-  --gradient-primary: linear-gradient(135deg, #000000 0%, #374151 50%, #6b7280 100%);
-  --gradient-hero: linear-gradient(135deg, #000000 0%, #111827 50%, #1f2937 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    #000000 0%,
+    #374151 50%,
+    #6b7280 100%
+  );
+  --gradient-hero: linear-gradient(
+    135deg,
+    #000000 0%,
+    #111827 50%,
+    #1f2937 100%
+  );
 
   --theme-overlay: rgba(0, 0, 0, 0.02);
 }
 
 [data-theme='monochrome'] body {
-  background-image:
-    repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(0, 0, 0, 0.02) 50px, rgba(0, 0, 0, 0.02) 51px);
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 50px,
+    rgba(0, 0, 0, 0.02) 50px,
+    rgba(0, 0, 0, 0.02) 51px
+  );
 }
 
 [data-theme='monochrome'] .modern-card {
@@ -200,8 +353,22 @@
   --accent-hover: #7c3aed;
   --accent-rgb: 139, 92, 246;
 
-  --gradient-primary: linear-gradient(135deg, #ec4899 0%, #8b5cf6 25%, #3b82f6 50%, #06b6d4 75%, #10b981 100%);
-  --gradient-hero: linear-gradient(135deg, #701a75 0%, #581c87 25%, #1e3a8a 50%, #164e63 75%, #065f46 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    #ec4899 0%,
+    #8b5cf6 25%,
+    #3b82f6 50%,
+    #06b6d4 75%,
+    #10b981 100%
+  );
+  --gradient-hero: linear-gradient(
+    135deg,
+    #701a75 0%,
+    #581c87 25%,
+    #1e3a8a 50%,
+    #164e63 75%,
+    #065f46 100%
+  );
 
   --theme-overlay: rgba(139, 92, 246, 0.05);
   --theme-glow: 0 0 60px rgba(139, 92, 246, 0.3);
@@ -209,14 +376,27 @@
 
 [data-theme='aurora'] body {
   background-image:
-    radial-gradient(ellipse at 20% 30%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+    radial-gradient(
+      ellipse at 20% 30%,
+      rgba(236, 72, 153, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(59, 130, 246, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 50% 80%,
+      rgba(16, 185, 129, 0.1) 0%,
+      transparent 50%
+    );
   animation: aurora-shift 20s ease-in-out infinite;
 }
 
 @keyframes aurora-shift {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -230,7 +410,10 @@
 
 /* Smooth theme transition */
 * {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Theme glow effects */
@@ -238,7 +421,8 @@
   box-shadow: var(--theme-glow);
 }
 
-[data-theme]:not([data-theme='light']):not([data-theme='dark']) .modern-card:hover {
+[data-theme]:not([data-theme='light']):not([data-theme='dark'])
+  .modern-card:hover {
   box-shadow: var(--elevation-3), var(--theme-glow);
 }
 
@@ -247,7 +431,11 @@
    =================================== */
 
 .theme-pattern-dots {
-  background-image: radial-gradient(circle, rgba(var(--accent-rgb), 0.1) 1px, transparent 1px);
+  background-image: radial-gradient(
+    circle,
+    rgba(var(--accent-rgb), 0.1) 1px,
+    transparent 1px
+  );
   background-size: 20px 20px;
 }
 
@@ -296,7 +484,9 @@
 
 .theme-option.active {
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent), var(--elevation-3);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    var(--elevation-3);
 }
 
 .theme-option-preview {
@@ -410,7 +600,9 @@
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.3);
   transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  transition:
+    width 0.6s,
+    height 0.6s;
 }
 
 .btn-premium:hover::before {
@@ -468,7 +660,8 @@
 }
 
 @keyframes aurora-button {
-  0%, 100% {
+  0%,
+  100% {
     filter: hue-rotate(0deg);
   }
   50% {

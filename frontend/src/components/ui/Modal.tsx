@@ -28,7 +28,7 @@ const sizeVariants = {
   md: 'max-w-md',
   lg: 'max-w-lg',
   xl: 'max-w-xl',
-  full: 'max-w-full mx-4'
+  full: 'max-w-full mx-4',
 };
 
 const Modal = memo(function Modal({
@@ -44,7 +44,7 @@ const Modal = memo(function Modal({
   className,
   overlayClassName,
   contentClassName,
-  preventScroll = true
+  preventScroll = true,
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
@@ -73,7 +73,8 @@ const Modal = memo(function Modal({
     if (!preventScroll) return;
 
     if (isOpen) {
-      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      const scrollBarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = 'hidden';
       document.body.style.paddingRight = `${scrollBarWidth}px`;
     } else {
@@ -140,7 +141,12 @@ const Modal = memo(function Modal({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.2, type: 'spring', stiffness: 300, damping: 30 }}
+            transition={{
+              duration: 0.2,
+              type: 'spring',
+              stiffness: 300,
+              damping: 30,
+            }}
             tabIndex={-1}
             role="dialog"
             aria-modal="true"
@@ -206,7 +212,7 @@ export function ConfirmModal({
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   variant = 'destructive',
-  loading = false
+  loading = false,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -219,28 +225,15 @@ export function ConfirmModal({
   loading?: boolean;
 }) {
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={title}
-      size="sm"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm">
       <div className="space-y-4">
         <p className="text-gray-600 dark:text-gray-400">{message}</p>
 
         <div className="flex space-x-3 justify-end">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={loading}
-          >
+          <Button variant="outline" onClick={onClose} disabled={loading}>
             {cancelText}
           </Button>
-          <Button
-            variant={variant}
-            onClick={onConfirm}
-            loading={loading}
-          >
+          <Button variant={variant} onClick={onConfirm} loading={loading}>
             {confirmText}
           </Button>
         </div>
@@ -256,7 +249,7 @@ export function AlertModal({
   title = 'Alert',
   message,
   type = 'info',
-  buttonText = 'OK'
+  buttonText = 'OK',
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -269,23 +262,18 @@ export function AlertModal({
     info: 'text-blue-600 dark:text-blue-400',
     success: 'text-green-600 dark:text-green-400',
     warning: 'text-yellow-600 dark:text-yellow-400',
-    error: 'text-red-600 dark:text-red-400'
+    error: 'text-red-600 dark:text-red-400',
   };
 
   const typeIcons = {
     info: '💡',
     success: '✅',
     warning: '⚠️',
-    error: '❌'
+    error: '❌',
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={title}
-      size="sm"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm">
       <div className="space-y-4">
         <div className="flex items-start space-x-3">
           <span className="text-2xl">{typeIcons[type]}</span>
@@ -293,9 +281,7 @@ export function AlertModal({
         </div>
 
         <div className="flex justify-end">
-          <Button onClick={onClose}>
-            {buttonText}
-          </Button>
+          <Button onClick={onClose}>{buttonText}</Button>
         </div>
       </div>
     </Modal>

@@ -2,10 +2,28 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import {
-  Sparkles, Mail, Lock, User, ArrowRight, Check,
-  Heart, Music, Camera, Book, Gamepad, Coffee, PartyPopper, Eye, EyeOff
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from 'framer-motion';
+import {
+  Sparkles,
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
+  Check,
+  Heart,
+  Music,
+  Camera,
+  Book,
+  Gamepad,
+  Coffee,
+  PartyPopper,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import confetti from 'canvas-confetti';
@@ -19,7 +37,11 @@ const interests = [
   { icon: Camera, label: 'Photography', color: 'from-blue-500 to-cyan-500' },
   { icon: Book, label: 'Reading', color: 'from-amber-500 to-orange-500' },
   { icon: Gamepad, label: 'Gaming', color: 'from-green-500 to-emerald-500' },
-  { icon: Coffee, label: 'Food & Drink', color: 'from-yellow-500 to-amber-500' },
+  {
+    icon: Coffee,
+    label: 'Food & Drink',
+    color: 'from-yellow-500 to-amber-500',
+  },
 ];
 
 export default function SignupExperiencePage() {
@@ -36,7 +58,16 @@ export default function SignupExperiencePage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [showPassword, setShowPassword] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; size: number; duration: number; delay: number }>>([]);
+  const [particles, setParticles] = useState<
+    Array<{
+      id: number;
+      x: number;
+      y: number;
+      size: number;
+      duration: number;
+      delay: number;
+    }>
+  >([]);
 
   const { scrollY } = useScroll();
   const parallaxY1 = useTransform(scrollY, [0, 500], [0, 150]);
@@ -87,7 +118,12 @@ export default function SignupExperiencePage() {
         x: x / window.innerWidth,
         y: y / window.innerHeight,
       },
-      colors: [colors.brand.primary, colors.brand.secondary, colors.brand.secondary, colors.status.warning],
+      colors: [
+        colors.brand.primary,
+        colors.brand.secondary,
+        colors.brand.secondary,
+        colors.status.warning,
+      ],
       ticks: 100,
       gravity: 1.2,
       decay: 0.94,
@@ -99,16 +135,28 @@ export default function SignupExperiencePage() {
   const fireConfetti = () => {
     const duration = 4000;
     const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 80, zIndex: 9999 };
+    const defaults = {
+      startVelocity: 30,
+      spread: 360,
+      ticks: 80,
+      zIndex: 9999,
+    };
 
-    const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+    const randomInRange = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
 
     // Initial burst from center
     confetti({
       particleCount: 200,
       spread: 160,
       origin: { y: 0.6 },
-      colors: [colors.brand.primary, colors.brand.secondary, colors.brand.secondary, colors.status.warning, colors.status.warning],
+      colors: [
+        colors.brand.primary,
+        colors.brand.secondary,
+        colors.brand.secondary,
+        colors.status.warning,
+        colors.status.warning,
+      ],
       ticks: 120,
     });
 
@@ -119,14 +167,22 @@ export default function SignupExperiencePage() {
         angle: 60,
         spread: 80,
         origin: { x: 0, y: 0.6 },
-        colors: [colors.brand.primary, colors.brand.secondary, colors.brand.secondary],
+        colors: [
+          colors.brand.primary,
+          colors.brand.secondary,
+          colors.brand.secondary,
+        ],
       });
       confetti({
         particleCount: 100,
         angle: 120,
         spread: 80,
         origin: { x: 1, y: 0.6 },
-        colors: [colors.status.warning, colors.status.warning, colors.brand.secondary],
+        colors: [
+          colors.status.warning,
+          colors.status.warning,
+          colors.brand.secondary,
+        ],
       });
     }, 200);
 
@@ -188,9 +244,11 @@ export default function SignupExperiencePage() {
     const hasUpperCase = /[A-Z]/.test(formData.password);
     const hasLowerCase = /[a-z]/.test(formData.password);
     const hasNumbers = /\d/.test(formData.password);
-    
+
     if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
-      toast.error('Password must contain at least one uppercase letter, one lowercase letter, and one number');
+      toast.error(
+        'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+      );
       return;
     }
 
@@ -199,15 +257,18 @@ export default function SignupExperiencePage() {
     try {
       // Step 1: Register
       console.log('Step 1: Registering user...');
-      const registerResponse = await fetch('http://localhost:8000/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          full_name: formData.full_name,
-        }),
-      });
+      const registerResponse = await fetch(
+        'http://localhost:8000/api/auth/register',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            full_name: formData.full_name,
+          }),
+        }
+      );
 
       const registerData = await registerResponse.json();
       console.log('Registration response:', registerData);
@@ -224,7 +285,9 @@ export default function SignupExperiencePage() {
           errorMessage = registerData.detail;
         } else if (Array.isArray(registerData.detail)) {
           // Pydantic validation errors
-          errorMessage = registerData.detail.map((err: any) => err.msg).join(', ');
+          errorMessage = registerData.detail
+            .map((err: any) => err.msg)
+            .join(', ');
         } else if (registerData.message) {
           errorMessage = registerData.message;
         }
@@ -234,65 +297,81 @@ export default function SignupExperiencePage() {
 
       // Step 2: Auto-verify (using any code since it's a demo)
       console.log('Step 2: Verifying email...');
-      const verifyResponse = await fetch('http://localhost:8000/api/auth/verify-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          code: '123456',
-        }),
-      });
+      const verifyResponse = await fetch(
+        'http://localhost:8000/api/auth/verify-email',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            code: '123456',
+          }),
+        }
+      );
 
       const verifyData = await verifyResponse.json();
       console.log('Verification response:', verifyData);
 
       if (!verifyResponse.ok) {
-        throw new Error('Email verification failed: ' + (verifyData.detail || 'Unknown error'));
+        throw new Error(
+          'Email verification failed: ' + (verifyData.detail || 'Unknown error')
+        );
       }
 
       // Step 3: Auto-login
       console.log('Step 3: Logging in...');
-      const loginResponse = await fetch('http://localhost:8000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          remember_me: true,
-        }),
-      });
+      const loginResponse = await fetch(
+        'http://localhost:8000/api/auth/login',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            remember_me: true,
+          }),
+        }
+      );
 
       const loginData = await loginResponse.json();
       console.log('Login response:', loginData);
 
       if (!loginResponse.ok) {
-        throw new Error('Auto-login failed: ' + (loginData.detail || 'Unknown error'));
+        throw new Error(
+          'Auto-login failed: ' + (loginData.detail || 'Unknown error')
+        );
       }
 
       // Store tokens and user data with interests
       localStorage.setItem('access_token', loginData.access_token);
       localStorage.setItem('refresh_token', loginData.refresh_token);
-      localStorage.setItem('user', JSON.stringify({
-        ...loginData.user,
-        interests: formData.interests,
-      }));
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          ...loginData.user,
+          interests: formData.interests,
+        })
+      );
 
       // Move to personalization step
       toast.success('Account created successfully!');
       setIsLoading(false);
       setStep('personalize');
-
     } catch (error: any) {
       console.error('Registration error:', error);
-      
+
       // Show user-friendly error message
       let errorMessage = 'Registration failed. Please try again.';
       if (error.message) {
         errorMessage = error.message;
-      } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        errorMessage = 'Unable to connect to server. Please check your internet connection.';
+      } else if (
+        error.name === 'TypeError' &&
+        error.message.includes('fetch')
+      ) {
+        errorMessage =
+          'Unable to connect to server. Please check your internet connection.';
       }
-      
+
       toast.error(errorMessage, {
         duration: 4000,
         style: {
@@ -317,10 +396,10 @@ export default function SignupExperiencePage() {
   };
 
   const toggleInterest = (interest: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       interests: prev.interests.includes(interest)
-        ? prev.interests.filter(i => i !== interest)
+        ? prev.interests.filter((i) => i !== interest)
         : [...prev.interests, interest],
     }));
   };
@@ -416,7 +495,7 @@ export default function SignupExperiencePage() {
               scale: [1, 1.2, 1],
               rotate: [0, 90, 0],
             }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
             className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-violet-400/30 to-fuchsia-400/30 rounded-full blur-3xl"
           />
           <motion.div
@@ -425,7 +504,7 @@ export default function SignupExperiencePage() {
               scale: [1.2, 1, 1.2],
               rotate: [90, 0, 90],
             }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
             className="absolute bottom-10 right-10 w-[32rem] h-[32rem] bg-gradient-to-br from-pink-400/30 to-rose-400/30 rounded-full blur-3xl"
           />
           <motion.div
@@ -434,7 +513,7 @@ export default function SignupExperiencePage() {
               scale: [1, 1.3, 1],
               rotate: [180, 270, 180],
             }}
-            transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
             className="absolute top-1/2 left-1/3 w-64 h-64 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-3xl"
           />
         </div>
@@ -449,12 +528,10 @@ export default function SignupExperiencePage() {
             >
               <div className="flex items-center justify-center gap-3">
                 {['account', 'personalize'].map((s, i) => {
-                  const isActive = ['account', 'personalize'].indexOf(step) >= i;
+                  const isActive =
+                    ['account', 'personalize'].indexOf(step) >= i;
                   return (
-                    <motion.div
-                      key={s}
-                      className="relative"
-                    >
+                    <motion.div key={s} className="relative">
                       <motion.div
                         className={`h-3 rounded-full transition-all duration-500 ${
                           isActive
@@ -463,7 +540,11 @@ export default function SignupExperiencePage() {
                         }`}
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
-                        transition={{ delay: i * 0.15, type: 'spring', stiffness: 100 }}
+                        transition={{
+                          delay: i * 0.15,
+                          type: 'spring',
+                          stiffness: 100,
+                        }}
                       />
                       {isActive && (
                         <motion.div
@@ -509,7 +590,7 @@ export default function SignupExperiencePage() {
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                  transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
                   className="mb-8 relative"
                   onClick={createParticleBurst}
                 >
@@ -556,7 +637,8 @@ export default function SignupExperiencePage() {
                   transition={{ delay: 0.4 }}
                   className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-xl mx-auto leading-relaxed"
                 >
-                  Join millions connecting, sharing, and discovering amazing content
+                  Join millions connecting, sharing, and discovering amazing
+                  content
                 </motion.p>
 
                 <motion.div
@@ -673,7 +755,13 @@ export default function SignupExperiencePage() {
                     </motion.p>
                   </div>
 
-                  <form onSubmit={(e) => { e.preventDefault(); handleRegisterAndLogin(); }} className="space-y-6">
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleRegisterAndLogin();
+                    }}
+                    className="space-y-6"
+                  >
                     {/* Full Name Input */}
                     <motion.div
                       initial={{ opacity: 0, x: -20 }}
@@ -684,15 +772,18 @@ export default function SignupExperiencePage() {
                         Full Name
                       </label>
                       <div className="relative">
-                        <div
-                          className="absolute left-4 top-1/2 -translate-y-1/2"
-                        >
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2">
                           <User className="w-5 h-5 text-violet-500" />
                         </div>
                         <input
                           type="text"
                           value={formData.full_name}
-                          onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              full_name: e.target.value,
+                            })
+                          }
                           className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 outline-none transition-all"
                           placeholder="John Doe"
                           required
@@ -710,15 +801,15 @@ export default function SignupExperiencePage() {
                         Email Address
                       </label>
                       <div className="relative">
-                        <div
-                          className="absolute left-4 top-1/2 -translate-y-1/2"
-                        >
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2">
                           <Mail className="w-5 h-5 text-violet-500" />
                         </div>
                         <input
                           type="email"
                           value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
                           className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 outline-none transition-all"
                           placeholder="you@example.com"
                           required
@@ -736,15 +827,18 @@ export default function SignupExperiencePage() {
                         Password
                       </label>
                       <div className="relative">
-                        <div
-                          className="absolute left-4 top-1/2 -translate-y-1/2"
-                        >
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2">
                           <Lock className="w-5 h-5 text-violet-500" />
                         </div>
                         <input
                           type={showPassword ? 'text' : 'password'}
                           value={formData.password}
-                          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              password: e.target.value,
+                            })
+                          }
                           className="w-full pl-12 pr-12 py-4 rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 outline-none transition-all"
                           placeholder="••••••••"
                           required
@@ -755,7 +849,11 @@ export default function SignupExperiencePage() {
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-violet-500 transition-colors"
                         >
-                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          {showPassword ? (
+                            <EyeOff className="w-5 h-5" />
+                          ) : (
+                            <Eye className="w-5 h-5" />
+                          )}
                         </button>
                       </div>
                       <motion.p
@@ -771,7 +869,12 @@ export default function SignupExperiencePage() {
                     {/* Submit Button */}
                     <motion.button
                       type="submit"
-                      disabled={!formData.full_name || !formData.email || !formData.password || isLoading}
+                      disabled={
+                        !formData.full_name ||
+                        !formData.email ||
+                        !formData.password ||
+                        isLoading
+                      }
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.6 }}
@@ -851,7 +954,7 @@ export default function SignupExperiencePage() {
                     <motion.div
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
-                      transition={{ type: "spring", stiffness: 200 }}
+                      transition={{ type: 'spring', stiffness: 200 }}
                       className="relative w-18 h-18 mx-auto mb-4"
                     >
                       <div className="w-18 h-18 mx-auto bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/50">
@@ -891,14 +994,20 @@ export default function SignupExperiencePage() {
                   <div className="grid grid-cols-2 gap-4 mb-8">
                     {interests.map((interest, index) => {
                       const Icon = interest.icon;
-                      const isSelected = formData.interests.includes(interest.label);
+                      const isSelected = formData.interests.includes(
+                        interest.label
+                      );
 
                       return (
                         <motion.button
                           key={interest.label}
                           initial={{ opacity: 0, y: 20, scale: 0.9 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
-                          transition={{ delay: index * 0.1, type: 'spring', stiffness: 150 }}
+                          transition={{
+                            delay: index * 0.1,
+                            type: 'spring',
+                            stiffness: 150,
+                          }}
                           onClick={(e) => {
                             createParticleBurst(e);
                             toggleInterest(interest.label);
@@ -924,12 +1033,18 @@ export default function SignupExperiencePage() {
                             />
                           )}
                           <motion.div
-                            animate={isSelected ? { rotate: [0, 10, -10, 0] } : {}}
+                            animate={
+                              isSelected ? { rotate: [0, 10, -10, 0] } : {}
+                            }
                             transition={{ duration: 0.5 }}
                           >
-                            <Icon className={`w-8 h-8 mx-auto mb-2 relative z-10 ${!isSelected && 'text-gray-600 dark:text-gray-400'}`} />
+                            <Icon
+                              className={`w-8 h-8 mx-auto mb-2 relative z-10 ${!isSelected && 'text-gray-600 dark:text-gray-400'}`}
+                            />
                           </motion.div>
-                          <p className={`font-semibold relative z-10 ${!isSelected && 'text-gray-700 dark:text-gray-300'}`}>
+                          <p
+                            className={`font-semibold relative z-10 ${!isSelected && 'text-gray-700 dark:text-gray-300'}`}
+                          >
                             {interest.label}
                           </p>
                           {isSelected && (
@@ -1017,7 +1132,7 @@ export default function SignupExperiencePage() {
                 <motion.div
                   initial={{ scale: 0, rotate: -360 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
+                  transition={{ delay: 0.2, type: 'spring', stiffness: 150 }}
                   className="relative w-40 h-40 mx-auto mb-8"
                 >
                   <div className="w-40 h-40 mx-auto bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-2xl shadow-green-500/50 relative overflow-hidden">

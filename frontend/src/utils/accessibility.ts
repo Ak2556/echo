@@ -57,7 +57,7 @@ export class ContrastAnalyzer {
     const rgb = this.hexToRgb(color);
     if (!rgb) return 0;
 
-    const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(c => {
+    const [r, g, b] = [rgb.r, rgb.g, rgb.b].map((c) => {
       c = c / 255;
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
@@ -68,19 +68,27 @@ export class ContrastAnalyzer {
   /**
    * Convert hex color to RGB
    */
-  private static hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  private static hexToRgb(
+    hex: string
+  ): { r: number; g: number; b: number } | null {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : null;
+    return result
+      ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16),
+        }
+      : null;
   }
 
   /**
    * Check if contrast meets WCAG standards
    */
-  static checkContrast(foreground: string, background: string, isLargeText = false): ColorContrastResult {
+  static checkContrast(
+    foreground: string,
+    background: string,
+    isLargeText = false
+  ): ColorContrastResult {
     const ratio = this.getContrastRatio(foreground, background);
 
     const aaThreshold = isLargeText ? 3 : 4.5;
@@ -102,15 +110,20 @@ export class ContrastAnalyzer {
    */
   static analyzePageContrast(): ColorContrastResult[] {
     const results: ColorContrastResult[] = [];
-    const textElements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, a, button, label, input, textarea');
+    const textElements = document.querySelectorAll(
+      'p, h1, h2, h3, h4, h5, h6, span, a, button, label, input, textarea'
+    );
 
-    textElements.forEach(element => {
+    textElements.forEach((element) => {
       const styles = window.getComputedStyle(element);
       const foreground = styles.color;
-      const background = styles.backgroundColor || styles.background || '#ffffff';
+      const background =
+        styles.backgroundColor || styles.background || '#ffffff';
 
-      const isLargeText = parseFloat(styles.fontSize) >= 18 ||
-                         (parseFloat(styles.fontSize) >= 14 && parseInt(styles.fontWeight) >= 700);
+      const isLargeText =
+        parseFloat(styles.fontSize) >= 18 ||
+        (parseFloat(styles.fontSize) >= 14 &&
+          parseInt(styles.fontWeight) >= 700);
 
       const result = this.checkContrast(
         this.rgbToHex(foreground),
@@ -162,20 +175,25 @@ export class KeyboardNavigationAnalyzer {
           severity: 'major',
           element: `${element.tagName}[${index}]`,
           description: 'Interactive element is not keyboard focusable',
-          recommendation: 'Remove tabindex="-1" or add proper keyboard event handlers',
-          wcagReference: 'WCAG 2.1.1 (A)'
+          recommendation:
+            'Remove tabindex="-1" or add proper keyboard event handlers',
+          wcagReference: 'WCAG 2.1.1 (A)',
         });
       }
 
       // Check for visible focus indicator
-      if (computedStyle.outlineStyle === 'none' && !computedStyle.boxShadow.includes('inset')) {
+      if (
+        computedStyle.outlineStyle === 'none' &&
+        !computedStyle.boxShadow.includes('inset')
+      ) {
         issues.push({
           type: 'error',
           severity: 'critical',
           element: `${element.tagName}[${index}]`,
           description: 'No visible focus indicator',
-          recommendation: 'Add :focus-visible styles with clear visual indication',
-          wcagReference: 'WCAG 2.4.7 (AA)'
+          recommendation:
+            'Add :focus-visible styles with clear visual indication',
+          wcagReference: 'WCAG 2.4.7 (AA)',
         });
       }
     });
@@ -189,7 +207,11 @@ export class KeyboardNavigationAnalyzer {
   static setupKeyboardNavigation(): void {
     document.addEventListener('keydown', (event) => {
       // Skip link navigation
-      if (event.key === 'Tab' && !event.shiftKey && event.target === document.body) {
+      if (
+        event.key === 'Tab' &&
+        !event.shiftKey &&
+        event.target === document.body
+      ) {
         const skipLink = document.querySelector('.skip-link') as HTMLElement;
         if (skipLink) {
           skipLink.style.position = 'static';
@@ -203,17 +225,25 @@ export class KeyboardNavigationAnalyzer {
 
       // Modal/dialog escape handling
       if (event.key === 'Escape') {
-        const activeModal = document.querySelector('[role="dialog"]:not([hidden])');
+        const activeModal = document.querySelector(
+          '[role="dialog"]:not([hidden])'
+        );
         if (activeModal) {
-          const closeButton = activeModal.querySelector('[aria-label*="close"], [aria-label*="dismiss"]') as HTMLElement;
+          const closeButton = activeModal.querySelector(
+            '[aria-label*="close"], [aria-label*="dismiss"]'
+          ) as HTMLElement;
           closeButton?.click();
         }
       }
 
       // Arrow key navigation for lists and menus
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+      if (
+        ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)
+      ) {
         const currentElement = event.target as HTMLElement;
-        const parent = currentElement.closest('[role="menu"], [role="listbox"], [role="tablist"]');
+        const parent = currentElement.closest(
+          '[role="menu"], [role="listbox"], [role="tablist"]'
+        );
 
         if (parent) {
           event.preventDefault();
@@ -226,7 +256,11 @@ export class KeyboardNavigationAnalyzer {
   /**
    * Handle arrow key navigation within lists and menus
    */
-  private static handleArrowNavigation(key: string, current: HTMLElement, container: Element): void {
+  private static handleArrowNavigation(
+    key: string,
+    current: HTMLElement,
+    container: Element
+  ): void {
     const focusableElements = container.querySelectorAll(
       '[role="menuitem"], [role="option"], [role="tab"], button, a, input, select, textarea, [tabindex="0"]'
     );
@@ -237,11 +271,13 @@ export class KeyboardNavigationAnalyzer {
     switch (key) {
       case 'ArrowUp':
       case 'ArrowLeft':
-        nextIndex = currentIndex > 0 ? currentIndex - 1 : focusableElements.length - 1;
+        nextIndex =
+          currentIndex > 0 ? currentIndex - 1 : focusableElements.length - 1;
         break;
       case 'ArrowDown':
       case 'ArrowRight':
-        nextIndex = currentIndex < focusableElements.length - 1 ? currentIndex + 1 : 0;
+        nextIndex =
+          currentIndex < focusableElements.length - 1 ? currentIndex + 1 : 0;
         break;
       default:
         return;
@@ -260,7 +296,9 @@ export class ARIAAnalyzer {
    */
   static validateARIA(): AccessibilityIssue[] {
     const issues: AccessibilityIssue[] = [];
-    const elementsWithARIA = document.querySelectorAll('[aria-label], [aria-labelledby], [aria-describedby], [role]');
+    const elementsWithARIA = document.querySelectorAll(
+      '[aria-label], [aria-labelledby], [aria-describedby], [role]'
+    );
 
     elementsWithARIA.forEach((element, index) => {
       // Check for empty aria-label
@@ -271,8 +309,9 @@ export class ARIAAnalyzer {
           severity: 'major',
           element: `${element.tagName}[${index}]`,
           description: 'Empty aria-label attribute',
-          recommendation: 'Provide meaningful aria-label or remove the attribute',
-          wcagReference: 'WCAG 4.1.2 (A)'
+          recommendation:
+            'Provide meaningful aria-label or remove the attribute',
+          wcagReference: 'WCAG 4.1.2 (A)',
         });
       }
 
@@ -287,7 +326,7 @@ export class ARIAAnalyzer {
             element: `${element.tagName}[${index}]`,
             description: `aria-labelledby references non-existent element: ${ariaLabelledby}`,
             recommendation: 'Ensure referenced element exists or update the ID',
-            wcagReference: 'WCAG 4.1.2 (A)'
+            wcagReference: 'WCAG 4.1.2 (A)',
           });
         }
       }
@@ -301,7 +340,7 @@ export class ARIAAnalyzer {
           element: `${element.tagName}[${index}]`,
           description: `Invalid ARIA role: ${role}`,
           recommendation: 'Use a valid ARIA role or remove the attribute',
-          wcagReference: 'WCAG 4.1.2 (A)'
+          wcagReference: 'WCAG 4.1.2 (A)',
         });
       }
     });
@@ -314,18 +353,75 @@ export class ARIAAnalyzer {
    */
   private static isValidRole(role: string): boolean {
     const validRoles = [
-      'alert', 'alertdialog', 'application', 'article', 'banner', 'button',
-      'cell', 'checkbox', 'columnheader', 'combobox', 'complementary',
-      'contentinfo', 'definition', 'dialog', 'directory', 'document',
-      'feed', 'figure', 'form', 'grid', 'gridcell', 'group', 'heading',
-      'img', 'link', 'list', 'listbox', 'listitem', 'log', 'main',
-      'marquee', 'math', 'menu', 'menubar', 'menuitem', 'menuitemcheckbox',
-      'menuitemradio', 'navigation', 'none', 'note', 'option', 'presentation',
-      'progressbar', 'radio', 'radiogroup', 'region', 'row', 'rowgroup',
-      'rowheader', 'scrollbar', 'search', 'searchbox', 'separator',
-      'slider', 'spinbutton', 'status', 'switch', 'tab', 'table',
-      'tablist', 'tabpanel', 'term', 'textbox', 'timer', 'toolbar',
-      'tooltip', 'tree', 'treegrid', 'treeitem'
+      'alert',
+      'alertdialog',
+      'application',
+      'article',
+      'banner',
+      'button',
+      'cell',
+      'checkbox',
+      'columnheader',
+      'combobox',
+      'complementary',
+      'contentinfo',
+      'definition',
+      'dialog',
+      'directory',
+      'document',
+      'feed',
+      'figure',
+      'form',
+      'grid',
+      'gridcell',
+      'group',
+      'heading',
+      'img',
+      'link',
+      'list',
+      'listbox',
+      'listitem',
+      'log',
+      'main',
+      'marquee',
+      'math',
+      'menu',
+      'menubar',
+      'menuitem',
+      'menuitemcheckbox',
+      'menuitemradio',
+      'navigation',
+      'none',
+      'note',
+      'option',
+      'presentation',
+      'progressbar',
+      'radio',
+      'radiogroup',
+      'region',
+      'row',
+      'rowgroup',
+      'rowheader',
+      'scrollbar',
+      'search',
+      'searchbox',
+      'separator',
+      'slider',
+      'spinbutton',
+      'status',
+      'switch',
+      'tab',
+      'table',
+      'tablist',
+      'tabpanel',
+      'term',
+      'textbox',
+      'timer',
+      'toolbar',
+      'tooltip',
+      'tree',
+      'treegrid',
+      'treeitem',
     ];
     return validRoles.includes(role);
   }
@@ -472,8 +568,12 @@ export class ScreenReaderOptimizer {
   /**
    * Announce dynamic content changes
    */
-  static announce(message: string, priority: 'polite' | 'assertive' = 'polite'): void {
-    const regionId = priority === 'assertive' ? 'alert-messages' : 'status-messages';
+  static announce(
+    message: string,
+    priority: 'polite' | 'assertive' = 'polite'
+  ): void {
+    const regionId =
+      priority === 'assertive' ? 'alert-messages' : 'status-messages';
     const region = document.getElementById(regionId);
 
     if (region) {
@@ -499,21 +599,23 @@ export class AccessibilityEnhancer {
 
     // Analyze color contrast
     const contrastResults = ContrastAnalyzer.analyzePageContrast();
-    contrastResults.forEach(result => {
+    contrastResults.forEach((result) => {
       if (!result.passes.aaa) {
         issues.push({
           type: 'warning',
           severity: result.passes.aa ? 'minor' : 'major',
           element: 'Text element',
           description: `Insufficient color contrast: ${result.ratio.toFixed(2)}:1`,
-          recommendation: 'Increase contrast to meet WCAG AAA standard (7:1 for normal text, 4.5:1 for large text)',
-          wcagReference: 'WCAG 1.4.6 (AAA)'
+          recommendation:
+            'Increase contrast to meet WCAG AAA standard (7:1 for normal text, 4.5:1 for large text)',
+          wcagReference: 'WCAG 1.4.6 (AAA)',
         });
       }
     });
 
     // Analyze keyboard accessibility
-    const keyboardIssues = KeyboardNavigationAnalyzer.analyzeKeyboardAccessibility();
+    const keyboardIssues =
+      KeyboardNavigationAnalyzer.analyzeKeyboardAccessibility();
     issues.push(...keyboardIssues);
 
     // Analyze ARIA usage
@@ -522,15 +624,15 @@ export class AccessibilityEnhancer {
 
     // Calculate compliance score
     const totalChecks = issues.length + 50; // Base score of 50 for comprehensive features
-    const errorCount = issues.filter(i => i.type === 'error').length;
-    const warningCount = issues.filter(i => i.type === 'warning').length;
+    const errorCount = issues.filter((i) => i.type === 'error').length;
+    const warningCount = issues.filter((i) => i.type === 'warning').length;
 
-    const score = Math.max(0, 100 - (errorCount * 5) - (warningCount * 2));
+    const score = Math.max(0, 100 - errorCount * 5 - warningCount * 2);
 
     const compliance = {
       wcagA: errorCount === 0,
       wcagAA: errorCount === 0 && warningCount <= 2,
-      wcagAAA: issues.length === 0
+      wcagAAA: issues.length === 0,
     };
 
     const recommendations = [
@@ -541,14 +643,14 @@ export class AccessibilityEnhancer {
       'Test with keyboard-only navigation',
       'Test with screen reader software',
       'Provide captions for video content',
-      'Ensure all form inputs have proper labels'
+      'Ensure all form inputs have proper labels',
     ];
 
     return {
       score,
       issues,
       recommendations,
-      compliance
+      compliance,
     };
   }
 
@@ -570,7 +672,6 @@ export class AccessibilityEnhancer {
 
     // Add reduced motion support
     this.setupReducedMotion();
-
   }
 
   /**
@@ -587,12 +688,17 @@ export class AccessibilityEnhancer {
           );
 
           const firstElement = focusableElements[0] as HTMLElement;
-          const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+          const lastElement = focusableElements[
+            focusableElements.length - 1
+          ] as HTMLElement;
 
           if (event.shiftKey && document.activeElement === firstElement) {
             event.preventDefault();
             lastElement?.focus();
-          } else if (!event.shiftKey && document.activeElement === lastElement) {
+          } else if (
+            !event.shiftKey &&
+            document.activeElement === lastElement
+          ) {
             event.preventDefault();
             firstElement?.focus();
           }
@@ -605,7 +711,9 @@ export class AccessibilityEnhancer {
    * Setup reduced motion preferences
    */
   private static setupReducedMotion(): void {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    );
 
     const updateMotionPreferences = (event: MediaQueryListEvent) => {
       document.documentElement.style.setProperty(
@@ -619,7 +727,7 @@ export class AccessibilityEnhancer {
       '--motion-preference',
       prefersReducedMotion.matches ? 'reduce' : 'no-preference'
     );
-    
+
     prefersReducedMotion.addEventListener('change', updateMotionPreferences);
   }
 }

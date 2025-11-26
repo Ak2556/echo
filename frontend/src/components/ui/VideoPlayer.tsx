@@ -7,7 +7,12 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { borderRadius, touchTarget, duration, easing } from '@/lib/design-system';
+import {
+  borderRadius,
+  touchTarget,
+  duration,
+  easing,
+} from '@/lib/design-system';
 
 export interface VideoQuality {
   label: string;
@@ -60,7 +65,9 @@ export function VideoPlayer({
   const [retryCount, setRetryCount] = useState(0);
   const [isRetrying, setIsRetrying] = useState(false);
   const [currentQuality, setCurrentQuality] = useState(defaultQuality);
-  const [availableQualities, setAvailableQualities] = useState<VideoQuality[]>([]);
+  const [availableQualities, setAvailableQualities] = useState<VideoQuality[]>(
+    []
+  );
   const [showQualityMenu, setShowQualityMenu] = useState(false);
   const [isQualityChanging, setIsQualityChanging] = useState(false);
   const [savedTime, setSavedTime] = useState(0);
@@ -78,7 +85,7 @@ export function VideoPlayer({
     '1080p': { label: '1080p Full HD', height: 1080 },
     '1440p': { label: '1440p 2K', height: 1440 },
     '2160p': { label: '2160p 4K', height: 2160 },
-    'auto': { label: 'Auto', height: 0 }
+    auto: { label: 'Auto', height: 0 },
   };
 
   const aspectRatios = {
@@ -92,47 +99,59 @@ export function VideoPlayer({
     if (typeof src === 'string') {
       return src;
     }
-    
+
     if (currentQuality === 'auto') {
       // Auto-select best quality based on network/device
       const autoQuality = getAutoQuality();
       return src[autoQuality] || src[Object.keys(src)[0]] || '';
     }
-    
+
     return src[currentQuality] || src[Object.keys(src)[0]] || '';
   };
 
   // Auto-quality selection based on network and device capabilities
   const getAutoQuality = (): string => {
     if (typeof src === 'string') return 'auto';
-    
+
     const connection = (navigator as any).connection;
     const availableKeys = Object.keys(src);
-    
+
     // Sort qualities by resolution (highest first)
     const sortedQualities = availableKeys.sort((a, b) => {
       const heightA = qualityOptions[a]?.height || 0;
       const heightB = qualityOptions[b]?.height || 0;
       return heightB - heightA;
     });
-    
+
     // Simple auto-selection logic
     if (connection) {
       const effectiveType = connection.effectiveType;
       switch (effectiveType) {
         case 'slow-2g':
         case '2g':
-          return sortedQualities.find(q => qualityOptions[q]?.height <= 240) || sortedQualities[sortedQualities.length - 1];
+          return (
+            sortedQualities.find((q) => qualityOptions[q]?.height <= 240) ||
+            sortedQualities[sortedQualities.length - 1]
+          );
         case '3g':
-          return sortedQualities.find(q => qualityOptions[q]?.height <= 480) || sortedQualities[sortedQualities.length - 1];
+          return (
+            sortedQualities.find((q) => qualityOptions[q]?.height <= 480) ||
+            sortedQualities[sortedQualities.length - 1]
+          );
         case '4g':
         default:
-          return sortedQualities.find(q => qualityOptions[q]?.height <= 1080) || sortedQualities[0];
+          return (
+            sortedQualities.find((q) => qualityOptions[q]?.height <= 1080) ||
+            sortedQualities[0]
+          );
       }
     }
-    
+
     // Default to 720p if no connection info
-    return sortedQualities.find(q => qualityOptions[q]?.height <= 720) || sortedQualities[0];
+    return (
+      sortedQualities.find((q) => qualityOptions[q]?.height <= 720) ||
+      sortedQualities[0]
+    );
   };
 
   const togglePlay = () => {
@@ -166,7 +185,7 @@ export function VideoPlayer({
   const handleError = (event?: Event) => {
     const video = videoRef.current;
     let errorMsg = 'Failed to load video. Please try again later.';
-    
+
     if (video?.error) {
       switch (video.error.code) {
         case MediaError.MEDIA_ERR_ABORTED:
@@ -185,7 +204,7 @@ export function VideoPlayer({
           errorMsg = 'An unknown error occurred while loading video.';
       }
     }
-    
+
     setIsLoading(false);
     setHasError(true);
     setErrorMessage(errorMsg);
@@ -209,8 +228,8 @@ export function VideoPlayer({
     if (retryCount < maxRetries) {
       setIsRetrying(true);
       setHasError(false);
-      setRetryCount(prev => prev + 1);
-      
+      setRetryCount((prev) => prev + 1);
+
       if (videoRef.current) {
         // Force reload the video
         const currentSrc = videoRef.current.src;
@@ -228,46 +247,42 @@ export function VideoPlayer({
 
   const isVideoSupported = (src: string): boolean => {
     const video = document.createElement('video');
-    const supportedFormats = [
-      'video/mp4',
-      'video/webm',
-      'video/ogg'
-    ];
-    
+    const supportedFormats = ['video/mp4', 'video/webm', 'video/ogg'];
+
     // Check if browser supports the video element
     if (!video.canPlayType) {
       return false;
     }
-    
+
     // Check file extension
     const extension = src.split('.').pop()?.toLowerCase();
     const formatMap: { [key: string]: string } = {
-      'mp4': 'video/mp4',
-      'webm': 'video/webm',
-      'ogg': 'video/ogg',
-      'ogv': 'video/ogg'
+      mp4: 'video/mp4',
+      webm: 'video/webm',
+      ogg: 'video/ogg',
+      ogv: 'video/ogg',
     };
-    
+
     if (extension && formatMap[extension]) {
       const canPlay = video.canPlayType(formatMap[extension]);
       return canPlay === 'probably' || canPlay === 'maybe';
     }
-    
+
     return true; // Assume supported if we can't determine
   };
 
   // Handle quality change
   const handleQualityChange = async (newQuality: string) => {
     if (newQuality === currentQuality || !videoRef.current) return;
-    
+
     setIsQualityChanging(true);
     setSavedTime(videoRef.current.currentTime);
     const wasPlaying = !videoRef.current.paused;
-    
+
     try {
       setCurrentQuality(newQuality);
       onQualityChange?.(newQuality);
-      
+
       // Wait for new source to load
       await new Promise<void>((resolve, reject) => {
         const video = videoRef.current;
@@ -275,30 +290,30 @@ export function VideoPlayer({
           reject(new Error('Video element not found'));
           return;
         }
-        
+
         const handleLoadedData = () => {
           video.removeEventListener('loadeddata', handleLoadedData);
           video.removeEventListener('error', handleError);
-          
+
           // Restore playback position
           video.currentTime = savedTime;
-          
+
           if (wasPlaying) {
             video.play().catch(console.error);
           }
-          
+
           resolve();
         };
-        
+
         const handleError = () => {
           video.removeEventListener('loadeddata', handleLoadedData);
           video.removeEventListener('error', handleError);
           reject(new Error('Failed to load new quality'));
         };
-        
+
         video.addEventListener('loadeddata', handleLoadedData);
         video.addEventListener('error', handleError);
-        
+
         // Trigger reload with new source
         video.load();
       });
@@ -315,7 +330,10 @@ export function VideoPlayer({
   // Close quality menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (qualityMenuRef.current && !qualityMenuRef.current.contains(event.target as Node)) {
+      if (
+        qualityMenuRef.current &&
+        !qualityMenuRef.current.contains(event.target as Node)
+      ) {
         setShowQualityMenu(false);
       }
     };
@@ -422,32 +440,34 @@ export function VideoPlayer({
   // Initialize available qualities and check format support
   useEffect(() => {
     const currentSrc = getCurrentVideoSrc();
-    
+
     if (currentSrc && !isVideoSupported(currentSrc)) {
       setHasError(true);
       setIsLoading(false);
       setErrorMessage('Video format is not supported by your browser.');
       return;
     }
-    
+
     // Set available qualities
     if (typeof src === 'object') {
-      const qualities: VideoQuality[] = Object.entries(src).map(([quality, url]) => ({
-        label: qualityOptions[quality]?.label || quality,
-        height: qualityOptions[quality]?.height || 0,
-        src: url
-      }));
-      
+      const qualities: VideoQuality[] = Object.entries(src).map(
+        ([quality, url]) => ({
+          label: qualityOptions[quality]?.label || quality,
+          height: qualityOptions[quality]?.height || 0,
+          src: url,
+        })
+      );
+
       // Sort by height (lowest to highest)
       qualities.sort((a, b) => a.height - b.height);
-      
+
       // Add auto option
       qualities.unshift({
         label: 'Auto',
         height: 0,
-        src: ''
+        src: '',
       });
-      
+
       setAvailableQualities(qualities);
     } else {
       setAvailableQualities([]);
@@ -519,7 +539,7 @@ export function VideoPlayer({
             color: 'white',
             zIndex: 2,
             textAlign: 'center',
-            padding: '1rem'
+            padding: '1rem',
           }}
         >
           <div
@@ -533,8 +553,11 @@ export function VideoPlayer({
             }}
           />
           <span style={{ fontSize: '0.875rem' }}>
-            {isQualityChanging ? 'Changing quality...' : 
-             isRetrying ? `Retrying... (${retryCount}/${maxRetries})` : 'Loading video...'}
+            {isQualityChanging
+              ? 'Changing quality...'
+              : isRetrying
+                ? `Retrying... (${retryCount}/${maxRetries})`
+                : 'Loading video...'}
           </span>
         </div>
       )}
@@ -565,27 +588,52 @@ export function VideoPlayer({
           >
             ⚠️
           </div>
-          <div style={{ fontSize: '1rem', fontWeight: 'bold' }}>Video Unavailable</div>
-          <div style={{ fontSize: '0.875rem', opacity: 0.8, marginBottom: '0.5rem' }}>{errorMessage}</div>
+          <div style={{ fontSize: '1rem', fontWeight: 'bold' }}>
+            Video Unavailable
+          </div>
+          <div
+            style={{
+              fontSize: '0.875rem',
+              opacity: 0.8,
+              marginBottom: '0.5rem',
+            }}
+          >
+            {errorMessage}
+          </div>
           {retryCount > 0 && (
-            <div style={{ fontSize: '0.75rem', opacity: 0.7, marginBottom: '0.5rem' }}>
+            <div
+              style={{
+                fontSize: '0.75rem',
+                opacity: 0.7,
+                marginBottom: '0.5rem',
+              }}
+            >
               Retry attempts: {retryCount}/{maxRetries}
             </div>
           )}
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: '0.5rem',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+            }}
+          >
             {retryCount < maxRetries && (
               <button
                 onClick={retryLoad}
                 disabled={isRetrying}
                 style={{
                   padding: '0.5rem 1rem',
-                  background: isRetrying ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.2)',
+                  background: isRetrying
+                    ? 'rgba(255, 255, 255, 0.1)'
+                    : 'rgba(255, 255, 255, 0.2)',
                   border: '1px solid rgba(255, 255, 255, 0.3)',
                   borderRadius: '0.5rem',
                   color: 'white',
                   cursor: isRetrying ? 'not-allowed' : 'pointer',
                   fontSize: '0.875rem',
-                  opacity: isRetrying ? 0.6 : 1
+                  opacity: isRetrying ? 0.6 : 1,
                 }}
               >
                 {isRetrying ? 'Retrying...' : 'Retry'}
@@ -641,7 +689,8 @@ export function VideoPlayer({
             zIndex: 2,
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.1)';
+            e.currentTarget.style.transform =
+              'translate(-50%, -50%) scale(1.1)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)';
@@ -775,18 +824,30 @@ export function VideoPlayer({
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.25rem',
-                    transition: 'background-color 0.2s'
+                    transition: 'background-color 0.2s',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.backgroundColor =
+                      'rgba(255, 255, 255, 0.1)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
                   }}
                 >
                   <span>⚙️</span>
-                  <span>{qualityOptions[currentQuality]?.label || currentQuality}</span>
-                  <span style={{ transform: showQualityMenu ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
+                  <span>
+                    {qualityOptions[currentQuality]?.label || currentQuality}
+                  </span>
+                  <span
+                    style={{
+                      transform: showQualityMenu
+                        ? 'rotate(180deg)'
+                        : 'rotate(0deg)',
+                      transition: 'transform 0.2s',
+                    }}
+                  >
+                    ▼
+                  </span>
                 </button>
 
                 {/* Quality Menu */}
@@ -803,14 +864,15 @@ export function VideoPlayer({
                       padding: '0.5rem 0',
                       minWidth: '150px',
                       zIndex: 10,
-                      backdropFilter: 'blur(10px)'
+                      backdropFilter: 'blur(10px)',
                     }}
                   >
                     {availableQualities.map((quality) => {
-                      const qualityKey = Object.keys(qualityOptions).find(
-                        key => qualityOptions[key].label === quality.label
-                      ) || 'auto';
-                      
+                      const qualityKey =
+                        Object.keys(qualityOptions).find(
+                          (key) => qualityOptions[key].label === quality.label
+                        ) || 'auto';
+
                       return (
                         <button
                           key={qualityKey}
@@ -819,26 +881,36 @@ export function VideoPlayer({
                           style={{
                             width: '100%',
                             padding: '0.5rem 1rem',
-                            background: currentQuality === qualityKey ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+                            background:
+                              currentQuality === qualityKey
+                                ? 'rgba(255, 255, 255, 0.2)'
+                                : 'transparent',
                             border: 'none',
                             color: 'white',
                             fontSize: '0.875rem',
-                            cursor: isQualityChanging ? 'not-allowed' : 'pointer',
+                            cursor: isQualityChanging
+                              ? 'not-allowed'
+                              : 'pointer',
                             textAlign: 'left',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             opacity: isQualityChanging ? 0.6 : 1,
-                            transition: 'all 0.2s'
+                            transition: 'all 0.2s',
                           }}
                           onMouseEnter={(e) => {
-                            if (!isQualityChanging && currentQuality !== qualityKey) {
-                              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                            if (
+                              !isQualityChanging &&
+                              currentQuality !== qualityKey
+                            ) {
+                              e.currentTarget.style.backgroundColor =
+                                'rgba(255, 255, 255, 0.1)';
                             }
                           }}
                           onMouseLeave={(e) => {
                             if (currentQuality !== qualityKey) {
-                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.backgroundColor =
+                                'transparent';
                             }
                           }}
                         >

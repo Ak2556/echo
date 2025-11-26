@@ -39,7 +39,6 @@ export default function FileUpload() {
         setSelectedFile(null);
       }
     } catch (error) {
-
     } finally {
       setUploading(false);
     }
@@ -52,17 +51,14 @@ export default function FileUpload() {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-4">File Upload & Sharing</h2>
-      
+
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 mb-6">
-        <input
-          type="file"
-          onChange={handleFileSelect}
-          className="mb-4"
-        />
+        <input type="file" onChange={handleFileSelect} className="mb-4" />
         {selectedFile && (
           <div className="mb-4">
             <p className="text-sm text-gray-600">
-              Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(2)} KB)
+              Selected: {selectedFile.name} (
+              {(selectedFile.size / 1024).toFixed(2)} KB)
             </p>
           </div>
         )}

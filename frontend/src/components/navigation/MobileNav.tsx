@@ -190,13 +190,8 @@ export function MobileNav({ onOpenMiniApp }: MobileNavProps) {
                 minHeight: touchTarget.comfortable,
                 padding: '0.75rem 1.5rem',
                 background:
-                  currentRoute === item.route
-                    ? 'var(--accent)'
-                    : 'transparent',
-                color:
-                  currentRoute === item.route
-                    ? 'white'
-                    : 'var(--fg)',
+                  currentRoute === item.route ? 'var(--accent)' : 'transparent',
+                color: currentRoute === item.route ? 'white' : 'var(--fg)',
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: '1rem',

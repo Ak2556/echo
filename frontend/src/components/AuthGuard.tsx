@@ -16,7 +16,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
   // Public routes that don't require authentication
   const publicRoutes = [
-    '/',  // Home page is public for testing
+    '/', // Home page is public for testing
     '/auth/login',
     '/auth/login-experience',
     '/auth/signup',
@@ -29,7 +29,9 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   useEffect(() => {
     const checkAuth = () => {
       // Check if current route is public
-      const isPublicRoute = publicRoutes.some(route => pathname?.startsWith(route));
+      const isPublicRoute = publicRoutes.some((route) =>
+        pathname?.startsWith(route)
+      );
 
       if (isPublicRoute) {
         setIsAuthenticated(true);
@@ -64,7 +66,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
         >
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
             className="w-16 h-16 mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full"
           />
           <p className="text-gray-600 dark:text-gray-400 font-medium">

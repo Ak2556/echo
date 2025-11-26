@@ -8,9 +8,15 @@ import '@testing-library/jest-dom';
 
 // Mock the AccessibilityQuickPanel component since it has complex dependencies
 jest.mock('../AccessibilityQuickPanel', () => {
-  return function MockAccessibilityQuickPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  return function MockAccessibilityQuickPanel({
+    isOpen,
+    onClose,
+  }: {
+    isOpen: boolean;
+    onClose: () => void;
+  }) {
     if (!isOpen) return null;
-    
+
     return (
       <div data-testid="accessibility-panel">
         <h2>Accessibility</h2>
@@ -55,20 +61,20 @@ describe('AccessibilityQuickPanel', () => {
 
   it('renders when open', () => {
     render(<AccessibilityQuickPanel {...defaultProps} />);
-    
+
     expect(screen.getByText('Accessibility')).toBeInTheDocument();
     expect(screen.getByText('Score: 85%')).toBeInTheDocument();
   });
 
   it('does not render when closed', () => {
     render(<AccessibilityQuickPanel {...defaultProps} isOpen={false} />);
-    
+
     expect(screen.queryByText('Accessibility')).not.toBeInTheDocument();
   });
 
   it('displays all tabs', () => {
     render(<AccessibilityQuickPanel {...defaultProps} />);
-    
+
     expect(screen.getByText('Visual')).toBeInTheDocument();
     expect(screen.getByText('Audio')).toBeInTheDocument();
     expect(screen.getByText('Keyboard')).toBeInTheDocument();
@@ -77,7 +83,7 @@ describe('AccessibilityQuickPanel', () => {
 
   it('displays visual accessibility controls', () => {
     render(<AccessibilityQuickPanel {...defaultProps} />);
-    
+
     expect(screen.getByText('High Contrast Mode')).toBeInTheDocument();
     expect(screen.getByText('Large Text')).toBeInTheDocument();
     expect(screen.getByText('Reduce Motion')).toBeInTheDocument();
@@ -86,20 +92,23 @@ describe('AccessibilityQuickPanel', () => {
 
   it('has proper ARIA attributes', () => {
     render(<AccessibilityQuickPanel {...defaultProps} />);
-    
+
     const closeButton = screen.getByLabelText('Close accessibility panel');
-    expect(closeButton).toHaveAttribute('aria-label', 'Close accessibility panel');
+    expect(closeButton).toHaveAttribute(
+      'aria-label',
+      'Close accessibility panel'
+    );
   });
 
   it('displays accessibility score', () => {
     render(<AccessibilityQuickPanel {...defaultProps} />);
-    
+
     expect(screen.getByText('Score: 85%')).toBeInTheDocument();
   });
 
   it('shows footer action buttons', () => {
     render(<AccessibilityQuickPanel {...defaultProps} />);
-    
+
     expect(screen.getByText('Reset')).toBeInTheDocument();
     expect(screen.getByText('Export')).toBeInTheDocument();
     expect(screen.getByText('Settings')).toBeInTheDocument();

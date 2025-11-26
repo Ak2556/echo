@@ -9,6 +9,7 @@ Accepted
 ## Context
 
 We need a modern React framework that provides:
+
 - Server-side rendering (SSR)
 - Static site generation (SSG)
 - API routes
@@ -17,6 +18,7 @@ We need a modern React framework that provides:
 - Developer experience
 
 Options considered:
+
 1. Next.js with Pages Router
 2. Next.js with App Router
 3. Remix
@@ -29,6 +31,7 @@ We will use **Next.js 13+ with App Router** for our frontend application.
 ## Reasons
 
 ### Pros
+
 - **React Server Components**: Improved performance and reduced bundle size
 - **Streaming**: Progressive rendering for better UX
 - **Layouts**: Shared UI components with nested routing
@@ -40,6 +43,7 @@ We will use **Next.js 13+ with App Router** for our frontend application.
 - **Vercel deployment**: Easy deployment and edge functions
 
 ### Cons
+
 - Learning curve for App Router (new paradigm)
 - Some features still in beta
 - Migration from Pages Router requires effort
@@ -47,6 +51,7 @@ We will use **Next.js 13+ with App Router** for our frontend application.
 ## Consequences
 
 ### Positive
+
 - Faster page loads with Server Components
 - Better SEO with SSR
 - Improved developer experience
@@ -54,6 +59,7 @@ We will use **Next.js 13+ with App Router** for our frontend application.
 - Easy deployment to Vercel/CDN
 
 ### Negative
+
 - Team needs to learn App Router patterns
 - Some third-party libraries may not be compatible yet
 - Debugging can be more complex with server/client boundary

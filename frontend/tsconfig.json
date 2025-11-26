@@ -22,6 +22,17 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "frontend/**/*", "backend/**/*", "k8s/**/*", "nginx/**/*"]
+  "include": [
+    "next-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "frontend/**/*",
+    "backend/**/*",
+    "k8s/**/*",
+    "nginx/**/*"
+  ]
 }

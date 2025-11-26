@@ -6,25 +6,38 @@ import { useSettings } from '@/contexts/SettingsContext';
 
 const getToastIcon = (type: ToastType): string => {
   switch (type) {
-    case 'success': return '✓';
-    case 'error': return '✕';
-    case 'warning': return '⚠';
-    case 'info': return 'ℹ';
-    default: return 'ℹ';
+    case 'success':
+      return '✓';
+    case 'error':
+      return '✕';
+    case 'warning':
+      return '⚠';
+    case 'info':
+      return 'ℹ';
+    default:
+      return 'ℹ';
   }
 };
 
 const getToastColor = (type: ToastType): string => {
   switch (type) {
-    case 'success': return '#10b981';
-    case 'error': return '#ef4444';
-    case 'warning': return '#f59e0b';
-    case 'info': return 'var(--nothing-glyph)';
-    default: return 'var(--nothing-glyph)';
+    case 'success':
+      return '#10b981';
+    case 'error':
+      return '#ef4444';
+    case 'warning':
+      return '#f59e0b';
+    case 'info':
+      return 'var(--nothing-glyph)';
+    default:
+      return 'var(--nothing-glyph)';
   }
 };
 
-const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({ toast, onRemove }) => {
+const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({
+  toast,
+  onRemove,
+}) => {
   const { shouldShowAnimation } = useSettings();
   const showAnimation = shouldShowAnimation();
 
@@ -41,7 +54,7 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({
         maxWidth: '420px',
         animation: showAnimation ? 'slideInRight 0.3s ease-out' : 'none',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-        border: `1px solid ${getToastColor(toast.type)}20`
+        border: `1px solid ${getToastColor(toast.type)}20`,
       }}
     >
       <div
@@ -56,19 +69,21 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({
           justifyContent: 'center',
           fontSize: '1rem',
           fontWeight: 'bold',
-          flexShrink: 0
+          flexShrink: 0,
         }}
       >
         {getToastIcon(toast.type)}
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{
-          margin: 0,
-          fontSize: '0.95rem',
-          lineHeight: 1.4,
-          wordBreak: 'break-word'
-        }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: '0.95rem',
+            lineHeight: 1.4,
+            wordBreak: 'break-word',
+          }}
+        >
           {toast.message}
         </p>
       </div>
@@ -83,7 +98,7 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({
           style={{
             padding: '0.5rem 1rem',
             fontSize: '0.85rem',
-            flexShrink: 0
+            flexShrink: 0,
           }}
         >
           {toast.action.label}
@@ -103,7 +118,7 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          flexShrink: 0
+          flexShrink: 0,
         }}
         aria-label="Close notification"
       >
@@ -138,7 +153,7 @@ export default function ToastContainer() {
           top: '5rem',
           right: '1rem',
           zIndex: 10000,
-          pointerEvents: 'none'
+          pointerEvents: 'none',
         }}
       >
         <div style={{ pointerEvents: 'auto' }}>

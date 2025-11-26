@@ -26,8 +26,8 @@ const THEMES: Theme[] = [
     preview: {
       primary: '#ffffff',
       secondary: '#f3f4f6',
-      tertiary: '#3b82f6'
-    }
+      tertiary: '#3b82f6',
+    },
   },
   {
     id: 'dark',
@@ -35,8 +35,8 @@ const THEMES: Theme[] = [
     preview: {
       primary: '#1f2937',
       secondary: '#111827',
-      tertiary: '#3b82f6'
-    }
+      tertiary: '#3b82f6',
+    },
   },
   {
     id: 'ocean-breeze',
@@ -44,8 +44,8 @@ const THEMES: Theme[] = [
     preview: {
       primary: '#0ea5e9',
       secondary: '#06b6d4',
-      tertiary: '#14b8a6'
-    }
+      tertiary: '#14b8a6',
+    },
   },
   {
     id: 'sunset-glow',
@@ -53,8 +53,8 @@ const THEMES: Theme[] = [
     preview: {
       primary: '#f97316',
       secondary: '#fb923c',
-      tertiary: '#fb7185'
-    }
+      tertiary: '#fb7185',
+    },
   },
   {
     id: 'forest-mystique',
@@ -62,8 +62,8 @@ const THEMES: Theme[] = [
     preview: {
       primary: '#10b981',
       secondary: '#34d399',
-      tertiary: '#6ee7b7'
-    }
+      tertiary: '#6ee7b7',
+    },
   },
   {
     id: 'royal-purple',
@@ -71,8 +71,8 @@ const THEMES: Theme[] = [
     preview: {
       primary: '#a855f7',
       secondary: '#c084fc',
-      tertiary: '#e9d5ff'
-    }
+      tertiary: '#e9d5ff',
+    },
   },
   {
     id: 'rose-gold',
@@ -80,8 +80,8 @@ const THEMES: Theme[] = [
     preview: {
       primary: '#ec4899',
       secondary: '#f472b6',
-      tertiary: '#fbbf24'
-    }
+      tertiary: '#fbbf24',
+    },
   },
   {
     id: 'midnight-galaxy',
@@ -89,8 +89,8 @@ const THEMES: Theme[] = [
     preview: {
       primary: '#6366f1',
       secondary: '#8b5cf6',
-      tertiary: '#a855f7'
-    }
+      tertiary: '#a855f7',
+    },
   },
   {
     id: 'cyberpunk',
@@ -98,8 +98,8 @@ const THEMES: Theme[] = [
     preview: {
       primary: '#ff006e',
       secondary: '#8338ec',
-      tertiary: '#06ffa5'
-    }
+      tertiary: '#06ffa5',
+    },
   },
   {
     id: 'monochrome',
@@ -107,8 +107,8 @@ const THEMES: Theme[] = [
     preview: {
       primary: '#000000',
       secondary: '#374151',
-      tertiary: '#6b7280'
-    }
+      tertiary: '#6b7280',
+    },
   },
   {
     id: 'aurora',
@@ -116,14 +116,14 @@ const THEMES: Theme[] = [
     preview: {
       primary: '#ec4899',
       secondary: '#8b5cf6',
-      tertiary: '#10b981'
-    }
-  }
+      tertiary: '#10b981',
+    },
+  },
 ];
 
 export default function ThemeSelector({
   currentTheme = 'dark',
-  onThemeChange
+  onThemeChange,
 }: {
   currentTheme?: string;
   onThemeChange?: (themeId: string) => void;
@@ -159,7 +159,7 @@ export default function ThemeSelector({
           borderRadius: 'var(--radius-md)',
           cursor: 'pointer',
           fontWeight: 600,
-          color: 'var(--fg)'
+          color: 'var(--fg)',
         }}
         aria-label="Change theme"
       >
@@ -188,25 +188,25 @@ export default function ThemeSelector({
                 <div
                   style={{
                     display: 'flex',
-                    height: '100%'
+                    height: '100%',
                   }}
                 >
                   <div
                     style={{
                       flex: 1,
-                      background: theme.preview.primary
+                      background: theme.preview.primary,
                     }}
                   />
                   <div
                     style={{
                       flex: 1,
-                      background: theme.preview.secondary
+                      background: theme.preview.secondary,
                     }}
                   />
                   <div
                     style={{
                       flex: 1,
-                      background: theme.preview.tertiary
+                      background: theme.preview.tertiary,
                     }}
                   />
                 </div>
@@ -229,7 +229,7 @@ export default function ThemeSelector({
                       alignItems: 'center',
                       justifyContent: 'center',
                       color: 'white',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
                     }}
                   >
                     <Check size={20} />
@@ -247,12 +247,13 @@ export default function ThemeSelector({
             padding: '1rem',
             background: 'var(--bg-secondary)',
             borderRadius: 'var(--radius-lg)',
-            borderLeft: '4px solid var(--accent)'
+            borderLeft: '4px solid var(--accent)',
           }}
         >
           <p style={{ margin: 0, fontSize: '0.875rem', lineHeight: 1.6 }}>
-            <strong>Pro Tip:</strong> Each theme is carefully crafted with unique gradients and color schemes. Your
-            choice is automatically saved and will persist across sessions.
+            <strong>Pro Tip:</strong> Each theme is carefully crafted with
+            unique gradients and color schemes. Your choice is automatically
+            saved and will persist across sessions.
           </p>
         </div>
       </AdvancedModal>
@@ -265,7 +266,7 @@ export default function ThemeSelector({
  */
 export function CompactThemeSwitcher({
   currentTheme = 'dark',
-  onThemeChange
+  onThemeChange,
 }: {
   currentTheme?: string;
   onThemeChange?: (themeId: string) => void;
@@ -299,7 +300,7 @@ export function CompactThemeSwitcher({
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
-          color: 'var(--fg)'
+          color: 'var(--fg)',
         }}
         aria-label="Theme switcher"
       >
@@ -317,11 +318,25 @@ export function CompactThemeSwitcher({
             borderRadius: 'var(--radius-lg)',
             boxShadow: 'var(--elevation-4)',
             minWidth: '200px',
-            zIndex: 1000
+            zIndex: 1000,
           }}
         >
-          <h4 style={{ margin: '0 0 0.75rem', fontSize: '0.875rem', fontWeight: 600 }}>Quick Themes</h4>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+          <h4
+            style={{
+              margin: '0 0 0.75rem',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+            }}
+          >
+            Quick Themes
+          </h4>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '0.5rem',
+            }}
+          >
             {popularThemes.map((theme) => (
               <button
                 key={theme.id}
@@ -329,11 +344,14 @@ export function CompactThemeSwitcher({
                 className="hover-scale transition-smooth"
                 style={{
                   padding: 0,
-                  border: currentTheme === theme.id ? '2px solid var(--accent)' : '2px solid transparent',
+                  border:
+                    currentTheme === theme.id
+                      ? '2px solid var(--accent)'
+                      : '2px solid transparent',
                   borderRadius: 'var(--radius-md)',
                   overflow: 'hidden',
                   cursor: 'pointer',
-                  aspectRatio: '1'
+                  aspectRatio: '1',
                 }}
                 title={theme.name}
               >
@@ -341,7 +359,7 @@ export function CompactThemeSwitcher({
                   style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
-                    height: '100%'
+                    height: '100%',
                   }}
                 >
                   <div style={{ background: theme.preview.primary }} />

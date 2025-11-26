@@ -10,7 +10,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { resetPasswordSchema, type ResetPasswordForm } from '@/lib/auth-schemas';
+import {
+  resetPasswordSchema,
+  type ResetPasswordForm,
+} from '@/lib/auth-schemas';
 import { apiClient, APIError } from '@/lib/api-client';
 import PasswordStrength from '@/components/auth/PasswordStrength';
 import Link from 'next/link';
@@ -136,7 +139,8 @@ export default function ResetPasswordPage() {
                 {tokenInfo.expiresIn && tokenInfo.expiresIn < 300 && (
                   <div className="mb-6 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                     <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                      ⚠️ This link expires in {Math.floor(tokenInfo.expiresIn / 60)} minutes
+                      ⚠️ This link expires in{' '}
+                      {Math.floor(tokenInfo.expiresIn / 60)} minutes
                     </p>
                   </div>
                 )}
@@ -148,7 +152,10 @@ export default function ResetPasswordPage() {
 
                   {/* New Password */}
                   <div>
-                    <label htmlFor="new_password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label
+                      htmlFor="new_password"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                    >
                       New Password
                     </label>
                     <input
@@ -170,7 +177,10 @@ export default function ResetPasswordPage() {
 
                   {/* Confirm Password */}
                   <div>
-                    <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label
+                      htmlFor="confirm_password"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                    >
                       Confirm New Password
                     </label>
                     <input
@@ -255,7 +265,8 @@ export default function ResetPasswordPage() {
                   Invalid or Expired Link
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 mb-8">
-                  This password reset link is no longer valid. It may have expired or already been used.
+                  This password reset link is no longer valid. It may have
+                  expired or already been used.
                 </p>
 
                 <div className="space-y-3">

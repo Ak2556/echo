@@ -9,7 +9,10 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { forgotPasswordSchema, type ForgotPasswordForm } from '@/lib/auth-schemas';
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordForm,
+} from '@/lib/auth-schemas';
 import { apiClient, APIError } from '@/lib/api-client';
 import Link from 'next/link';
 
@@ -74,7 +77,10 @@ export default function ForgotPasswordPage() {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                   {/* Email */}
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                    >
                       Email Address
                     </label>
                     <input
@@ -139,7 +145,8 @@ export default function ForgotPasswordPage() {
                   Check Your Email
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  If an account exists for <strong>{submittedEmail}</strong>, we've sent password reset instructions to that email.
+                  If an account exists for <strong>{submittedEmail}</strong>,
+                  we've sent password reset instructions to that email.
                 </p>
 
                 {/* Info box */}

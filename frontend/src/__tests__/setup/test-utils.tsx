@@ -5,7 +5,11 @@
 
 import React, { ReactElement, ReactNode } from 'react';
 import { render, RenderOptions, RenderResult } from '@testing-library/react';
-import { renderHook, RenderHookOptions, RenderHookResult } from '@testing-library/react';
+import {
+  renderHook,
+  RenderHookOptions,
+  RenderHookResult,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 // Mock data generators
@@ -137,11 +141,11 @@ export const customRenderHook = <TProps, TResult>(
 export const setupUserEvent = () => userEvent.setup();
 
 // Async utilities
-export const waitForLoadingToFinish = () => 
-  new Promise(resolve => setTimeout(resolve, 0));
+export const waitForLoadingToFinish = () =>
+  new Promise((resolve) => setTimeout(resolve, 0));
 
-export const waitForAnimation = () => 
-  new Promise(resolve => setTimeout(resolve, 300));
+export const waitForAnimation = () =>
+  new Promise((resolve) => setTimeout(resolve, 300));
 
 // Mock API responses
 export const mockApiResponse = (data: any, status = 200) => ({
@@ -161,7 +165,7 @@ export const mockApiError = (message = 'API Error', status = 500) => ({
 // Local storage mock utilities
 export const mockLocalStorage = () => {
   const store: Record<string, string> = {};
-  
+
   return {
     getItem: jest.fn((key: string) => store[key] || null),
     setItem: jest.fn((key: string, value: string) => {
@@ -171,7 +175,7 @@ export const mockLocalStorage = () => {
       delete store[key];
     }),
     clear: jest.fn(() => {
-      Object.keys(store).forEach(key => delete store[key]);
+      Object.keys(store).forEach((key) => delete store[key]);
     }),
     get store() {
       return { ...store };
@@ -186,9 +190,11 @@ export const mockIntersectionObserver = () => {
     unobserve: jest.fn(),
     disconnect: jest.fn(),
   };
-  
-  global.IntersectionObserver = jest.fn().mockImplementation(() => mockObserver);
-  
+
+  global.IntersectionObserver = jest
+    .fn()
+    .mockImplementation(() => mockObserver);
+
   return mockObserver;
 };
 
@@ -199,9 +205,9 @@ export const mockResizeObserver = () => {
     unobserve: jest.fn(),
     disconnect: jest.fn(),
   };
-  
+
   global.ResizeObserver = jest.fn().mockImplementation(() => mockObserver);
-  
+
   return mockObserver;
 };
 
@@ -217,12 +223,12 @@ export const mockMediaQuery = (matches = false) => {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   };
-  
+
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: jest.fn().mockImplementation(() => mockMQL),
   });
-  
+
   return mockMQL;
 };
 
@@ -245,37 +251,38 @@ export const measureMemory = () => {
 export const checkAccessibility = async (container: HTMLElement) => {
   // Mock implementation - in real scenario would use @axe-core/react
   const issues: string[] = [];
-  
+
   // Check for missing alt text
   const images = container.querySelectorAll('img');
-  images.forEach(img => {
+  images.forEach((img) => {
     if (!img.alt && !img.getAttribute('aria-label')) {
       issues.push('Image missing alt text');
     }
   });
-  
+
   // Check for missing labels
   const inputs = container.querySelectorAll('input, textarea, select');
-  inputs.forEach(input => {
-    const hasLabel = input.getAttribute('aria-label') || 
-                    input.getAttribute('aria-labelledby') ||
-                    container.querySelector(`label[for="${input.id}"]`);
+  inputs.forEach((input) => {
+    const hasLabel =
+      input.getAttribute('aria-label') ||
+      input.getAttribute('aria-labelledby') ||
+      container.querySelector(`label[for="${input.id}"]`);
     if (!hasLabel) {
       issues.push('Form control missing label');
     }
   });
-  
+
   // Check for proper heading hierarchy
   const headings = container.querySelectorAll('h1, h2, h3, h4, h5, h6');
   let lastLevel = 0;
-  headings.forEach(heading => {
+  headings.forEach((heading) => {
     const level = parseInt(heading.tagName.charAt(1));
     if (level > lastLevel + 1) {
       issues.push('Heading hierarchy skipped');
     }
     lastLevel = level;
   });
-  
+
   return issues;
 };
 
@@ -284,19 +291,19 @@ export const customMatchers = {
   toBeAccessible: async (received: HTMLElement) => {
     const issues = await checkAccessibility(received);
     const pass = issues.length === 0;
-    
+
     return {
-      message: () => 
-        pass 
+      message: () =>
+        pass
           ? `Expected element to have accessibility issues`
           : `Expected element to be accessible, but found issues: ${issues.join(', ')}`,
       pass,
     };
   },
-  
+
   toHavePerformanceWithin: (received: number, min: number, max: number) => {
     const pass = received >= min && received <= max;
-    
+
     return {
       message: () =>
         pass
@@ -305,21 +312,23 @@ export const customMatchers = {
       pass,
     };
   },
-  
+
   toBeResponsive: (received: HTMLElement) => {
     const computedStyle = window.getComputedStyle(received);
-    const hasFlexOrGrid = computedStyle.display === 'flex' || 
-                         computedStyle.display === 'grid' ||
-                         computedStyle.display === 'inline-flex' ||
-                         computedStyle.display === 'inline-grid';
-    
-    const hasResponsiveUnits = computedStyle.width?.includes('%') ||
-                              computedStyle.width?.includes('vw') ||
-                              computedStyle.width?.includes('rem') ||
-                              computedStyle.maxWidth?.includes('%');
-    
+    const hasFlexOrGrid =
+      computedStyle.display === 'flex' ||
+      computedStyle.display === 'grid' ||
+      computedStyle.display === 'inline-flex' ||
+      computedStyle.display === 'inline-grid';
+
+    const hasResponsiveUnits =
+      computedStyle.width?.includes('%') ||
+      computedStyle.width?.includes('vw') ||
+      computedStyle.width?.includes('rem') ||
+      computedStyle.maxWidth?.includes('%');
+
     const pass = hasFlexOrGrid || hasResponsiveUnits;
-    
+
     return {
       message: () =>
         pass
@@ -332,21 +341,23 @@ export const customMatchers = {
 
 // Test data factories
 export const createTestData = {
-  users: (count = 5) => Array.from({ length: count }, (_, i) => 
-    mockUser({ id: `user-${i}`, username: `user${i}` })
-  ),
-  
-  posts: (count = 10) => Array.from({ length: count }, (_, i) => 
-    mockPost({ id: `post-${i}`, content: `Test post ${i}` })
-  ),
-  
-  messages: (count = 20) => Array.from({ length: count }, (_, i) => 
-    mockMessage({ id: `message-${i}`, content: `Test message ${i}` })
-  ),
-  
-  chats: (count = 5) => Array.from({ length: count }, (_, i) => 
-    mockChat({ id: `chat-${i}` })
-  ),
+  users: (count = 5) =>
+    Array.from({ length: count }, (_, i) =>
+      mockUser({ id: `user-${i}`, username: `user${i}` })
+    ),
+
+  posts: (count = 10) =>
+    Array.from({ length: count }, (_, i) =>
+      mockPost({ id: `post-${i}`, content: `Test post ${i}` })
+    ),
+
+  messages: (count = 20) =>
+    Array.from({ length: count }, (_, i) =>
+      mockMessage({ id: `message-${i}`, content: `Test message ${i}` })
+    ),
+
+  chats: (count = 5) =>
+    Array.from({ length: count }, (_, i) => mockChat({ id: `chat-${i}` })),
 };
 
 // Export everything for easy importing

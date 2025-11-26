@@ -1,13 +1,26 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, ReactNode, memo } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+  memo,
+} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
 
 type ToastType = 'success' | 'error' | 'warning' | 'info';
-type ToastPosition = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
+type ToastPosition =
+  | 'top-right'
+  | 'top-left'
+  | 'bottom-right'
+  | 'bottom-left'
+  | 'top-center'
+  | 'bottom-center';
 
 interface Toast {
   id: string;
@@ -44,34 +57,37 @@ interface ToastProviderProps {
   maxToasts?: number;
 }
 
-export function ToastProvider({ 
-  children, 
+export function ToastProvider({
+  children,
   position = 'top-right',
-  maxToasts = 5 
+  maxToasts = 5,
 }: ToastProviderProps) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const addToast = useCallback((toast: Omit<Toast, 'id'>) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    const newToast = { ...toast, id };
-    
-    setToasts(prev => {
-      const updated = [newToast, ...prev];
-      return updated.slice(0, maxToasts);
-    });
+  const addToast = useCallback(
+    (toast: Omit<Toast, 'id'>) => {
+      const id = Math.random().toString(36).substr(2, 9);
+      const newToast = { ...toast, id };
 
-    // Auto remove after duration
-    if (toast.duration !== 0) {
-      setTimeout(() => {
-        removeToast(id);
-      }, toast.duration || 5000);
-    }
+      setToasts((prev) => {
+        const updated = [newToast, ...prev];
+        return updated.slice(0, maxToasts);
+      });
 
-    return id;
-  }, [maxToasts]);
+      // Auto remove after duration
+      if (toast.duration !== 0) {
+        setTimeout(() => {
+          removeToast(id);
+        }, toast.duration || 5000);
+      }
+
+      return id;
+    },
+    [maxToasts]
+  );
 
   const removeToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
   const clearAll = useCallback(() => {
@@ -82,13 +98,17 @@ export function ToastProvider({
     toasts,
     addToast,
     removeToast,
-    clearAll
+    clearAll,
   };
 
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <ToastContainer position={position} toasts={toasts} onRemove={removeToast} />
+      <ToastContainer
+        position={position}
+        toasts={toasts}
+        onRemove={removeToast}
+      />
     </ToastContext.Provider>
   );
 }
@@ -108,11 +128,16 @@ function ToastContainer({ position, toasts, onRemove }: ToastContainerProps) {
     'bottom-right': 'bottom-4 right-4',
     'bottom-left': 'bottom-4 left-4',
     'top-center': 'top-4 left-1/2 transform -translate-x-1/2',
-    'bottom-center': 'bottom-4 left-1/2 transform -translate-x-1/2'
+    'bottom-center': 'bottom-4 left-1/2 transform -translate-x-1/2',
   };
 
   return createPortal(
-    <div className={cn('fixed z-50 flex flex-col space-y-2', positionClasses[position])}>
+    <div
+      className={cn(
+        'fixed z-50 flex flex-col space-y-2',
+        positionClasses[position]
+      )}
+    >
       <AnimatePresence>
         {toasts.map((toast) => (
           <ToastItem
@@ -134,10 +159,14 @@ interface ToastItemProps {
   position: ToastPosition;
 }
 
-const ToastItem = memo(function ToastItem({ toast, onRemove, position }: ToastItemProps) {
+const ToastItem = memo(function ToastItem({
+  toast,
+  onRemove,
+  position,
+}: ToastItemProps) {
   const isRight = position.includes('right');
   const isLeft = position.includes('left');
-  
+
   const slideDirection = isRight ? 100 : isLeft ? -100 : 0;
 
   const typeStyles = {
@@ -145,26 +174,26 @@ const ToastItem = memo(function ToastItem({ toast, onRemove, position }: ToastIt
       bg: 'bg-green-50 dark:bg-green-900/20',
       border: 'border-green-200 dark:border-green-800',
       icon: CheckCircle,
-      iconColor: 'text-green-600 dark:text-green-400'
+      iconColor: 'text-green-600 dark:text-green-400',
     },
     error: {
       bg: 'bg-red-50 dark:bg-red-900/20',
       border: 'border-red-200 dark:border-red-800',
       icon: AlertCircle,
-      iconColor: 'text-red-600 dark:text-red-400'
+      iconColor: 'text-red-600 dark:text-red-400',
     },
     warning: {
       bg: 'bg-yellow-50 dark:bg-yellow-900/20',
       border: 'border-yellow-200 dark:border-yellow-800',
       icon: AlertTriangle,
-      iconColor: 'text-yellow-600 dark:text-yellow-400'
+      iconColor: 'text-yellow-600 dark:text-yellow-400',
     },
     info: {
       bg: 'bg-blue-50 dark:bg-blue-900/20',
       border: 'border-blue-200 dark:border-blue-800',
       icon: Info,
-      iconColor: 'text-blue-600 dark:text-blue-400'
-    }
+      iconColor: 'text-blue-600 dark:text-blue-400',
+    },
   };
 
   const style = typeStyles[toast.type];
@@ -184,7 +213,7 @@ const ToastItem = memo(function ToastItem({ toast, onRemove, position }: ToastIt
     >
       <div className="flex items-start space-x-3">
         <Icon className={cn('w-5 h-5 mt-0.5 flex-shrink-0', style.iconColor)} />
-        
+
         <div className="flex-1 min-w-0">
           {toast.title && (
             <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-1">
@@ -194,7 +223,7 @@ const ToastItem = memo(function ToastItem({ toast, onRemove, position }: ToastIt
           <p className="text-sm text-gray-700 dark:text-gray-300">
             {toast.message}
           </p>
-          
+
           {toast.action && (
             <button
               onClick={toast.action.onClick}
@@ -207,7 +236,7 @@ const ToastItem = memo(function ToastItem({ toast, onRemove, position }: ToastIt
             </button>
           )}
         </div>
-        
+
         <button
           onClick={() => onRemove(toast.id)}
           className="flex-shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
@@ -224,50 +253,86 @@ const ToastItem = memo(function ToastItem({ toast, onRemove, position }: ToastIt
 export function useToastActions() {
   const { addToast } = useToast();
 
-  const success = useCallback((message: string, options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>) => {
-    return addToast({ type: 'success', message, ...options });
-  }, [addToast]);
+  const success = useCallback(
+    (
+      message: string,
+      options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>
+    ) => {
+      return addToast({ type: 'success', message, ...options });
+    },
+    [addToast]
+  );
 
-  const error = useCallback((message: string, options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>) => {
-    return addToast({ type: 'error', message, ...options });
-  }, [addToast]);
+  const error = useCallback(
+    (
+      message: string,
+      options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>
+    ) => {
+      return addToast({ type: 'error', message, ...options });
+    },
+    [addToast]
+  );
 
-  const warning = useCallback((message: string, options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>) => {
-    return addToast({ type: 'warning', message, ...options });
-  }, [addToast]);
+  const warning = useCallback(
+    (
+      message: string,
+      options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>
+    ) => {
+      return addToast({ type: 'warning', message, ...options });
+    },
+    [addToast]
+  );
 
-  const info = useCallback((message: string, options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>) => {
-    return addToast({ type: 'info', message, ...options });
-  }, [addToast]);
+  const info = useCallback(
+    (
+      message: string,
+      options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>
+    ) => {
+      return addToast({ type: 'info', message, ...options });
+    },
+    [addToast]
+  );
 
   return { success, error, warning, info };
 }
 
 // Simple toast function for quick usage
 export const toast = {
-  success: (message: string, options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>) => {
+  success: (
+    message: string,
+    options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>
+  ) => {
     // This will only work if ToastProvider is mounted
     const event = new CustomEvent('toast', {
-      detail: { type: 'success', message, ...options }
+      detail: { type: 'success', message, ...options },
     });
     window.dispatchEvent(event);
   },
-  error: (message: string, options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>) => {
+  error: (
+    message: string,
+    options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>
+  ) => {
     const event = new CustomEvent('toast', {
-      detail: { type: 'error', message, ...options }
+      detail: { type: 'error', message, ...options },
     });
     window.dispatchEvent(event);
   },
-  warning: (message: string, options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>) => {
+  warning: (
+    message: string,
+    options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>
+  ) => {
     const event = new CustomEvent('toast', {
-      detail: { type: 'warning', message, ...options }
+      detail: { type: 'warning', message, ...options },
     });
     window.dispatchEvent(event);
   },
-  info: (message: string, options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>) => {
+  info: (
+    message: string,
+    options?: Partial<Omit<Toast, 'id' | 'type' | 'message'>>
+  ) => {
     const event = new CustomEvent('toast', {
-      detail: { type: 'info', message, ...options }
+      detail: { type: 'info', message, ...options },
     });
     window.dispatchEvent(event);
-  }
+  },
 };

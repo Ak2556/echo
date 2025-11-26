@@ -201,7 +201,10 @@ export class CircularBuffer<T> {
  * Time Complexity: O(1) insert at head, O(n) for search/delete
  */
 class ListNode<T> {
-  constructor(public value: T, public next: ListNode<T> | null = null) {}
+  constructor(
+    public value: T,
+    public next: ListNode<T> | null = null
+  ) {}
 }
 
 export class LinkedList<T> {
@@ -392,7 +395,8 @@ export class BinarySearchTree<T> {
   private count: number = 0;
 
   constructor(compareFn?: (a: T, b: T) => number) {
-    this.compareFn = compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
+    this.compareFn =
+      compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
   }
 
   insert(value: T): void {
@@ -575,7 +579,8 @@ export class AVLTree<T> {
   private count: number = 0;
 
   constructor(compareFn?: (a: T, b: T) => number) {
-    this.compareFn = compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
+    this.compareFn =
+      compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
   }
 
   insert(value: T): void {
@@ -638,7 +643,8 @@ export class AVLTree<T> {
   }
 
   private updateHeight(node: AVLNode<T>): void {
-    node.height = 1 + Math.max(this.getHeight(node.left), this.getHeight(node.right));
+    node.height =
+      1 + Math.max(this.getHeight(node.left), this.getHeight(node.right));
   }
 
   private getHeight(node: AVLNode<T> | null): number {
@@ -749,7 +755,8 @@ export class MinHeap<T> {
   private compareFn: (a: T, b: T) => number;
 
   constructor(compareFn?: (a: T, b: T) => number) {
-    this.compareFn = compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
+    this.compareFn =
+      compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
   }
 
   insert(value: T): void {
@@ -784,7 +791,10 @@ export class MinHeap<T> {
       const parentIndex = Math.floor((index - 1) / 2);
       if (this.compareFn(this.heap[index], this.heap[parentIndex]) >= 0) break;
 
-      [this.heap[index], this.heap[parentIndex]] = [this.heap[parentIndex], this.heap[index]];
+      [this.heap[index], this.heap[parentIndex]] = [
+        this.heap[parentIndex],
+        this.heap[index],
+      ];
       index = parentIndex;
     }
   }
@@ -795,19 +805,26 @@ export class MinHeap<T> {
       const leftChild = 2 * index + 1;
       const rightChild = 2 * index + 2;
 
-      if (leftChild < this.heap.length &&
-          this.compareFn(this.heap[leftChild], this.heap[minIndex]) < 0) {
+      if (
+        leftChild < this.heap.length &&
+        this.compareFn(this.heap[leftChild], this.heap[minIndex]) < 0
+      ) {
         minIndex = leftChild;
       }
 
-      if (rightChild < this.heap.length &&
-          this.compareFn(this.heap[rightChild], this.heap[minIndex]) < 0) {
+      if (
+        rightChild < this.heap.length &&
+        this.compareFn(this.heap[rightChild], this.heap[minIndex]) < 0
+      ) {
         minIndex = rightChild;
       }
 
       if (minIndex === index) break;
 
-      [this.heap[index], this.heap[minIndex]] = [this.heap[minIndex], this.heap[index]];
+      [this.heap[index], this.heap[minIndex]] = [
+        this.heap[minIndex],
+        this.heap[index],
+      ];
       index = minIndex;
     }
   }
@@ -826,7 +843,8 @@ export class MaxHeap<T> {
   private compareFn: (a: T, b: T) => number;
 
   constructor(compareFn?: (a: T, b: T) => number) {
-    this.compareFn = compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
+    this.compareFn =
+      compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
   }
 
   insert(value: T): void {
@@ -861,7 +879,10 @@ export class MaxHeap<T> {
       const parentIndex = Math.floor((index - 1) / 2);
       if (this.compareFn(this.heap[index], this.heap[parentIndex]) <= 0) break;
 
-      [this.heap[index], this.heap[parentIndex]] = [this.heap[parentIndex], this.heap[index]];
+      [this.heap[index], this.heap[parentIndex]] = [
+        this.heap[parentIndex],
+        this.heap[index],
+      ];
       index = parentIndex;
     }
   }
@@ -872,19 +893,26 @@ export class MaxHeap<T> {
       const leftChild = 2 * index + 1;
       const rightChild = 2 * index + 2;
 
-      if (leftChild < this.heap.length &&
-          this.compareFn(this.heap[leftChild], this.heap[maxIndex]) > 0) {
+      if (
+        leftChild < this.heap.length &&
+        this.compareFn(this.heap[leftChild], this.heap[maxIndex]) > 0
+      ) {
         maxIndex = leftChild;
       }
 
-      if (rightChild < this.heap.length &&
-          this.compareFn(this.heap[rightChild], this.heap[maxIndex]) > 0) {
+      if (
+        rightChild < this.heap.length &&
+        this.compareFn(this.heap[rightChild], this.heap[maxIndex]) > 0
+      ) {
         maxIndex = rightChild;
       }
 
       if (maxIndex === index) break;
 
-      [this.heap[index], this.heap[maxIndex]] = [this.heap[maxIndex], this.heap[index]];
+      [this.heap[index], this.heap[maxIndex]] = [
+        this.heap[maxIndex],
+        this.heap[index],
+      ];
       index = maxIndex;
     }
   }
@@ -941,7 +969,7 @@ export class Graph<T> {
   }
 
   removeVertex(vertex: T): void {
-    this.adjacencyList.get(vertex)?.forEach(neighbor => {
+    this.adjacencyList.get(vertex)?.forEach((neighbor) => {
       this.removeEdge(vertex, neighbor);
     });
     this.adjacencyList.delete(vertex);
@@ -1042,7 +1070,11 @@ export class Graph<T> {
     return false;
   }
 
-  private hasCycleHelper(vertex: T, visited: Set<T>, recursionStack: Set<T>): boolean {
+  private hasCycleHelper(
+    vertex: T,
+    visited: Set<T>,
+    recursionStack: Set<T>
+  ): boolean {
     visited.add(vertex);
     recursionStack.add(vertex);
 
@@ -1094,7 +1126,9 @@ export class Graph<T> {
 
     const distances = new Map<T, number>();
     const previous = new Map<T, T | null>();
-    const pq = new MinHeap<{ vertex: T; distance: number }>((a, b) => a.distance - b.distance);
+    const pq = new MinHeap<{ vertex: T; distance: number }>(
+      (a, b) => a.distance - b.distance
+    );
 
     for (const vertex of this.adjacencyList.keys()) {
       distances.set(vertex, vertex === start ? 0 : Infinity);
@@ -1133,7 +1167,7 @@ export class Graph<T> {
 
     return {
       path,
-      distance: distances.get(end)!
+      distance: distances.get(end)!,
     };
   }
 }
@@ -1212,7 +1246,7 @@ export class HashSet<T> {
     const str = String(value);
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
-      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash = (hash << 5) - hash + str.charCodeAt(i);
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash % this.bucketCount);
@@ -1306,7 +1340,10 @@ export class BloomFilter {
     return true;
   }
 
-  private createHashFunctions(count: number, size: number): ((value: string) => number)[] {
+  private createHashFunctions(
+    count: number,
+    size: number
+  ): ((value: string) => number)[] {
     const functions: ((value: string) => number)[] = [];
 
     for (let i = 0; i < count; i++) {
@@ -1314,7 +1351,7 @@ export class BloomFilter {
         let hash = 0;
         const seed = i + 1;
         for (let j = 0; j < value.length; j++) {
-          hash = ((hash << 5) - hash + value.charCodeAt(j) * seed);
+          hash = (hash << 5) - hash + value.charCodeAt(j) * seed;
           hash = hash & hash;
         }
         return Math.abs(hash % size);
@@ -1363,7 +1400,13 @@ export class SegmentTree {
     return this.queryHelper(0, 0, this.n - 1, left, right);
   }
 
-  private queryHelper(node: number, start: number, end: number, left: number, right: number): number {
+  private queryHelper(
+    node: number,
+    start: number,
+    end: number,
+    left: number,
+    right: number
+  ): number {
     if (right < start || left > end) return 0;
     if (left <= start && end <= right) return this.tree[node];
 
@@ -1378,7 +1421,13 @@ export class SegmentTree {
     this.updateHelper(0, 0, this.n - 1, index, value);
   }
 
-  private updateHelper(node: number, start: number, end: number, index: number, value: number): void {
+  private updateHelper(
+    node: number,
+    start: number,
+    end: number,
+    index: number,
+    value: number
+  ): void {
     if (start === end) {
       this.tree[node] = value;
       return;
@@ -1428,5 +1477,5 @@ export default {
   // Advanced
   DisjointSet,
   BloomFilter,
-  SegmentTree
+  SegmentTree,
 };

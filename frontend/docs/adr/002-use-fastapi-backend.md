@@ -9,6 +9,7 @@ Accepted
 ## Context
 
 We need a modern Python web framework for our backend API that provides:
+
 - High performance
 - Type safety
 - Auto-generated documentation
@@ -16,6 +17,7 @@ We need a modern Python web framework for our backend API that provides:
 - Easy testing
 
 Options considered:
+
 1. FastAPI
 2. Django + DRF
 3. Flask
@@ -28,6 +30,7 @@ We will use **FastAPI** as our backend framework.
 ## Reasons
 
 ### Pros
+
 - **Performance**: One of the fastest Python frameworks (comparable to Node.js)
 - **Type hints**: Python type hints for validation and documentation
 - **Auto docs**: Automatic OpenAPI (Swagger) documentation
@@ -38,6 +41,7 @@ We will use **FastAPI** as our backend framework.
 - **WebSocket support**: Built-in WebSocket support
 
 ### Cons
+
 - Relatively newer than Django/Flask
 - Smaller community compared to Django
 - Less third-party packages
@@ -45,6 +49,7 @@ We will use **FastAPI** as our backend framework.
 ## Consequences
 
 ### Positive
+
 - Fast API responses
 - Type-safe code reduces bugs
 - Automatic API documentation
@@ -52,6 +57,7 @@ We will use **FastAPI** as our backend framework.
 - Clean and maintainable code
 
 ### Negative
+
 - Team needs to learn FastAPI patterns
 - Some Django features need to be implemented manually
 - Fewer ready-made admin panels

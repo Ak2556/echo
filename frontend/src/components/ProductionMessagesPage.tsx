@@ -62,161 +62,175 @@ type ContextMenu = {
 };
 
 // Message Bubble Component (memoized for performance)
-const MessageBubble = memo(({
-  message,
-  activeThread,
-  onReply,
-  onEdit,
-  onDelete,
-  onReact,
-  onContextMenu
-}: {
-  message: Message;
-  activeThread: Thread | undefined;
-  onReply: (msg: Message) => void;
-  onEdit: (msg: Message) => void;
-  onDelete: (msgId: string) => void;
-  onReact: (msgId: string, emoji: string) => void;
-  onContextMenu: (e: React.MouseEvent, msg: Message) => void;
-}) => {
-  if (message.deleted) {
-    return (
-      <div className={`message-wrapper ${message.sender === 'me' ? 'sent' : 'received'}`}>
-        <div className="message-bubble deleted-message">
-          <p className="deleted-text">🚫 This message was deleted</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <motion.div
-      className={`message-wrapper ${message.sender === 'me' ? 'sent' : 'received'}`}
-      initial={{ opacity: 0, y: 20, scale: 0.8 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.3 }}
-      onContextMenu={(e) => onContextMenu(e, message)}
-    >
-      {message.sender === 'them' && (
-        <Image
-          src={activeThread?.avatar || ''}
-          alt=""
-          width={32}
-          height={32}
-          className="message-avatar"
-        />
-      )}
-
-      <div className="message-bubble-wrapper">
-        {message.replyTo && (
-          <div className="reply-preview">
-            <div className="reply-line"></div>
-            <div className="reply-content">
-              <span className="reply-name">
-                {message.replyTo.sender === 'me' ? 'You' : activeThread?.name}
-              </span>
-              <p className="reply-text">{message.replyTo.text || '📎 Media'}</p>
-            </div>
-          </div>
-        )}
-
-        {message.forwarded && (
-          <div className="forwarded-badge">
-            <span>↪️ Forwarded</span>
-          </div>
-        )}
-
-        <motion.div
-          className={`message-bubble ${message.sender === 'me' ? 'bubble-sent' : 'bubble-received'} ${
-            message.status === 'failed' ? 'message-failed' : ''
-          }`}
+const MessageBubble = memo(
+  ({
+    message,
+    activeThread,
+    onReply,
+    onEdit,
+    onDelete,
+    onReact,
+    onContextMenu,
+  }: {
+    message: Message;
+    activeThread: Thread | undefined;
+    onReply: (msg: Message) => void;
+    onEdit: (msg: Message) => void;
+    onDelete: (msgId: string) => void;
+    onReact: (msgId: string, emoji: string) => void;
+    onContextMenu: (e: React.MouseEvent, msg: Message) => void;
+  }) => {
+    if (message.deleted) {
+      return (
+        <div
+          className={`message-wrapper ${message.sender === 'me' ? 'sent' : 'received'}`}
         >
-          {message.mediaUrl && (
-            <div className="message-media">
-              {message.mediaType === 'image' || message.mediaType === 'gif' ? (
-                <Image
-                  src={message.mediaUrl}
-                  alt="Media"
-                  width={300}
-                  height={200}
-                  className="media-image"
-                />
-              ) : message.mediaType === 'video' ? (
-                <video
-                  src={message.mediaUrl}
-                  controls
-                  className="media-video"
-                />
-              ) : message.mediaType === 'voice' ? (
-                <div className="voice-message">
-                  <audio
+          <div className="message-bubble deleted-message">
+            <p className="deleted-text">🚫 This message was deleted</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <motion.div
+        className={`message-wrapper ${message.sender === 'me' ? 'sent' : 'received'}`}
+        initial={{ opacity: 0, y: 20, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        onContextMenu={(e) => onContextMenu(e, message)}
+      >
+        {message.sender === 'them' && (
+          <Image
+            src={activeThread?.avatar || ''}
+            alt=""
+            width={32}
+            height={32}
+            className="message-avatar"
+          />
+        )}
+
+        <div className="message-bubble-wrapper">
+          {message.replyTo && (
+            <div className="reply-preview">
+              <div className="reply-line"></div>
+              <div className="reply-content">
+                <span className="reply-name">
+                  {message.replyTo.sender === 'me' ? 'You' : activeThread?.name}
+                </span>
+                <p className="reply-text">
+                  {message.replyTo.text || '📎 Media'}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {message.forwarded && (
+            <div className="forwarded-badge">
+              <span>↪️ Forwarded</span>
+            </div>
+          )}
+
+          <motion.div
+            className={`message-bubble ${message.sender === 'me' ? 'bubble-sent' : 'bubble-received'} ${
+              message.status === 'failed' ? 'message-failed' : ''
+            }`}
+          >
+            {message.mediaUrl && (
+              <div className="message-media">
+                {message.mediaType === 'image' ||
+                message.mediaType === 'gif' ? (
+                  <Image
+                    src={message.mediaUrl}
+                    alt="Media"
+                    width={300}
+                    height={200}
+                    className="media-image"
+                  />
+                ) : message.mediaType === 'video' ? (
+                  <video
                     src={message.mediaUrl}
                     controls
-                    className="voice-audio-player"
+                    className="media-video"
                   />
-                </div>
-              ) : null}
-            </div>
-          )}
+                ) : message.mediaType === 'voice' ? (
+                  <div className="voice-message">
+                    <audio
+                      src={message.mediaUrl}
+                      controls
+                      className="voice-audio-player"
+                    />
+                  </div>
+                ) : null}
+              </div>
+            )}
 
-          {message.text && (
-            <p className="message-text">{message.text}</p>
-          )}
+            {message.text && <p className="message-text">{message.text}</p>}
 
-          {message.reactions && message.reactions.length > 0 && (
-            <div className="message-reactions">
-              {message.reactions.map((reaction, idx) => (
-                <motion.span
-                  key={idx}
-                  className="reaction-bubble"
-                  title={reaction.users.join(', ')}
+            {message.reactions && message.reactions.length > 0 && (
+              <div className="message-reactions">
+                {message.reactions.map((reaction, idx) => (
+                  <motion.span
+                    key={idx}
+                    className="reaction-bubble"
+                    title={reaction.users.join(', ')}
+                  >
+                    {reaction.emoji}{' '}
+                    {reaction.users.length > 1 && reaction.users.length}
+                  </motion.span>
+                ))}
+                <button
+                  className="add-reaction-btn"
+                  onClick={() => onReact(message.id, '❤️')}
                 >
-                  {reaction.emoji} {reaction.users.length > 1 && reaction.users.length}
-                </motion.span>
-              ))}
-              <button
-                className="add-reaction-btn"
-                onClick={() => onReact(message.id, '❤️')}
-              >
-                +
-              </button>
-            </div>
-          )}
-        </motion.div>
+                  +
+                </button>
+              </div>
+            )}
+          </motion.div>
 
-        <div className="message-meta">
-          <span className="message-time">
-            {new Date(message.at).toLocaleTimeString('en-US', {
-              hour: 'numeric',
-              minute: '2-digit',
-            })}
-          </span>
-          {message.edited && <span className="edited-badge">edited</span>}
-          {message.sender === 'me' && (
-            <span className="message-status">
-              {message.status === 'sending' && '🕐'}
-              {message.status === 'sent' && '✓'}
-              {message.status === 'delivered' && '✓✓'}
-              {message.status === 'seen' && <span className="seen-checkmark">✓✓</span>}
-              {message.status === 'failed' && '❌'}
+          <div className="message-meta">
+            <span className="message-time">
+              {new Date(message.at).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+              })}
             </span>
-          )}
-        </div>
+            {message.edited && <span className="edited-badge">edited</span>}
+            {message.sender === 'me' && (
+              <span className="message-status">
+                {message.status === 'sending' && '🕐'}
+                {message.status === 'sent' && '✓'}
+                {message.status === 'delivered' && '✓✓'}
+                {message.status === 'seen' && (
+                  <span className="seen-checkmark">✓✓</span>
+                )}
+                {message.status === 'failed' && '❌'}
+              </span>
+            )}
+          </div>
 
-        {/* Quick Actions */}
-        <div className="message-actions">
-          <button onClick={() => onReply(message)} title="Reply">↩️</button>
-          {message.sender === 'me' && (
-            <>
-              <button onClick={() => onEdit(message)} title="Edit">✏️</button>
-              <button onClick={() => onDelete(message.id)} title="Delete">🗑️</button>
-            </>
-          )}
+          {/* Quick Actions */}
+          <div className="message-actions">
+            <button onClick={() => onReply(message)} title="Reply">
+              ↩️
+            </button>
+            {message.sender === 'me' && (
+              <>
+                <button onClick={() => onEdit(message)} title="Edit">
+                  ✏️
+                </button>
+                <button onClick={() => onDelete(message.id)} title="Delete">
+                  🗑️
+                </button>
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </motion.div>
-  );
-});
+      </motion.div>
+    );
+  }
+);
 
 MessageBubble.displayName = 'MessageBubble';
 
@@ -237,9 +251,16 @@ export default function ProductionMessagesPage() {
   const [recordingTime, setRecordingTime] = useState(0);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [editingMessage, setEditingMessage] = useState<Message | null>(null);
-  const [contextMenu, setContextMenu] = useState<ContextMenu>({ show: false, x: 0, y: 0, message: null });
+  const [contextMenu, setContextMenu] = useState<ContextMenu>({
+    show: false,
+    x: 0,
+    y: 0,
+    message: null,
+  });
   const [isDragging, setIsDragging] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<'online' | 'offline' | 'connecting'>('online');
+  const [connectionStatus, setConnectionStatus] = useState<
+    'online' | 'offline' | 'connecting'
+  >('online');
   const [showSearchInChat, setShowSearchInChat] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showNewMessage, setShowNewMessage] = useState(false);
@@ -277,7 +298,8 @@ export default function ProductionMessagesPage() {
     {
       id: 1,
       name: 'Priya Sharma',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=b6e3f4',
+      avatar:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=b6e3f4',
       lastMessage: '',
       time: '',
       unread: 0,
@@ -290,7 +312,8 @@ export default function ProductionMessagesPage() {
     {
       id: 2,
       name: 'Arjun Singh',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun&backgroundColor=c0aede',
+      avatar:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun&backgroundColor=c0aede',
       lastMessage: '',
       time: '',
       unread: 0,
@@ -301,7 +324,8 @@ export default function ProductionMessagesPage() {
     {
       id: 3,
       name: 'Design Team',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Team&backgroundColor=ffd5dc',
+      avatar:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=Team&backgroundColor=ffd5dc',
       lastMessage: '',
       time: '',
       unread: 0,
@@ -313,7 +337,8 @@ export default function ProductionMessagesPage() {
     {
       id: 4,
       name: 'Ravi Kumar',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ravi&backgroundColor=ffdfbf',
+      avatar:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=Ravi&backgroundColor=ffdfbf',
       lastMessage: '',
       time: '',
       unread: 0,
@@ -323,7 +348,9 @@ export default function ProductionMessagesPage() {
   ];
 
   // Messages state (empty by default)
-  const [messagesByThread, setMessagesByThread] = useState<Record<number, Message[]>>({});
+  const [messagesByThread, setMessagesByThread] = useState<
+    Record<number, Message[]>
+  >({});
 
   // Popular GIFs
   const popularGifs = [
@@ -334,7 +361,20 @@ export default function ProductionMessagesPage() {
   ];
 
   // Emojis
-  const quickEmojis = ['😊', '😂', '❤️', '👍', '🔥', '🎉', '😍', '🤔', '👏', '🙌', '💯', '✨'];
+  const quickEmojis = [
+    '😊',
+    '😂',
+    '❤️',
+    '👍',
+    '🔥',
+    '🎉',
+    '😍',
+    '🤔',
+    '👏',
+    '🙌',
+    '💯',
+    '✨',
+  ];
 
   const activeThread = threads.find((t) => t.id === selectedThread);
   const messages = messagesByThread[selectedThread] || [];
@@ -352,11 +392,14 @@ export default function ProductionMessagesPage() {
       setConnectionStatus('connecting');
       const constraints = {
         audio: true,
-        video: type === 'video' ? {
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          facingMode: 'user'
-        } : false
+        video:
+          type === 'video'
+            ? {
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+                facingMode: 'user',
+              }
+            : false,
       };
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -392,11 +435,11 @@ export default function ProductionMessagesPage() {
 
   const endCall = () => {
     if (localStreamRef.current) {
-      localStreamRef.current.getTracks().forEach(track => track.stop());
+      localStreamRef.current.getTracks().forEach((track) => track.stop());
       localStreamRef.current = null;
     }
     if (remoteStreamRef.current) {
-      remoteStreamRef.current.getTracks().forEach(track => track.stop());
+      remoteStreamRef.current.getTracks().forEach((track) => track.stop());
       remoteStreamRef.current = null;
     }
     if (localVideoRef.current) localVideoRef.current.srcObject = null;
@@ -419,7 +462,7 @@ export default function ProductionMessagesPage() {
       const audioTrack = localStreamRef.current.getAudioTracks()[0];
       if (audioTrack) {
         audioTrack.enabled = call.muted;
-        setCall(prev => ({ ...prev, muted: !prev.muted }));
+        setCall((prev) => ({ ...prev, muted: !prev.muted }));
       }
     }
   };
@@ -429,7 +472,7 @@ export default function ProductionMessagesPage() {
       const videoTrack = localStreamRef.current.getVideoTracks()[0];
       if (videoTrack) {
         videoTrack.enabled = !call.videoEnabled;
-        setCall(prev => ({ ...prev, videoEnabled: !prev.videoEnabled }));
+        setCall((prev) => ({ ...prev, videoEnabled: !prev.videoEnabled }));
       }
     }
   };
@@ -437,16 +480,18 @@ export default function ProductionMessagesPage() {
   const toggleScreenShare = async () => {
     try {
       if (!call.screenSharing) {
-        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+        });
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = screenStream;
         }
-        setCall(prev => ({ ...prev, screenSharing: true }));
+        setCall((prev) => ({ ...prev, screenSharing: true }));
       } else {
         if (remoteStreamRef.current && remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = remoteStreamRef.current;
         }
-        setCall(prev => ({ ...prev, screenSharing: false }));
+        setCall((prev) => ({ ...prev, screenSharing: false }));
       }
     } catch (error) {
       console.error('Error sharing screen:', error);
@@ -494,7 +539,9 @@ export default function ProductionMessagesPage() {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: 'audio/wav',
+        });
         const audioUrl = URL.createObjectURL(audioBlob);
 
         const voiceMessage: Message = {
@@ -520,7 +567,7 @@ export default function ProductionMessagesPage() {
           }));
         }, 1000);
 
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       };
 
       mediaRecorder.start();
@@ -551,7 +598,7 @@ export default function ProductionMessagesPage() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: 1280, height: 720, facingMode: 'user' },
-        audio: true
+        audio: true,
       });
       videoStreamRef.current = stream;
 
@@ -568,7 +615,9 @@ export default function ProductionMessagesPage() {
       };
 
       mediaRecorder.onstop = () => {
-        const videoBlob = new Blob(videoChunksRef.current, { type: 'video/webm' });
+        const videoBlob = new Blob(videoChunksRef.current, {
+          type: 'video/webm',
+        });
         const videoUrl = URL.createObjectURL(videoBlob);
 
         const videoMessage: Message = {
@@ -594,7 +643,7 @@ export default function ProductionMessagesPage() {
           }));
         }, 1000);
 
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
         if (videoPreviewRef.current) {
           videoPreviewRef.current.srcObject = null;
         }
@@ -624,7 +673,7 @@ export default function ProductionMessagesPage() {
       setRecordingTime(0);
       videoChunksRef.current = [];
       if (videoStreamRef.current) {
-        videoStreamRef.current.getTracks().forEach(track => track.stop());
+        videoStreamRef.current.getTracks().forEach((track) => track.stop());
       }
       if (videoPreviewRef.current) {
         videoPreviewRef.current.srcObject = null;
@@ -633,32 +682,64 @@ export default function ProductionMessagesPage() {
   };
 
   // Message handlers
-  const handleSend = useCallback((e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const handleSend = useCallback(
+    (e?: React.FormEvent) => {
+      if (e) e.preventDefault();
 
-    if (editingMessage) {
-      // Edit existing message
-      setMessagesByThread((prev) => ({
-        ...prev,
-        [selectedThread]: prev[selectedThread].map((msg) =>
-          msg.id === editingMessage.id
-            ? { ...msg, text: messageInput, edited: true }
-            : msg
-        ),
-      }));
-      setEditingMessage(null);
-      setMessageInput('');
-      return;
-    }
+      if (editingMessage) {
+        // Edit existing message
+        setMessagesByThread((prev) => ({
+          ...prev,
+          [selectedThread]: prev[selectedThread].map((msg) =>
+            msg.id === editingMessage.id
+              ? { ...msg, text: messageInput, edited: true }
+              : msg
+          ),
+        }));
+        setEditingMessage(null);
+        setMessageInput('');
+        return;
+      }
 
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const mediaMessage: Message = {
+      if (selectedFile) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const mediaMessage: Message = {
+            id: Math.random().toString(36).slice(2),
+            sender: 'me',
+            mediaType: selectedFile.type.startsWith('video')
+              ? 'video'
+              : 'image',
+            mediaUrl: event.target?.result as string,
+            text: messageInput,
+            at: Date.now(),
+            status: 'sending',
+            replyTo: replyingTo || undefined,
+          };
+          setMessagesByThread((prev) => ({
+            ...prev,
+            [selectedThread]: [...(prev[selectedThread] || []), mediaMessage],
+          }));
+          setTimeout(() => {
+            setMessagesByThread((prev) => ({
+              ...prev,
+              [selectedThread]: prev[selectedThread].map((msg) =>
+                msg.id === mediaMessage.id
+                  ? { ...msg, status: 'delivered' }
+                  : msg
+              ),
+            }));
+          }, 1000);
+        };
+        reader.readAsDataURL(selectedFile);
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        setMessageInput('');
+        setReplyingTo(null);
+      } else if (messageInput.trim()) {
+        const newMessage: Message = {
           id: Math.random().toString(36).slice(2),
           sender: 'me',
-          mediaType: selectedFile.type.startsWith('video') ? 'video' : 'image',
-          mediaUrl: event.target?.result as string,
           text: messageInput,
           at: Date.now(),
           status: 'sending',
@@ -666,48 +747,23 @@ export default function ProductionMessagesPage() {
         };
         setMessagesByThread((prev) => ({
           ...prev,
-          [selectedThread]: [...(prev[selectedThread] || []), mediaMessage],
+          [selectedThread]: [...(prev[selectedThread] || []), newMessage],
         }));
+        setMessageInput('');
+        setReplyingTo(null);
+
         setTimeout(() => {
           setMessagesByThread((prev) => ({
             ...prev,
             [selectedThread]: prev[selectedThread].map((msg) =>
-              msg.id === mediaMessage.id ? { ...msg, status: 'delivered' } : msg
+              msg.id === newMessage.id ? { ...msg, status: 'delivered' } : msg
             ),
           }));
         }, 1000);
-      };
-      reader.readAsDataURL(selectedFile);
-      setSelectedFile(null);
-      setPreviewUrl(null);
-      setMessageInput('');
-      setReplyingTo(null);
-    } else if (messageInput.trim()) {
-      const newMessage: Message = {
-        id: Math.random().toString(36).slice(2),
-        sender: 'me',
-        text: messageInput,
-        at: Date.now(),
-        status: 'sending',
-        replyTo: replyingTo || undefined,
-      };
-      setMessagesByThread((prev) => ({
-        ...prev,
-        [selectedThread]: [...(prev[selectedThread] || []), newMessage],
-      }));
-      setMessageInput('');
-      setReplyingTo(null);
-
-      setTimeout(() => {
-        setMessagesByThread((prev) => ({
-          ...prev,
-          [selectedThread]: prev[selectedThread].map((msg) =>
-            msg.id === newMessage.id ? { ...msg, status: 'delivered' } : msg
-          ),
-        }));
-      }, 1000);
-    }
-  }, [messageInput, selectedFile, replyingTo, editingMessage, selectedThread]);
+      }
+    },
+    [messageInput, selectedFile, replyingTo, editingMessage, selectedThread]
+  );
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -732,7 +788,7 @@ export default function ProductionMessagesPage() {
     };
     setMessagesByThread((prev) => ({
       ...prev,
-      [selectedThread]: [...(prev[selectedThread] || []), gifMessage]
+      [selectedThread]: [...(prev[selectedThread] || []), gifMessage],
     }));
     setShowGifPicker(false);
 
@@ -775,16 +831,14 @@ export default function ProductionMessagesPage() {
       [selectedThread]: prev[selectedThread].map((msg) => {
         if (msg.id === messageId) {
           const reactions = msg.reactions || [];
-          const existingReaction = reactions.find(r => r.emoji === emoji);
+          const existingReaction = reactions.find((r) => r.emoji === emoji);
 
           if (existingReaction) {
             // Add user to existing reaction
             return {
               ...msg,
-              reactions: reactions.map(r =>
-                r.emoji === emoji
-                  ? { ...r, users: [...r.users, 'You'] }
-                  : r
+              reactions: reactions.map((r) =>
+                r.emoji === emoji ? { ...r, users: [...r.users, 'You'] } : r
               ),
             };
           } else {
@@ -905,7 +959,9 @@ export default function ProductionMessagesPage() {
   }, [messages, selectedThread]);
 
   return (
-    <div className={`production-messages-page ${colorMode === 'dark' ? 'dark-mode' : ''}`}>
+    <div
+      className={`production-messages-page ${colorMode === 'dark' ? 'dark-mode' : ''}`}
+    >
       {/* Connection Status Banner */}
       <AnimatePresence>
         {connectionStatus !== 'online' && (
@@ -915,7 +971,9 @@ export default function ProductionMessagesPage() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -50, opacity: 0 }}
           >
-            {connectionStatus === 'connecting' ? '🔄 Connecting...' : '⚠️ No internet connection'}
+            {connectionStatus === 'connecting'
+              ? '🔄 Connecting...'
+              : '⚠️ No internet connection'}
           </motion.div>
         )}
       </AnimatePresence>
@@ -941,7 +999,12 @@ export default function ProductionMessagesPage() {
                   <motion.div
                     className="local-video-pip"
                     drag
-                    dragConstraints={{ left: 0, right: 300, top: 0, bottom: 300 }}
+                    dragConstraints={{
+                      left: 0,
+                      right: 300,
+                      top: 0,
+                      bottom: 300,
+                    }}
                   >
                     <video
                       ref={localVideoRef}
@@ -956,8 +1019,12 @@ export default function ProductionMessagesPage() {
                       {call.participant?.name}
                     </div>
                     <div className="call-meta">
-                      <span className="call-duration">{formatDuration(call.duration)}</span>
-                      <span className={`connection-quality quality-${call.connectionQuality}`}>
+                      <span className="call-duration">
+                        {formatDuration(call.duration)}
+                      </span>
+                      <span
+                        className={`connection-quality quality-${call.connectionQuality}`}
+                      >
                         {call.connectionQuality === 'excellent' && '📶'}
                         {call.connectionQuality === 'good' && '📶'}
                         {call.connectionQuality === 'poor' && '📶'}
@@ -978,9 +1045,13 @@ export default function ProductionMessagesPage() {
                   </div>
                   <h2 className="call-name">{call.participant?.name}</h2>
                   <p className="call-status">
-                    {call.duration > 0 ? formatDuration(call.duration) : 'Connecting...'}
+                    {call.duration > 0
+                      ? formatDuration(call.duration)
+                      : 'Connecting...'}
                   </p>
-                  <span className={`connection-quality-text quality-${call.connectionQuality}`}>
+                  <span
+                    className={`connection-quality-text quality-${call.connectionQuality}`}
+                  >
                     Connection: {call.connectionQuality}
                   </span>
                 </div>
@@ -991,8 +1062,12 @@ export default function ProductionMessagesPage() {
                   className={`control-btn ${call.muted ? 'muted' : ''}`}
                   onClick={toggleMute}
                 >
-                  <span className="control-icon">{call.muted ? '🔇' : '🎤'}</span>
-                  <span className="control-label">{call.muted ? 'Unmute' : 'Mute'}</span>
+                  <span className="control-icon">
+                    {call.muted ? '🔇' : '🎤'}
+                  </span>
+                  <span className="control-label">
+                    {call.muted ? 'Unmute' : 'Mute'}
+                  </span>
                 </motion.button>
 
                 {call.type === 'video' && (
@@ -1001,7 +1076,9 @@ export default function ProductionMessagesPage() {
                       className={`control-btn ${!call.videoEnabled ? 'disabled' : ''}`}
                       onClick={toggleVideo}
                     >
-                      <span className="control-icon">{call.videoEnabled ? '📹' : '📷'}</span>
+                      <span className="control-icon">
+                        {call.videoEnabled ? '📹' : '📷'}
+                      </span>
                       <span className="control-label">
                         {call.videoEnabled ? 'Stop Video' : 'Start Video'}
                       </span>
@@ -1137,9 +1214,12 @@ export default function ProductionMessagesPage() {
               <div className="suggested-users">
                 <p className="section-label">Suggested</p>
                 {threads
-                  .filter(thread =>
-                    newMessageRecipient === '' ||
-                    thread.name.toLowerCase().includes(newMessageRecipient.toLowerCase())
+                  .filter(
+                    (thread) =>
+                      newMessageRecipient === '' ||
+                      thread.name
+                        .toLowerCase()
+                        .includes(newMessageRecipient.toLowerCase())
                   )
                   .map((thread) => (
                     <motion.div
@@ -1162,7 +1242,9 @@ export default function ProductionMessagesPage() {
                       <div className="suggested-user-info">
                         <span className="suggested-user-name">
                           {thread.name}
-                          {thread.verified && <span className="verified-icon">✓</span>}
+                          {thread.verified && (
+                            <span className="verified-icon">✓</span>
+                          )}
                         </span>
                         <span className="suggested-user-status">
                           {thread.online ? 'Active now' : thread.lastSeen}
@@ -1257,7 +1339,9 @@ export default function ProductionMessagesPage() {
                       <h3 className="thread-name">
                         {thread.pinned && <span className="pin-icon">📌</span>}
                         {thread.name}
-                        {thread.verified && <span className="verified-icon">✓</span>}
+                        {thread.verified && (
+                          <span className="verified-icon">✓</span>
+                        )}
                         {thread.muted && <span className="muted-icon">🔕</span>}
                       </h3>
                       <span className="thread-time">{thread.time}</span>
@@ -1309,7 +1393,9 @@ export default function ProductionMessagesPage() {
               <div className="header-info">
                 <h2 className="chat-title">
                   {activeThread?.name}
-                  {activeThread?.verified && <span className="verified-badge-small">✓</span>}
+                  {activeThread?.verified && (
+                    <span className="verified-badge-small">✓</span>
+                  )}
                 </h2>
                 <p className="chat-status">
                   {activeThread?.isTyping ? (
@@ -1317,7 +1403,9 @@ export default function ProductionMessagesPage() {
                   ) : activeThread?.online ? (
                     <span className="online-text">Active now</span>
                   ) : (
-                    <span className="offline-text">{activeThread?.lastSeen}</span>
+                    <span className="offline-text">
+                      {activeThread?.lastSeen}
+                    </span>
                   )}
                 </p>
               </div>
@@ -1345,10 +1433,7 @@ export default function ProductionMessagesPage() {
               >
                 📹
               </motion.button>
-              <motion.button
-                className="header-action-btn"
-                title="More options"
-              >
+              <motion.button className="header-action-btn" title="More options">
                 ⋮
               </motion.button>
             </div>
@@ -1405,12 +1490,20 @@ export default function ProductionMessagesPage() {
                   <div className="reply-line-vert"></div>
                   <div>
                     <div className="reply-to-name">
-                      Replying to {replyingTo.sender === 'me' ? 'yourself' : activeThread?.name}
+                      Replying to{' '}
+                      {replyingTo.sender === 'me'
+                        ? 'yourself'
+                        : activeThread?.name}
                     </div>
-                    <div className="reply-to-text">{replyingTo.text || '📎 Media'}</div>
+                    <div className="reply-to-text">
+                      {replyingTo.text || '📎 Media'}
+                    </div>
                   </div>
                 </div>
-                <button onClick={() => setReplyingTo(null)} className="reply-cancel">
+                <button
+                  onClick={() => setReplyingTo(null)}
+                  className="reply-cancel"
+                >
                   ✕
                 </button>
               </motion.div>
@@ -1465,9 +1558,13 @@ export default function ProductionMessagesPage() {
                     <div className="preview-video-icon">📹</div>
                   )}
                   <div className="preview-info">
-                    <span className="preview-filename">{selectedFile?.name}</span>
+                    <span className="preview-filename">
+                      {selectedFile?.name}
+                    </span>
                     <span className="preview-size">
-                      {selectedFile && (selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                      {selectedFile &&
+                        (selectedFile.size / 1024 / 1024).toFixed(2)}{' '}
+                      MB
                     </span>
                   </div>
                 </div>
@@ -1501,7 +1598,9 @@ export default function ProductionMessagesPage() {
                   >
                     🔴
                   </motion.span>
-                  <span className="recording-time">{formatDuration(recordingTime)}</span>
+                  <span className="recording-time">
+                    {formatDuration(recordingTime)}
+                  </span>
                   <div className="recording-waveform">
                     {[...Array(15)].map((_, i) => (
                       <motion.div
@@ -1518,7 +1617,10 @@ export default function ProductionMessagesPage() {
                   </div>
                 </div>
                 <div className="recording-actions">
-                  <button onClick={cancelRecording} className="recording-cancel">
+                  <button
+                    onClick={cancelRecording}
+                    className="recording-cancel"
+                  >
                     ✕
                   </button>
                   <button onClick={stopRecording} className="recording-send">
@@ -1554,7 +1656,9 @@ export default function ProductionMessagesPage() {
                     >
                       🔴 REC
                     </motion.span>
-                    <span className="video-recording-time">{formatDuration(recordingTime)}</span>
+                    <span className="video-recording-time">
+                      {formatDuration(recordingTime)}
+                    </span>
                   </div>
                   <div className="video-recording-actions">
                     <motion.button
@@ -1666,12 +1770,18 @@ export default function ProductionMessagesPage() {
               </motion.button>
               <motion.button
                 className={`input-btn ${isVideoRecording ? 'recording-active' : ''}`}
-                onClick={isVideoRecording ? stopVideoRecording : startVideoRecording}
+                onClick={
+                  isVideoRecording ? stopVideoRecording : startVideoRecording
+                }
                 onContextMenu={(e) => {
                   e.preventDefault();
                   if (isVideoRecording) cancelVideoRecording();
                 }}
-                title={isVideoRecording ? 'Stop video recording' : 'Record video message'}
+                title={
+                  isVideoRecording
+                    ? 'Stop video recording'
+                    : 'Record video message'
+                }
               >
                 🎬
               </motion.button>
@@ -1687,8 +1797,8 @@ export default function ProductionMessagesPage() {
                   editingMessage
                     ? 'Edit message...'
                     : replyingTo
-                    ? 'Type a reply...'
-                    : 'Type a message...'
+                      ? 'Type a reply...'
+                      : 'Type a message...'
                 }
                 className="message-input-field"
               />
@@ -1718,14 +1828,24 @@ export default function ProductionMessagesPage() {
       <style jsx global>{`
         .production-messages-page {
           height: 100vh;
-          background: linear-gradient(135deg, #fdf2f8 0%, #faf5ff 50%, #f5f3ff 100%) !important;
+          background: linear-gradient(
+            135deg,
+            #fdf2f8 0%,
+            #faf5ff 50%,
+            #f5f3ff 100%
+          ) !important;
           position: relative;
           overflow: hidden;
           isolation: isolate;
         }
 
         .production-messages-page.dark-mode {
-          background: linear-gradient(135deg, #0f0a1f 0%, #1a0b2e 50%, #16213e 100%) !important;
+          background: linear-gradient(
+            135deg,
+            #0f0a1f 0%,
+            #1a0b2e 50%,
+            #16213e 100%
+          ) !important;
         }
 
         /* Smooth Scroll */
@@ -1734,8 +1854,11 @@ export default function ProductionMessagesPage() {
         }
 
         /* Production Quality Transitions */
-        button, input, .thread-item, .message-bubble {
-          transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+        button,
+        input,
+        .thread-item,
+        .message-bubble {
+          transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Connection Banner */
@@ -1844,9 +1967,15 @@ export default function ProductionMessagesPage() {
           font-size: 14px;
         }
 
-        .quality-excellent { opacity: 1; }
-        .quality-good { opacity: 0.7; }
-        .quality-poor { opacity: 0.4; }
+        .quality-excellent {
+          opacity: 1;
+        }
+        .quality-good {
+          opacity: 0.7;
+        }
+        .quality-poor {
+          opacity: 0.4;
+        }
 
         .audio-call-layout {
           flex: 1;
@@ -2246,8 +2375,10 @@ export default function ProductionMessagesPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4), 0 2px 6px rgba(118, 75, 162, 0.3);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow:
+            0 4px 15px rgba(102, 126, 234, 0.4),
+            0 2px 6px rgba(118, 75, 162, 0.3);
           transform: scale(1);
           position: relative;
         }
@@ -2258,8 +2389,14 @@ export default function ProductionMessagesPage() {
           inset: 0;
           border-radius: 50%;
           padding: 2px;
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
-          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.3),
+            rgba(255, 255, 255, 0)
+          );
+          -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
           -webkit-mask-composite: xor;
           mask-composite: exclude;
           opacity: 0.5;
@@ -2268,7 +2405,9 @@ export default function ProductionMessagesPage() {
         .compose-btn:hover {
           background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
           transform: scale(1.1);
-          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5), 0 4px 10px rgba(118, 75, 162, 0.4);
+          box-shadow:
+            0 6px 20px rgba(102, 126, 234, 0.5),
+            0 4px 10px rgba(118, 75, 162, 0.4);
         }
 
         .compose-btn:active {
@@ -2279,12 +2418,16 @@ export default function ProductionMessagesPage() {
 
         .dark-mode .compose-btn {
           background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
-          box-shadow: 0 4px 15px rgba(167, 139, 250, 0.4), 0 2px 6px rgba(139, 92, 246, 0.3);
+          box-shadow:
+            0 4px 15px rgba(167, 139, 250, 0.4),
+            0 2px 6px rgba(139, 92, 246, 0.3);
         }
 
         .dark-mode .compose-btn:hover {
           background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
-          box-shadow: 0 6px 20px rgba(167, 139, 250, 0.5), 0 4px 10px rgba(139, 92, 246, 0.4);
+          box-shadow:
+            0 6px 20px rgba(167, 139, 250, 0.5),
+            0 4px 10px rgba(139, 92, 246, 0.4);
         }
 
         .search-container {
@@ -2316,16 +2459,25 @@ export default function ProductionMessagesPage() {
           border: 1.5px solid rgba(0, 0, 0, 0.08);
           border-radius: 14px;
           font-size: 15px;
-          background: linear-gradient(135deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.04) 100%);
-          transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), inset 0 1px 2px rgba(0, 0, 0, 0.02);
+          background: linear-gradient(
+            135deg,
+            rgba(0, 0, 0, 0.02) 0%,
+            rgba(0, 0, 0, 0.04) 100%
+          );
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow:
+            0 2px 4px rgba(0, 0, 0, 0.04),
+            inset 0 1px 2px rgba(0, 0, 0, 0.02);
         }
 
         .search-input:focus {
           outline: none;
           border-color: #8b5cf6;
           background: white;
-          box-shadow: 0 3px 8px rgba(139, 92, 246, 0.15), 0 2px 4px rgba(139, 92, 246, 0.1), inset 0 1px 2px rgba(139, 92, 246, 0.05);
+          box-shadow:
+            0 3px 8px rgba(139, 92, 246, 0.15),
+            0 2px 4px rgba(139, 92, 246, 0.1),
+            inset 0 1px 2px rgba(139, 92, 246, 0.05);
           transform: translateY(-1px);
         }
 
@@ -2335,16 +2487,25 @@ export default function ProductionMessagesPage() {
         }
 
         .dark-mode .search-input {
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.06) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.04) 0%,
+            rgba(255, 255, 255, 0.06) 100%
+          );
           border-color: rgba(255, 255, 255, 0.1);
           color: #fff;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(0, 0, 0, 0.2);
+          box-shadow:
+            0 2px 4px rgba(0, 0, 0, 0.3),
+            inset 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .dark-mode .search-input:focus {
           border-color: #a78bfa;
           background: rgba(255, 255, 255, 0.1);
-          box-shadow: 0 3px 8px rgba(167, 139, 250, 0.2), 0 2px 4px rgba(167, 139, 250, 0.12), inset 0 1px 2px rgba(167, 139, 250, 0.08);
+          box-shadow:
+            0 3px 8px rgba(167, 139, 250, 0.2),
+            0 2px 4px rgba(167, 139, 250, 0.12),
+            inset 0 1px 2px rgba(167, 139, 250, 0.08);
         }
 
         .dark-mode .search-input:hover:not(:focus) {
@@ -2366,7 +2527,7 @@ export default function ProductionMessagesPage() {
           cursor: pointer;
           border-radius: 14px;
           margin-bottom: 6px;
-          transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           transform: translateX(0) scale(1);
           background: rgba(255, 255, 255, 0.6);
@@ -2377,7 +2538,9 @@ export default function ProductionMessagesPage() {
         .thread-item:hover {
           background: #ffffff;
           transform: translateX(4px) scale(1.02);
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+          box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.08),
+            0 2px 8px rgba(0, 0, 0, 0.04);
           border-color: rgba(139, 92, 246, 0.08);
         }
 
@@ -2387,9 +2550,15 @@ export default function ProductionMessagesPage() {
         }
 
         .thread-item.active {
-          background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0.04) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(139, 92, 246, 0.08) 0%,
+            rgba(139, 92, 246, 0.04) 100%
+          );
           transform: translateX(0) scale(1);
-          box-shadow: 0 4px 20px rgba(139, 92, 246, 0.12), 0 2px 8px rgba(139, 92, 246, 0.08);
+          box-shadow:
+            0 4px 20px rgba(139, 92, 246, 0.12),
+            0 2px 8px rgba(139, 92, 246, 0.08);
           border: 1.5px solid rgba(139, 92, 246, 0.2);
         }
 
@@ -2401,13 +2570,21 @@ export default function ProductionMessagesPage() {
 
         .dark-mode .thread-item:hover {
           background: #2a2a2a;
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+          box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.4),
+            0 2px 8px rgba(0, 0, 0, 0.3);
           border-color: rgba(167, 139, 250, 0.15);
         }
 
         .dark-mode .thread-item.active {
-          background: linear-gradient(135deg, rgba(167, 139, 250, 0.12) 0%, rgba(167, 139, 250, 0.06) 100%);
-          box-shadow: 0 4px 20px rgba(167, 139, 250, 0.2), 0 2px 8px rgba(167, 139, 250, 0.15);
+          background: linear-gradient(
+            135deg,
+            rgba(167, 139, 250, 0.12) 0%,
+            rgba(167, 139, 250, 0.06) 100%
+          );
+          box-shadow:
+            0 4px 20px rgba(167, 139, 250, 0.2),
+            0 2px 8px rgba(167, 139, 250, 0.15);
           border: 1.5px solid rgba(167, 139, 250, 0.3);
         }
 
@@ -2425,7 +2602,12 @@ export default function ProductionMessagesPage() {
           position: absolute;
           inset: -3px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+          background: linear-gradient(
+            135deg,
+            #667eea 0%,
+            #764ba2 50%,
+            #f093fb 100%
+          );
           opacity: 0;
           transition: opacity 0.3s ease;
         }
@@ -2437,26 +2619,34 @@ export default function ProductionMessagesPage() {
         .thread-avatar {
           border-radius: 50%;
           border: 3px solid rgba(255, 255, 255, 0.9);
-          box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15), 0 2px 6px rgba(0, 0, 0, 0.08);
-          transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+          box-shadow:
+            0 4px 12px rgba(139, 92, 246, 0.15),
+            0 2px 6px rgba(0, 0, 0, 0.08);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           z-index: 1;
         }
 
         .thread-item:hover .thread-avatar {
           border-color: rgba(255, 255, 255, 1);
-          box-shadow: 0 6px 20px rgba(139, 92, 246, 0.25), 0 3px 10px rgba(0, 0, 0, 0.12);
+          box-shadow:
+            0 6px 20px rgba(139, 92, 246, 0.25),
+            0 3px 10px rgba(0, 0, 0, 0.12);
           transform: scale(1.08);
         }
 
         .dark-mode .thread-avatar {
           border-color: rgba(30, 20, 50, 0.9);
-          box-shadow: 0 4px 12px rgba(167, 139, 250, 0.2), 0 2px 6px rgba(0, 0, 0, 0.3);
+          box-shadow:
+            0 4px 12px rgba(167, 139, 250, 0.2),
+            0 2px 6px rgba(0, 0, 0, 0.3);
         }
 
         .dark-mode .thread-item:hover .thread-avatar {
           border-color: rgba(30, 20, 50, 1);
-          box-shadow: 0 6px 20px rgba(167, 139, 250, 0.35), 0 3px 10px rgba(0, 0, 0, 0.4);
+          box-shadow:
+            0 6px 20px rgba(167, 139, 250, 0.35),
+            0 3px 10px rgba(0, 0, 0, 0.4);
         }
 
         .online-badge {
@@ -2468,31 +2658,45 @@ export default function ProductionMessagesPage() {
           background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
           border: 3px solid white;
           border-radius: 50%;
-          box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.6), 0 2px 6px rgba(52, 199, 89, 0.4);
+          box-shadow:
+            0 0 0 0 rgba(52, 199, 89, 0.6),
+            0 2px 6px rgba(52, 199, 89, 0.4);
           animation: onlinePulse 2s ease-in-out infinite;
         }
 
         @keyframes onlinePulse {
-          0%, 100% {
-            box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.6), 0 2px 6px rgba(52, 199, 89, 0.4);
+          0%,
+          100% {
+            box-shadow:
+              0 0 0 0 rgba(52, 199, 89, 0.6),
+              0 2px 6px rgba(52, 199, 89, 0.4);
           }
           50% {
-            box-shadow: 0 0 0 4px rgba(52, 199, 89, 0), 0 2px 8px rgba(52, 199, 89, 0.5);
+            box-shadow:
+              0 0 0 4px rgba(52, 199, 89, 0),
+              0 2px 8px rgba(52, 199, 89, 0.5);
           }
         }
 
         .dark-mode .online-badge {
           background: linear-gradient(135deg, #30d158 0%, #2ecc40 100%);
           border-color: #1a1a1a;
-          box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.7), 0 2px 6px rgba(48, 209, 88, 0.5);
+          box-shadow:
+            0 0 0 0 rgba(48, 209, 88, 0.7),
+            0 2px 6px rgba(48, 209, 88, 0.5);
         }
 
         @keyframes onlinePulseDark {
-          0%, 100% {
-            box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.7), 0 2px 6px rgba(48, 209, 88, 0.5);
+          0%,
+          100% {
+            box-shadow:
+              0 0 0 0 rgba(48, 209, 88, 0.7),
+              0 2px 6px rgba(48, 209, 88, 0.5);
           }
           50% {
-            box-shadow: 0 0 0 4px rgba(48, 209, 88, 0), 0 2px 8px rgba(48, 209, 88, 0.6);
+            box-shadow:
+              0 0 0 4px rgba(48, 209, 88, 0),
+              0 2px 8px rgba(48, 209, 88, 0.6);
           }
         }
 
@@ -2635,7 +2839,9 @@ export default function ProductionMessagesPage() {
         }
 
         @keyframes typingBounce {
-          0%, 60%, 100% {
+          0%,
+          60%,
+          100% {
             transform: translateY(0) scale(1);
             opacity: 0.7;
           }
@@ -2647,7 +2853,11 @@ export default function ProductionMessagesPage() {
 
         /* Chat Area - Premium design */
         .chat-area {
-          background: linear-gradient(180deg, rgba(253, 242, 248, 0.6) 0%, rgba(250, 245, 255, 0.6) 100%);
+          background: linear-gradient(
+            180deg,
+            rgba(253, 242, 248, 0.6) 0%,
+            rgba(250, 245, 255, 0.6) 100%
+          );
           display: flex;
           flex-direction: column;
           position: relative;
@@ -2657,7 +2867,11 @@ export default function ProductionMessagesPage() {
         }
 
         .dark-mode .chat-area {
-          background: linear-gradient(180deg, rgba(15, 10, 31, 0.8) 0%, rgba(26, 11, 46, 0.8) 100%);
+          background: linear-gradient(
+            180deg,
+            rgba(15, 10, 31, 0.8) 0%,
+            rgba(26, 11, 46, 0.8) 100%
+          );
           box-shadow: inset 2px 0 4px rgba(0, 0, 0, 0.5);
         }
 
@@ -2667,14 +2881,22 @@ export default function ProductionMessagesPage() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(250, 245, 255, 0.9) 100%);
+          background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(250, 245, 255, 0.9) 100%
+          );
           box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
           backdrop-filter: blur(20px);
           flex-shrink: 0;
         }
 
         .dark-mode .chat-header {
-          background: linear-gradient(180deg, rgba(30, 20, 50, 0.9) 0%, rgba(26, 11, 46, 0.9) 100%);
+          background: linear-gradient(
+            180deg,
+            rgba(30, 20, 50, 0.9) 0%,
+            rgba(26, 11, 46, 0.9) 100%
+          );
           border-bottom-color: rgba(167, 139, 250, 0.2);
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
@@ -2799,20 +3021,28 @@ export default function ProductionMessagesPage() {
           width: 42px;
           height: 42px;
           border-radius: 50%;
-          background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0.12) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(139, 92, 246, 0.08) 0%,
+            rgba(139, 92, 246, 0.12) 100%
+          );
           border: 1px solid rgba(139, 92, 246, 0.1);
           font-size: 18px;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           transform: scale(1);
           box-shadow: 0 2px 6px rgba(139, 92, 246, 0.08);
         }
 
         .header-action-btn:hover {
-          background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.25) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(139, 92, 246, 0.15) 0%,
+            rgba(139, 92, 246, 0.25) 100%
+          );
           border-color: rgba(139, 92, 246, 0.2);
           transform: scale(1.1);
           box-shadow: 0 3px 10px rgba(139, 92, 246, 0.15);
@@ -2825,13 +3055,21 @@ export default function ProductionMessagesPage() {
         }
 
         .dark-mode .header-action-btn {
-          background: linear-gradient(135deg, rgba(167, 139, 250, 0.12) 0%, rgba(167, 139, 250, 0.18) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(167, 139, 250, 0.12) 0%,
+            rgba(167, 139, 250, 0.18) 100%
+          );
           border-color: rgba(167, 139, 250, 0.15);
           box-shadow: 0 2px 6px rgba(167, 139, 250, 0.12);
         }
 
         .dark-mode .header-action-btn:hover {
-          background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(167, 139, 250, 0.3) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(167, 139, 250, 0.2) 0%,
+            rgba(167, 139, 250, 0.3) 100%
+          );
           border-color: rgba(167, 139, 250, 0.25);
           box-shadow: 0 3px 10px rgba(167, 139, 250, 0.2);
         }
@@ -2903,22 +3141,30 @@ export default function ProductionMessagesPage() {
           border-radius: 50%;
           flex-shrink: 0;
           border: 2px solid rgba(255, 255, 255, 0.9);
-          box-shadow: 0 3px 10px rgba(139, 92, 246, 0.15), 0 2px 4px rgba(0, 0, 0, 0.08);
-          transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+          box-shadow:
+            0 3px 10px rgba(139, 92, 246, 0.15),
+            0 2px 4px rgba(0, 0, 0, 0.08);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .message-wrapper:hover .message-avatar {
           transform: scale(1.05);
-          box-shadow: 0 4px 14px rgba(139, 92, 246, 0.25), 0 3px 6px rgba(0, 0, 0, 0.1);
+          box-shadow:
+            0 4px 14px rgba(139, 92, 246, 0.25),
+            0 3px 6px rgba(0, 0, 0, 0.1);
         }
 
         .dark-mode .message-avatar {
           border-color: rgba(30, 20, 50, 0.9);
-          box-shadow: 0 3px 10px rgba(167, 139, 250, 0.2), 0 2px 4px rgba(0, 0, 0, 0.3);
+          box-shadow:
+            0 3px 10px rgba(167, 139, 250, 0.2),
+            0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .dark-mode .message-wrapper:hover .message-avatar {
-          box-shadow: 0 4px 14px rgba(167, 139, 250, 0.35), 0 3px 6px rgba(0, 0, 0, 0.4);
+          box-shadow:
+            0 4px 14px rgba(167, 139, 250, 0.35),
+            0 3px 6px rgba(0, 0, 0, 0.4);
         }
 
         .message-bubble-wrapper {
@@ -2956,7 +3202,7 @@ export default function ProductionMessagesPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           transform: scale(1);
         }
 
@@ -3030,39 +3276,67 @@ export default function ProductionMessagesPage() {
           border-radius: 20px;
           position: relative;
           word-wrap: break-word;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-          transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+          box-shadow:
+            0 2px 6px rgba(0, 0, 0, 0.06),
+            0 1px 3px rgba(0, 0, 0, 0.04);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           font-size: 15px;
           line-height: 1.5;
           border: 1px solid rgba(0, 0, 0, 0.04);
         }
 
         .message-bubble:hover {
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
+          box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.1),
+            0 2px 6px rgba(0, 0, 0, 0.06);
           transform: translateY(-2px);
         }
 
         .bubble-received {
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.95) 0%,
+            rgba(248, 250, 252, 0.95) 100%
+          );
           border-bottom-left-radius: 6px;
           border-color: rgba(139, 92, 246, 0.1);
-          box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+          box-shadow:
+            0 2px 8px rgba(139, 92, 246, 0.08),
+            0 1px 3px rgba(0, 0, 0, 0.04);
         }
 
         .bubble-received:hover {
-          background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(245, 243, 255, 1) 100%);
-          box-shadow: 0 4px 12px rgba(139, 92, 246, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(245, 243, 255, 1) 100%
+          );
+          box-shadow:
+            0 4px 12px rgba(139, 92, 246, 0.12),
+            0 2px 6px rgba(0, 0, 0, 0.06);
         }
 
         .dark-mode .bubble-received {
-          background: linear-gradient(135deg, rgba(40, 30, 60, 0.95) 0%, rgba(30, 20, 50, 0.95) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(40, 30, 60, 0.95) 0%,
+            rgba(30, 20, 50, 0.95) 100%
+          );
           border-color: rgba(167, 139, 250, 0.15);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(167, 139, 250, 0.1);
+          box-shadow:
+            0 2px 8px rgba(0, 0, 0, 0.3),
+            0 1px 3px rgba(167, 139, 250, 0.1);
         }
 
         .dark-mode .bubble-received:hover {
-          background: linear-gradient(135deg, rgba(50, 40, 70, 0.95) 0%, rgba(40, 30, 60, 0.95) 100%);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(167, 139, 250, 0.15);
+          background: linear-gradient(
+            135deg,
+            rgba(50, 40, 70, 0.95) 0%,
+            rgba(40, 30, 60, 0.95) 100%
+          );
+          box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.4),
+            0 2px 6px rgba(167, 139, 250, 0.15);
         }
 
         .bubble-sent {
@@ -3070,22 +3344,30 @@ export default function ProductionMessagesPage() {
           color: white;
           border-bottom-right-radius: 6px;
           border-color: rgba(102, 126, 234, 0.3);
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3), 0 2px 4px rgba(118, 75, 162, 0.2);
+          box-shadow:
+            0 4px 12px rgba(102, 126, 234, 0.3),
+            0 2px 4px rgba(118, 75, 162, 0.2);
         }
 
         .bubble-sent:hover {
           background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4), 0 3px 8px rgba(118, 75, 162, 0.3);
+          box-shadow:
+            0 6px 20px rgba(102, 126, 234, 0.4),
+            0 3px 8px rgba(118, 75, 162, 0.3);
         }
 
         .dark-mode .bubble-sent {
           background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
-          box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3), 0 2px 4px rgba(139, 92, 246, 0.2);
+          box-shadow:
+            0 4px 12px rgba(167, 139, 250, 0.3),
+            0 2px 4px rgba(139, 92, 246, 0.2);
         }
 
         .dark-mode .bubble-sent:hover {
           background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
-          box-shadow: 0 6px 20px rgba(167, 139, 250, 0.4), 0 3px 8px rgba(139, 92, 246, 0.3);
+          box-shadow:
+            0 6px 20px rgba(167, 139, 250, 0.4),
+            0 3px 8px rgba(139, 92, 246, 0.3);
         }
 
         .message-failed {
@@ -3142,8 +3424,10 @@ export default function ProductionMessagesPage() {
           filter: brightness(1.2);
         }
 
-        .bubble-sent .voice-audio-player::-webkit-media-controls-current-time-display,
-        .bubble-sent .voice-audio-player::-webkit-media-controls-time-remaining-display {
+        .bubble-sent
+          .voice-audio-player::-webkit-media-controls-current-time-display,
+        .bubble-sent
+          .voice-audio-player::-webkit-media-controls-time-remaining-display {
           color: white;
         }
 
@@ -3571,7 +3855,11 @@ export default function ProductionMessagesPage() {
         /* Input Area - Premium */
         .chat-input-area {
           padding: 20px 28px 24px 28px;
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 245, 255, 0.98) 100%);
+          background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.95) 0%,
+            rgba(250, 245, 255, 0.98) 100%
+          );
           border-top: 1px solid rgba(139, 92, 246, 0.15);
           display: flex;
           gap: 12px;
@@ -3582,7 +3870,11 @@ export default function ProductionMessagesPage() {
         }
 
         .dark-mode .chat-input-area {
-          background: linear-gradient(180deg, rgba(30, 20, 50, 0.95) 0%, rgba(26, 11, 46, 0.98) 100%);
+          background: linear-gradient(
+            180deg,
+            rgba(30, 20, 50, 0.95) 0%,
+            rgba(26, 11, 46, 0.98) 100%
+          );
           border-top: 1px solid rgba(167, 139, 250, 0.2);
           box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
         }
@@ -3597,21 +3889,29 @@ export default function ProductionMessagesPage() {
           width: 42px;
           height: 42px;
           border-radius: 50%;
-          background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0.12) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(139, 92, 246, 0.08) 0%,
+            rgba(139, 92, 246, 0.12) 100%
+          );
           border: 1px solid rgba(139, 92, 246, 0.1);
           font-size: 18px;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           font-weight: 600;
           transform: scale(1);
           box-shadow: 0 2px 6px rgba(139, 92, 246, 0.08);
         }
 
         .input-btn:hover {
-          background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.25) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(139, 92, 246, 0.15) 0%,
+            rgba(139, 92, 246, 0.25) 100%
+          );
           border-color: rgba(139, 92, 246, 0.2);
           transform: scale(1.1);
           box-shadow: 0 3px 10px rgba(139, 92, 246, 0.15);
@@ -3624,13 +3924,21 @@ export default function ProductionMessagesPage() {
         }
 
         .dark-mode .input-btn {
-          background: linear-gradient(135deg, rgba(167, 139, 250, 0.12) 0%, rgba(167, 139, 250, 0.18) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(167, 139, 250, 0.12) 0%,
+            rgba(167, 139, 250, 0.18) 100%
+          );
           border-color: rgba(167, 139, 250, 0.15);
           box-shadow: 0 2px 6px rgba(167, 139, 250, 0.12);
         }
 
         .dark-mode .input-btn:hover {
-          background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(167, 139, 250, 0.3) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(167, 139, 250, 0.2) 0%,
+            rgba(167, 139, 250, 0.3) 100%
+          );
           border-color: rgba(167, 139, 250, 0.25);
           box-shadow: 0 3px 10px rgba(167, 139, 250, 0.2);
         }
@@ -3641,7 +3949,8 @@ export default function ProductionMessagesPage() {
         }
 
         @keyframes recordingPulse {
-          0%, 100% {
+          0%,
+          100% {
             transform: scale(1);
           }
           50% {
@@ -3660,39 +3969,53 @@ export default function ProductionMessagesPage() {
           border-radius: 28px;
           font-size: 15px;
           background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-          transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1px 2px rgba(0, 0, 0, 0.02);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow:
+            0 2px 6px rgba(0, 0, 0, 0.04),
+            inset 0 1px 2px rgba(0, 0, 0, 0.02);
         }
 
         .dark-mode .message-input-field {
           background: linear-gradient(135deg, #2c2c2e 0%, #242426 100%);
           border-color: #3a3a3c;
           color: #fff;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(0, 0, 0, 0.2);
+          box-shadow:
+            0 2px 6px rgba(0, 0, 0, 0.3),
+            inset 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .message-input-field:focus {
           outline: none;
           border-color: #8b5cf6;
           background: #ffffff;
-          box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2), 0 2px 8px rgba(139, 92, 246, 0.1), inset 0 1px 2px rgba(139, 92, 246, 0.05);
+          box-shadow:
+            0 4px 16px rgba(139, 92, 246, 0.2),
+            0 2px 8px rgba(139, 92, 246, 0.1),
+            inset 0 1px 2px rgba(139, 92, 246, 0.05);
           transform: translateY(-2px);
         }
 
         .dark-mode .message-input-field:focus {
           border-color: #a78bfa;
           background: #2c2c2e;
-          box-shadow: 0 4px 16px rgba(167, 139, 250, 0.25), 0 2px 8px rgba(167, 139, 250, 0.15), inset 0 1px 2px rgba(167, 139, 250, 0.1);
+          box-shadow:
+            0 4px 16px rgba(167, 139, 250, 0.25),
+            0 2px 8px rgba(167, 139, 250, 0.15),
+            inset 0 1px 2px rgba(167, 139, 250, 0.1);
         }
 
         .message-input-field:hover:not(:focus) {
           border-color: #c8c8cc;
-          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06), inset 0 1px 2px rgba(0, 0, 0, 0.02);
+          box-shadow:
+            0 3px 8px rgba(0, 0, 0, 0.06),
+            inset 0 1px 2px rgba(0, 0, 0, 0.02);
         }
 
         .dark-mode .message-input-field:hover:not(:focus) {
           border-color: #48484a;
-          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(0, 0, 0, 0.2);
+          box-shadow:
+            0 3px 8px rgba(0, 0, 0, 0.4),
+            inset 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .message-input-field::placeholder {
@@ -3715,8 +4038,10 @@ export default function ProductionMessagesPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3), 0 2px 6px rgba(118, 75, 162, 0.2);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow:
+            0 4px 12px rgba(102, 126, 234, 0.3),
+            0 2px 6px rgba(118, 75, 162, 0.2);
           transform: scale(1);
           position: relative;
         }
@@ -3727,8 +4052,14 @@ export default function ProductionMessagesPage() {
           inset: 0;
           border-radius: 50%;
           padding: 2px;
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
-          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.4),
+            rgba(255, 255, 255, 0)
+          );
+          -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
           -webkit-mask-composite: xor;
           mask-composite: exclude;
           opacity: 0.6;
@@ -3736,24 +4067,32 @@ export default function ProductionMessagesPage() {
 
         .dark-mode .send-btn {
           background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
-          box-shadow: 0 4px 12px rgba(167, 139, 250, 0.35), 0 2px 6px rgba(139, 92, 246, 0.25);
+          box-shadow:
+            0 4px 12px rgba(167, 139, 250, 0.35),
+            0 2px 6px rgba(139, 92, 246, 0.25);
         }
 
         .send-btn:hover:not(:disabled) {
           background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
           transform: scale(1.12);
-          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45), 0 3px 10px rgba(118, 75, 162, 0.3);
+          box-shadow:
+            0 6px 20px rgba(102, 126, 234, 0.45),
+            0 3px 10px rgba(118, 75, 162, 0.3);
         }
 
         .dark-mode .send-btn:hover:not(:disabled) {
           background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
-          box-shadow: 0 6px 20px rgba(167, 139, 250, 0.5), 0 3px 10px rgba(139, 92, 246, 0.35);
+          box-shadow:
+            0 6px 20px rgba(167, 139, 250, 0.5),
+            0 3px 10px rgba(139, 92, 246, 0.35);
         }
 
         .send-btn:active:not(:disabled) {
           transform: scale(0.96);
           transition-duration: 0.15s;
-          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.35), 0 1px 4px rgba(118, 75, 162, 0.25);
+          box-shadow:
+            0 2px 8px rgba(102, 126, 234, 0.35),
+            0 1px 4px rgba(118, 75, 162, 0.25);
         }
 
         .send-btn:disabled {

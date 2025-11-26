@@ -8,7 +8,7 @@ export default function IntegrationsPanel() {
     const response = await fetch('/api/integrations/slack/webhook', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ webhook_url: webhookUrl, message })
+      body: JSON.stringify({ webhook_url: webhookUrl, message }),
     });
     const data = await response.json();
     alert(data.message);
@@ -18,7 +18,7 @@ export default function IntegrationsPanel() {
     const response = await fetch('/api/integrations/discord/webhook', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ webhook_url: webhookUrl, content: message })
+      body: JSON.stringify({ webhook_url: webhookUrl, content: message }),
     });
     const data = await response.json();
     alert(data.message);
@@ -27,7 +27,7 @@ export default function IntegrationsPanel() {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6">Third-Party Integrations</h2>
-      
+
       <div className="space-y-6">
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-xl font-semibold mb-4">Slack Integration</h3>
@@ -69,7 +69,9 @@ export default function IntegrationsPanel() {
             <div className="flex items-center justify-between p-3 border rounded">
               <div>
                 <p className="font-medium">Slack</p>
-                <p className="text-sm text-gray-600">Send notifications and messages</p>
+                <p className="text-sm text-gray-600">
+                  Send notifications and messages
+                </p>
               </div>
               <span className="text-green-600">Active</span>
             </div>

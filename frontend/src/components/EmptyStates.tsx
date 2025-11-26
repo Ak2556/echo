@@ -1,7 +1,19 @@
 'use client';
 
 import React from 'react';
-import { Inbox, Users, ShoppingBag, Heart, MessageCircle, Image as ImageIcon, Video, Bell, Search, Bookmark, TrendingUp } from 'lucide-react';
+import {
+  Inbox,
+  Users,
+  ShoppingBag,
+  Heart,
+  MessageCircle,
+  Image as ImageIcon,
+  Video,
+  Bell,
+  Search,
+  Bookmark,
+  TrendingUp,
+} from 'lucide-react';
 
 /**
  * Beautiful Empty State Components
@@ -22,7 +34,13 @@ interface EmptyStateProps {
   };
 }
 
-export function EmptyState({ icon, title, description, action, secondaryAction }: EmptyStateProps) {
+export function EmptyState({
+  icon,
+  title,
+  description,
+  action,
+  secondaryAction,
+}: EmptyStateProps) {
   return (
     <div
       className="animate-fade-in-up"
@@ -33,7 +51,7 @@ export function EmptyState({ icon, title, description, action, secondaryAction }
         justifyContent: 'center',
         padding: '4rem 2rem',
         textAlign: 'center',
-        minHeight: '400px'
+        minHeight: '400px',
       }}
     >
       {/* Icon */}
@@ -51,7 +69,7 @@ export function EmptyState({ icon, title, description, action, secondaryAction }
             marginBottom: '2rem',
             color: 'white',
             fontSize: '3rem',
-            boxShadow: '0 20px 60px rgba(var(--accent-rgb), 0.3)'
+            boxShadow: '0 20px 60px rgba(var(--accent-rgb), 0.3)',
           }}
         >
           {icon}
@@ -64,7 +82,7 @@ export function EmptyState({ icon, title, description, action, secondaryAction }
           fontSize: '1.75rem',
           fontWeight: 700,
           marginBottom: '0.75rem',
-          color: 'var(--fg)'
+          color: 'var(--fg)',
         }}
       >
         {title}
@@ -77,7 +95,7 @@ export function EmptyState({ icon, title, description, action, secondaryAction }
           color: 'var(--muted)',
           maxWidth: '500px',
           lineHeight: 1.6,
-          marginBottom: '2rem'
+          marginBottom: '2rem',
         }}
       >
         {description}
@@ -85,7 +103,14 @@ export function EmptyState({ icon, title, description, action, secondaryAction }
 
       {/* Actions */}
       {(action || secondaryAction) && (
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '1rem',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+          }}
+        >
           {action && (
             <button
               onClick={action.onClick}
@@ -94,7 +119,7 @@ export function EmptyState({ icon, title, description, action, secondaryAction }
                 padding: '0.875rem 2rem',
                 borderRadius: 'var(--radius-lg)',
                 fontSize: '1rem',
-                fontWeight: 600
+                fontWeight: 600,
               }}
             >
               {action.label}
@@ -108,7 +133,7 @@ export function EmptyState({ icon, title, description, action, secondaryAction }
                 padding: '0.875rem 2rem',
                 borderRadius: 'var(--radius-lg)',
                 fontSize: '1rem',
-                fontWeight: 600
+                fontWeight: 600,
               }}
             >
               {secondaryAction.label}
@@ -134,13 +159,13 @@ export function EmptyFeed({ onCreatePost }: { onCreatePost?: () => void }) {
         onCreatePost
           ? {
               label: 'Create Your First Post',
-              onClick: onCreatePost
+              onClick: onCreatePost,
             }
           : undefined
       }
       secondaryAction={{
         label: 'Discover People',
-        onClick: () => console.log('Discover')
+        onClick: () => console.log('Discover'),
       }}
     />
   );
@@ -154,13 +179,17 @@ export function EmptyFollowers() {
       description="Share interesting content and engage with the community to grow your audience. Your followers will appear here."
       action={{
         label: 'Share Your First Post',
-        onClick: () => console.log('Create post')
+        onClick: () => console.log('Create post'),
       }}
     />
   );
 }
 
-export function EmptyCart({ onBrowseProducts }: { onBrowseProducts?: () => void }) {
+export function EmptyCart({
+  onBrowseProducts,
+}: {
+  onBrowseProducts?: () => void;
+}) {
   return (
     <EmptyState
       icon={<ShoppingBag size={48} />}
@@ -170,11 +199,11 @@ export function EmptyCart({ onBrowseProducts }: { onBrowseProducts?: () => void 
         onBrowseProducts
           ? {
               label: 'Start Shopping',
-              onClick: onBrowseProducts
+              onClick: onBrowseProducts,
             }
           : {
               label: 'Browse Products',
-              onClick: () => console.log('Browse')
+              onClick: () => console.log('Browse'),
             }
       }
     />
@@ -189,7 +218,7 @@ export function EmptyLikes() {
       description="Posts you like will appear here. Start exploring and show some love to content you enjoy!"
       action={{
         label: 'Explore Feed',
-        onClick: () => console.log('Explore')
+        onClick: () => console.log('Explore'),
       }}
     />
   );
@@ -203,11 +232,11 @@ export function EmptyMessages() {
       description="Your inbox is empty. Start a conversation with your friends or discover new connections!"
       action={{
         label: 'Start a Conversation',
-        onClick: () => console.log('New message')
+        onClick: () => console.log('New message'),
       }}
       secondaryAction={{
         label: 'Find Friends',
-        onClick: () => console.log('Find friends')
+        onClick: () => console.log('Find friends'),
       }}
     />
   );
@@ -223,7 +252,7 @@ export function EmptyPhotos({ onUpload }: { onUpload?: () => void }) {
         onUpload
           ? {
               label: 'Upload Photos',
-              onClick: onUpload
+              onClick: onUpload,
             }
           : undefined
       }
@@ -241,7 +270,7 @@ export function EmptyVideos({ onUpload }: { onUpload?: () => void }) {
         onUpload
           ? {
               label: 'Upload Video',
-              onClick: onUpload
+              onClick: onUpload,
             }
           : undefined
       }
@@ -267,7 +296,7 @@ export function EmptySearchResults({ query }: { query: string }) {
       description={`We couldn't find anything matching "${query}". Try different keywords or check your spelling.`}
       action={{
         label: 'Clear Search',
-        onClick: () => console.log('Clear')
+        onClick: () => console.log('Clear'),
       }}
     />
   );
@@ -281,7 +310,7 @@ export function EmptyBookmarks() {
       description="Save posts you want to revisit later. Your bookmarked content will appear here."
       action={{
         label: 'Explore Content',
-        onClick: () => console.log('Explore')
+        onClick: () => console.log('Explore'),
       }}
     />
   );
@@ -295,7 +324,7 @@ export function EmptyTrending() {
       description="Be the first to start a trend! Share interesting content and watch it gain momentum."
       action={{
         label: 'Create Content',
-        onClick: () => console.log('Create')
+        onClick: () => console.log('Create'),
       }}
     />
   );
@@ -308,7 +337,7 @@ export function CompactEmptyState({
   icon,
   message,
   actionLabel,
-  onAction
+  onAction,
 }: {
   icon: React.ReactNode;
   message: string;
@@ -324,7 +353,7 @@ export function CompactEmptyState({
         alignItems: 'center',
         justifyContent: 'center',
         padding: '2rem 1rem',
-        textAlign: 'center'
+        textAlign: 'center',
       }}
     >
       <div
@@ -337,7 +366,7 @@ export function CompactEmptyState({
           alignItems: 'center',
           justifyContent: 'center',
           marginBottom: '1rem',
-          color: 'var(--muted)'
+          color: 'var(--muted)',
         }}
       >
         {icon}
@@ -346,7 +375,7 @@ export function CompactEmptyState({
         style={{
           fontSize: '0.875rem',
           color: 'var(--muted)',
-          marginBottom: onAction ? '1rem' : 0
+          marginBottom: onAction ? '1rem' : 0,
         }}
       >
         {message}
@@ -359,7 +388,7 @@ export function CompactEmptyState({
             padding: '0.5rem 1rem',
             borderRadius: 'var(--radius-md)',
             fontSize: '0.875rem',
-            fontWeight: 600
+            fontWeight: 600,
           }}
         >
           {actionLabel}
@@ -380,7 +409,7 @@ export function MinimalEmptyState({ message }: { message: string }) {
         padding: '3rem 2rem',
         textAlign: 'center',
         color: 'var(--muted)',
-        fontSize: '0.95rem'
+        fontSize: '0.95rem',
       }}
     >
       {message}

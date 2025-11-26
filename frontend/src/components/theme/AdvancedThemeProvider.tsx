@@ -1,6 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useCallback,
+} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { storage } from '@/lib/utils';
 
@@ -70,17 +77,17 @@ interface ThemeContextType {
   reducedMotion: ReducedMotion;
   fontSize: FontSize;
   contrast: Contrast;
-  
+
   // Available themes
   themes: Theme[];
-  
+
   // Theme actions
   setTheme: (themeId: string) => void;
   setColorMode: (mode: ColorMode) => void;
   setReducedMotion: (motion: ReducedMotion) => void;
   setFontSize: (size: FontSize) => void;
   setContrast: (contrast: Contrast) => void;
-  
+
   // Utility functions
   getColor: (colorKey: keyof ThemeColors) => string;
   toggleColorMode: () => void;
@@ -94,7 +101,9 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function useAdvancedTheme() {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useAdvancedTheme must be used within an AdvancedThemeProvider');
+    throw new Error(
+      'useAdvancedTheme must be used within an AdvancedThemeProvider'
+    );
   }
   return context;
 }
@@ -118,7 +127,7 @@ const defaultThemes: Theme[] = [
         success: '#34C759',
         warning: '#FF9500',
         error: '#FF3B30',
-        info: '#007AFF'
+        info: '#007AFF',
       },
       dark: {
         primary: '#0A84FF',
@@ -132,38 +141,39 @@ const defaultThemes: Theme[] = [
         success: '#30D158',
         warning: '#FF9F0A',
         error: '#FF453A',
-        info: '#64D2FF'
-      }
+        info: '#64D2FF',
+      },
     },
     fonts: {
-      primary: '-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif',
+      primary:
+        '-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif',
       secondary: 'Georgia, \"Times New Roman\", serif',
-      mono: '\"SF Mono\", Monaco, \"Cascadia Code\", \"Roboto Mono\", monospace'
+      mono: '\"SF Mono\", Monaco, \"Cascadia Code\", \"Roboto Mono\", monospace',
     },
     spacing: {
       xs: '0.25rem',
       sm: '0.5rem',
       md: '1rem',
       lg: '1.5rem',
-      xl: '2rem'
+      xl: '2rem',
     },
     borderRadius: {
       sm: '0.25rem',
       md: '0.5rem',
       lg: '0.75rem',
-      xl: '1rem'
+      xl: '1rem',
     },
     shadows: {
       sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
       md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
       lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-      xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+      xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
     },
     animations: {
       fast: '150ms ease',
       normal: '300ms ease',
-      slow: '500ms ease'
-    }
+      slow: '500ms ease',
+    },
   },
   {
     id: 'echo-minimal',
@@ -182,7 +192,7 @@ const defaultThemes: Theme[] = [
         success: '#00AA00',
         warning: '#FF8800',
         error: '#CC0000',
-        info: '#0066CC'
+        info: '#0066CC',
       },
       dark: {
         primary: '#FFFFFF',
@@ -196,38 +206,38 @@ const defaultThemes: Theme[] = [
         success: '#00DD00',
         warning: '#FFAA00',
         error: '#FF3333',
-        info: '#3399FF'
-      }
+        info: '#3399FF',
+      },
     },
     fonts: {
       primary: '\"Inter\", -apple-system, BlinkMacSystemFont, sans-serif',
       secondary: '\"Inter\", -apple-system, BlinkMacSystemFont, sans-serif',
-      mono: '\"JetBrains Mono\", \"Fira Code\", monospace'
+      mono: '\"JetBrains Mono\", \"Fira Code\", monospace',
     },
     spacing: {
       xs: '0.125rem',
       sm: '0.25rem',
       md: '0.75rem',
       lg: '1.25rem',
-      xl: '2rem'
+      xl: '2rem',
     },
     borderRadius: {
       sm: '0.125rem',
       md: '0.25rem',
       lg: '0.5rem',
-      xl: '0.75rem'
+      xl: '0.75rem',
     },
     shadows: {
       sm: '0 1px 1px rgba(0, 0, 0, 0.05)',
       md: '0 2px 4px rgba(0, 0, 0, 0.1)',
       lg: '0 4px 8px rgba(0, 0, 0, 0.15)',
-      xl: '0 8px 16px rgba(0, 0, 0, 0.2)'
+      xl: '0 8px 16px rgba(0, 0, 0, 0.2)',
     },
     animations: {
       fast: '100ms linear',
       normal: '200ms ease-out',
-      slow: '400ms ease-in-out'
-    }
+      slow: '400ms ease-in-out',
+    },
   },
   {
     id: 'echo-vibrant',
@@ -246,7 +256,7 @@ const defaultThemes: Theme[] = [
         success: '#48BB78',
         warning: '#ED8936',
         error: '#F56565',
-        info: '#4299E1'
+        info: '#4299E1',
       },
       dark: {
         primary: '#FF8A65',
@@ -260,39 +270,39 @@ const defaultThemes: Theme[] = [
         success: '#68D391',
         warning: '#F6AD55',
         error: '#FC8181',
-        info: '#63B3ED'
-      }
+        info: '#63B3ED',
+      },
     },
     fonts: {
       primary: '\"Poppins\", -apple-system, BlinkMacSystemFont, sans-serif',
       secondary: '\"Playfair Display\", Georgia, serif',
-      mono: '\"Source Code Pro\", monospace'
+      mono: '\"Source Code Pro\", monospace',
     },
     spacing: {
       xs: '0.25rem',
       sm: '0.5rem',
       md: '1rem',
       lg: '1.5rem',
-      xl: '2.5rem'
+      xl: '2.5rem',
     },
     borderRadius: {
       sm: '0.375rem',
       md: '0.75rem',
       lg: '1rem',
-      xl: '1.5rem'
+      xl: '1.5rem',
     },
     shadows: {
       sm: '0 2px 4px rgba(255, 107, 53, 0.1)',
       md: '0 4px 8px rgba(255, 107, 53, 0.15)',
       lg: '0 8px 16px rgba(255, 107, 53, 0.2)',
-      xl: '0 16px 32px rgba(255, 107, 53, 0.25)'
+      xl: '0 16px 32px rgba(255, 107, 53, 0.25)',
     },
     animations: {
       fast: '200ms cubic-bezier(0.4, 0, 0.2, 1)',
       normal: '350ms cubic-bezier(0.4, 0, 0.2, 1)',
-      slow: '600ms cubic-bezier(0.4, 0, 0.2, 1)'
-    }
-  }
+      slow: '600ms cubic-bezier(0.4, 0, 0.2, 1)',
+    },
+  },
 ];
 
 interface AdvancedThemeProviderProps {
@@ -304,17 +314,23 @@ interface AdvancedThemeProviderProps {
 export function AdvancedThemeProvider({
   children,
   defaultTheme = 'echo-default',
-  persistSettings = true
+  persistSettings = true,
 }: AdvancedThemeProviderProps) {
   const [themes] = useState<Theme[]>(defaultThemes);
   const [currentThemeId, setCurrentThemeId] = useState(() => {
-    return persistSettings ? storage.get('echo-theme-id', defaultTheme) : defaultTheme;
+    return persistSettings
+      ? storage.get('echo-theme-id', defaultTheme)
+      : defaultTheme;
   });
   const [colorMode, setColorModeState] = useState<ColorMode>(() => {
-    return persistSettings ? storage.get('echo-color-mode', 'system') : 'system';
+    return persistSettings
+      ? storage.get('echo-color-mode', 'system')
+      : 'system';
   });
   const [reducedMotion, setReducedMotionState] = useState<ReducedMotion>(() => {
-    return persistSettings ? storage.get('echo-reduced-motion', 'no-preference') : 'no-preference';
+    return persistSettings
+      ? storage.get('echo-reduced-motion', 'no-preference')
+      : 'no-preference';
   });
   const [fontSize, setFontSizeState] = useState<FontSize>(() => {
     return persistSettings ? storage.get('echo-font-size', 'medium') : 'medium';
@@ -323,7 +339,7 @@ export function AdvancedThemeProvider({
     return persistSettings ? storage.get('echo-contrast', 'normal') : 'normal';
   });
 
-  const currentTheme = themes.find(t => t.id === currentThemeId) || themes[0];
+  const currentTheme = themes.find((t) => t.id === currentThemeId) || themes[0];
 
   // Detect system preferences
   useEffect(() => {
@@ -361,10 +377,14 @@ export function AdvancedThemeProvider({
     if (typeof window === 'undefined') return;
 
     const root = document.documentElement;
-    const isDark = colorMode === 'dark' || 
-      (colorMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    
-    const colors = isDark ? currentTheme.colors.dark : currentTheme.colors.light;
+    const isDark =
+      colorMode === 'dark' ||
+      (colorMode === 'system' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    const colors = isDark
+      ? currentTheme.colors.dark
+      : currentTheme.colors.light;
 
     // Apply CSS custom properties
     Object.entries(colors).forEach(([key, value]) => {
@@ -400,7 +420,7 @@ export function AdvancedThemeProvider({
     const fontSizeMap = {
       small: '14px',
       medium: '16px',
-      large: '18px'
+      large: '18px',
     };
     root.style.setProperty('--base-font-size', fontSizeMap[fontSize]);
 
@@ -460,13 +480,20 @@ export function AdvancedThemeProvider({
     setContrastState(contrastMode);
   }, []);
 
-  const getColor = useCallback((colorKey: keyof ThemeColors) => {
-    const isDark = colorMode === 'dark' || 
-      (colorMode === 'system' && typeof window !== 'undefined' && 
-       window.matchMedia('(prefers-color-scheme: dark)').matches);
-    
-    return isDark ? currentTheme.colors.dark[colorKey] : currentTheme.colors.light[colorKey];
-  }, [currentTheme, colorMode]);
+  const getColor = useCallback(
+    (colorKey: keyof ThemeColors) => {
+      const isDark =
+        colorMode === 'dark' ||
+        (colorMode === 'system' &&
+          typeof window !== 'undefined' &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      return isDark
+        ? currentTheme.colors.dark[colorKey]
+        : currentTheme.colors.light[colorKey];
+    },
+    [currentTheme, colorMode]
+  );
 
   const toggleColorMode = useCallback(() => {
     setColorMode(colorMode === 'light' ? 'dark' : 'light');
@@ -487,27 +514,29 @@ export function AdvancedThemeProvider({
       fontSize,
       contrast,
       reducedMotion,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     return JSON.stringify(themeData, null, 2);
   }, [currentThemeId, colorMode, fontSize, contrast, reducedMotion]);
 
-  const importTheme = useCallback((themeData: string) => {
-    try {
-      const parsed = JSON.parse(themeData);
-      if (parsed.themeId && themes.find(t => t.id === parsed.themeId)) {
-        setCurrentThemeId(parsed.themeId);
+  const importTheme = useCallback(
+    (themeData: string) => {
+      try {
+        const parsed = JSON.parse(themeData);
+        if (parsed.themeId && themes.find((t) => t.id === parsed.themeId)) {
+          setCurrentThemeId(parsed.themeId);
+        }
+        if (parsed.colorMode) setColorModeState(parsed.colorMode);
+        if (parsed.fontSize) setFontSizeState(parsed.fontSize);
+        if (parsed.contrast) setContrastState(parsed.contrast);
+        if (parsed.reducedMotion) setReducedMotionState(parsed.reducedMotion);
+        return true;
+      } catch (error) {
+        return false;
       }
-      if (parsed.colorMode) setColorModeState(parsed.colorMode);
-      if (parsed.fontSize) setFontSizeState(parsed.fontSize);
-      if (parsed.contrast) setContrastState(parsed.contrast);
-      if (parsed.reducedMotion) setReducedMotionState(parsed.reducedMotion);
-      return true;
-    } catch (error) {
-
-      return false;
-    }
-  }, [themes]);
+    },
+    [themes]
+  );
 
   const value: ThemeContextType = {
     currentTheme,
@@ -525,13 +554,11 @@ export function AdvancedThemeProvider({
     toggleColorMode,
     resetToDefaults,
     exportTheme,
-    importTheme
+    importTheme,
   };
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
 

@@ -29,17 +29,14 @@ const QUICK_APPS: QuickApp[] = [
   { id: 'recipes', name: 'Recipe Book', icon: '🍳' },
   { id: 'translator', name: 'Translator', icon: '🌍' },
   { id: 'whiteboard', name: 'Whiteboard', icon: '🎨' },
-  { id: 'dairyfarm', name: 'Dairy Farm Manager', icon: '🐄' }
+  { id: 'dairyfarm', name: 'Dairy Farm Manager', icon: '🐄' },
 ];
 
 export function AppsMenu({ isOpen, onClose, onOpenApp }: AppsMenuProps) {
   if (!isOpen) return null;
 
   return (
-    <div
-      className="apps-dropdown"
-      onClick={(e) => e.stopPropagation()}
-    >
+    <div className="apps-dropdown" onClick={(e) => e.stopPropagation()}>
       <div className="apps-grid">
         {QUICK_APPS.map((app) => (
           <button

@@ -1,6 +1,11 @@
 'use client';
 
-import React, { createContext, useContext, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useCallback,
+  ReactNode,
+} from 'react';
 
 interface PostInteractionsContextType {
   // Content actions
@@ -14,86 +19,81 @@ interface PostInteractionsContextType {
   deletePost: (postId: string) => Promise<boolean>;
 }
 
-const PostInteractionsContext = createContext<PostInteractionsContextType | undefined>(undefined);
+const PostInteractionsContext = createContext<
+  PostInteractionsContextType | undefined
+>(undefined);
 
-export const PostInteractionsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const PostInteractionsProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const likePost = useCallback(async (postId: string): Promise<boolean> => {
     try {
       // In real app, make API call
 
       return true;
     } catch (error) {
-
       return false;
     }
   }, []);
 
   const unlikePost = useCallback(async (postId: string): Promise<boolean> => {
     try {
-
       return true;
     } catch (error) {
-
       return false;
     }
   }, []);
 
   const repostPost = useCallback(async (postId: string): Promise<boolean> => {
     try {
-
       return true;
     } catch (error) {
-
       return false;
     }
   }, []);
 
   const unrepostPost = useCallback(async (postId: string): Promise<boolean> => {
     try {
-
       return true;
     } catch (error) {
-
       return false;
     }
   }, []);
 
   const bookmarkPost = useCallback(async (postId: string): Promise<boolean> => {
     try {
-
       return true;
     } catch (error) {
-
       return false;
     }
   }, []);
 
-  const unbookmarkPost = useCallback(async (postId: string): Promise<boolean> => {
-    try {
+  const unbookmarkPost = useCallback(
+    async (postId: string): Promise<boolean> => {
+      try {
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    []
+  );
 
-      return true;
-    } catch (error) {
-
-      return false;
-    }
-  }, []);
-
-  const reportPost = useCallback(async (postId: string, reason: string): Promise<boolean> => {
-    try {
-
-      return true;
-    } catch (error) {
-
-      return false;
-    }
-  }, []);
+  const reportPost = useCallback(
+    async (postId: string, reason: string): Promise<boolean> => {
+      try {
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    []
+  );
 
   const deletePost = useCallback(async (postId: string): Promise<boolean> => {
     try {
-
       return true;
     } catch (error) {
-
       return false;
     }
   }, []);
@@ -106,7 +106,7 @@ export const PostInteractionsProvider: React.FC<{ children: ReactNode }> = ({ ch
     bookmarkPost,
     unbookmarkPost,
     reportPost,
-    deletePost
+    deletePost,
   };
 
   return (
@@ -119,7 +119,9 @@ export const PostInteractionsProvider: React.FC<{ children: ReactNode }> = ({ ch
 export const usePostInteractions = (): PostInteractionsContextType => {
   const context = useContext(PostInteractionsContext);
   if (context === undefined) {
-    throw new Error('usePostInteractions must be used within a PostInteractionsProvider');
+    throw new Error(
+      'usePostInteractions must be used within a PostInteractionsProvider'
+    );
   }
   return context;
 };

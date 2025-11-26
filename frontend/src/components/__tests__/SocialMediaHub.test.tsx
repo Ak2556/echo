@@ -5,14 +5,24 @@
 
 import React from 'react';
 import { screen, fireEvent, waitFor, within } from '@testing-library/react';
-import { render, setupUserEvent, mockUser, mockPost, mockMessage, mockChat, createTestData } from '@/__tests__/setup/test-utils';
+import {
+  render,
+  setupUserEvent,
+  mockUser,
+  mockPost,
+  mockMessage,
+  mockChat,
+  createTestData,
+} from '@/__tests__/setup/test-utils';
 import SocialMediaHub from '@/components/SocialMediaHub';
 
 // Mock framer-motion to avoid animation issues in tests
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+    button: ({ children, ...props }: any) => (
+      <button {...props}>{children}</button>
+    ),
   },
   AnimatePresence: ({ children }: any) => children,
 }));
@@ -20,7 +30,9 @@ jest.mock('framer-motion', () => ({
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, ...props }: any) => <img src={src} alt={alt} {...props} />,
+  default: ({ src, alt, ...props }: any) => (
+    <img src={src} alt={alt} {...props} />
+  ),
 }));
 
 // Mock useResponsive hook
@@ -60,10 +72,11 @@ describe('SocialMediaHub', () => {
       render(<SocialMediaHub />);
 
       // Should have post author information
-      const avatars = screen.queryAllByAltText(/Priya Sharma|Raj Kumar|Sarah Johnson/i);
+      const avatars = screen.queryAllByAltText(
+        /Priya Sharma|Raj Kumar|Sarah Johnson/i
+      );
       expect(avatars.length).toBeGreaterThan(0);
     });
-
   });
 
   describe('Tab Navigation', () => {
@@ -71,39 +84,53 @@ describe('SocialMediaHub', () => {
       render(<SocialMediaHub />);
 
       // Navigation has been removed from this component
-      expect(screen.queryByRole('button', { name: /feed/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /stories/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /messages/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /explore/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /profile/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /feed/i })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /stories/i })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /messages/i })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /explore/i })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /profile/i })
+      ).not.toBeInTheDocument();
     });
   });
 
   describe('Feed View', () => {
     it('renders create post interface', () => {
       render(<SocialMediaHub />);
-      
+
       expect(screen.getByText("What's on your mind?")).toBeInTheDocument();
       expect(screen.getByAltText('Your Avatar')).toBeInTheDocument();
     });
 
     it('expands create post form when clicked', async () => {
       render(<SocialMediaHub />);
-      
+
       const createPostButton = screen.getByText("What's on your mind?");
       await user.click(createPostButton);
-      
-      expect(screen.getByPlaceholderText("What's happening?")).toBeInTheDocument();
+
+      expect(
+        screen.getByPlaceholderText("What's happening?")
+      ).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /post/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /cancel/i })
+      ).toBeInTheDocument();
     });
 
     it('shows media attachment options in create post', async () => {
       render(<SocialMediaHub />);
-      
+
       const createPostButton = screen.getByText("What's on your mind?");
       await user.click(createPostButton);
-      
+
       expect(screen.getByText('📷')).toBeInTheDocument();
       expect(screen.getByText('🎥')).toBeInTheDocument();
       expect(screen.getByText('📊')).toBeInTheDocument();
@@ -113,55 +140,63 @@ describe('SocialMediaHub', () => {
 
     it('enables post button when text is entered', async () => {
       render(<SocialMediaHub />);
-      
+
       const createPostButton = screen.getByText("What's on your mind?");
       await user.click(createPostButton);
-      
+
       const textarea = screen.getByPlaceholderText("What's happening?");
       const postButton = screen.getByRole('button', { name: /post/i });
-      
+
       expect(postButton).toBeDisabled();
-      
+
       await user.type(textarea, 'Test post content');
       expect(postButton).toBeEnabled();
     });
 
     it('cancels post creation when cancel is clicked', async () => {
       render(<SocialMediaHub />);
-      
+
       const createPostButton = screen.getByText("What's on your mind?");
       await user.click(createPostButton);
-      
+
       const textarea = screen.getByPlaceholderText("What's happening?");
       await user.type(textarea, 'Test content');
-      
+
       const cancelButton = screen.getByRole('button', { name: /cancel/i });
       await user.click(cancelButton);
-      
+
       expect(screen.getByText("What's on your mind?")).toBeInTheDocument();
-      expect(screen.queryByPlaceholderText("What's happening?")).not.toBeInTheDocument();
+      expect(
+        screen.queryByPlaceholderText("What's happening?")
+      ).not.toBeInTheDocument();
     });
 
     it('renders sample posts', () => {
       render(<SocialMediaHub />);
-      
+
       // Check for sample post content
-      expect(screen.getByText(/Just finished this amazing digital artwork/)).toBeInTheDocument();
-      expect(screen.getByText(/Building something amazing with React/)).toBeInTheDocument();
-      expect(screen.getByText(/Made this incredible South Indian feast/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Just finished this amazing digital artwork/)
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/Building something amazing with React/)
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/Made this incredible South Indian feast/)
+      ).toBeInTheDocument();
     });
 
     it('renders post interactions', () => {
       render(<SocialMediaHub />);
-      
+
       // Check for like buttons
       const likeButtons = screen.getAllByText('🤍');
       expect(likeButtons.length).toBeGreaterThan(0);
-      
+
       // Check for comment buttons
       const commentButtons = screen.getAllByText('💬');
       expect(commentButtons.length).toBeGreaterThan(0);
-      
+
       // Check for share buttons
       const shareButtons = screen.getAllByText('🔄');
       expect(shareButtons.length).toBeGreaterThan(0);
@@ -182,7 +217,7 @@ describe('SocialMediaHub', () => {
 
     it('renders trending sidebar on desktop', () => {
       render(<SocialMediaHub />);
-      
+
       expect(screen.getByText('🔥 Trending')).toBeInTheDocument();
       expect(screen.getByText('#ReactJS')).toBeInTheDocument();
       expect(screen.getByText('#WebDev')).toBeInTheDocument();
@@ -190,7 +225,7 @@ describe('SocialMediaHub', () => {
 
     it('renders suggested users sidebar', () => {
       render(<SocialMediaHub />);
-      
+
       expect(screen.getByText('👥 Suggested for you')).toBeInTheDocument();
       expect(screen.getByText('Ravi Kumar')).toBeInTheDocument();
       expect(screen.getByText('Sneha Patel')).toBeInTheDocument();
@@ -198,8 +233,10 @@ describe('SocialMediaHub', () => {
 
     it('renders poll in posts', () => {
       render(<SocialMediaHub />);
-      
-      expect(screen.getByText("What's your favorite frontend framework?")).toBeInTheDocument();
+
+      expect(
+        screen.getByText("What's your favorite frontend framework?")
+      ).toBeInTheDocument();
       expect(screen.getByText('React')).toBeInTheDocument();
       expect(screen.getByText('Vue')).toBeInTheDocument();
       expect(screen.getByText('Angular')).toBeInTheDocument();
@@ -222,7 +259,9 @@ describe('SocialMediaHub', () => {
 
       // Messages view has been removed from this component
       expect(screen.queryByText('💬 Messages')).not.toBeInTheDocument();
-      expect(screen.queryByText('Select a conversation')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Select a conversation')
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -276,7 +315,7 @@ describe('SocialMediaHub', () => {
 
     it('has proper alt text for images', () => {
       render(<SocialMediaHub />);
-      
+
       const avatarImages = screen.getAllByAltText(/avatar/i);
       expect(avatarImages.length).toBeGreaterThan(0);
     });

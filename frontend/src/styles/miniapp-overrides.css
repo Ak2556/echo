@@ -3,8 +3,8 @@
 
 /* CRITICAL: Force all mini app overlays to be static */
 .miniapp-content-wrapper .miniapp-overlay,
-.miniapp-content-wrapper div[style*="position: fixed"],
-.miniapp-content-wrapper div[style*="position:fixed"] {
+.miniapp-content-wrapper div[style*='position: fixed'],
+.miniapp-content-wrapper div[style*='position:fixed'] {
   position: static !important;
   background: none !important;
   backdrop-filter: none !important;
@@ -67,8 +67,8 @@
 .miniapp-content-wrapper .miniapp-close,
 .miniapp-content-wrapper .close-btn,
 .miniapp-content-wrapper .help-close,
-.miniapp-content-wrapper button[title*="Close"],
-.miniapp-content-wrapper button[aria-label*="Close"] {
+.miniapp-content-wrapper button[title*='Close'],
+.miniapp-content-wrapper button[aria-label*='Close'] {
   display: none !important;
 }
 
@@ -140,22 +140,22 @@
 /* Remove this section - it's now handled above */
 
 /* Override any inline styles with position fixed */
-.miniapp-content-wrapper [style*="position: fixed"],
-.miniapp-content-wrapper [style*="position:fixed"] {
+.miniapp-content-wrapper [style*='position: fixed'],
+.miniapp-content-wrapper [style*='position:fixed'] {
   position: static !important;
 }
 
 /* Override any inline styles with high z-index */
-.miniapp-content-wrapper [style*="z-index: 1000"],
-.miniapp-content-wrapper [style*="z-index:1000"],
-.miniapp-content-wrapper [style*="z-index: 9999"],
-.miniapp-content-wrapper [style*="z-index:9999"],
-.miniapp-content-wrapper [style*="z-index: 10000"],
-.miniapp-content-wrapper [style*="z-index:10000"],
-.miniapp-content-wrapper [style*="z-index: 99999"],
-.miniapp-content-wrapper [style*="z-index:99999"],
-.miniapp-content-wrapper [style*="z-index: 999999"],
-.miniapp-content-wrapper [style*="z-index:999999"] {
+.miniapp-content-wrapper [style*='z-index: 1000'],
+.miniapp-content-wrapper [style*='z-index:1000'],
+.miniapp-content-wrapper [style*='z-index: 9999'],
+.miniapp-content-wrapper [style*='z-index:9999'],
+.miniapp-content-wrapper [style*='z-index: 10000'],
+.miniapp-content-wrapper [style*='z-index:10000'],
+.miniapp-content-wrapper [style*='z-index: 99999'],
+.miniapp-content-wrapper [style*='z-index:99999'],
+.miniapp-content-wrapper [style*='z-index: 999999'],
+.miniapp-content-wrapper [style*='z-index:999999'] {
   z-index: auto !important;
 }
 
@@ -166,7 +166,7 @@
     top: 56px !important;
     max-height: calc(100vh - 70px) !important;
   }
-  
+
   .miniapp-content-wrapper {
     padding: 1rem !important;
   }

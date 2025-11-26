@@ -40,7 +40,8 @@ export function Skeleton({
         width,
         height: variant === 'circular' ? width : height,
         ...variantStyles[variant],
-        background: 'linear-gradient(90deg, var(--nothing-surface) 25%, var(--bg-secondary) 50%, var(--nothing-surface) 75%)',
+        background:
+          'linear-gradient(90deg, var(--nothing-surface) 25%, var(--bg-secondary) 50%, var(--nothing-surface) 75%)',
         backgroundSize: '200% 100%',
         animation: 'shimmer 1.5s infinite',
       }}
@@ -81,7 +82,14 @@ export function PostCardSkeleton() {
       }}
     >
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: spacing[3], marginBottom: spacing[4] }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: spacing[3],
+          marginBottom: spacing[4],
+        }}
+      >
         <Skeleton variant="circular" width="48px" />
         <div style={{ flex: 1 }}>
           <Skeleton width="40%" height="1rem" />
@@ -111,14 +119,22 @@ export function PostCardSkeleton() {
       />
 
       {/* Tags */}
-      <div style={{ display: 'flex', gap: spacing[2], marginBottom: spacing[4] }}>
+      <div
+        style={{ display: 'flex', gap: spacing[2], marginBottom: spacing[4] }}
+      >
         <Skeleton width="80px" height="28px" borderRadius={borderRadius.full} />
-        <Skeleton width="100px" height="28px" borderRadius={borderRadius.full} />
+        <Skeleton
+          width="100px"
+          height="28px"
+          borderRadius={borderRadius.full}
+        />
         <Skeleton width="90px" height="28px" borderRadius={borderRadius.full} />
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'flex', gap: spacing[6], marginBottom: spacing[4] }}>
+      <div
+        style={{ display: 'flex', gap: spacing[6], marginBottom: spacing[4] }}
+      >
         <Skeleton width="80px" height="1rem" />
         <Skeleton width="100px" height="1rem" />
         <Skeleton width="80px" height="1rem" />
@@ -155,13 +171,21 @@ export function PageSkeleton() {
   return (
     <div style={{ padding: spacing[6] }}>
       {/* Title */}
-      <Skeleton width="300px" height="2.5rem" style={{ marginBottom: spacing[8] }} />
+      <Skeleton
+        width="300px"
+        height="2.5rem"
+        style={{ marginBottom: spacing[8] }}
+      />
 
       {/* Content sections */}
       <div style={{ maxWidth: '680px', margin: '0 auto' }}>
         {Array.from({ length: 3 }).map((_, index) => (
           <div key={index} style={{ marginBottom: spacing[8] }}>
-            <Skeleton width="200px" height="1.5rem" style={{ marginBottom: spacing[4] }} />
+            <Skeleton
+              width="200px"
+              height="1.5rem"
+              style={{ marginBottom: spacing[4] }}
+            />
             <Skeleton width="100%" height="1rem" />
             <div style={{ marginTop: spacing[2] }}>
               <Skeleton width="95%" height="1rem" />
@@ -204,7 +228,13 @@ export function ListItemSkeleton() {
 /**
  * Card Grid Skeleton
  */
-export function CardGridSkeleton({ count = 6, columns = 3 }: { count?: number; columns?: number }) {
+export function CardGridSkeleton({
+  count = 6,
+  columns = 3,
+}: {
+  count?: number;
+  columns?: number;
+}) {
   return (
     <div
       style={{
@@ -230,7 +260,11 @@ export function CardGridSkeleton({ count = 6, columns = 3 }: { count?: number; c
               <Skeleton width="60%" height="1rem" />
             </div>
             <div style={{ marginTop: spacing[4] }}>
-              <Skeleton width="100px" height="36px" borderRadius={borderRadius.lg} />
+              <Skeleton
+                width="100px"
+                height="36px"
+                borderRadius={borderRadius.lg}
+              />
             </div>
           </div>
         </div>

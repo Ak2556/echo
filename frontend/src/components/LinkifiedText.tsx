@@ -9,7 +9,11 @@ interface LinkifiedTextProps {
   style?: React.CSSProperties;
 }
 
-export default function LinkifiedText({ text, className = '', style = {} }: LinkifiedTextProps) {
+export default function LinkifiedText({
+  text,
+  className = '',
+  style = {},
+}: LinkifiedTextProps) {
   const router = useRouter();
   const entities = parseText(text);
 
@@ -41,7 +45,7 @@ export default function LinkifiedText({ text, className = '', style = {} }: Link
                   color: '#3b82f6',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.textDecoration = 'underline';
@@ -66,7 +70,7 @@ export default function LinkifiedText({ text, className = '', style = {} }: Link
                   color: '#10b981',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.textDecoration = 'underline';
@@ -92,7 +96,7 @@ export default function LinkifiedText({ text, className = '', style = {} }: Link
                   fontWeight: 500,
                   cursor: 'pointer',
                   textDecoration: 'underline',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = '#a78bfa';

@@ -5,14 +5,20 @@
 
 import React from 'react';
 import { screen, waitFor, within } from '@testing-library/react';
-import { render, setupUserEvent, createTestData } from '@/__tests__/setup/test-utils';
+import {
+  render,
+  setupUserEvent,
+  createTestData,
+} from '@/__tests__/setup/test-utils';
 import SocialMediaHub from '@/components/SocialMediaHub';
 
 // Mock framer-motion
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+    button: ({ children, ...props }: any) => (
+      <button {...props}>{children}</button>
+    ),
   },
   AnimatePresence: ({ children }: any) => children,
 }));
@@ -20,7 +26,9 @@ jest.mock('framer-motion', () => ({
 // Mock Next.js Image
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, ...props }: any) => <img src={src} alt={alt} {...props} />,
+  default: ({ src, alt, ...props }: any) => (
+    <img src={src} alt={alt} {...props} />
+  ),
 }));
 
 // Mock useResponsive hook
@@ -62,7 +70,9 @@ describe('Social Media Flow Integration Tests', () => {
       // Verify post creation interface is closed
       await waitFor(() => {
         expect(screen.getByText("What's on your mind?")).toBeInTheDocument();
-        expect(screen.queryByPlaceholderText("What's happening?")).not.toBeInTheDocument();
+        expect(
+          screen.queryByPlaceholderText("What's happening?")
+        ).not.toBeInTheDocument();
       });
     });
 
@@ -83,7 +93,9 @@ describe('Social Media Flow Integration Tests', () => {
 
       // Verify interface is reset
       expect(screen.getByText("What's on your mind?")).toBeInTheDocument();
-      expect(screen.queryByPlaceholderText("What's happening?")).not.toBeInTheDocument();
+      expect(
+        screen.queryByPlaceholderText("What's happening?")
+      ).not.toBeInTheDocument();
     });
 
     it('prevents posting empty content', async () => {
@@ -171,7 +183,9 @@ describe('Social Media Flow Integration Tests', () => {
       render(<SocialMediaHub />);
 
       // Find the poll question
-      const pollQuestion = screen.getByText("What's your favorite frontend framework?");
+      const pollQuestion = screen.getByText(
+        "What's your favorite frontend framework?"
+      );
       expect(pollQuestion).toBeInTheDocument();
 
       // Find poll options - there might be multiple matches for common words like "React"
@@ -196,13 +210,23 @@ describe('Social Media Flow Integration Tests', () => {
       render(<SocialMediaHub />);
 
       // Internal navigation has been removed - component only shows feed
-      expect(screen.queryByRole('button', { name: /stories/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /messages/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /explore/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /profile/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /stories/i })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /messages/i })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /explore/i })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /profile/i })
+      ).not.toBeInTheDocument();
 
       // Feed content should be rendered
-      expect(screen.getByText(/Just finished this amazing digital artwork/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Just finished this amazing digital artwork/)
+      ).toBeInTheDocument();
     });
 
     it('always renders feed content', () => {
@@ -210,7 +234,9 @@ describe('Social Media Flow Integration Tests', () => {
 
       // Component now only displays feed, no active tab state
       expect(screen.getByRole('main')).toBeInTheDocument();
-      expect(screen.getByText(/Just finished this amazing digital artwork/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Just finished this amazing digital artwork/)
+      ).toBeInTheDocument();
     });
   });
 
@@ -220,8 +246,12 @@ describe('Social Media Flow Integration Tests', () => {
 
       // Messaging has been removed from this component
       expect(screen.queryByText('💬 Messages')).not.toBeInTheDocument();
-      expect(screen.queryByText('Select a conversation')).not.toBeInTheDocument();
-      expect(screen.queryByPlaceholderText('Type a message...')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Select a conversation')
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByPlaceholderText('Type a message...')
+      ).not.toBeInTheDocument();
     });
   });
 

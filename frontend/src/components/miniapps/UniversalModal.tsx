@@ -5,7 +5,18 @@ import React, { useState, useEffect } from 'react';
 export interface ModalField {
   id: string;
   label: string;
-  type: 'text' | 'number' | 'email' | 'password' | 'textarea' | 'select' | 'date' | 'time' | 'checkbox' | 'radio' | 'file';
+  type:
+    | 'text'
+    | 'number'
+    | 'email'
+    | 'password'
+    | 'textarea'
+    | 'select'
+    | 'date'
+    | 'time'
+    | 'checkbox'
+    | 'radio'
+    | 'file';
   placeholder?: string;
   required?: boolean;
   options?: { value: string; label: string }[];
@@ -46,7 +57,7 @@ export default function UniversalModal({
   size = 'md',
   showHeader = true,
   showFooter = true,
-  isDarkMode = true
+  isDarkMode = true,
 }: UniversalModalProps) {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -55,7 +66,7 @@ export default function UniversalModal({
   useEffect(() => {
     if (isVisible && fields.length > 0) {
       const initialData: Record<string, any> = {};
-      fields.forEach(field => {
+      fields.forEach((field) => {
         initialData[field.id] = field.defaultValue || '';
       });
       setFormData(initialData);
@@ -64,19 +75,22 @@ export default function UniversalModal({
   }, [isVisible, fields]);
 
   const handleInputChange = (fieldId: string, value: any) => {
-    setFormData(prev => ({ ...prev, [fieldId]: value }));
+    setFormData((prev) => ({ ...prev, [fieldId]: value }));
     if (errors[fieldId]) {
-      setErrors(prev => ({ ...prev, [fieldId]: '' }));
+      setErrors((prev) => ({ ...prev, [fieldId]: '' }));
     }
   };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    fields.forEach(field => {
+    fields.forEach((field) => {
       const value = formData[field.id];
 
-      if (field.required && (!value || (typeof value === 'string' && !value.trim()))) {
+      if (
+        field.required &&
+        (!value || (typeof value === 'string' && !value.trim()))
+      ) {
         newErrors[field.id] = `${field.label} is required`;
       }
 
@@ -101,7 +115,6 @@ export default function UniversalModal({
     try {
       await action.onClick(formData);
     } catch (error) {
-
     } finally {
       setIsLoading(false);
     }
@@ -130,8 +143,10 @@ export default function UniversalModal({
             onChange={(e) => handleInputChange(field.id, e.target.value)}
             className={`modal-select ${error ? 'error' : ''}`}
           >
-            <option value="">{field.placeholder || `Select ${field.label}`}</option>
-            {field.options?.map(option => (
+            <option value="">
+              {field.placeholder || `Select ${field.label}`}
+            </option>
+            {field.options?.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -155,7 +170,7 @@ export default function UniversalModal({
       case 'radio':
         return (
           <div className="modal-radio-group">
-            {field.options?.map(option => (
+            {field.options?.map((option) => (
               <label key={option.value} className="modal-radio">
                 <input
                   type="radio"
@@ -175,7 +190,9 @@ export default function UniversalModal({
         return (
           <input
             type="file"
-            onChange={(e) => handleInputChange(field.id, e.target.files?.[0] || null)}
+            onChange={(e) =>
+              handleInputChange(field.id, e.target.files?.[0] || null)
+            }
             className={`modal-file ${error ? 'error' : ''}`}
           />
         );
@@ -195,25 +212,37 @@ export default function UniversalModal({
 
   const getSizeClass = () => {
     switch (size) {
-      case 'sm': return 'modal-sm';
-      case 'lg': return 'modal-lg';
-      case 'xl': return 'modal-xl';
-      default: return 'modal-md';
+      case 'sm':
+        return 'modal-sm';
+      case 'lg':
+        return 'modal-lg';
+      case 'xl':
+        return 'modal-xl';
+      default:
+        return 'modal-md';
     }
   };
 
   if (!isVisible) return null;
 
   return (
-    <div className={`modal-overlay ${isDarkMode ? 'dark' : 'light'}`} onClick={onClose}>
-      <div className={`modal-container ${getSizeClass()}`} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`modal-overlay ${isDarkMode ? 'dark' : 'light'}`}
+      onClick={onClose}
+    >
+      <div
+        className={`modal-container ${getSizeClass()}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         {showHeader && (
           <div className="modal-header">
             <div className="modal-title">
               {icon && <span className="modal-icon">{icon}</span>}
               <h2>{title}</h2>
             </div>
-            <button className="modal-close" onClick={onClose}>×</button>
+            <button className="modal-close" onClick={onClose}>
+              ×
+            </button>
           </div>
         )}
 
@@ -222,7 +251,7 @@ export default function UniversalModal({
 
           {fields.length > 0 && (
             <form className="modal-form" onSubmit={(e) => e.preventDefault()}>
-              {fields.map(field => (
+              {fields.map((field) => (
                 <div key={field.id} className="modal-field">
                   <label className="modal-label">
                     {field.label}
@@ -284,10 +313,18 @@ export default function UniversalModal({
           animation: modalSlideUp 0.3s ease-out;
         }
 
-        .modal-sm { max-width: 400px; }
-        .modal-md { max-width: 600px; }
-        .modal-lg { max-width: 800px; }
-        .modal-xl { max-width: 1200px; }
+        .modal-sm {
+          max-width: 400px;
+        }
+        .modal-md {
+          max-width: 600px;
+        }
+        .modal-lg {
+          max-width: 800px;
+        }
+        .modal-xl {
+          max-width: 1200px;
+        }
 
         @keyframes modalSlideUp {
           from {
@@ -377,7 +414,10 @@ export default function UniversalModal({
           margin-left: 2px;
         }
 
-        .modal-input, .modal-textarea, .modal-select, .modal-file {
+        .modal-input,
+        .modal-textarea,
+        .modal-select,
+        .modal-file {
           padding: 0.75rem 1rem;
           border: 2px solid var(--nothing-border);
           border-radius: 12px;
@@ -387,17 +427,22 @@ export default function UniversalModal({
           transition: all 0.2s ease;
         }
 
-        .modal-input:focus, .modal-textarea:focus, .modal-select:focus {
+        .modal-input:focus,
+        .modal-textarea:focus,
+        .modal-select:focus {
           outline: none;
           border-color: var(--nothing-accent);
           box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
         }
 
-        .modal-input.error, .modal-textarea.error, .modal-select.error {
+        .modal-input.error,
+        .modal-textarea.error,
+        .modal-select.error {
           border-color: var(--nothing-error);
         }
 
-        .modal-checkbox, .modal-radio {
+        .modal-checkbox,
+        .modal-radio {
           display: flex;
           align-items: center;
           gap: 0.75rem;
@@ -405,11 +450,13 @@ export default function UniversalModal({
           padding: 0.5rem 0;
         }
 
-        .modal-checkbox input[type="checkbox"], .modal-radio input[type="radio"] {
+        .modal-checkbox input[type='checkbox'],
+        .modal-radio input[type='radio'] {
           display: none;
         }
 
-        .checkmark, .radio-mark {
+        .checkmark,
+        .radio-mark {
           width: 20px;
           height: 20px;
           border: 2px solid var(--nothing-border);
@@ -558,7 +605,9 @@ export default function UniversalModal({
             max-height: 95vh;
           }
 
-          .modal-header, .modal-body, .modal-footer {
+          .modal-header,
+          .modal-body,
+          .modal-footer {
             padding: 1rem 1.5rem;
           }
 

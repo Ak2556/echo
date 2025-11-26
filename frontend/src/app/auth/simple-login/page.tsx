@@ -50,7 +50,6 @@ export default function SimpleLoginPage() {
       setTimeout(() => {
         router.push('/');
       }, 500);
-
     } catch (error: any) {
       toast.error(error.message || 'Login failed', { id: toastId });
     } finally {
@@ -69,7 +68,9 @@ export default function SimpleLoginPage() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 Simple Login
               </h1>
-              <p className="text-gray-600">Quick login without validation issues</p>
+              <p className="text-gray-600">
+                Quick login without validation issues
+              </p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-5">
@@ -113,7 +114,10 @@ export default function SimpleLoginPage() {
             <p className="mt-6 text-center text-sm text-gray-600">
               Test credentials already filled in!
               <br />
-              Password: <code className="bg-gray-100 px-2 py-1 rounded">SecurePass123</code>
+              Password:{' '}
+              <code className="bg-gray-100 px-2 py-1 rounded">
+                SecurePass123
+              </code>
             </p>
           </div>
         </div>

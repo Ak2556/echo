@@ -1,13 +1,21 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from 'react';
 
 interface NavigationContextType {
   currentRoute: string;
   navigate: (route: string) => void;
 }
 
-const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
+const NavigationContext = createContext<NavigationContextType | undefined>(
+  undefined
+);
 
 export function useNavigation() {
   const context = useContext(NavigationContext);
@@ -25,7 +33,6 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
   const [currentRoute, setCurrentRoute] = useState('feed');
 
   const navigate = (route: string) => {
-
     setCurrentRoute(route);
   };
 
@@ -44,7 +51,7 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
 
   const value: NavigationContextType = {
     currentRoute,
-    navigate
+    navigate,
   };
 
   return (

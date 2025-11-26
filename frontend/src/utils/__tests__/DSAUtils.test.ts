@@ -11,7 +11,7 @@ import {
   SearchAlgorithms,
   PerformanceAnalytics,
   MemoryOptimizedOperations,
-  GraphAlgorithms
+  GraphAlgorithms,
 } from '../DSAUtils';
 
 describe('DSAUtils', () => {
@@ -199,7 +199,7 @@ describe('DSAUtils', () => {
 
     test('should maintain heap property for numbers', () => {
       const numbers = [5, 2, 8, 1, 9, 3];
-      numbers.forEach(num => pq.enqueue(num));
+      numbers.forEach((num) => pq.enqueue(num));
 
       const sorted = [];
       while (!pq.isEmpty()) {
@@ -275,8 +275,13 @@ describe('DSAUtils', () => {
     });
 
     test('should sort large arrays efficiently', () => {
-      const largeArray = Array.from({ length: 1000 }, () => Math.floor(Math.random() * 1000));
-      const sorted = OptimizedSorting.smartSort([...largeArray], (a, b) => a - b);
+      const largeArray = Array.from({ length: 1000 }, () =>
+        Math.floor(Math.random() * 1000)
+      );
+      const sorted = OptimizedSorting.smartSort(
+        [...largeArray],
+        (a, b) => a - b
+      );
 
       // Verify it's sorted
       for (let i = 1; i < sorted.length; i++) {
@@ -289,17 +294,22 @@ describe('DSAUtils', () => {
       expect(OptimizedSorting.smartSort([1], (a, b) => a - b)).toEqual([1]);
 
       const duplicates = [5, 5, 5, 5];
-      expect(OptimizedSorting.smartSort(duplicates, (a, b) => a - b)).toEqual([5, 5, 5, 5]);
+      expect(OptimizedSorting.smartSort(duplicates, (a, b) => a - b)).toEqual([
+        5, 5, 5, 5,
+      ]);
     });
 
     test('should work with custom comparators', () => {
       const objects = [
         { name: 'Alice', age: 30 },
         { name: 'Bob', age: 25 },
-        { name: 'Charlie', age: 35 }
+        { name: 'Charlie', age: 35 },
       ];
 
-      const sorted = OptimizedSorting.smartSort(objects, (a, b) => a.age - b.age);
+      const sorted = OptimizedSorting.smartSort(
+        objects,
+        (a, b) => a.age - b.age
+      );
 
       expect(sorted[0].name).toBe('Bob');
       expect(sorted[1].name).toBe('Alice');
@@ -311,10 +321,18 @@ describe('DSAUtils', () => {
     test('should perform binary search correctly', () => {
       const sortedArray = [1, 3, 5, 7, 9, 11, 13];
 
-      expect(SearchAlgorithms.binarySearch(sortedArray, 7, (a, b) => a - b)).toBe(3);
-      expect(SearchAlgorithms.binarySearch(sortedArray, 1, (a, b) => a - b)).toBe(0);
-      expect(SearchAlgorithms.binarySearch(sortedArray, 13, (a, b) => a - b)).toBe(6);
-      expect(SearchAlgorithms.binarySearch(sortedArray, 6, (a, b) => a - b)).toBe(-1);
+      expect(
+        SearchAlgorithms.binarySearch(sortedArray, 7, (a, b) => a - b)
+      ).toBe(3);
+      expect(
+        SearchAlgorithms.binarySearch(sortedArray, 1, (a, b) => a - b)
+      ).toBe(0);
+      expect(
+        SearchAlgorithms.binarySearch(sortedArray, 13, (a, b) => a - b)
+      ).toBe(6);
+      expect(
+        SearchAlgorithms.binarySearch(sortedArray, 6, (a, b) => a - b)
+      ).toBe(-1);
     });
 
     test('should perform fuzzy search with similarity threshold', () => {
@@ -353,7 +371,11 @@ describe('DSAUtils', () => {
     });
 
     test('should handle fuzzy search with no matches', () => {
-      const results = SearchAlgorithms.fuzzySearch('xyz', ['abc', 'def', 'ghi'], 0.9);
+      const results = SearchAlgorithms.fuzzySearch(
+        'xyz',
+        ['abc', 'def', 'ghi'],
+        0.9
+      );
       expect(results.length).toBe(0);
     });
 
@@ -399,10 +421,13 @@ describe('DSAUtils', () => {
     });
 
     test('should measure asynchronous operations', async () => {
-      const result = await PerformanceAnalytics.measureAsync('test-async', async () => {
-        await new Promise(resolve => setTimeout(resolve, 10));
-        return 'done';
-      });
+      const result = await PerformanceAnalytics.measureAsync(
+        'test-async',
+        async () => {
+          await new Promise((resolve) => setTimeout(resolve, 10));
+          return 'done';
+        }
+      );
 
       expect(result).toBe('done');
 
@@ -468,7 +493,7 @@ describe('DSAUtils', () => {
 
       const result = await MemoryOptimizedOperations.processInChunks(
         largeArray,
-        (chunk) => chunk.map(x => x * 2),
+        (chunk) => chunk.map((x) => x * 2),
         100
       );
 
@@ -482,7 +507,7 @@ describe('DSAUtils', () => {
 
       const result = await MemoryOptimizedOperations.processInChunks(
         smallArray,
-        (chunk) => chunk.map(x => x * 3),
+        (chunk) => chunk.map((x) => x * 3),
         10
       );
 
@@ -492,10 +517,10 @@ describe('DSAUtils', () => {
     test('should calculate visible items for virtualization', () => {
       const result = MemoryOptimizedOperations.calculateVisibleItems(
         1000, // totalItems
-        50,   // itemHeight
-        400,  // containerHeight
-        500,  // scrollTop
-        2     // buffer
+        50, // itemHeight
+        400, // containerHeight
+        500, // scrollTop
+        2 // buffer
       );
 
       expect(result.startIndex).toBeGreaterThanOrEqual(0);
@@ -506,15 +531,33 @@ describe('DSAUtils', () => {
 
     test('should handle edge cases in virtualization', () => {
       // Test with scroll at top
-      const topResult = MemoryOptimizedOperations.calculateVisibleItems(100, 50, 400, 0, 1);
+      const topResult = MemoryOptimizedOperations.calculateVisibleItems(
+        100,
+        50,
+        400,
+        0,
+        1
+      );
       expect(topResult.startIndex).toBe(0);
 
       // Test with scroll at bottom
-      const bottomResult = MemoryOptimizedOperations.calculateVisibleItems(100, 50, 400, 4600, 1);
+      const bottomResult = MemoryOptimizedOperations.calculateVisibleItems(
+        100,
+        50,
+        400,
+        4600,
+        1
+      );
       expect(bottomResult.endIndex).toBe(99);
 
       // Test with no items
-      const emptyResult = MemoryOptimizedOperations.calculateVisibleItems(0, 50, 400, 0, 1);
+      const emptyResult = MemoryOptimizedOperations.calculateVisibleItems(
+        0,
+        50,
+        400,
+        0,
+        1
+      );
       expect(emptyResult.startIndex).toBe(0);
       expect(emptyResult.endIndex).toBe(-1);
     });
@@ -591,8 +634,8 @@ describe('DSAUtils', () => {
     });
 
     test('should return null for unreachable nodes', () => {
-      const graph = new Map<string, Array<{node: string, weight: number}>>();
-      graph.set('A', [{node: 'B', weight: 1}]);
+      const graph = new Map<string, Array<{ node: string; weight: number }>>();
+      graph.set('A', [{ node: 'B', weight: 1 }]);
       graph.set('B', []);
       graph.set('C', []);
 
@@ -620,10 +663,10 @@ describe('DSAUtils', () => {
     });
 
     test('should handle disconnected graphs in Dijkstra', () => {
-      const graph = new Map<string, Array<{node: string, weight: number}>>();
-      graph.set('A', [{node: 'B', weight: 1}]);
+      const graph = new Map<string, Array<{ node: string; weight: number }>>();
+      graph.set('A', [{ node: 'B', weight: 1 }]);
       graph.set('B', []);
-      graph.set('C', [{node: 'D', weight: 1}]);
+      graph.set('C', [{ node: 'D', weight: 1 }]);
       graph.set('D', []);
 
       const result = GraphAlgorithms.dijkstra(graph, 'A', 'D');
@@ -632,7 +675,7 @@ describe('DSAUtils', () => {
     });
 
     test('should handle graph with Infinity distances', () => {
-      const graph = new Map<string, Array<{node: string, weight: number}>>();
+      const graph = new Map<string, Array<{ node: string; weight: number }>>();
       graph.set('A', []);
       graph.set('B', []);
 
@@ -664,8 +707,14 @@ describe('DSAUtils', () => {
       // Create a nearly sorted array (just a few elements out of order)
       const nearlySorted = Array.from({ length: 100 }, (_, i) => i);
       // Swap a few elements
-      [nearlySorted[10], nearlySorted[11]] = [nearlySorted[11], nearlySorted[10]];
-      [nearlySorted[50], nearlySorted[51]] = [nearlySorted[51], nearlySorted[50]];
+      [nearlySorted[10], nearlySorted[11]] = [
+        nearlySorted[11],
+        nearlySorted[10],
+      ];
+      [nearlySorted[50], nearlySorted[51]] = [
+        nearlySorted[51],
+        nearlySorted[50],
+      ];
 
       const result = OptimizedSorting.smartSort(nearlySorted);
 
@@ -674,7 +723,10 @@ describe('DSAUtils', () => {
 
     test('should correctly merge sorted arrays in timSort', () => {
       // Test with array large enough to trigger timSort but needs merging
-      const testArray = [...Array.from({ length: 40 }, (_, i) => i * 2), ...Array.from({ length: 40 }, (_, i) => i * 2 + 1)];
+      const testArray = [
+        ...Array.from({ length: 40 }, (_, i) => i * 2),
+        ...Array.from({ length: 40 }, (_, i) => i * 2 + 1),
+      ];
 
       const result = OptimizedSorting.smartSort(testArray);
 
@@ -718,14 +770,23 @@ describe('DSAUtils', () => {
     test('should work efficiently with combined data structures', () => {
       const cache = new LRUCache<string, number[]>(10);
       const trie = new Trie();
-      const pq = new PriorityQueue<{ word: string; frequency: number }>((a, b) => b.frequency - a.frequency);
+      const pq = new PriorityQueue<{ word: string; frequency: number }>(
+        (a, b) => b.frequency - a.frequency
+      );
 
       // Test scenario: Building a word frequency cache with search capabilities
-      const words = ['hello', 'world', 'hello', 'javascript', 'world', 'programming'];
+      const words = [
+        'hello',
+        'world',
+        'hello',
+        'javascript',
+        'world',
+        'programming',
+      ];
       const wordFreq: { [key: string]: number } = {};
 
       // Count frequencies
-      words.forEach(word => {
+      words.forEach((word) => {
         wordFreq[word] = (wordFreq[word] || 0) + 1;
         trie.insert(word);
       });

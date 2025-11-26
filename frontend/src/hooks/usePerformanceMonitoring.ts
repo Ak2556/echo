@@ -58,9 +58,11 @@ export function usePerformanceMonitoring(
   });
 
   const reportComponentPerformance = () => {
-    const averageRenderTime = renderTimes.current.length > 0
-      ? renderTimes.current.reduce((sum, time) => sum + time, 0) / renderTimes.current.length
-      : 0;
+    const averageRenderTime =
+      renderTimes.current.length > 0
+        ? renderTimes.current.reduce((sum, time) => sum + time, 0) /
+          renderTimes.current.length
+        : 0;
 
     const performanceData: ComponentPerformanceData = {
       componentName,
@@ -184,9 +186,11 @@ export function usePerformanceMonitoring(
     getPerformanceData: () => ({
       componentName,
       renderCount: renderCount.current,
-      averageRenderTime: renderTimes.current.length > 0
-        ? renderTimes.current.reduce((sum, time) => sum + time, 0) / renderTimes.current.length
-        : 0,
+      averageRenderTime:
+        renderTimes.current.length > 0
+          ? renderTimes.current.reduce((sum, time) => sum + time, 0) /
+            renderTimes.current.length
+          : 0,
       lastRenderTime: renderTimes.current[renderTimes.current.length - 1] || 0,
     }),
   };

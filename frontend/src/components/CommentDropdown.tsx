@@ -2,7 +2,16 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { Heart, MessageCircle, MoreVertical, Send, Smile, X, ChevronDown, ChevronUp } from 'lucide-react';
+import {
+  Heart,
+  MessageCircle,
+  MoreVertical,
+  Send,
+  Smile,
+  X,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react';
 import { formatRelativeTime } from '@/utils/internationalization';
 import { useToast } from '@/contexts/ToastContext';
 import LinkifiedText from './LinkifiedText';
@@ -33,7 +42,12 @@ interface CommentDropdownProps {
 
 const emojis = ['❤️', '😂', '👍', '🔥', '🙏', '💯', '👏', '✨'];
 
-export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: CommentDropdownProps) {
+export default function CommentDropdown({
+  postId,
+  isOpen,
+  onClose,
+  buttonRef,
+}: CommentDropdownProps) {
   const toast = useToast();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [comments, setComments] = useState<Comment[]>([
@@ -43,10 +57,12 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
         id: '1',
         username: 'priya_sharma',
         displayName: 'Priya Sharma',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=b6e3f4',
-        verified: true
+        avatar:
+          'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=b6e3f4',
+        verified: true,
       },
-      content: 'This is absolutely amazing! 🔥 The attention to detail is incredible.',
+      content:
+        'This is absolutely amazing! 🔥 The attention to detail is incredible.',
       timestamp: new Date(Date.now() - 1000 * 60 * 30),
       likes: 24,
       isLiked: false,
@@ -57,17 +73,18 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
             id: '2',
             username: 'raj_kumar',
             displayName: 'Raj Kumar',
-            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Raj&backgroundColor=ffd5dc',
-            verified: false
+            avatar:
+              'https://api.dicebear.com/7.x/avataaars/svg?seed=Raj&backgroundColor=ffd5dc',
+            verified: false,
           },
           content: 'Thanks for the tag! This is really inspiring 💡',
           timestamp: new Date(Date.now() - 1000 * 60 * 25),
           likes: 8,
           isLiked: true,
           replies: [],
-          replyTo: 'priya_sharma'
-        }
-      ]
+          replyTo: 'priya_sharma',
+        },
+      ],
     },
     {
       id: '2',
@@ -75,19 +92,23 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
         id: '3',
         username: 'sarah_jones',
         displayName: 'Sarah Jones',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah&backgroundColor=e6f3ff',
-        verified: true
+        avatar:
+          'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah&backgroundColor=e6f3ff',
+        verified: true,
       },
       content: 'Would love to collaborate on something like this! 🚀',
       timestamp: new Date(Date.now() - 1000 * 60 * 15),
       likes: 12,
       isLiked: false,
-      replies: []
-    }
+      replies: [],
+    },
   ]);
 
   const [commentText, setCommentText] = useState('');
-  const [replyingTo, setReplyingTo] = useState<{commentId: string; username: string} | null>(null);
+  const [replyingTo, setReplyingTo] = useState<{
+    commentId: string;
+    username: string;
+  } | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -95,7 +116,7 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        dropdownRef.current && 
+        dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node) &&
         buttonRef.current &&
         !buttonRef.current.contains(event.target as Node)
@@ -122,32 +143,35 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
         id: 'me',
         username: 'you',
         displayName: 'You',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=You&backgroundColor=c0aede',
-        verified: false
+        avatar:
+          'https://api.dicebear.com/7.x/avataaars/svg?seed=You&backgroundColor=c0aede',
+        verified: false,
       },
       content: commentText.trim(),
       timestamp: new Date(),
       likes: 0,
       isLiked: false,
       replies: replyingTo ? [] : [],
-      replyTo: replyingTo?.username
+      replyTo: replyingTo?.username,
     };
 
     if (replyingTo) {
       // Add as reply
-      setComments(prev => prev.map(comment => {
-        if (comment.id === replyingTo.commentId) {
-          return {
-            ...comment,
-            replies: [...comment.replies, newComment]
-          };
-        }
-        return comment;
-      }));
+      setComments((prev) =>
+        prev.map((comment) => {
+          if (comment.id === replyingTo.commentId) {
+            return {
+              ...comment,
+              replies: [...comment.replies, newComment],
+            };
+          }
+          return comment;
+        })
+      );
       toast.success(`Replied to @${replyingTo.username}`);
     } else {
       // Add as top-level comment
-      setComments(prev => [newComment, ...prev]);
+      setComments((prev) => [newComment, ...prev]);
       toast.success('Comment posted!');
     }
 
@@ -155,46 +179,57 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
     setReplyingTo(null);
   }, [commentText, replyingTo, toast]);
 
-  const handleLikeComment = useCallback((commentId: string, isReply: boolean, parentId?: string) => {
-    if (isReply && parentId) {
-      setComments(prev => prev.map(comment => {
-        if (comment.id === parentId) {
-          return {
-            ...comment,
-            replies: comment.replies.map(reply => {
-              if (reply.id === commentId) {
-                return {
-                  ...reply,
-                  isLiked: !reply.isLiked,
-                  likes: reply.isLiked ? reply.likes - 1 : reply.likes + 1
-                };
-              }
-              return reply;
-            })
-          };
-        }
-        return comment;
-      }));
-    } else {
-      setComments(prev => prev.map(comment => {
-        if (comment.id === commentId) {
-          return {
-            ...comment,
-            isLiked: !comment.isLiked,
-            likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1
-          };
-        }
-        return comment;
-      }));
-    }
-  }, []);
+  const handleLikeComment = useCallback(
+    (commentId: string, isReply: boolean, parentId?: string) => {
+      if (isReply && parentId) {
+        setComments((prev) =>
+          prev.map((comment) => {
+            if (comment.id === parentId) {
+              return {
+                ...comment,
+                replies: comment.replies.map((reply) => {
+                  if (reply.id === commentId) {
+                    return {
+                      ...reply,
+                      isLiked: !reply.isLiked,
+                      likes: reply.isLiked ? reply.likes - 1 : reply.likes + 1,
+                    };
+                  }
+                  return reply;
+                }),
+              };
+            }
+            return comment;
+          })
+        );
+      } else {
+        setComments((prev) =>
+          prev.map((comment) => {
+            if (comment.id === commentId) {
+              return {
+                ...comment,
+                isLiked: !comment.isLiked,
+                likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1,
+              };
+            }
+            return comment;
+          })
+        );
+      }
+    },
+    []
+  );
 
   const handleReply = useCallback((commentId: string, username: string) => {
     setReplyingTo({ commentId, username });
     setCommentText(`@${username} `);
   }, []);
 
-  const renderComment = (comment: Comment, isReply: boolean = false, parentId?: string) => (
+  const renderComment = (
+    comment: Comment,
+    isReply: boolean = false,
+    parentId?: string
+  ) => (
     <div
       key={comment.id}
       style={{
@@ -204,13 +239,15 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
         borderRadius: '8px',
         background: isReply ? 'var(--bg-secondary)' : 'transparent',
         border: isReply ? '1px solid var(--border-secondary)' : 'none',
-        transition: 'all 0.2s'
+        transition: 'all 0.2s',
       }}
     >
-      <div style={{
-        display: 'flex',
-        gap: '0.5rem'
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '0.5rem',
+        }}
+      >
         {/* Avatar */}
         <Image
           src={comment.author.avatar}
@@ -220,73 +257,89 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
           style={{
             borderRadius: '50%',
             border: '1px solid var(--border-primary)',
-            flexShrink: 0
+            flexShrink: 0,
           }}
         />
 
         {/* Comment Content */}
         <div style={{ flex: 1, minWidth: 0 }}>
           {/* Author Info */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            marginBottom: '0.25rem',
-            flexWrap: 'wrap'
-          }}>
-            <span style={{
-              fontWeight: 600,
-              fontSize: '0.85rem',
-              color: 'var(--text-primary)'
-            }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '0.25rem',
+              flexWrap: 'wrap',
+            }}
+          >
+            <span
+              style={{
+                fontWeight: 600,
+                fontSize: '0.85rem',
+                color: 'var(--text-primary)',
+              }}
+            >
               {comment.author.displayName}
             </span>
             {comment.author.verified && (
-              <span style={{ color: 'var(--color-primary)', fontSize: '12px' }}>✓</span>
+              <span style={{ color: 'var(--color-primary)', fontSize: '12px' }}>
+                ✓
+              </span>
             )}
-            <span style={{
-              fontSize: '0.7rem',
-              color: 'var(--text-tertiary)'
-            }}>
+            <span
+              style={{
+                fontSize: '0.7rem',
+                color: 'var(--text-tertiary)',
+              }}
+            >
               @{comment.author.username}
             </span>
-            <span style={{
-              fontSize: '0.7rem',
-              color: 'var(--text-tertiary)'
-            }}>
+            <span
+              style={{
+                fontSize: '0.7rem',
+                color: 'var(--text-tertiary)',
+              }}
+            >
               · {formatRelativeTime(comment.timestamp)}
             </span>
           </div>
 
           {/* Reply To Indicator */}
           {comment.replyTo && (
-            <div style={{
-              fontSize: '0.75rem',
-              color: 'var(--color-primary)',
-              marginBottom: '0.25rem',
-              fontWeight: 500
-            }}>
+            <div
+              style={{
+                fontSize: '0.75rem',
+                color: 'var(--color-primary)',
+                marginBottom: '0.25rem',
+                fontWeight: 500,
+              }}
+            >
               Replying to @{comment.replyTo}
             </div>
           )}
 
           {/* Comment Text */}
-          <p style={{
-            margin: '0 0 0.5rem 0',
-            fontSize: '0.85rem',
-            lineHeight: 1.5,
-            color: 'var(--text-primary)',
-            wordWrap: 'break-word'
-          }}>
+          <p
+            style={{
+              margin: '0 0 0.5rem 0',
+              fontSize: '0.85rem',
+              lineHeight: 1.5,
+              color: 'var(--text-primary)',
+              wordWrap: 'break-word',
+            }}
+          >
             <LinkifiedText text={comment.content} />
           </p>
 
           {/* Actions */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem'
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1rem',
+            }}
+          >
             <button
               onClick={() => handleLikeComment(comment.id, isReply, parentId)}
               style={{
@@ -301,7 +354,7 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
                 color: comment.isLiked ? '#ef4444' : 'var(--text-tertiary)',
                 transition: 'all 0.2s',
                 padding: '0.2rem 0.4rem',
-                borderRadius: '4px'
+                borderRadius: '4px',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
@@ -329,7 +382,7 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
                   color: 'var(--text-tertiary)',
                   transition: 'all 0.2s',
                   padding: '0.2rem 0.4rem',
-                  borderRadius: '4px'
+                  borderRadius: '4px',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = 'rgba(59, 130, 246, 0.1)';
@@ -355,7 +408,7 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
                 color: 'var(--text-tertiary)',
                 padding: '0.2rem',
                 borderRadius: '4px',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'var(--bg-tertiary)';
@@ -373,7 +426,9 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
       {/* Replies */}
       {comment.replies.length > 0 && (
         <div style={{ marginTop: '0.5rem' }}>
-          {comment.replies.map(reply => renderComment(reply, true, comment.id))}
+          {comment.replies.map((reply) =>
+            renderComment(reply, true, comment.id)
+          )}
         </div>
       )}
     </div>
@@ -381,7 +436,10 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
 
   if (!isOpen) return null;
 
-  const totalComments = comments.reduce((total, comment) => total + 1 + comment.replies.length, 0);
+  const totalComments = comments.reduce(
+    (total, comment) => total + 1 + comment.replies.length,
+    0
+  );
   const displayedComments = isExpanded ? comments : comments.slice(0, 2);
 
   const dropdownContent = (
@@ -403,33 +461,39 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        animation: 'slideDown 0.2s ease-out'
+        animation: 'slideDown 0.2s ease-out',
       }}
     >
       {/* Header */}
-      <div style={{
-        padding: '1rem',
-        borderBottom: '1px solid var(--border-secondary)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'var(--bg-secondary)'
-      }}>
+      <div
+        style={{
+          padding: '1rem',
+          borderBottom: '1px solid var(--border-secondary)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'var(--bg-secondary)',
+        }}
+      >
         <div>
-          <h4 style={{
-            margin: 0,
-            fontSize: '0.95rem',
-            fontWeight: 600,
-            color: 'var(--text-primary)',
-            marginBottom: '0.2rem'
-          }}>
+          <h4
+            style={{
+              margin: 0,
+              fontSize: '0.95rem',
+              fontWeight: 600,
+              color: 'var(--text-primary)',
+              marginBottom: '0.2rem',
+            }}
+          >
             💬 Comments
           </h4>
-          <p style={{
-            margin: 0,
-            fontSize: '0.75rem',
-            color: 'var(--text-tertiary)'
-          }}>
+          <p
+            style={{
+              margin: 0,
+              fontSize: '0.75rem',
+              color: 'var(--text-tertiary)',
+            }}
+          >
             {totalComments} {totalComments === 1 ? 'comment' : 'comments'}
           </p>
         </div>
@@ -446,7 +510,7 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
             alignItems: 'center',
             justifyContent: 'center',
             transition: 'all 0.2s',
-            color: 'var(--text-tertiary)'
+            color: 'var(--text-tertiary)',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
@@ -462,27 +526,34 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
       </div>
 
       {/* Comments List */}
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        padding: '0.75rem',
-        background: 'var(--bg-elevated)'
-      }}>
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: '0.75rem',
+          background: 'var(--bg-elevated)',
+        }}
+      >
         {comments.length === 0 ? (
-          <div style={{
-            textAlign: 'center',
-            padding: '2rem 1rem',
-            color: 'var(--text-tertiary)'
-          }}>
-            <MessageCircle size={32} style={{ opacity: 0.3, marginBottom: '0.5rem' }} />
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '2rem 1rem',
+              color: 'var(--text-tertiary)',
+            }}
+          >
+            <MessageCircle
+              size={32}
+              style={{ opacity: 0.3, marginBottom: '0.5rem' }}
+            />
             <p style={{ margin: 0, fontSize: '0.85rem' }}>
               No comments yet. Be the first to share your thoughts!
             </p>
           </div>
         ) : (
           <>
-            {displayedComments.map(comment => renderComment(comment))}
-            
+            {displayedComments.map((comment) => renderComment(comment))}
+
             {/* Show More/Less Button */}
             {comments.length > 2 && (
               <button
@@ -502,7 +573,7 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
                   gap: '0.5rem',
                   fontSize: '0.85rem',
                   fontWeight: 500,
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = 'var(--bg-tertiary)';
@@ -529,28 +600,34 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
       </div>
 
       {/* Comment Input */}
-      <div style={{
-        padding: '0.75rem',
-        borderTop: '1px solid var(--border-secondary)',
-        background: 'var(--bg-secondary)'
-      }}>
+      <div
+        style={{
+          padding: '0.75rem',
+          borderTop: '1px solid var(--border-secondary)',
+          background: 'var(--bg-secondary)',
+        }}
+      >
         {/* Replying To Indicator */}
         {replyingTo && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '0.5rem',
-            padding: '0.4rem 0.6rem',
-            background: 'rgba(59, 130, 246, 0.1)',
-            borderRadius: '6px',
-            border: '1px solid rgba(59, 130, 246, 0.2)'
-          }}>
-            <span style={{
-              fontSize: '0.75rem',
-              color: '#3b82f6',
-              fontWeight: 500
-            }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '0.5rem',
+              padding: '0.4rem 0.6rem',
+              background: 'rgba(59, 130, 246, 0.1)',
+              borderRadius: '6px',
+              border: '1px solid rgba(59, 130, 246, 0.2)',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '0.75rem',
+                color: '#3b82f6',
+                fontWeight: 500,
+              }}
+            >
               Replying to @{replyingTo.username}
             </span>
             <button
@@ -565,7 +642,7 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
                 color: '#3b82f6',
                 padding: '0.2rem',
                 display: 'flex',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
             >
               <X size={12} />
@@ -573,11 +650,13 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
           </div>
         )}
 
-        <div style={{
-          display: 'flex',
-          gap: '0.5rem',
-          alignItems: 'flex-end'
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '0.5rem',
+            alignItems: 'flex-end',
+          }}
+        >
           <Image
             src="https://api.dicebear.com/7.x/avataaars/svg?seed=You&backgroundColor=c0aede"
             alt="Your avatar"
@@ -586,7 +665,7 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
             style={{
               borderRadius: '50%',
               border: '1px solid var(--border-primary)',
-              flexShrink: 0
+              flexShrink: 0,
             }}
           />
 
@@ -610,7 +689,7 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
                 resize: 'none',
                 fontFamily: 'inherit',
                 lineHeight: 1.4,
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
               }}
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = 'var(--color-primary)';
@@ -627,7 +706,15 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
             />
 
             {/* Emoji Button and Send Button */}
-            <div style={{ position: 'absolute', right: '0.5rem', bottom: '0.5rem', display: 'flex', gap: '0.25rem' }}>
+            <div
+              style={{
+                position: 'absolute',
+                right: '0.5rem',
+                bottom: '0.5rem',
+                display: 'flex',
+                gap: '0.25rem',
+              }}
+            >
               <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 style={{
@@ -638,7 +725,7 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
                   display: 'flex',
                   alignItems: 'center',
                   color: 'var(--text-tertiary)',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = 'var(--color-primary)';
@@ -663,7 +750,7 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
                     justifyContent: 'center',
                     borderRadius: '50%',
                     color: 'white',
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'scale(1.1)';
@@ -679,26 +766,28 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
 
             {/* Emoji Picker */}
             {showEmojiPicker && (
-              <div style={{
-                position: 'absolute',
-                bottom: '100%',
-                right: 0,
-                marginBottom: '0.5rem',
-                padding: '0.5rem',
-                background: 'var(--bg-elevated)',
-                border: '1px solid var(--border-primary)',
-                borderRadius: '8px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '0.25rem',
-                zIndex: 10
-              }}>
-                {emojis.map(emoji => (
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '100%',
+                  right: 0,
+                  marginBottom: '0.5rem',
+                  padding: '0.5rem',
+                  background: 'var(--bg-elevated)',
+                  border: '1px solid var(--border-primary)',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: '0.25rem',
+                  zIndex: 10,
+                }}
+              >
+                {emojis.map((emoji) => (
                   <button
                     key={emoji}
                     onClick={() => {
-                      setCommentText(prev => prev + emoji);
+                      setCommentText((prev) => prev + emoji);
                       setShowEmojiPicker(false);
                     }}
                     style={{
@@ -708,7 +797,7 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
                       fontSize: '1.2rem',
                       padding: '0.3rem',
                       borderRadius: '4px',
-                      transition: 'all 0.2s'
+                      transition: 'all 0.2s',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.background = 'var(--bg-secondary)';
@@ -728,14 +817,16 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
         </div>
 
         {/* Helper Text */}
-        <div style={{
-          marginTop: '0.4rem',
-          fontSize: '0.7rem',
-          color: 'var(--text-tertiary)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          paddingLeft: '2.5rem'
-        }}>
+        <div
+          style={{
+            marginTop: '0.4rem',
+            fontSize: '0.7rem',
+            color: 'var(--text-tertiary)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            paddingLeft: '2.5rem',
+          }}
+        >
           <span>Press Cmd/Ctrl + Enter to post</span>
           <span>{commentText.length}/500</span>
         </div>
@@ -756,9 +847,5 @@ export default function CommentDropdown({ postId, isOpen, onClose, buttonRef }: 
     </div>
   );
 
-  return (
-    <div style={{ position: 'relative' }}>
-      {dropdownContent}
-    </div>
-  );
+  return <div style={{ position: 'relative' }}>{dropdownContent}</div>;
 }

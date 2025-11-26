@@ -14,33 +14,108 @@ interface ReportModalProps {
 }
 
 const postReportReasons = [
-  { id: 'spam', label: 'Spam or Scam', icon: '🚫', description: 'Unwanted commercial content or fraudulent activity' },
-  { id: 'harassment', label: 'Harassment or Bullying', icon: '😡', description: 'Targeting someone with abuse or threats' },
-  { id: 'misinformation', label: 'False Information', icon: '❌', description: 'Content that is misleading or factually incorrect' },
-  { id: 'hate', label: 'Hate Speech', icon: '⚠️', description: 'Content that attacks people based on identity' },
-  { id: 'violence', label: 'Violence or Dangerous Content', icon: '💥', description: 'Content promoting violence or harmful activities' },
-  { id: 'inappropriate', label: 'Inappropriate Content', icon: '🔞', description: 'Sexual, graphic, or disturbing content' },
-  { id: 'copyright', label: 'Copyright Violation', icon: '©️', description: 'Unauthorized use of copyrighted material' },
-  { id: 'other', label: 'Other', icon: '📝', description: 'Something else that violates our guidelines' }
+  {
+    id: 'spam',
+    label: 'Spam or Scam',
+    icon: '🚫',
+    description: 'Unwanted commercial content or fraudulent activity',
+  },
+  {
+    id: 'harassment',
+    label: 'Harassment or Bullying',
+    icon: '😡',
+    description: 'Targeting someone with abuse or threats',
+  },
+  {
+    id: 'misinformation',
+    label: 'False Information',
+    icon: '❌',
+    description: 'Content that is misleading or factually incorrect',
+  },
+  {
+    id: 'hate',
+    label: 'Hate Speech',
+    icon: '⚠️',
+    description: 'Content that attacks people based on identity',
+  },
+  {
+    id: 'violence',
+    label: 'Violence or Dangerous Content',
+    icon: '💥',
+    description: 'Content promoting violence or harmful activities',
+  },
+  {
+    id: 'inappropriate',
+    label: 'Inappropriate Content',
+    icon: '🔞',
+    description: 'Sexual, graphic, or disturbing content',
+  },
+  {
+    id: 'copyright',
+    label: 'Copyright Violation',
+    icon: '©️',
+    description: 'Unauthorized use of copyrighted material',
+  },
+  {
+    id: 'other',
+    label: 'Other',
+    icon: '📝',
+    description: 'Something else that violates our guidelines',
+  },
 ];
 
 const userReportReasons = [
-  { id: 'spam', label: 'Spam Account', icon: '🚫', description: 'Account primarily posts spam or promotional content' },
-  { id: 'impersonation', label: 'Impersonation', icon: '🎭', description: 'Pretending to be someone else' },
-  { id: 'harassment', label: 'Harassment', icon: '😡', description: 'Repeatedly targeting others with abuse' },
-  { id: 'hate', label: 'Hateful Content', icon: '⚠️', description: 'Consistently posts hate speech or discriminatory content' },
-  { id: 'underage', label: 'Underage Account', icon: '👶', description: 'Account appears to belong to someone under 13' },
-  { id: 'bot', label: 'Automated Bot', icon: '🤖', description: 'Account appears to be an undisclosed bot' },
-  { id: 'other', label: 'Other', icon: '📝', description: 'Something else that violates our guidelines' }
+  {
+    id: 'spam',
+    label: 'Spam Account',
+    icon: '🚫',
+    description: 'Account primarily posts spam or promotional content',
+  },
+  {
+    id: 'impersonation',
+    label: 'Impersonation',
+    icon: '🎭',
+    description: 'Pretending to be someone else',
+  },
+  {
+    id: 'harassment',
+    label: 'Harassment',
+    icon: '😡',
+    description: 'Repeatedly targeting others with abuse',
+  },
+  {
+    id: 'hate',
+    label: 'Hateful Content',
+    icon: '⚠️',
+    description: 'Consistently posts hate speech or discriminatory content',
+  },
+  {
+    id: 'underage',
+    label: 'Underage Account',
+    icon: '👶',
+    description: 'Account appears to belong to someone under 13',
+  },
+  {
+    id: 'bot',
+    label: 'Automated Bot',
+    icon: '🤖',
+    description: 'Account appears to be an undisclosed bot',
+  },
+  {
+    id: 'other',
+    label: 'Other',
+    icon: '📝',
+    description: 'Something else that violates our guidelines',
+  },
 ];
 
-export default function ReportModal({ 
-  isOpen, 
-  onClose, 
-  type, 
-  targetId, 
-  targetName, 
-  onReport 
+export default function ReportModal({
+  isOpen,
+  onClose,
+  type,
+  targetId,
+  targetName,
+  onReport,
 }: ReportModalProps) {
   const toast = useToast();
   const [selectedReason, setSelectedReason] = useState('');
@@ -48,7 +123,7 @@ export default function ReportModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const reasons = type === 'post' ? postReportReasons : userReportReasons;
-  const selectedReasonData = reasons.find(r => r.id === selectedReason);
+  const selectedReasonData = reasons.find((r) => r.id === selectedReason);
   const requiresDetails = selectedReason === 'other';
   const maxDetailsLength = 500;
 
@@ -73,7 +148,9 @@ export default function ReportModal({
     try {
       const success = await onReport(selectedReason, details.trim());
       if (success) {
-        toast.success('Report submitted successfully. Thank you for helping keep Echo safe.');
+        toast.success(
+          'Report submitted successfully. Thank you for helping keep Echo safe.'
+        );
         setSelectedReason('');
         setDetails('');
         onClose();
@@ -108,7 +185,7 @@ export default function ReportModal({
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 1000,
-        padding: '1rem'
+        padding: '1rem',
       }}
       onClick={handleClose}
     >
@@ -123,29 +200,33 @@ export default function ReportModal({
           overflow: 'auto',
           position: 'relative',
           boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
-          border: '1px solid var(--border)'
+          border: '1px solid var(--border)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '1.5rem'
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: '1.5rem',
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Flag size={20} style={{ color: '#ef4444' }} />
-            <h2 style={{ 
-              margin: 0, 
-              fontSize: '1.25rem', 
-              fontWeight: 700,
-              color: 'var(--fg)'
-            }}>
+            <h2
+              style={{
+                margin: 0,
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                color: 'var(--fg)',
+              }}
+            >
               Report {type === 'post' ? 'Post' : 'User'}
             </h2>
           </div>
-          
+
           <button
             onClick={handleClose}
             style={{
@@ -158,7 +239,7 @@ export default function ReportModal({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transition: 'background 0.2s'
+              transition: 'background 0.2s',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'rgba(0, 0, 0, 0.2)';
@@ -173,52 +254,71 @@ export default function ReportModal({
 
         {/* Target Info */}
         {targetName && (
-          <div style={{
-            background: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: '8px',
-            padding: '0.75rem',
-            marginBottom: '1.5rem',
-            fontSize: '0.9rem',
-            color: 'var(--muted)'
-          }}>
-            Reporting {type}: <strong style={{ color: 'var(--fg)' }}>{targetName}</strong>
+          <div
+            style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '8px',
+              padding: '0.75rem',
+              marginBottom: '1.5rem',
+              fontSize: '0.9rem',
+              color: 'var(--muted)',
+            }}
+          >
+            Reporting {type}:{' '}
+            <strong style={{ color: 'var(--fg)' }}>{targetName}</strong>
           </div>
         )}
 
         {/* Warning */}
-        <div style={{
-          background: 'rgba(239, 68, 68, 0.1)',
-          border: '1px solid rgba(239, 68, 68, 0.2)',
-          borderRadius: '8px',
-          padding: '1rem',
-          marginBottom: '1.5rem',
-          display: 'flex',
-          gap: '0.75rem'
-        }}>
-          <AlertTriangle size={20} style={{ color: '#ef4444', flexShrink: 0, marginTop: '0.1rem' }} />
+        <div
+          style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            borderRadius: '8px',
+            padding: '1rem',
+            marginBottom: '1.5rem',
+            display: 'flex',
+            gap: '0.75rem',
+          }}
+        >
+          <AlertTriangle
+            size={20}
+            style={{ color: '#ef4444', flexShrink: 0, marginTop: '0.1rem' }}
+          />
           <div style={{ fontSize: '0.85rem', lineHeight: 1.4 }}>
-            <strong style={{ color: '#ef4444', display: 'block', marginBottom: '0.25rem' }}>
+            <strong
+              style={{
+                color: '#ef4444',
+                display: 'block',
+                marginBottom: '0.25rem',
+              }}
+            >
               Important:
             </strong>
             <span style={{ color: 'var(--fg)' }}>
-              False reports may result in action against your account. Only report content that genuinely violates our community guidelines.
+              False reports may result in action against your account. Only
+              report content that genuinely violates our community guidelines.
             </span>
           </div>
         </div>
 
         {/* Reason Selection */}
         <div style={{ marginBottom: '1.5rem' }}>
-          <h3 style={{
-            margin: '0 0 1rem 0',
-            fontSize: '1rem',
-            fontWeight: 600,
-            color: 'var(--fg)'
-          }}>
+          <h3
+            style={{
+              margin: '0 0 1rem 0',
+              fontSize: '1rem',
+              fontWeight: 600,
+              color: 'var(--fg)',
+            }}
+          >
             Why are you reporting this {type}?
           </h3>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
+          >
             {reasons.map((reason) => (
               <label
                 key={reason.id}
@@ -231,11 +331,15 @@ export default function ReportModal({
                   borderRadius: '8px',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
-                  background: selectedReason === reason.id ? 'rgba(var(--accent-rgb), 0.05)' : 'var(--surface)'
+                  background:
+                    selectedReason === reason.id
+                      ? 'rgba(var(--accent-rgb), 0.05)'
+                      : 'var(--surface)',
                 }}
                 onMouseEnter={(e) => {
                   if (selectedReason !== reason.id) {
-                    e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb), 0.5)';
+                    e.currentTarget.style.borderColor =
+                      'rgba(var(--accent-rgb), 0.5)';
                   }
                 }}
                 onMouseLeave={(e) => {
@@ -254,31 +358,37 @@ export default function ReportModal({
                     width: '18px',
                     height: '18px',
                     marginTop: '0.1rem',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
                   }}
                 />
                 <div style={{ flex: 1 }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    marginBottom: '0.25rem'
-                  }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      marginBottom: '0.25rem',
+                    }}
+                  >
                     <span style={{ fontSize: '1rem' }}>{reason.icon}</span>
-                    <span style={{
-                      fontWeight: 600,
-                      fontSize: '0.9rem',
-                      color: 'var(--fg)'
-                    }}>
+                    <span
+                      style={{
+                        fontWeight: 600,
+                        fontSize: '0.9rem',
+                        color: 'var(--fg)',
+                      }}
+                    >
                       {reason.label}
                     </span>
                   </div>
-                  <p style={{
-                    margin: 0,
-                    fontSize: '0.8rem',
-                    color: 'var(--muted)',
-                    lineHeight: 1.3
-                  }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: '0.8rem',
+                      color: 'var(--muted)',
+                      lineHeight: 1.3,
+                    }}
+                  >
                     {reason.description}
                   </p>
                 </div>
@@ -288,23 +398,27 @@ export default function ReportModal({
         </div>
 
         {/* Additional Details */}
-        {(selectedReason && (requiresDetails || selectedReasonData)) && (
+        {selectedReason && (requiresDetails || selectedReasonData) && (
           <div style={{ marginBottom: '1.5rem' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '0.5rem',
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              color: 'var(--fg)'
-            }}>
-              Additional details {requiresDetails && <span style={{ color: '#ef4444' }}>*</span>}
+            <label
+              style={{
+                display: 'block',
+                marginBottom: '0.5rem',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                color: 'var(--fg)',
+              }}
+            >
+              Additional details{' '}
+              {requiresDetails && <span style={{ color: '#ef4444' }}>*</span>}
             </label>
             <textarea
               value={details}
               onChange={(e) => setDetails(e.target.value)}
-              placeholder={requiresDetails 
-                ? "Please provide specific details about the violation..." 
-                : "Any additional context that might help our review (optional)..."
+              placeholder={
+                requiresDetails
+                  ? 'Please provide specific details about the violation...'
+                  : 'Any additional context that might help our review (optional)...'
               }
               style={{
                 width: '100%',
@@ -320,7 +434,7 @@ export default function ReportModal({
                 resize: 'vertical',
                 outline: 'none',
                 transition: 'border-color 0.2s',
-                fontFamily: 'inherit'
+                fontFamily: 'inherit',
               }}
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = 'var(--accent)';
@@ -329,20 +443,27 @@ export default function ReportModal({
                 e.currentTarget.style.borderColor = 'var(--border)';
               }}
             />
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginTop: '0.5rem',
-              fontSize: '0.75rem',
-              color: 'var(--muted)'
-            }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: '0.5rem',
+                fontSize: '0.75rem',
+                color: 'var(--muted)',
+              }}
+            >
               <span>
                 {requiresDetails ? 'Required for this report type' : 'Optional'}
               </span>
-              <span style={{
-                color: details.length > maxDetailsLength * 0.9 ? '#ef4444' : 'var(--muted)'
-              }}>
+              <span
+                style={{
+                  color:
+                    details.length > maxDetailsLength * 0.9
+                      ? '#ef4444'
+                      : 'var(--muted)',
+                }}
+              >
                 {details.length}/{maxDetailsLength}
               </span>
             </div>
@@ -350,44 +471,57 @@ export default function ReportModal({
         )}
 
         {/* What Happens Next */}
-        <div style={{
-          background: 'rgba(59, 130, 246, 0.1)',
-          border: '1px solid rgba(59, 130, 246, 0.2)',
-          borderRadius: '8px',
-          padding: '1rem',
-          marginBottom: '1.5rem'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            marginBottom: '0.5rem'
-          }}>
+        <div
+          style={{
+            background: 'rgba(59, 130, 246, 0.1)',
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+            borderRadius: '8px',
+            padding: '1rem',
+            marginBottom: '1.5rem',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '0.5rem',
+            }}
+          >
             <Shield size={16} style={{ color: '#3b82f6' }} />
             <strong style={{ fontSize: '0.85rem', color: '#3b82f6' }}>
               What happens next?
             </strong>
           </div>
-          <ul style={{
-            margin: 0,
-            paddingLeft: '1.25rem',
-            fontSize: '0.8rem',
-            color: 'var(--fg)',
-            lineHeight: 1.4
-          }}>
-            <li>Our moderation team will review your report within 24-48 hours</li>
+          <ul
+            style={{
+              margin: 0,
+              paddingLeft: '1.25rem',
+              fontSize: '0.8rem',
+              color: 'var(--fg)',
+              lineHeight: 1.4,
+            }}
+          >
+            <li>
+              Our moderation team will review your report within 24-48 hours
+            </li>
             <li>We'll take appropriate action if violations are found</li>
-            <li>Your report is anonymous and won't be shared with the reported user</li>
+            <li>
+              Your report is anonymous and won't be shared with the reported
+              user
+            </li>
             <li>You may receive a follow-up if we need more information</li>
           </ul>
         </div>
 
         {/* Action Buttons */}
-        <div style={{
-          display: 'flex',
-          gap: '0.75rem',
-          justifyContent: 'flex-end'
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '0.75rem',
+            justifyContent: 'flex-end',
+          }}
+        >
           <button
             onClick={handleClose}
             style={{
@@ -399,7 +533,7 @@ export default function ReportModal({
               cursor: 'pointer',
               fontSize: '0.9rem',
               fontWeight: 500,
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'rgba(0, 0, 0, 0.05)';
@@ -410,41 +544,58 @@ export default function ReportModal({
           >
             Cancel
           </button>
-          
+
           <button
             onClick={handleSubmit}
-            disabled={!selectedReason || (requiresDetails && !details.trim()) || isSubmitting || details.length > maxDetailsLength}
+            disabled={
+              !selectedReason ||
+              (requiresDetails && !details.trim()) ||
+              isSubmitting ||
+              details.length > maxDetailsLength
+            }
             style={{
               padding: '0.75rem 1.5rem',
               border: 'none',
-              background: selectedReason && (!requiresDetails || details.trim()) && details.length <= maxDetailsLength
-                ? '#ef4444' 
-                : 'rgba(0, 0, 0, 0.1)',
-              color: selectedReason && (!requiresDetails || details.trim()) && details.length <= maxDetailsLength
-                ? 'white' 
-                : 'var(--muted)',
+              background:
+                selectedReason &&
+                (!requiresDetails || details.trim()) &&
+                details.length <= maxDetailsLength
+                  ? '#ef4444'
+                  : 'rgba(0, 0, 0, 0.1)',
+              color:
+                selectedReason &&
+                (!requiresDetails || details.trim()) &&
+                details.length <= maxDetailsLength
+                  ? 'white'
+                  : 'var(--muted)',
               borderRadius: '8px',
-              cursor: selectedReason && (!requiresDetails || details.trim()) && !isSubmitting && details.length <= maxDetailsLength
-                ? 'pointer' 
-                : 'not-allowed',
+              cursor:
+                selectedReason &&
+                (!requiresDetails || details.trim()) &&
+                !isSubmitting &&
+                details.length <= maxDetailsLength
+                  ? 'pointer'
+                  : 'not-allowed',
               fontSize: '0.9rem',
               fontWeight: 600,
               transition: 'all 0.2s',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem'
+              gap: '0.5rem',
             }}
           >
             {isSubmitting ? (
               <>
-                <div style={{
-                  width: '16px',
-                  height: '16px',
-                  border: '2px solid rgba(255, 255, 255, 0.3)',
-                  borderTopColor: 'white',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite'
-                }} />
+                <div
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    border: '2px solid rgba(255, 255, 255, 0.3)',
+                    borderTopColor: 'white',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite',
+                  }}
+                />
                 Submitting...
               </>
             ) : (
@@ -456,8 +607,12 @@ export default function ReportModal({
 
       <style jsx>{`
         @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
       `}</style>
     </div>

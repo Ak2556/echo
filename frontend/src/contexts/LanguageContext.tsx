@@ -2,7 +2,10 @@
 
 import React, { createContext, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import i18n, { SUPPORTED_LANGUAGES, type SupportedLanguageCode } from '@/lib/i18n';
+import i18n, {
+  SUPPORTED_LANGUAGES,
+  type SupportedLanguageCode,
+} from '@/lib/i18n';
 
 type LanguageContextType = {
   language: SupportedLanguageCode;
@@ -12,13 +15,14 @@ type LanguageContextType = {
   supportedLanguages: typeof SUPPORTED_LANGUAGES;
 };
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined
+);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const { i18n, t } = useTranslation();
 
   const setLanguage = (newLanguage: SupportedLanguageCode) => {
-
     i18n.changeLanguage(newLanguage);
     localStorage.setItem('echo-language', newLanguage);
   };
@@ -39,7 +43,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLanguage,
     t,
     isRTL,
-    supportedLanguages: SUPPORTED_LANGUAGES
+    supportedLanguages: SUPPORTED_LANGUAGES,
   };
 
   return (

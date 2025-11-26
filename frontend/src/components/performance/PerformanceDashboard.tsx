@@ -2,14 +2,22 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  usePerformance, 
-  useRenderPerformance, 
-  useNetworkPerformance, 
+import {
+  usePerformance,
+  useRenderPerformance,
+  useNetworkPerformance,
   useBundlePerformance,
-  formatPerformanceMetrics 
+  formatPerformanceMetrics,
 } from '@/hooks/usePerformance';
-import { Activity, Cpu, HardDrive, Network, Zap, AlertTriangle, CheckCircle } from 'lucide-react';
+import {
+  Activity,
+  Cpu,
+  HardDrive,
+  Network,
+  Zap,
+  AlertTriangle,
+  CheckCircle,
+} from 'lucide-react';
 
 interface PerformanceDashboardProps {
   isVisible?: boolean;
@@ -26,39 +34,44 @@ interface PerformanceAlert {
   threshold: number;
 }
 
-export default function PerformanceDashboard({ 
-  isVisible = false, 
-  onToggle 
+export default function PerformanceDashboard({
+  isVisible = false,
+  onToggle,
 }: PerformanceDashboardProps) {
   const [alerts, setAlerts] = useState<PerformanceAlert[]>([]);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [selectedTab, setSelectedTab] = useState<'overview' | 'detailed' | 'alerts'>('overview');
-  
+  const [selectedTab, setSelectedTab] = useState<
+    'overview' | 'detailed' | 'alerts'
+  >('overview');
+
   // Performance hooks
   const { metrics } = usePerformance({
     trackFPS: true,
     trackMemory: true,
     trackInteractions: true,
-    onMetricsUpdate: handleMetricsUpdate
+    onMetricsUpdate: handleMetricsUpdate,
   });
-  
+
   const renderPerf = useRenderPerformance('PerformanceDashboard');
   const networkInfo = useNetworkPerformance();
   const bundleMetrics = useBundlePerformance();
-  
+
   // Performance thresholds
-  const thresholds = useMemo(() => ({
-    fps: { warning: 30, error: 15 },
-    renderTime: { warning: 16, error: 32 },
-    memoryUsage: { warning: 70, error: 85 },
-    interactionTime: { warning: 100, error: 300 },
-    bundleSize: { warning: 5 * 1024 * 1024, error: 10 * 1024 * 1024 } // 5MB warning, 10MB error
-  }), []);
-  
+  const thresholds = useMemo(
+    () => ({
+      fps: { warning: 30, error: 15 },
+      renderTime: { warning: 16, error: 32 },
+      memoryUsage: { warning: 70, error: 85 },
+      interactionTime: { warning: 100, error: 300 },
+      bundleSize: { warning: 5 * 1024 * 1024, error: 10 * 1024 * 1024 }, // 5MB warning, 10MB error
+    }),
+    []
+  );
+
   // Handle metrics updates and generate alerts
   function handleMetricsUpdate(newMetrics: any) {
     const newAlerts: PerformanceAlert[] = [];
-    
+
     // FPS alerts
     if (newMetrics.fps < thresholds.fps.error) {
       newAlerts.push({
@@ -68,7 +81,7 @@ export default function PerformanceDashboard({
         timestamp: Date.now(),
         metric: 'fps',
         value: newMetrics.fps,
-        threshold: thresholds.fps.error
+        threshold: thresholds.fps.error,
       });
     } else if (newMetrics.fps < thresholds.fps.warning) {
       newAlerts.push({
@@ -78,10 +91,10 @@ export default function PerformanceDashboard({
         timestamp: Date.now(),
         metric: 'fps',
         value: newMetrics.fps,
-        threshold: thresholds.fps.warning
+        threshold: thresholds.fps.warning,
       });
     }
-    
+
     // Render time alerts
     if (newMetrics.renderTime > thresholds.renderTime.error) {
       newAlerts.push({
@@ -91,7 +104,7 @@ export default function PerformanceDashboard({
         timestamp: Date.now(),
         metric: 'renderTime',
         value: newMetrics.renderTime,
-        threshold: thresholds.renderTime.error
+        threshold: thresholds.renderTime.error,
       });
     } else if (newMetrics.renderTime > thresholds.renderTime.warning) {
       newAlerts.push({
@@ -101,10 +114,10 @@ export default function PerformanceDashboard({
         timestamp: Date.now(),
         metric: 'renderTime',
         value: newMetrics.renderTime,
-        threshold: thresholds.renderTime.warning
+        threshold: thresholds.renderTime.warning,
       });
     }
-    
+
     // Memory usage alerts
     if (newMetrics.memoryUsage?.percentage > thresholds.memoryUsage.error) {
       newAlerts.push({
@@ -114,9 +127,11 @@ export default function PerformanceDashboard({
         timestamp: Date.now(),
         metric: 'memoryUsage',
         value: newMetrics.memoryUsage.percentage,
-        threshold: thresholds.memoryUsage.error
+        threshold: thresholds.memoryUsage.error,
       });
-    } else if (newMetrics.memoryUsage?.percentage > thresholds.memoryUsage.warning) {
+    } else if (
+      newMetrics.memoryUsage?.percentage > thresholds.memoryUsage.warning
+    ) {
       newAlerts.push({
         id: `memory-${Date.now()}`,
         type: 'warning',
@@ -124,61 +139,70 @@ export default function PerformanceDashboard({
         timestamp: Date.now(),
         metric: 'memoryUsage',
         value: newMetrics.memoryUsage.percentage,
-        threshold: thresholds.memoryUsage.warning
+        threshold: thresholds.memoryUsage.warning,
       });
     }
-    
+
     if (newAlerts.length > 0) {
-      setAlerts(prev => [...newAlerts, ...prev].slice(0, 50)); // Keep last 50 alerts
+      setAlerts((prev) => [...newAlerts, ...prev].slice(0, 50)); // Keep last 50 alerts
     }
   }
-  
+
   // Clear old alerts
   useEffect(() => {
     const interval = setInterval(() => {
-      setAlerts(prev => prev.filter(alert => Date.now() - alert.timestamp < 300000)); // 5 minutes
+      setAlerts((prev) =>
+        prev.filter((alert) => Date.now() - alert.timestamp < 300000)
+      ); // 5 minutes
     }, 60000); // Check every minute
-    
+
     return () => clearInterval(interval);
   }, []);
-  
+
   // Performance score calculation
   const performanceScore = useMemo(() => {
     let score = 100;
-    
+
     // FPS impact
     if (metrics.fps < 30) score -= 20;
     else if (metrics.fps < 45) score -= 10;
-    
+
     // Render time impact
     if (metrics.renderTime > 32) score -= 20;
     else if (metrics.renderTime > 16) score -= 10;
-    
+
     // Memory impact
     if (metrics.memoryUsage?.percentage > 85) score -= 15;
     else if (metrics.memoryUsage?.percentage > 70) score -= 8;
-    
+
     // Interaction time impact
     if (metrics.interactionTime > 300) score -= 15;
     else if (metrics.interactionTime > 100) score -= 8;
-    
+
     return Math.max(0, score);
   }, [metrics]);
-  
+
   // Get performance status
   const getPerformanceStatus = (score: number) => {
-    if (score >= 90) return { status: 'excellent', color: 'text-green-500', icon: CheckCircle };
-    if (score >= 70) return { status: 'good', color: 'text-blue-500', icon: CheckCircle };
-    if (score >= 50) return { status: 'fair', color: 'text-yellow-500', icon: AlertTriangle };
+    if (score >= 90)
+      return {
+        status: 'excellent',
+        color: 'text-green-500',
+        icon: CheckCircle,
+      };
+    if (score >= 70)
+      return { status: 'good', color: 'text-blue-500', icon: CheckCircle };
+    if (score >= 50)
+      return { status: 'fair', color: 'text-yellow-500', icon: AlertTriangle };
     return { status: 'poor', color: 'text-red-500', icon: AlertTriangle };
   };
-  
+
   const performanceStatus = getPerformanceStatus(performanceScore);
   const StatusIcon = performanceStatus.icon;
-  
+
   // Format metrics for display
   const formattedMetrics = formatPerformanceMetrics(metrics);
-  
+
   if (!isVisible) {
     return (
       <button
@@ -190,7 +214,7 @@ export default function PerformanceDashboard({
       </button>
     );
   }
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -203,8 +227,12 @@ export default function PerformanceDashboard({
       <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
         <div className="flex items-center space-x-2">
           <Activity size={20} className="text-blue-600" />
-          <h3 className="font-semibold text-gray-900 dark:text-white">Performance</h3>
-          <div className={`flex items-center space-x-1 ${performanceStatus.color}`}>
+          <h3 className="font-semibold text-gray-900 dark:text-white">
+            Performance
+          </h3>
+          <div
+            className={`flex items-center space-x-1 ${performanceStatus.color}`}
+          >
             <StatusIcon size={16} />
             <span className="text-sm font-medium">{performanceScore}</span>
           </div>
@@ -225,7 +253,7 @@ export default function PerformanceDashboard({
           </button>
         </div>
       </div>
-      
+
       {!isMinimized && (
         <div className="flex flex-col h-full">
           {/* Tabs */}
@@ -263,7 +291,9 @@ export default function PerformanceDashboard({
                 >
                   {/* Performance Score */}
                   <div className="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div className={`text-3xl font-bold ${performanceStatus.color}`}>
+                    <div
+                      className={`text-3xl font-bold ${performanceStatus.color}`}
+                    >
                       {performanceScore}
                     </div>
                     <div className="text-sm text-gray-600 dark:text-gray-400 capitalize">
@@ -278,7 +308,9 @@ export default function PerformanceDashboard({
                         <Zap size={16} className="text-blue-600" />
                         <span className="text-sm font-medium">FPS</span>
                       </div>
-                      <div className="text-lg font-bold text-blue-600">{metrics.fps}</div>
+                      <div className="text-lg font-bold text-blue-600">
+                        {metrics.fps}
+                      </div>
                     </div>
 
                     <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
@@ -313,7 +345,7 @@ export default function PerformanceDashboard({
                   </div>
                 </motion.div>
               )}
-              
+
               {selectedTab === 'detailed' && (
                 <motion.div
                   key="detailed"
@@ -326,7 +358,9 @@ export default function PerformanceDashboard({
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Render Time:</span>
-                      <span className="text-sm">{formattedMetrics.renderTime}</span>
+                      <span className="text-sm">
+                        {formattedMetrics.renderTime}
+                      </span>
                     </div>
 
                     <div className="flex justify-between items-center">
@@ -336,17 +370,25 @@ export default function PerformanceDashboard({
 
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Load Time:</span>
-                      <span className="text-sm">{formattedMetrics.loadTime}</span>
+                      <span className="text-sm">
+                        {formattedMetrics.loadTime}
+                      </span>
                     </div>
 
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">Interaction Time:</span>
-                      <span className="text-sm">{formattedMetrics.interactionTime}</span>
+                      <span className="text-sm font-medium">
+                        Interaction Time:
+                      </span>
+                      <span className="text-sm">
+                        {formattedMetrics.interactionTime}
+                      </span>
                     </div>
 
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Memory Usage:</span>
-                      <span className="text-sm">{formattedMetrics.memoryUsage}</span>
+                      <span className="text-sm">
+                        {formattedMetrics.memoryUsage}
+                      </span>
                     </div>
 
                     <div className="flex justify-between items-center">
@@ -358,7 +400,9 @@ export default function PerformanceDashboard({
 
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Resources:</span>
-                      <span className="text-sm">{bundleMetrics.resourceCount}</span>
+                      <span className="text-sm">
+                        {bundleMetrics.resourceCount}
+                      </span>
                     </div>
 
                     <div className="flex justify-between items-center">
@@ -367,13 +411,17 @@ export default function PerformanceDashboard({
                     </div>
 
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">Avg Render Time:</span>
-                      <span className="text-sm">{renderPerf.averageRenderTime.toFixed(2)}ms</span>
+                      <span className="text-sm font-medium">
+                        Avg Render Time:
+                      </span>
+                      <span className="text-sm">
+                        {renderPerf.averageRenderTime.toFixed(2)}ms
+                      </span>
                     </div>
                   </div>
                 </motion.div>
               )}
-              
+
               {selectedTab === 'alerts' && (
                 <motion.div
                   key="alerts"
@@ -384,7 +432,10 @@ export default function PerformanceDashboard({
                 >
                   {alerts.length === 0 ? (
                     <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                      <CheckCircle size={48} className="mx-auto mb-2 opacity-50" />
+                      <CheckCircle
+                        size={48}
+                        className="mx-auto mb-2 opacity-50"
+                      />
                       <p>No performance alerts</p>
                     </div>
                   ) : (
@@ -395,19 +446,25 @@ export default function PerformanceDashboard({
                           alert.type === 'error'
                             ? 'bg-red-50 dark:bg-red-900/20 border-red-500'
                             : alert.type === 'warning'
-                            ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500'
-                            : 'bg-blue-50 dark:bg-blue-900/20 border-blue-500'
+                              ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500'
+                              : 'bg-blue-50 dark:bg-blue-900/20 border-blue-500'
                         }`}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <p className="text-sm font-medium">{alert.message}</p>
+                            <p className="text-sm font-medium">
+                              {alert.message}
+                            </p>
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                               {new Date(alert.timestamp).toLocaleTimeString()}
                             </p>
                           </div>
                           <button
-                            onClick={() => setAlerts(prev => prev.filter(a => a.id !== alert.id))}
+                            onClick={() =>
+                              setAlerts((prev) =>
+                                prev.filter((a) => a.id !== alert.id)
+                              )
+                            }
                             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                           >
                             ✕

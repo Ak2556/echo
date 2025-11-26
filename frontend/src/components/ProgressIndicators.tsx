@@ -14,7 +14,7 @@ export function LinearProgress({
   variant = 'default',
   size = 'md',
   showLabel = false,
-  animated = true
+  animated = true,
 }: {
   value?: number;
   max?: number;
@@ -58,7 +58,7 @@ export function LinearProgress({
           background: 'var(--bg-secondary)',
           borderRadius: 'var(--radius-full)',
           overflow: 'hidden',
-          position: 'relative'
+          position: 'relative',
         }}
       >
         <div
@@ -67,10 +67,15 @@ export function LinearProgress({
             width: `${percentage}%`,
             background: getBackground(),
             borderRadius: 'var(--radius-full)',
-            transition: animated ? 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+            transition: animated
+              ? 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+              : 'none',
             position: 'relative',
             overflow: 'hidden',
-            boxShadow: variant === 'glow' ? '0 0 20px rgba(var(--accent-rgb), 0.5)' : 'none'
+            boxShadow:
+              variant === 'glow'
+                ? '0 0 20px rgba(var(--accent-rgb), 0.5)'
+                : 'none',
           }}
         >
           {variant === 'striped' && (
@@ -84,7 +89,7 @@ export function LinearProgress({
                 backgroundImage:
                   'linear-gradient(45deg, rgba(255,255,255,.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.2) 50%, rgba(255,255,255,.2) 75%, transparent 75%, transparent)',
                 backgroundSize: '1rem 1rem',
-                animation: animated ? 'stripe-move 1s linear infinite' : 'none'
+                animation: animated ? 'stripe-move 1s linear infinite' : 'none',
               }}
             />
           )}
@@ -97,7 +102,7 @@ export function LinearProgress({
             fontSize: '0.875rem',
             fontWeight: 600,
             color: 'var(--muted)',
-            textAlign: 'right'
+            textAlign: 'right',
           }}
         >
           {Math.round(percentage)}%
@@ -124,7 +129,7 @@ export function CircularProgress({
   size = 80,
   strokeWidth = 8,
   showLabel = true,
-  variant = 'default'
+  variant = 'default',
 }: {
   value?: number;
   max?: number;
@@ -143,13 +148,19 @@ export function CircularProgress({
       style={{
         position: 'relative',
         width: `${size}px`,
-        height: `${size}px`
+        height: `${size}px`,
       }}
     >
       <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
         <defs>
           {variant === 'gradient' && (
-            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient
+              id="progressGradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
               <stop offset="0%" stopColor="var(--accent)" />
               <stop offset="100%" stopColor="#9333ea" />
             </linearGradient>
@@ -169,14 +180,16 @@ export function CircularProgress({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={variant === 'gradient' ? 'url(#progressGradient)' : 'var(--accent)'}
+          stroke={
+            variant === 'gradient' ? 'url(#progressGradient)' : 'var(--accent)'
+          }
           strokeWidth={strokeWidth}
           fill="none"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
           style={{
-            transition: 'stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+            transition: 'stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         />
       </svg>
@@ -189,7 +202,7 @@ export function CircularProgress({
             transform: 'translate(-50%, -50%)',
             fontSize: `${size / 4}px`,
             fontWeight: 700,
-            color: 'var(--fg)'
+            color: 'var(--fg)',
           }}
         >
           {Math.round(percentage)}%
@@ -203,7 +216,7 @@ export function CircularProgress({
 export function SpinnerLoader({
   size = 40,
   variant = 'default',
-  label
+  label,
 }: {
   size?: number;
   variant?: 'default' | 'gradient' | 'dots';
@@ -216,7 +229,7 @@ export function SpinnerLoader({
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '1rem'
+          gap: '1rem',
         }}
       >
         <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -229,13 +242,15 @@ export function SpinnerLoader({
                 borderRadius: '50%',
                 background: 'var(--accent)',
                 animation: `bounce 1.4s infinite ease-in-out both`,
-                animationDelay: `${i * 0.16}s`
+                animationDelay: `${i * 0.16}s`,
               }}
             />
           ))}
         </div>
         {label && (
-          <p style={{ fontSize: '0.875rem', color: 'var(--muted)', margin: 0 }}>{label}</p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--muted)', margin: 0 }}>
+            {label}
+          </p>
         )}
       </div>
     );
@@ -247,7 +262,7 @@ export function SpinnerLoader({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '1rem'
+        gap: '1rem',
       }}
     >
       <div
@@ -258,26 +273,40 @@ export function SpinnerLoader({
           borderTopColor: 'var(--accent)',
           borderRadius: '50%',
           animation: 'spin 1s linear infinite',
-          background: variant === 'gradient' ? 'var(--gradient-primary)' : 'transparent',
-          WebkitMask: variant === 'gradient' ? 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)' : 'none',
+          background:
+            variant === 'gradient' ? 'var(--gradient-primary)' : 'transparent',
+          WebkitMask:
+            variant === 'gradient'
+              ? 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)'
+              : 'none',
           WebkitMaskComposite: variant === 'gradient' ? 'xor' : 'none',
           maskComposite: variant === 'gradient' ? 'exclude' : 'none',
-          padding: variant === 'gradient' ? '4px' : '0'
+          padding: variant === 'gradient' ? '4px' : '0',
         }}
       />
-      {label && <p style={{ fontSize: '0.875rem', color: 'var(--muted)', margin: 0 }}>{label}</p>}
+      {label && (
+        <p style={{ fontSize: '0.875rem', color: 'var(--muted)', margin: 0 }}>
+          {label}
+        </p>
+      )}
     </div>
   );
 }
 
 // Pulse Loader
-export function PulseLoader({ size = 60, color = 'var(--accent)' }: { size?: number; color?: string }) {
+export function PulseLoader({
+  size = 60,
+  color = 'var(--accent)',
+}: {
+  size?: number;
+  color?: string;
+}) {
   return (
     <div
       style={{
         width: `${size}px`,
         height: `${size}px`,
-        position: 'relative'
+        position: 'relative',
       }}
     >
       {[0, 1].map((i) => (
@@ -291,7 +320,7 @@ export function PulseLoader({ size = 60, color = 'var(--accent)' }: { size?: num
             background: color,
             opacity: 0.6,
             animation: `pulse 2s infinite cubic-bezier(0.4, 0, 0.2, 1)`,
-            animationDelay: `${i * 1}s`
+            animationDelay: `${i * 1}s`,
           }}
         />
       ))}
@@ -305,7 +334,7 @@ export function SkeletonLoader({
   height = '20px',
   borderRadius = 'var(--radius-md)',
   count = 1,
-  gap = '0.5rem'
+  gap = '0.5rem',
 }: {
   width?: string;
   height?: string;
@@ -322,7 +351,7 @@ export function SkeletonLoader({
           style={{
             width,
             height,
-            borderRadius
+            borderRadius,
           }}
         />
       ))}
@@ -334,7 +363,7 @@ export function SkeletonLoader({
 export function StepProgress({
   steps,
   currentStep,
-  variant = 'default'
+  variant = 'default',
 }: {
   steps: string[];
   currentStep: number;
@@ -346,7 +375,7 @@ export function StepProgress({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: '100%'
+        width: '100%',
       }}
     >
       {steps.map((step, index) => {
@@ -360,7 +389,7 @@ export function StepProgress({
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                flex: 1
+                flex: 1,
               }}
             >
               {/* Step Circle */}
@@ -370,7 +399,10 @@ export function StepProgress({
                   width: variant === 'minimal' ? '32px' : '48px',
                   height: variant === 'minimal' ? '32px' : '48px',
                   borderRadius: '50%',
-                  background: isCompleted || isCurrent ? 'var(--gradient-primary)' : 'var(--bg-secondary)',
+                  background:
+                    isCompleted || isCurrent
+                      ? 'var(--gradient-primary)'
+                      : 'var(--bg-secondary)',
                   color: isCompleted || isCurrent ? 'white' : 'var(--muted)',
                   display: 'flex',
                   alignItems: 'center',
@@ -379,7 +411,7 @@ export function StepProgress({
                   fontSize: variant === 'minimal' ? '0.875rem' : '1rem',
                   marginBottom: '0.5rem',
                   border: isCurrent ? '3px solid var(--accent)' : 'none',
-                  transition: 'all var(--transition-base)'
+                  transition: 'all var(--transition-base)',
                 }}
               >
                 {isCompleted ? '✓' : index + 1}
@@ -393,7 +425,7 @@ export function StepProgress({
                     fontWeight: isCurrent ? 600 : 400,
                     color: isCurrent ? 'var(--fg)' : 'var(--muted)',
                     margin: 0,
-                    textAlign: 'center'
+                    textAlign: 'center',
                   }}
                 >
                   {step}
@@ -407,9 +439,11 @@ export function StepProgress({
                 style={{
                   flex: 1,
                   height: '2px',
-                  background: isCompleted ? 'var(--accent)' : 'var(--bg-secondary)',
+                  background: isCompleted
+                    ? 'var(--accent)'
+                    : 'var(--bg-secondary)',
                   transition: 'background var(--transition-base)',
-                  marginBottom: variant === 'minimal' ? 0 : '2rem'
+                  marginBottom: variant === 'minimal' ? 0 : '2rem',
                 }}
               />
             )}
@@ -432,29 +466,29 @@ export function LoadingBar({ isLoading }: { isLoading: boolean }) {
         height: '3px',
         zIndex: 99999,
         opacity: isLoading ? 1 : 0,
-        transition: 'opacity 0.3s'
+        transition: 'opacity 0.3s',
       }}
     >
       <div
         style={{
           height: '100%',
           background: 'var(--gradient-primary)',
-          animation: 'loading-bar 2s ease-in-out infinite'
+          animation: 'loading-bar 2s ease-in-out infinite',
         }}
       />
       <style jsx>{`
         @keyframes loading-bar {
           0% {
             width: 0;
-            marginLeft: 0;
+            marginleft: 0;
           }
           50% {
             width: 100%;
-            marginLeft: 0;
+            marginleft: 0;
           }
           100% {
             width: 0;
-            marginLeft: 100%;
+            marginleft: 100%;
           }
         }
       `}</style>
@@ -469,5 +503,5 @@ export default {
   PulseLoader,
   SkeletonLoader,
   StepProgress,
-  LoadingBar
+  LoadingBar,
 };

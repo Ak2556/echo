@@ -36,14 +36,16 @@ import toast, { Toaster } from 'react-hot-toast';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 
-const passwordSchema = z.object({
-  currentPassword: z.string().min(1, 'Current password is required'),
-  newPassword: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword'],
-});
+const passwordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Current password is required'),
+    newPassword: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 
 type PasswordForm = z.infer<typeof passwordSchema>;
 
@@ -82,7 +84,7 @@ export default function SettingsPage() {
 
     try {
       // TODO: Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       toast.success('Password updated successfully!', {
         id: toastId,
@@ -91,7 +93,8 @@ export default function SettingsPage() {
       });
       reset();
     } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to update password. Please try again.';
+      const errorMsg =
+        error?.message || 'Failed to update password. Please try again.';
       toast.error(errorMsg, { id: toastId, duration: 4000 });
     }
   };
@@ -99,7 +102,7 @@ export default function SettingsPage() {
   const handleEnable2FA = async () => {
     const toastId = toast.loading('Setting up 2FA...');
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       toast.success('2FA setup initiated! Check your email.', {
         id: toastId,
         icon: '🔐',
@@ -112,7 +115,7 @@ export default function SettingsPage() {
   const handleDeleteAccount = async () => {
     const toastId = toast.loading('Deleting account...');
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       await logout();
       toast.success('Account deleted successfully', { id: toastId });
       router.push('/');
@@ -134,7 +137,9 @@ export default function SettingsPage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-gray-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-600 dark:text-gray-400">Loading settings...</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            Loading settings...
+          </p>
         </div>
       </div>
     );
@@ -249,7 +254,10 @@ export default function SettingsPage() {
                         <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                           Change Password
                         </h4>
-                        <form onSubmit={handleSubmit(onPasswordSubmit)} className="space-y-4">
+                        <form
+                          onSubmit={handleSubmit(onPasswordSubmit)}
+                          className="space-y-4"
+                        >
                           <Input
                             {...register('currentPassword')}
                             type="password"
@@ -288,7 +296,9 @@ export default function SettingsPage() {
                             variant="primary"
                             size="md"
                             loading={isSubmitting}
-                            leftIcon={!isSubmitting ? <Save size={18} /> : undefined}
+                            leftIcon={
+                              !isSubmitting ? <Save size={18} /> : undefined
+                            }
                           >
                             Update Password
                           </Button>
@@ -311,7 +321,8 @@ export default function SettingsPage() {
                           Security Settings
                         </h3>
                         <p className="text-gray-600 dark:text-gray-400">
-                          Enhance your account security with additional protections
+                          Enhance your account security with additional
+                          protections
                         </p>
                       </div>
 
@@ -320,7 +331,10 @@ export default function SettingsPage() {
                         <div className="flex items-start justify-between p-5 bg-gray-50 dark:bg-gray-700/30 rounded-xl">
                           <div className="flex gap-4">
                             <div className="w-12 h-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                              <Smartphone size={24} className="text-green-600 dark:text-green-400" />
+                              <Smartphone
+                                size={24}
+                                className="text-green-600 dark:text-green-400"
+                              />
                             </div>
                             <div>
                               <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
@@ -351,7 +365,10 @@ export default function SettingsPage() {
                           <div className="space-y-3">
                             <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                               <div className="flex items-center gap-3">
-                                <Monitor size={20} className="text-gray-600 dark:text-gray-400" />
+                                <Monitor
+                                  size={20}
+                                  className="text-gray-600 dark:text-gray-400"
+                                />
                                 <div>
                                   <p className="font-medium text-gray-900 dark:text-white">
                                     Current Session
@@ -394,9 +411,15 @@ export default function SettingsPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             {theme === 'light' ? (
-                              <Sun size={20} className="text-gray-600 dark:text-gray-400" />
+                              <Sun
+                                size={20}
+                                className="text-gray-600 dark:text-gray-400"
+                              />
                             ) : (
-                              <Moon size={20} className="text-gray-600 dark:text-gray-400" />
+                              <Moon
+                                size={20}
+                                className="text-gray-600 dark:text-gray-400"
+                              />
                             )}
                             <div>
                               <h4 className="font-semibold text-gray-900 dark:text-white">
@@ -411,7 +434,9 @@ export default function SettingsPage() {
                             value={theme}
                             onChange={(e) => {
                               setTheme(e.target.value as 'light' | 'dark');
-                              toast.success(`Theme changed to ${e.target.value}`);
+                              toast.success(
+                                `Theme changed to ${e.target.value}`
+                              );
                             }}
                             className="px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
@@ -425,10 +450,13 @@ export default function SettingsPage() {
                           <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
                             Notifications
                           </h4>
-                          
+
                           <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                             <div className="flex items-center gap-3">
-                              <Bell size={20} className="text-gray-600 dark:text-gray-400" />
+                              <Bell
+                                size={20}
+                                className="text-gray-600 dark:text-gray-400"
+                              />
                               <div>
                                 <h5 className="font-medium text-gray-900 dark:text-white">
                                   Email Notifications
@@ -455,7 +483,10 @@ export default function SettingsPage() {
 
                           <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                             <div className="flex items-center gap-3">
-                              <Smartphone size={20} className="text-gray-600 dark:text-gray-400" />
+                              <Smartphone
+                                size={20}
+                                className="text-gray-600 dark:text-gray-400"
+                              />
                               <div>
                                 <h5 className="font-medium text-gray-900 dark:text-white">
                                   Push Notifications
@@ -506,13 +537,18 @@ export default function SettingsPage() {
                         <div className="space-y-4">
                           <div className="p-5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
                             <div className="flex gap-3">
-                              <Eye size={20} className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
+                              <Eye
+                                size={20}
+                                className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1"
+                              />
                               <div>
                                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
                                   Profile Visibility
                                 </h4>
                                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                                  Your profile is currently visible to all Echo users. You can change this in your privacy settings.
+                                  Your profile is currently visible to all Echo
+                                  users. You can change this in your privacy
+                                  settings.
                                 </p>
                                 <Button variant="outline" size="sm">
                                   Manage Visibility
@@ -527,15 +563,24 @@ export default function SettingsPage() {
                             </h4>
                             <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                               <li className="flex items-center gap-2">
-                                <CheckCircle size={16} className="text-green-500" />
+                                <CheckCircle
+                                  size={16}
+                                  className="text-green-500"
+                                />
                                 Your data is encrypted at rest and in transit
                               </li>
                               <li className="flex items-center gap-2">
-                                <CheckCircle size={16} className="text-green-500" />
+                                <CheckCircle
+                                  size={16}
+                                  className="text-green-500"
+                                />
                                 We never sell your personal information
                               </li>
                               <li className="flex items-center gap-2">
-                                <CheckCircle size={16} className="text-green-500" />
+                                <CheckCircle
+                                  size={16}
+                                  className="text-green-500"
+                                />
                                 You can download your data anytime
                               </li>
                             </ul>
@@ -567,14 +612,19 @@ export default function SettingsPage() {
                         <div className="p-6 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl">
                           <div className="flex items-start gap-4">
                             <div className="w-12 h-12 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
-                              <Trash2 size={24} className="text-red-600 dark:text-red-400" />
+                              <Trash2
+                                size={24}
+                                className="text-red-600 dark:text-red-400"
+                              />
                             </div>
                             <div className="flex-1">
                               <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                                 Delete Account
                               </h4>
                               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                                Once you delete your account, there is no going back. All your data will be permanently removed. This action cannot be undone.
+                                Once you delete your account, there is no going
+                                back. All your data will be permanently removed.
+                                This action cannot be undone.
                               </p>
                               <Button
                                 onClick={() => setShowDeleteDialog(true)}
@@ -616,14 +666,18 @@ export default function SettingsPage() {
             >
               <div className="flex items-start gap-4 mb-6">
                 <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
-                  <AlertTriangle size={24} className="text-red-600 dark:text-red-400" />
+                  <AlertTriangle
+                    size={24}
+                    className="text-red-600 dark:text-red-400"
+                  />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                     Delete Account?
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Are you absolutely sure? This action cannot be undone. All your data will be permanently deleted.
+                    Are you absolutely sure? This action cannot be undone. All
+                    your data will be permanently deleted.
                   </p>
                 </div>
               </div>

@@ -17,8 +17,12 @@ interface AuthState {
 }
 
 interface AuthActions {
-  login: (data: LoginForm) => Promise<{ requires2FA?: boolean; tempToken?: string }>;
-  register: (data: RegisterForm) => Promise<{ userId: string; requiresVerification: boolean }>;
+  login: (
+    data: LoginForm
+  ) => Promise<{ requires2FA?: boolean; tempToken?: string }>;
+  register: (
+    data: RegisterForm
+  ) => Promise<{ userId: string; requiresVerification: boolean }>;
   logout: (everywhere?: boolean) => Promise<void>;
   refreshUser: () => Promise<void>;
   clearError: () => void;
@@ -107,7 +111,8 @@ export function useAuth(): AuthState & AuthActions {
       const user = await apiClient.getCurrentUser();
       setState((prev) => ({ ...prev, user, error: null }));
     } catch (error) {
-      const message = error instanceof APIError ? error.message : 'Failed to load user';
+      const message =
+        error instanceof APIError ? error.message : 'Failed to load user';
       setState((prev) => ({ ...prev, error: message }));
     }
   }, []);
@@ -127,7 +132,7 @@ export function useAuth(): AuthState & AuthActions {
         setState((prev) => ({ ...prev, loading: false }));
         return {
           requires2FA: true,
-          tempToken: response.access_token // Temporary token for 2FA verification
+          tempToken: response.access_token, // Temporary token for 2FA verification
         };
       }
 
@@ -142,7 +147,8 @@ export function useAuth(): AuthState & AuthActions {
 
       return { requires2FA: false };
     } catch (error) {
-      const message = error instanceof APIError ? error.message : 'Login failed';
+      const message =
+        error instanceof APIError ? error.message : 'Login failed';
       setState((prev) => ({ ...prev, loading: false, error: message }));
       throw error;
     }
@@ -164,7 +170,8 @@ export function useAuth(): AuthState & AuthActions {
         requiresVerification: response.requires_verification,
       };
     } catch (error) {
-      const message = error instanceof APIError ? error.message : 'Registration failed';
+      const message =
+        error instanceof APIError ? error.message : 'Registration failed';
       setState((prev) => ({ ...prev, loading: false, error: message }));
       throw error;
     }
@@ -174,26 +181,29 @@ export function useAuth(): AuthState & AuthActions {
    * Logout (revoke tokens).
    * @param everywhere - Logout from all devices
    */
-  const logout = useCallback(async (everywhere: boolean = false) => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
+  const logout = useCallback(
+    async (everywhere: boolean = false) => {
+      setState((prev) => ({ ...prev, loading: true, error: null }));
 
-    try {
-      await apiClient.logout(everywhere);
-      // Clear user from localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('user');
+      try {
+        await apiClient.logout(everywhere);
+        // Clear user from localStorage
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('user');
+        }
+        setState({ user: null, loading: false, error: null });
+        router.push('/auth/login');
+      } catch (error) {
+        // Still clear local state even if API call fails
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('user');
+        }
+        setState({ user: null, loading: false, error: null });
+        router.push('/auth/login');
       }
-      setState({ user: null, loading: false, error: null });
-      router.push('/auth/login');
-    } catch (error) {
-      // Still clear local state even if API call fails
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('user');
-      }
-      setState({ user: null, loading: false, error: null });
-      router.push('/auth/login');
-    }
-  }, [router]);
+    },
+    [router]
+  );
 
   /**
    * Clear error state.

@@ -117,7 +117,9 @@ export default function TwoFactorSetupPage() {
             <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
               <li className="flex items-start gap-2">
                 <span className="text-blue-600 dark:text-blue-400">✓</span>
-                <span>Protect your account even if your password is compromised</span>
+                <span>
+                  Protect your account even if your password is compromised
+                </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-600 dark:text-blue-400">✓</span>
@@ -131,10 +133,7 @@ export default function TwoFactorSetupPage() {
           </div>
 
           {/* Setup component */}
-          <TwoFactorSetup
-            onComplete={handleComplete}
-            onCancel={handleCancel}
-          />
+          <TwoFactorSetup onComplete={handleComplete} onCancel={handleCancel} />
         </div>
       </motion.div>
     </div>

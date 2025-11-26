@@ -6,11 +6,16 @@ export const currencies = {
   EUR: { symbol: '€', name: 'Euro', code: 'EUR', locale: 'de-DE' },
   GBP: { symbol: '£', name: 'British Pound', code: 'GBP', locale: 'en-GB' },
   JPY: { symbol: '¥', name: 'Japanese Yen', code: 'JPY', locale: 'ja-JP' },
-  AUD: { symbol: 'A$', name: 'Australian Dollar', code: 'AUD', locale: 'en-AU' },
+  AUD: {
+    symbol: 'A$',
+    name: 'Australian Dollar',
+    code: 'AUD',
+    locale: 'en-AU',
+  },
   CAD: { symbol: 'C$', name: 'Canadian Dollar', code: 'CAD', locale: 'en-CA' },
   CNY: { symbol: '¥', name: 'Chinese Yuan', code: 'CNY', locale: 'zh-CN' },
   BRL: { symbol: 'R$', name: 'Brazilian Real', code: 'BRL', locale: 'pt-BR' },
-  MXN: { symbol: '$', name: 'Mexican Peso', code: 'MXN', locale: 'es-MX' }
+  MXN: { symbol: '$', name: 'Mexican Peso', code: 'MXN', locale: 'es-MX' },
 };
 
 export const languages = {
@@ -36,15 +41,24 @@ export const languages = {
   ja: { name: 'Japanese', native: '日本語', locale: 'ja-JP', rtl: false },
   ko: { name: 'Korean', native: '한국어', locale: 'ko-KR', rtl: false },
   zh: { name: 'Chinese', native: '中文', locale: 'zh-CN', rtl: false },
-  id: { name: 'Indonesian', native: 'Bahasa Indonesia', locale: 'id-ID', rtl: false },
+  id: {
+    name: 'Indonesian',
+    native: 'Bahasa Indonesia',
+    locale: 'id-ID',
+    rtl: false,
+  },
   th: { name: 'Thai', native: 'ไทย', locale: 'th-TH', rtl: false },
-  vi: { name: 'Vietnamese', native: 'Tiếng Việt', locale: 'vi-VN', rtl: false }
+  vi: { name: 'Vietnamese', native: 'Tiếng Việt', locale: 'vi-VN', rtl: false },
 };
 
 export const timezones = [
   { value: 'Asia/Kolkata', label: 'Mumbai (IST)', offset: '+05:30' },
   { value: 'America/New_York', label: 'New York (EST)', offset: '-05:00' },
-  { value: 'America/Los_Angeles', label: 'Los Angeles (PST)', offset: '-08:00' },
+  {
+    value: 'America/Los_Angeles',
+    label: 'Los Angeles (PST)',
+    offset: '-08:00',
+  },
   { value: 'America/Chicago', label: 'Chicago (CST)', offset: '-06:00' },
   { value: 'Europe/London', label: 'London (GMT)', offset: '+00:00' },
   { value: 'Europe/Paris', label: 'Paris (CET)', offset: '+01:00' },
@@ -57,22 +71,34 @@ export const timezones = [
   { value: 'Australia/Sydney', label: 'Sydney (AEDT)', offset: '+11:00' },
   { value: 'Pacific/Auckland', label: 'Auckland (NZDT)', offset: '+13:00' },
   { value: 'America/Sao_Paulo', label: 'São Paulo (BRT)', offset: '-03:00' },
-  { value: 'America/Mexico_City', label: 'Mexico City (CST)', offset: '-06:00' },
-  { value: 'Africa/Johannesburg', label: 'Johannesburg (SAST)', offset: '+02:00' },
+  {
+    value: 'America/Mexico_City',
+    label: 'Mexico City (CST)',
+    offset: '-06:00',
+  },
+  {
+    value: 'Africa/Johannesburg',
+    label: 'Johannesburg (SAST)',
+    offset: '+02:00',
+  },
   { value: 'Africa/Cairo', label: 'Cairo (EET)', offset: '+02:00' },
-  { value: 'UTC', label: 'UTC', offset: '+00:00' }
+  { value: 'UTC', label: 'UTC', offset: '+00:00' },
 ];
 
 // Format currency with locale
-export function formatCurrency(amount: number, currencyCode: string = 'INR'): string {
-  const currency = currencies[currencyCode as keyof typeof currencies] || currencies.INR;
+export function formatCurrency(
+  amount: number,
+  currencyCode: string = 'INR'
+): string {
+  const currency =
+    currencies[currencyCode as keyof typeof currencies] || currencies.INR;
 
   try {
     return new Intl.NumberFormat(currency.locale, {
       style: 'currency',
       currency: currency.code,
       minimumFractionDigits: 0,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     }).format(amount);
   } catch (error) {
     return `${currency.symbol}${amount.toLocaleString()}`;
@@ -89,14 +115,17 @@ export function formatNumber(num: number, locale: string = 'en-US'): string {
 }
 
 // Format large numbers (1.2K, 1.5M, etc.)
-export function formatCompactNumber(num: number, locale: string = 'en-US'): string {
+export function formatCompactNumber(
+  num: number,
+  locale: string = 'en-US'
+): string {
   if (num < 1000) return num.toString();
 
   try {
     return new Intl.NumberFormat(locale, {
       notation: 'compact',
       compactDisplay: 'short',
-      maximumFractionDigits: 1
+      maximumFractionDigits: 1,
     }).format(num);
   } catch (error) {
     if (num >= 1000000) {
@@ -122,7 +151,7 @@ export function formatDateTime(
     hour: '2-digit',
     minute: '2-digit',
     timeZone: timezone,
-    ...options
+    ...options,
   };
 
   try {
@@ -133,7 +162,10 @@ export function formatDateTime(
 }
 
 // Format relative time (2 hours ago, 3 days ago)
-export function formatRelativeTime(date: Date, locale: string = 'en-US'): string {
+export function formatRelativeTime(
+  date: Date,
+  locale: string = 'en-US'
+): string {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffSecs = Math.floor(diffMs / 1000);
@@ -142,7 +174,10 @@ export function formatRelativeTime(date: Date, locale: string = 'en-US'): string
   const diffDays = Math.floor(diffHours / 24);
 
   try {
-    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style: 'short' });
+    const rtf = new Intl.RelativeTimeFormat(locale, {
+      numeric: 'auto',
+      style: 'short',
+    });
 
     if (diffSecs < 60) {
       return rtf.format(-diffSecs, 'second');
@@ -195,7 +230,7 @@ export const moderationReasons = {
     de: 'Spam oder irreführend',
     ar: 'بريد عشوائي أو مضلل',
     ja: 'スパムまたは誤解を招く',
-    zh: '垃圾邮件或误导性'
+    zh: '垃圾邮件或误导性',
   },
   harassment: {
     en: 'Harassment or bullying',
@@ -205,7 +240,7 @@ export const moderationReasons = {
     de: 'Belästigung oder Mobbing',
     ar: 'مضايقة أو تنمر',
     ja: 'ハラスメントまたはいじめ',
-    zh: '骚扰或欺凌'
+    zh: '骚扰或欺凌',
   },
   hateSpeech: {
     en: 'Hate speech or discrimination',
@@ -215,7 +250,7 @@ export const moderationReasons = {
     de: 'Hassrede oder Diskriminierung',
     ar: 'خطاب الكراهية أو التمييز',
     ja: 'ヘイトスピーチまたは差別',
-    zh: '仇恨言论或歧视'
+    zh: '仇恨言论或歧视',
   },
   violence: {
     en: 'Violence or dangerous content',
@@ -225,7 +260,7 @@ export const moderationReasons = {
     de: 'Gewalt oder gefährliche Inhalte',
     ar: 'عنف أو محتوى خطير',
     ja: '暴力または危険なコンテンツ',
-    zh: '暴力或危险内容'
+    zh: '暴力或危险内容',
   },
   nsfw: {
     en: 'Adult or sexual content',
@@ -235,17 +270,17 @@ export const moderationReasons = {
     de: 'Erwachsenen- oder sexuelle Inhalte',
     ar: 'محتوى للبالغين أو جنسي',
     ja: 'アダルトまたは性的コンテンツ',
-    zh: '成人或性内容'
+    zh: '成人或性内容',
   },
   copyright: {
     en: 'Copyright infringement',
     hi: 'कॉपीराइट उल्लंघन',
     es: 'Infracción de derechos de autor',
-    fr: 'Violation du droit d\'auteur',
+    fr: "Violation du droit d'auteur",
     de: 'Urheberrechtsverletzung',
     ar: 'انتهاك حقوق النشر',
     ja: '著作権侵害',
-    zh: '侵犯版权'
+    zh: '侵犯版权',
   },
   misinformation: {
     en: 'False information or misinformation',
@@ -255,7 +290,7 @@ export const moderationReasons = {
     de: 'Falsche Informationen oder Fehlinformationen',
     ar: 'معلومات خاطئة أو تضليل',
     ja: '虚偽情報または誤情報',
-    zh: '虚假信息或错误信息'
+    zh: '虚假信息或错误信息',
   },
   other: {
     en: 'Other',
@@ -265,12 +300,15 @@ export const moderationReasons = {
     de: 'Andere',
     ar: 'آخر',
     ja: 'その他',
-    zh: '其他'
-  }
+    zh: '其他',
+  },
 };
 
 // Get translated moderation reason
-export function getModerationReason(reason: keyof typeof moderationReasons, lang: string = 'en'): string {
+export function getModerationReason(
+  reason: keyof typeof moderationReasons,
+  lang: string = 'en'
+): string {
   const langCode = lang.split('-')[0];
   const reasons = moderationReasons[reason];
   return reasons[langCode as keyof typeof reasons] || reasons.en;
@@ -297,7 +335,12 @@ export function detectLanguage(text: string): string {
 }
 
 // Pluralization helper
-export function pluralize(count: number, singular: string, plural: string, locale: string = 'en'): string {
+export function pluralize(
+  count: number,
+  singular: string,
+  plural: string,
+  locale: string = 'en'
+): string {
   const rules = new Intl.PluralRules(locale);
   const rule = rules.select(count);
 
@@ -316,7 +359,10 @@ export function isRTL(lang: string): boolean {
 }
 
 // Format file size
-export function formatFileSize(bytes: number, locale: string = 'en-US'): string {
+export function formatFileSize(
+  bytes: number,
+  locale: string = 'en-US'
+): string {
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
   let size = bytes;
   let unitIndex = 0;
@@ -330,12 +376,15 @@ export function formatFileSize(bytes: number, locale: string = 'en-US'): string 
 }
 
 // Format percentage
-export function formatPercentage(value: number, locale: string = 'en-US'): string {
+export function formatPercentage(
+  value: number,
+  locale: string = 'en-US'
+): string {
   try {
     return new Intl.NumberFormat(locale, {
       style: 'percent',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 1
+      maximumFractionDigits: 1,
     }).format(value / 100);
   } catch (error) {
     return `${value}%`;

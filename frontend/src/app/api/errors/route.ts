@@ -22,20 +22,29 @@ export async function POST(request: NextRequest) {
     // Sanitize error report
     const sanitizedReport = {
       message: await sanitizeInput(errorReport.message || ''),
-      stack: errorReport.stack ? await sanitizeInput(errorReport.stack.substring(0, 5000)) : undefined,
-      filename: errorReport.filename ? await sanitizeInput(errorReport.filename) : undefined,
-      lineno: typeof errorReport.lineno === 'number' ? errorReport.lineno : undefined,
-      colno: typeof errorReport.colno === 'number' ? errorReport.colno : undefined,
+      stack: errorReport.stack
+        ? await sanitizeInput(errorReport.stack.substring(0, 5000))
+        : undefined,
+      filename: errorReport.filename
+        ? await sanitizeInput(errorReport.filename)
+        : undefined,
+      lineno:
+        typeof errorReport.lineno === 'number' ? errorReport.lineno : undefined,
+      colno:
+        typeof errorReport.colno === 'number' ? errorReport.colno : undefined,
       timestamp: errorReport.timestamp || Date.now(),
       userAgent: await sanitizeInput(errorReport.userAgent || ''),
       url: await sanitizeInput(errorReport.url || ''),
-      userId: errorReport.userId ? await sanitizeInput(errorReport.userId) : undefined,
+      userId: errorReport.userId
+        ? await sanitizeInput(errorReport.userId)
+        : undefined,
       sessionId: await sanitizeInput(errorReport.sessionId || ''),
       buildVersion: await sanitizeInput(errorReport.buildVersion || ''),
       serverTimestamp: new Date().toISOString(),
-      clientIP: request.headers.get('x-forwarded-for') ||
-                request.headers.get('x-real-ip') ||
-                'unknown',
+      clientIP:
+        request.headers.get('x-forwarded-for') ||
+        request.headers.get('x-real-ip') ||
+        'unknown',
     };
 
     // Determine error severity
@@ -57,11 +66,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       severity,
-      id: generateErrorId()
+      id: generateErrorId(),
     });
-
   } catch (error) {
-
     return NextResponse.json(
       { error: 'Failed to process error report' },
       { status: 500 }
@@ -72,7 +79,9 @@ export async function POST(request: NextRequest) {
 /**
  * Determine error severity based on error characteristics
  */
-function determineSeverity(errorReport: any): 'low' | 'medium' | 'high' | 'critical' {
+function determineSeverity(
+  errorReport: any
+): 'low' | 'medium' | 'high' | 'critical' {
   const { message, stack, url } = errorReport;
 
   // Critical errors
@@ -120,7 +129,6 @@ async function sendCriticalErrorAlert(errorReport: any): Promise<void> {
     // - PagerDuty
     // - Email alerts
     // - SMS notifications
-
     // Example webhook notification (would be actual service in production)
     // await fetch(process.env.SLACK_WEBHOOK_URL, {
     //   method: 'POST',
@@ -138,10 +146,7 @@ async function sendCriticalErrorAlert(errorReport: any): Promise<void> {
     //     }]
     //   })
     // });
-
-  } catch (alertError) {
-
-  }
+  } catch (alertError) {}
 }
 
 /**

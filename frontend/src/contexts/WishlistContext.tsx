@@ -1,6 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
 interface WishlistItem {
   id: string;
@@ -18,7 +24,9 @@ interface WishlistContextType {
   totalItems: number;
 }
 
-const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
+const WishlistContext = createContext<WishlistContextType | undefined>(
+  undefined
+);
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
@@ -37,9 +45,9 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   }, [wishlist]);
 
   const addToWishlist = (item: WishlistItem) => {
-    setWishlist(prev => {
+    setWishlist((prev) => {
       // Don't add if already in wishlist
-      if (prev.some(i => i.id === item.id)) {
+      if (prev.some((i) => i.id === item.id)) {
         return prev;
       }
       return [...prev, item];
@@ -47,11 +55,11 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   };
 
   const removeFromWishlist = (id: string) => {
-    setWishlist(prev => prev.filter(item => item.id !== id));
+    setWishlist((prev) => prev.filter((item) => item.id !== id));
   };
 
   const isInWishlist = (id: string): boolean => {
-    return wishlist.some(item => item.id === id);
+    return wishlist.some((item) => item.id === id);
   };
 
   const clearWishlist = () => {
@@ -68,7 +76,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         removeFromWishlist,
         isInWishlist,
         clearWishlist,
-        totalItems
+        totalItems,
       }}
     >
       {children}

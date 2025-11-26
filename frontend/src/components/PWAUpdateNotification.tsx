@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { usePWA } from '@/lib/pwa';
 import Button from '@/components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { RefreshCw, X, Download } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -31,7 +37,6 @@ export default function PWAUpdateNotification() {
       skipWaiting();
       // The page will reload automatically due to controllerchange event
     } catch (error) {
-
       setIsUpdating(false);
     }
   };
@@ -89,7 +94,9 @@ export default function PWAUpdateNotification() {
             className="flex-1 bg-blue-600 hover:bg-blue-700"
             size="sm"
           >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isUpdating ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-4 h-4 mr-2 ${isUpdating ? 'animate-spin' : ''}`}
+            />
             {isUpdating ? 'Updating...' : 'Update Now'}
           </Button>
           <Button

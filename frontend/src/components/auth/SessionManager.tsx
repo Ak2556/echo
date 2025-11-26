@@ -12,9 +12,20 @@ interface SessionManagerProps {
   className?: string;
 }
 
-export default function SessionManager({ className = '' }: SessionManagerProps) {
-  const { sessions, loading, error, revokeSession, revokeAllOtherSessions, refreshSessions } = useSession();
-  const [revokingSessionId, setRevokingSessionId] = useState<string | null>(null);
+export default function SessionManager({
+  className = '',
+}: SessionManagerProps) {
+  const {
+    sessions,
+    loading,
+    error,
+    revokeSession,
+    revokeAllOtherSessions,
+    refreshSessions,
+  } = useSession();
+  const [revokingSessionId, setRevokingSessionId] = useState<string | null>(
+    null
+  );
   const [revokingAll, setRevokingAll] = useState(false);
 
   const handleRevokeSession = async (sessionId: string) => {
@@ -31,7 +42,8 @@ export default function SessionManager({ className = '' }: SessionManagerProps) 
   };
 
   const handleRevokeAll = async () => {
-    if (!confirm('Are you sure you want to sign out of all other devices?')) return;
+    if (!confirm('Are you sure you want to sign out of all other devices?'))
+      return;
 
     setRevokingAll(true);
     try {

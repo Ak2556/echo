@@ -1,6 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
 interface Settings {
   // Notifications
@@ -79,7 +85,10 @@ interface Settings {
 
 interface SettingsContextType {
   settings: Settings;
-  updateSetting: (key: keyof Settings, value: boolean | string | number | string[]) => void;
+  updateSetting: (
+    key: keyof Settings,
+    value: boolean | string | number | string[]
+  ) => void;
   updateMultipleSettings: (updates: Partial<Settings>) => void;
   resetSettings: () => void;
   exportSettings: () => string;
@@ -162,12 +171,16 @@ const defaultSettings: Settings = {
   debugMode: false,
   showPerformanceMetrics: false,
   errorLogging: true,
-  apiEndpoint: 'production'
+  apiEndpoint: 'production',
 };
 
-const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
+const SettingsContext = createContext<SettingsContextType | undefined>(
+  undefined
+);
 
-export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const SettingsProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [settings, setSettings] = useState<Settings>(defaultSettings);
 
   // Load settings from localStorage on mount
@@ -179,9 +192,7 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
         // Merge with defaults to ensure new settings are included
         setSettings({ ...defaultSettings, ...parsed });
         applySettings({ ...defaultSettings, ...parsed });
-      } catch (error) {
-
-      }
+      } catch (error) {}
     }
   }, []);
 
@@ -208,7 +219,10 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
 
     // Apply data usage settings
-    document.documentElement.setAttribute('data-usage', settingsToApply.dataUsage);
+    document.documentElement.setAttribute(
+      'data-usage',
+      settingsToApply.dataUsage
+    );
 
     // Apply language settings
     document.documentElement.setAttribute('lang', settingsToApply.language);
@@ -216,7 +230,6 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
     // Apply debug mode
     if (settingsToApply.debugMode) {
       document.body.classList.add('debug-mode');
-
     } else {
       document.body.classList.remove('debug-mode');
     }
@@ -228,7 +241,10 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
     localStorage.setItem('echo-currency', settingsToApply.currency);
   };
 
-  const updateSetting = (key: keyof Settings, value: boolean | string | number | string[]) => {
+  const updateSetting = (
+    key: keyof Settings,
+    value: boolean | string | number | string[]
+  ) => {
     const newSettings = { ...settings, [key]: value };
     setSettings(newSettings);
 
@@ -264,11 +280,15 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   const exportSettings = (): string => {
-    return JSON.stringify({
-      settings,
-      exportDate: new Date().toISOString(),
-      version: '2.1.0'
-    }, null, 2);
+    return JSON.stringify(
+      {
+        settings,
+        exportDate: new Date().toISOString(),
+        version: '2.1.0',
+      },
+      null,
+      2
+    );
   };
 
   const importSettings = (data: string): boolean => {
@@ -281,7 +301,6 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
       applySettings(mergedSettings);
       return true;
     } catch (error) {
-
       return false;
     }
   };
@@ -290,7 +309,8 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
     if (!settings.soundEffects) return;
 
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
@@ -298,33 +318,37 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
       gainNode.connect(audioContext.destination);
 
       oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+      oscillator.frequency.exponentialRampToValueAtTime(
+        400,
+        audioContext.currentTime + 0.1
+      );
 
       gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.01,
+        audioContext.currentTime + 0.1
+      );
 
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.1);
-    } catch (error) {
-
-    }
+    } catch (error) {}
   };
 
   const formatDate = (date: Date): string => {
     const localeMap: { [key: string]: string } = {
-      'en': 'en-US',
-      'pa': 'pa-IN',
-      'hi': 'hi-IN',
-      'bn': 'bn-IN',
-      'te': 'te-IN',
-      'mr': 'mr-IN',
-      'ta': 'ta-IN',
-      'gu': 'gu-IN',
-      'kn': 'kn-IN',
-      'ml': 'ml-IN',
-      'or': 'or-IN',
-      'as': 'as-IN',
-      'ur': 'ur-PK'
+      en: 'en-US',
+      pa: 'pa-IN',
+      hi: 'hi-IN',
+      bn: 'bn-IN',
+      te: 'te-IN',
+      mr: 'mr-IN',
+      ta: 'ta-IN',
+      gu: 'gu-IN',
+      kn: 'kn-IN',
+      ml: 'ml-IN',
+      or: 'or-IN',
+      as: 'as-IN',
+      ur: 'ur-PK',
     };
 
     const locale = localeMap[settings.language] || 'en-US';
@@ -336,7 +360,7 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       }).format(date);
     } catch (error) {
       return date.toLocaleString();
@@ -349,10 +373,14 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   const getImageQuality = (): number => {
     switch (settings.dataUsage) {
-      case 'low': return 0.7;
-      case 'balanced': return 0.85;
-      case 'high': return 1.0;
-      default: return 0.85;
+      case 'low':
+        return 0.7;
+      case 'balanced':
+        return 0.85;
+      case 'high':
+        return 1.0;
+      default:
+        return 0.85;
     }
   };
 
@@ -366,7 +394,7 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
     playSound,
     formatDate,
     shouldShowAnimation,
-    getImageQuality
+    getImageQuality,
   };
 
   return (

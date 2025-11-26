@@ -6,7 +6,13 @@
 export interface Holiday {
   name: string;
   date: string; // 'MM-DD' format or dynamic calculation function
-  type: 'public' | 'religious' | 'cultural' | 'observance' | 'awareness' | 'international';
+  type:
+    | 'public'
+    | 'religious'
+    | 'cultural'
+    | 'observance'
+    | 'awareness'
+    | 'international';
   countries: string[]; // ISO country codes, or ['GLOBAL'] for worldwide
   description?: string;
   category?: string;
@@ -55,7 +61,7 @@ function getIslamicHolidays(year: number): Date[] {
     new Date(eidFitr2024.getTime() - drift * 24 * 60 * 60 * 1000),
     new Date(eidAdha2024.getTime() - drift * 24 * 60 * 60 * 1000),
     new Date(muharram2024.getTime() - drift * 24 * 60 * 60 * 1000),
-    new Date(mawlid2024.getTime() - drift * 24 * 60 * 60 * 1000)
+    new Date(mawlid2024.getTime() - drift * 24 * 60 * 60 * 1000),
   ];
 }
 
@@ -84,7 +90,7 @@ function getHinduFestivals(year: number): { [key: string]: Date } {
     diwali: new Date(diwali2024.getTime() + drift * msPerDay),
     dussehra: new Date(dussehra2024.getTime() + drift * msPerDay),
     janmashtami: new Date(janmashtami2024.getTime() + drift * msPerDay),
-    ganeshChaturthi: new Date(ganeshChaturthi2024.getTime() + drift * msPerDay)
+    ganeshChaturthi: new Date(ganeshChaturthi2024.getTime() + drift * msPerDay),
   };
 }
 
@@ -112,7 +118,7 @@ export function getMovableHolidays(year: number): Holiday[] {
       type: 'religious',
       countries: ['US', 'GB', 'CA', 'AU', 'DE', 'FR', 'IT', 'ES', 'BR', 'MX'],
       description: 'Christian observance of Jesus crucifixion',
-      isMovable: true
+      isMovable: true,
     },
     {
       name: 'Easter Sunday',
@@ -120,7 +126,7 @@ export function getMovableHolidays(year: number): Holiday[] {
       type: 'religious',
       countries: ['GLOBAL'],
       description: 'Christian celebration of Jesus resurrection',
-      isMovable: true
+      isMovable: true,
     },
     {
       name: 'Easter Monday',
@@ -128,7 +134,7 @@ export function getMovableHolidays(year: number): Holiday[] {
       type: 'public',
       countries: ['GB', 'CA', 'AU', 'DE', 'FR', 'IT'],
       description: 'Public holiday following Easter',
-      isMovable: true
+      isMovable: true,
     }
   );
 
@@ -142,7 +148,7 @@ export function getMovableHolidays(year: number): Holiday[] {
     type: 'public',
     countries: ['US'],
     description: 'Honors military personnel who died in service',
-    isMovable: true
+    isMovable: true,
   });
 
   // Labor Day - First Monday of September
@@ -154,7 +160,7 @@ export function getMovableHolidays(year: number): Holiday[] {
     type: 'public',
     countries: ['US'],
     description: 'Celebrates American workers',
-    isMovable: true
+    isMovable: true,
   });
 
   // Thanksgiving - Fourth Thursday of November
@@ -167,7 +173,7 @@ export function getMovableHolidays(year: number): Holiday[] {
     type: 'public',
     countries: ['US'],
     description: 'Traditional harvest festival',
-    isMovable: true
+    isMovable: true,
   });
 
   // Islamic Holidays (dynamic)
@@ -179,7 +185,7 @@ export function getMovableHolidays(year: number): Holiday[] {
       type: 'religious',
       countries: ['GLOBAL'],
       description: 'Islamic festival marking end of Ramadan (approx)',
-      isMovable: true
+      isMovable: true,
     },
     {
       name: 'Eid al-Adha',
@@ -187,7 +193,7 @@ export function getMovableHolidays(year: number): Holiday[] {
       type: 'religious',
       countries: ['GLOBAL'],
       description: 'Islamic Festival of Sacrifice (approx)',
-      isMovable: true
+      isMovable: true,
     },
     {
       name: 'Muharram (Islamic New Year)',
@@ -195,15 +201,15 @@ export function getMovableHolidays(year: number): Holiday[] {
       type: 'religious',
       countries: ['GLOBAL'],
       description: 'Islamic New Year (approx)',
-      isMovable: true
+      isMovable: true,
     },
     {
-      name: 'Mawlid (Prophet\'s Birthday)',
+      name: "Mawlid (Prophet's Birthday)",
       date: `${String(islamicDates[3].getMonth() + 1).padStart(2, '0')}-${String(islamicDates[3].getDate()).padStart(2, '0')}`,
       type: 'religious',
       countries: ['GLOBAL'],
       description: 'Birth anniversary of Prophet Muhammad (approx)',
-      isMovable: true
+      isMovable: true,
     }
   );
 
@@ -216,7 +222,7 @@ export function getMovableHolidays(year: number): Holiday[] {
       type: 'religious',
       countries: ['IN', 'NP'],
       description: 'Hindu festival of colors and spring (approx)',
-      isMovable: true
+      isMovable: true,
     },
     {
       name: 'Diwali / Deepavali',
@@ -224,7 +230,7 @@ export function getMovableHolidays(year: number): Holiday[] {
       type: 'religious',
       countries: ['IN', 'NP', 'MY', 'SG'],
       description: 'Hindu festival of lights (approx)',
-      isMovable: true
+      isMovable: true,
     },
     {
       name: 'Dussehra / Vijayadashami',
@@ -232,7 +238,7 @@ export function getMovableHolidays(year: number): Holiday[] {
       type: 'religious',
       countries: ['IN', 'NP'],
       description: 'Victory of good over evil (approx)',
-      isMovable: true
+      isMovable: true,
     },
     {
       name: 'Janmashtami',
@@ -240,7 +246,7 @@ export function getMovableHolidays(year: number): Holiday[] {
       type: 'religious',
       countries: ['IN'],
       description: 'Birth of Lord Krishna (approx)',
-      isMovable: true
+      isMovable: true,
     },
     {
       name: 'Ganesh Chaturthi',
@@ -248,7 +254,7 @@ export function getMovableHolidays(year: number): Holiday[] {
       type: 'religious',
       countries: ['IN'],
       description: 'Hindu festival honoring Lord Ganesha (approx)',
-      isMovable: true
+      isMovable: true,
     }
   );
 
@@ -262,7 +268,7 @@ export function getMovableHolidays(year: number): Holiday[] {
     type: 'observance',
     countries: ['US', 'CA', 'AU', 'IN'],
     description: 'Honors mothers',
-    isMovable: true
+    isMovable: true,
   });
 
   // Father's Day - Third Sunday of June
@@ -275,7 +281,7 @@ export function getMovableHolidays(year: number): Holiday[] {
     type: 'observance',
     countries: ['US', 'GB', 'CA', 'IN'],
     description: 'Honors fathers',
-    isMovable: true
+    isMovable: true,
   });
 
   return holidays;
@@ -291,35 +297,35 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     date: '01-01',
     type: 'public',
     countries: ['GLOBAL'],
-    description: 'First day of the year'
+    description: 'First day of the year',
   },
   {
     name: 'Epiphany',
     date: '01-06',
     type: 'religious',
     countries: ['DE', 'ES', 'IT', 'AT', 'PL'],
-    description: 'Christian feast day'
+    description: 'Christian feast day',
   },
   {
     name: 'Martin Luther King Jr. Day',
     date: '01-15',
     type: 'public',
     countries: ['US'],
-    description: 'Honors civil rights leader MLK Jr.'
+    description: 'Honors civil rights leader MLK Jr.',
   },
   {
     name: 'Australia Day',
     date: '01-26',
     type: 'public',
     countries: ['AU'],
-    description: 'National day of Australia'
+    description: 'National day of Australia',
   },
   {
     name: 'Republic Day (India)',
     date: '01-26',
     type: 'public',
     countries: ['IN'],
-    description: 'Commemorates constitution adoption'
+    description: 'Commemorates constitution adoption',
   },
 
   // ============= FEBRUARY =============
@@ -329,7 +335,7 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'religious',
     countries: ['IN'],
     description: 'Hindu festival celebrating spring and Goddess Saraswati',
-    isMovable: true
+    isMovable: true,
   },
   {
     name: 'Maha Shivaratri',
@@ -337,21 +343,21 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'religious',
     countries: ['IN'],
     description: 'Hindu festival dedicated to Lord Shiva',
-    isMovable: true
+    isMovable: true,
   },
   {
     name: "Valentine's Day",
     date: '02-14',
     type: 'observance',
     countries: ['GLOBAL'],
-    description: 'Day of love and romance'
+    description: 'Day of love and romance',
   },
   {
     name: "Presidents' Day",
     date: '02-19',
     type: 'public',
     countries: ['US'],
-    description: 'Honors US presidents'
+    description: 'Honors US presidents',
   },
 
   // ============= MARCH =============
@@ -360,21 +366,21 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     date: '03-08',
     type: 'international',
     countries: ['GLOBAL'],
-    description: 'Celebrates women worldwide'
+    description: 'Celebrates women worldwide',
   },
   {
     name: "St. Patrick's Day",
     date: '03-17',
     type: 'cultural',
     countries: ['IE', 'US', 'GB', 'CA', 'AU'],
-    description: 'Irish cultural celebration'
+    description: 'Irish cultural celebration',
   },
   {
     name: 'Nowruz (Persian New Year)',
     date: '03-20',
     type: 'cultural',
     countries: ['IR', 'AF', 'TJ', 'AZ'],
-    description: 'Persian New Year celebration'
+    description: 'Persian New Year celebration',
   },
   {
     name: 'Ugadi',
@@ -382,7 +388,7 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'cultural',
     countries: ['IN'],
     description: 'Hindu New Year celebrated in Karnataka, Andhra Pradesh',
-    isMovable: true
+    isMovable: true,
   },
 
   // ============= APRIL =============
@@ -392,7 +398,7 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'religious',
     countries: ['IN'],
     description: 'Birthday of Lord Rama',
-    isMovable: true
+    isMovable: true,
   },
   {
     name: 'Mahavir Jayanti',
@@ -400,42 +406,43 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'religious',
     countries: ['IN'],
     description: 'Birth anniversary of Lord Mahavira, founder of Jainism',
-    isMovable: true
+    isMovable: true,
   },
   {
     name: 'Ambedkar Jayanti',
     date: '04-14',
     type: 'public',
     countries: ['IN'],
-    description: 'Birthday of Dr. B.R. Ambedkar, architect of Indian Constitution'
+    description:
+      'Birthday of Dr. B.R. Ambedkar, architect of Indian Constitution',
   },
   {
     name: "April Fools' Day",
     date: '04-01',
     type: 'observance',
     countries: ['GLOBAL'],
-    description: 'Day of pranks and jokes'
+    description: 'Day of pranks and jokes',
   },
   {
     name: 'Earth Day',
     date: '04-22',
     type: 'international',
     countries: ['GLOBAL'],
-    description: 'Environmental awareness day'
+    description: 'Environmental awareness day',
   },
   {
     name: 'ANZAC Day',
     date: '04-25',
     type: 'public',
     countries: ['AU', 'NZ'],
-    description: 'Honors Australian and New Zealand Army Corps'
+    description: 'Honors Australian and New Zealand Army Corps',
   },
   {
     name: "King's Day (Netherlands)",
     date: '04-27',
     type: 'public',
     countries: ['NL'],
-    description: 'Dutch national holiday'
+    description: 'Dutch national holiday',
   },
 
   // ============= MAY =============
@@ -444,21 +451,21 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     date: '05-01',
     type: 'public',
     countries: ['GLOBAL'],
-    description: 'International Workers Day'
+    description: 'International Workers Day',
   },
   {
     name: 'Cinco de Mayo',
     date: '05-05',
     type: 'cultural',
     countries: ['MX', 'US'],
-    description: 'Mexican victory celebration'
+    description: 'Mexican victory celebration',
   },
   {
     name: 'Victory in Europe Day',
     date: '05-08',
     type: 'observance',
     countries: ['GB', 'FR', 'RU'],
-    description: 'WWII victory commemoration'
+    description: 'WWII victory commemoration',
   },
 
   // ============= JUNE =============
@@ -467,14 +474,14 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     date: '06-19',
     type: 'public',
     countries: ['US'],
-    description: 'Emancipation Day'
+    description: 'Emancipation Day',
   },
   {
     name: 'Midsummer',
     date: '06-21',
     type: 'cultural',
     countries: ['SE', 'FI', 'NO'],
-    description: 'Summer solstice celebration'
+    description: 'Summer solstice celebration',
   },
 
   // ============= JULY =============
@@ -483,21 +490,21 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     date: '07-01',
     type: 'public',
     countries: ['CA'],
-    description: 'Canadian national day'
+    description: 'Canadian national day',
   },
   {
     name: 'Independence Day',
     date: '07-04',
     type: 'public',
     countries: ['US'],
-    description: 'US independence from Britain'
+    description: 'US independence from Britain',
   },
   {
     name: 'Bastille Day',
     date: '07-14',
     type: 'public',
     countries: ['FR'],
-    description: 'French national day'
+    description: 'French national day',
   },
 
   // ============= AUGUST =============
@@ -507,21 +514,21 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'religious',
     countries: ['IN'],
     description: 'Hindu festival celebrating brother-sister bond',
-    isMovable: true
+    isMovable: true,
   },
   {
     name: 'Independence Day (India)',
     date: '08-15',
     type: 'public',
     countries: ['IN'],
-    description: 'Indian independence from Britain'
+    description: 'Indian independence from Britain',
   },
   {
     name: 'Independence Day (Indonesia)',
     date: '08-17',
     type: 'public',
     countries: ['ID'],
-    description: 'Indonesian independence'
+    description: 'Indonesian independence',
   },
 
   // ============= SEPTEMBER =============
@@ -531,28 +538,28 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'cultural',
     countries: ['IN'],
     description: 'Harvest festival celebrated in Kerala',
-    isMovable: true
+    isMovable: true,
   },
   {
     name: 'Independence Day (Brazil)',
     date: '09-07',
     type: 'public',
     countries: ['BR'],
-    description: 'Brazilian independence'
+    description: 'Brazilian independence',
   },
   {
     name: 'Independence Day (Mexico)',
     date: '09-16',
     type: 'public',
     countries: ['MX'],
-    description: 'Mexican independence'
+    description: 'Mexican independence',
   },
   {
     name: 'Oktoberfest Begins',
     date: '09-21',
     type: 'cultural',
     countries: ['DE'],
-    description: 'German beer festival'
+    description: 'German beer festival',
   },
 
   // ============= OCTOBER =============
@@ -561,14 +568,14 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     date: '10-02',
     type: 'public',
     countries: ['IN'],
-    description: 'Birthday of Mahatma Gandhi, Father of the Nation'
+    description: 'Birthday of Mahatma Gandhi, Father of the Nation',
   },
   {
     name: 'German Unity Day',
     date: '10-03',
     type: 'public',
     countries: ['DE'],
-    description: 'German reunification'
+    description: 'German reunification',
   },
   {
     name: 'Navratri Begins',
@@ -576,14 +583,14 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'religious',
     countries: ['IN'],
     description: 'Nine-night Hindu festival honoring Goddess Durga',
-    isMovable: true
+    isMovable: true,
   },
   {
     name: 'Columbus Day / Indigenous Peoples Day',
     date: '10-14',
     type: 'public',
     countries: ['US'],
-    description: 'Historical observance'
+    description: 'Historical observance',
   },
   {
     name: 'Karva Chauth',
@@ -591,21 +598,21 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'religious',
     countries: ['IN'],
     description: 'Hindu festival where married women fast for husbands',
-    isMovable: true
+    isMovable: true,
   },
   {
     name: 'United Nations Day',
     date: '10-24',
     type: 'international',
     countries: ['GLOBAL'],
-    description: 'UN founding anniversary'
+    description: 'UN founding anniversary',
   },
   {
     name: 'Halloween',
     date: '10-31',
     type: 'cultural',
     countries: ['US', 'GB', 'CA', 'IE'],
-    description: 'Traditional celebration'
+    description: 'Traditional celebration',
   },
 
   // ============= NOVEMBER =============
@@ -615,7 +622,7 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'religious',
     countries: ['IN'],
     description: 'Hindu festival celebrating brother-sister relationship',
-    isMovable: true
+    isMovable: true,
   },
   {
     name: 'Chhath Puja',
@@ -623,7 +630,7 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'religious',
     countries: ['IN'],
     description: 'Hindu festival honoring Sun God, celebrated in Bihar',
-    isMovable: true
+    isMovable: true,
   },
   {
     name: 'Guru Nanak Jayanti',
@@ -631,35 +638,35 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'religious',
     countries: ['IN'],
     description: 'Birth anniversary of Guru Nanak, founder of Sikhism',
-    isMovable: true
+    isMovable: true,
   },
   {
     name: 'All Saints Day',
     date: '11-01',
     type: 'religious',
     countries: ['DE', 'FR', 'IT', 'ES', 'PL', 'AT'],
-    description: 'Christian feast day'
+    description: 'Christian feast day',
   },
   {
     name: 'Guy Fawkes Night',
     date: '11-05',
     type: 'cultural',
     countries: ['GB'],
-    description: 'British bonfire night'
+    description: 'British bonfire night',
   },
   {
     name: 'Veterans Day',
     date: '11-11',
     type: 'public',
     countries: ['US'],
-    description: 'Honors military veterans'
+    description: 'Honors military veterans',
   },
   {
     name: 'Remembrance Day',
     date: '11-11',
     type: 'public',
     countries: ['GB', 'CA', 'AU'],
-    description: 'WWI armistice day'
+    description: 'WWI armistice day',
   },
 
   // ============= DECEMBER =============
@@ -668,7 +675,7 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     date: '12-06',
     type: 'cultural',
     countries: ['NL', 'BE', 'DE', 'AT'],
-    description: 'Traditional gift-giving day'
+    description: 'Traditional gift-giving day',
   },
   {
     name: 'Hanukkah Begins',
@@ -676,35 +683,35 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     type: 'religious',
     countries: ['GLOBAL'],
     description: 'Jewish Festival of Lights',
-    isMovable: true
+    isMovable: true,
   },
   {
     name: 'Christmas Eve',
     date: '12-24',
     type: 'observance',
     countries: ['GLOBAL'],
-    description: 'Day before Christmas'
+    description: 'Day before Christmas',
   },
   {
     name: 'Christmas Day',
     date: '12-25',
     type: 'public',
     countries: ['GLOBAL'],
-    description: 'Christian celebration'
+    description: 'Christian celebration',
   },
   {
     name: 'Boxing Day',
     date: '12-26',
     type: 'public',
     countries: ['GB', 'CA', 'AU', 'NZ'],
-    description: 'Post-Christmas holiday'
+    description: 'Post-Christmas holiday',
   },
   {
     name: "New Year's Eve",
     date: '12-31',
     type: 'observance',
     countries: ['GLOBAL'],
-    description: 'Last day of the year'
+    description: 'Last day of the year',
   },
 
   // ============= AWARENESS DAYS =============
@@ -713,84 +720,87 @@ export const STATIC_HOLIDAYS: Holiday[] = [
     date: '02-04',
     type: 'awareness',
     countries: ['GLOBAL'],
-    description: 'Cancer awareness day'
+    description: 'Cancer awareness day',
   },
   {
     name: 'World Health Day',
     date: '04-07',
     type: 'awareness',
     countries: ['GLOBAL'],
-    description: 'Global health awareness'
+    description: 'Global health awareness',
   },
   {
     name: 'World Book Day',
     date: '04-23',
     type: 'awareness',
     countries: ['GLOBAL'],
-    description: 'Promotes reading and publishing'
+    description: 'Promotes reading and publishing',
   },
   {
     name: 'World Environment Day',
     date: '06-05',
     type: 'awareness',
     countries: ['GLOBAL'],
-    description: 'Environmental awareness'
+    description: 'Environmental awareness',
   },
   {
     name: 'World Population Day',
     date: '07-11',
     type: 'awareness',
     countries: ['GLOBAL'],
-    description: 'Population awareness'
+    description: 'Population awareness',
   },
   {
     name: 'International Youth Day',
     date: '08-12',
     type: 'awareness',
     countries: ['GLOBAL'],
-    description: 'Youth empowerment'
+    description: 'Youth empowerment',
   },
   {
     name: 'International Day of Peace',
     date: '09-21',
     type: 'awareness',
     countries: ['GLOBAL'],
-    description: 'World peace promotion'
+    description: 'World peace promotion',
   },
   {
     name: 'World Mental Health Day',
     date: '10-10',
     type: 'awareness',
     countries: ['GLOBAL'],
-    description: 'Mental health awareness'
+    description: 'Mental health awareness',
   },
   {
     name: 'World Food Day',
     date: '10-16',
     type: 'awareness',
     countries: ['GLOBAL'],
-    description: 'Food security awareness'
+    description: 'Food security awareness',
   },
   {
     name: 'World AIDS Day',
     date: '12-01',
     type: 'awareness',
     countries: ['GLOBAL'],
-    description: 'HIV/AIDS awareness'
+    description: 'HIV/AIDS awareness',
   },
   {
     name: 'Human Rights Day',
     date: '12-10',
     type: 'awareness',
     countries: ['GLOBAL'],
-    description: 'Human rights awareness'
+    description: 'Human rights awareness',
   },
 ];
 
 /**
  * Get all holidays for a specific year and country
  */
-export function getHolidaysForYear(year: number, countryCode?: string): Holiday[] {
+export function getHolidaysForYear(
+  year: number,
+  countryCode?: string
+): Holiday[] {
   const movableHolidays = getMovableHolidays(year);
   const allHolidays = [...STATIC_HOLIDAYS, ...movableHolidays];
 
@@ -798,30 +808,40 @@ export function getHolidaysForYear(year: number, countryCode?: string): Holiday[
     return allHolidays;
   }
 
-  return allHolidays.filter(holiday =>
-    holiday.countries.includes(countryCode) ||
-    holiday.countries.includes('GLOBAL')
+  return allHolidays.filter(
+    (holiday) =>
+      holiday.countries.includes(countryCode) ||
+      holiday.countries.includes('GLOBAL')
   );
 }
 
 /**
  * Get holidays for a specific month
  */
-export function getHolidaysForMonth(year: number, month: number, countryCode?: string): Holiday[] {
+export function getHolidaysForMonth(
+  year: number,
+  month: number,
+  countryCode?: string
+): Holiday[] {
   const allHolidays = getHolidaysForYear(year, countryCode);
   const monthStr = String(month).padStart(2, '0');
 
-  return allHolidays.filter(holiday => holiday.date.startsWith(monthStr));
+  return allHolidays.filter((holiday) => holiday.date.startsWith(monthStr));
 }
 
 /**
  * Get holiday for a specific date
  */
-export function getHolidayForDate(year: number, month: number, day: number, countryCode?: string): Holiday | null {
+export function getHolidayForDate(
+  year: number,
+  month: number,
+  day: number,
+  countryCode?: string
+): Holiday | null {
   const allHolidays = getHolidaysForYear(year, countryCode);
   const dateStr = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-  return allHolidays.find(holiday => holiday.date === dateStr) || null;
+  return allHolidays.find((holiday) => holiday.date === dateStr) || null;
 }
 
 /**
@@ -831,7 +851,15 @@ export interface EventTemplate {
   id: string;
   name: string;
   icon: string;
-  type: 'meeting' | 'reminder' | 'event' | 'task' | 'birthday' | 'holiday' | 'focus' | 'workout';
+  type:
+    | 'meeting'
+    | 'reminder'
+    | 'event'
+    | 'task'
+    | 'birthday'
+    | 'holiday'
+    | 'focus'
+    | 'workout';
   category: string;
   defaultDuration: number; // minutes
   color: string;
@@ -852,7 +880,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     color: '#3b82f6',
     description: '15-minute team sync',
     suggestedTime: '09:00',
-    checklist: ['Yesterday progress', 'Today plan', 'Blockers']
+    checklist: ['Yesterday progress', 'Today plan', 'Blockers'],
   },
   {
     id: 'sprint-planning',
@@ -863,7 +891,12 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     defaultDuration: 120,
     color: '#8b5cf6',
     description: 'Quarterly planning meeting',
-    checklist: ['Review backlog', 'Set sprint goals', 'Estimate tasks', 'Assign work']
+    checklist: [
+      'Review backlog',
+      'Set sprint goals',
+      'Estimate tasks',
+      'Assign work',
+    ],
   },
   {
     id: 'one-on-one',
@@ -874,7 +907,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     defaultDuration: 30,
     color: '#10b981',
     description: 'Individual catch-up',
-    checklist: ['Career goals', 'Feedback', 'Concerns', 'Next steps']
+    checklist: ['Career goals', 'Feedback', 'Concerns', 'Next steps'],
   },
   {
     id: 'code-review',
@@ -884,7 +917,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     category: 'Work',
     defaultDuration: 60,
     color: '#6366f1',
-    description: 'Review pull requests'
+    description: 'Review pull requests',
   },
   {
     id: 'deep-work',
@@ -895,7 +928,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     defaultDuration: 120,
     color: '#ec4899',
     description: 'Focused work time',
-    checklist: ['Silent notifications', 'Close email', 'Single task focus']
+    checklist: ['Silent notifications', 'Close email', 'Single task focus'],
   },
 
   // Personal Templates
@@ -909,7 +942,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     color: '#ef4444',
     description: 'Exercise session',
     suggestedTime: '07:00',
-    checklist: ['Warm up', 'Main workout', 'Cool down', 'Stretch']
+    checklist: ['Warm up', 'Main workout', 'Cool down', 'Stretch'],
   },
   {
     id: 'meditation',
@@ -920,7 +953,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     defaultDuration: 20,
     color: '#14b8a6',
     description: 'Mindfulness practice',
-    suggestedTime: '06:30'
+    suggestedTime: '06:30',
   },
   {
     id: 'meal-prep',
@@ -931,7 +964,12 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     defaultDuration: 90,
     color: '#f59e0b',
     description: 'Weekly meal preparation',
-    checklist: ['Plan menu', 'Shop groceries', 'Cook meals', 'Store containers']
+    checklist: [
+      'Plan menu',
+      'Shop groceries',
+      'Cook meals',
+      'Store containers',
+    ],
   },
   {
     id: 'family-time',
@@ -941,7 +979,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     category: 'Personal',
     defaultDuration: 120,
     color: '#ec4899',
-    description: 'Quality family time'
+    description: 'Quality family time',
   },
   {
     id: 'reading',
@@ -952,7 +990,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     defaultDuration: 30,
     color: '#8b5cf6',
     description: 'Book reading session',
-    suggestedTime: '20:00'
+    suggestedTime: '20:00',
   },
 
   // Learning Templates
@@ -964,7 +1002,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     category: 'Learning',
     defaultDuration: 60,
     color: '#3b82f6',
-    description: 'Online learning session'
+    description: 'Online learning session',
   },
   {
     id: 'language-practice',
@@ -974,7 +1012,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     category: 'Learning',
     defaultDuration: 30,
     color: '#10b981',
-    description: 'Language learning'
+    description: 'Language learning',
   },
 
   // Social Templates
@@ -986,7 +1024,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     category: 'Social',
     defaultDuration: 30,
     color: '#f59e0b',
-    description: 'Casual coffee meeting'
+    description: 'Casual coffee meeting',
   },
   {
     id: 'dinner-party',
@@ -997,7 +1035,12 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     defaultDuration: 180,
     color: '#ec4899',
     description: 'Social dinner gathering',
-    checklist: ['Send invites', 'Plan menu', 'Shop ingredients', 'Prepare venue']
+    checklist: [
+      'Send invites',
+      'Plan menu',
+      'Shop ingredients',
+      'Prepare venue',
+    ],
   },
   {
     id: 'birthday-celebration',
@@ -1008,7 +1051,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     defaultDuration: 180,
     color: '#f59e0b',
     description: 'Birthday celebration',
-    checklist: ['Book venue', 'Send invites', 'Order cake', 'Prepare gifts']
+    checklist: ['Book venue', 'Send invites', 'Order cake', 'Prepare gifts'],
   },
 
   // Health Templates
@@ -1021,7 +1064,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     defaultDuration: 60,
     color: '#ef4444',
     description: 'Medical appointment',
-    checklist: ['Bring insurance card', 'List symptoms', 'Current medications']
+    checklist: ['Bring insurance card', 'List symptoms', 'Current medications'],
   },
   {
     id: 'dental-checkup',
@@ -1031,7 +1074,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     category: 'Health',
     defaultDuration: 60,
     color: '#14b8a6',
-    description: 'Dental appointment'
+    description: 'Dental appointment',
   },
 
   // Travel Templates
@@ -1044,7 +1087,12 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     defaultDuration: 240,
     color: '#3b82f6',
     description: 'Air travel',
-    checklist: ['Check-in online', 'Print boarding pass', 'Pack bags', 'Arrive 2h early']
+    checklist: [
+      'Check-in online',
+      'Print boarding pass',
+      'Pack bags',
+      'Arrive 2h early',
+    ],
   },
   {
     id: 'hotel-checkin',
@@ -1054,7 +1102,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     category: 'Travel',
     defaultDuration: 30,
     color: '#8b5cf6',
-    description: 'Hotel arrival'
+    description: 'Hotel arrival',
   },
   {
     id: 'vacation',
@@ -1065,7 +1113,12 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
     defaultDuration: 10080, // 7 days
     color: '#10b981',
     description: 'Holiday trip',
-    checklist: ['Book flights', 'Reserve hotel', 'Pack bags', 'Set out-of-office']
+    checklist: [
+      'Book flights',
+      'Reserve hotel',
+      'Pack bags',
+      'Set out-of-office',
+    ],
   },
 ];
 
@@ -1073,20 +1126,20 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
  * Get template by ID
  */
 export function getTemplateById(id: string): EventTemplate | null {
-  return EVENT_TEMPLATES.find(t => t.id === id) || null;
+  return EVENT_TEMPLATES.find((t) => t.id === id) || null;
 }
 
 /**
  * Get templates by category
  */
 export function getTemplatesByCategory(category: string): EventTemplate[] {
-  return EVENT_TEMPLATES.filter(t => t.category === category);
+  return EVENT_TEMPLATES.filter((t) => t.category === category);
 }
 
 /**
  * Get all unique categories
  */
 export function getTemplateCategories(): string[] {
-  const categories = new Set(EVENT_TEMPLATES.map(t => t.category));
+  const categories = new Set(EVENT_TEMPLATES.map((t) => t.category));
   return Array.from(categories).sort();
 }

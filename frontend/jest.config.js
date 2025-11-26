@@ -109,13 +109,7 @@ const customJestConfig = {
   ],
 
   // Coverage reporters
-  coverageReporters: [
-    'text',
-    'text-summary',
-    'html',
-    'lcov',
-    'json-summary',
-  ],
+  coverageReporters: ['text', 'text-summary', 'html', 'lcov', 'json-summary'],
 
   // Coverage directory
   coverageDirectory: '<rootDir>/coverage',
@@ -128,7 +122,7 @@ const customJestConfig = {
 
   // Error handling
   errorOnDeprecated: true,
-  
+
   // Performance monitoring (disabled to prevent false positives)
   detectOpenHandles: false,
   detectLeaks: false,

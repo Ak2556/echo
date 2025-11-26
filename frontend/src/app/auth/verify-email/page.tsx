@@ -51,7 +51,8 @@ export default function VerifyEmailPage() {
         router.push(`/auth/login?email=${encodeURIComponent(email)}`);
       }, 2000);
     } catch (err) {
-      const message = err instanceof APIError ? err.message : 'Verification failed';
+      const message =
+        err instanceof APIError ? err.message : 'Verification failed';
       setError(message);
       setState('error');
       throw err;
@@ -72,7 +73,8 @@ export default function VerifyEmailPage() {
       // Set cooldown
       setResendCooldown(60);
     } catch (err) {
-      const message = err instanceof APIError ? err.message : 'Failed to resend code';
+      const message =
+        err instanceof APIError ? err.message : 'Failed to resend code';
       setError(message);
     }
   };

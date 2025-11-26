@@ -15,17 +15,19 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const cardVariants = {
-  default: 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
+  default:
+    'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
   elevated: 'bg-white dark:bg-gray-800 shadow-lg border-0',
   outlined: 'bg-transparent border-2 border-gray-300 dark:border-gray-600',
   filled: 'bg-gray-50 dark:bg-gray-900 border-0',
-  glass: 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/20'
+  glass:
+    'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/20',
 };
 
 const sizeVariants = {
   sm: 'p-3',
   md: 'p-4',
-  lg: 'p-6'
+  lg: 'p-6',
 };
 
 const roundedVariants = {
@@ -34,7 +36,7 @@ const roundedVariants = {
   md: 'rounded-md',
   lg: 'rounded-lg',
   xl: 'rounded-xl',
-  full: 'rounded-full'
+  full: 'rounded-full',
 };
 
 const shadowVariants = {
@@ -42,67 +44,68 @@ const shadowVariants = {
   sm: 'shadow-sm',
   md: 'shadow-md',
   lg: 'shadow-lg',
-  xl: 'shadow-xl'
+  xl: 'shadow-xl',
 };
 
-const Card = forwardRef<HTMLDivElement, CardProps>((
-  {
-    className,
-    variant = 'default',
-    size = 'md',
-    rounded = 'lg',
-    shadow = 'none',
-    hover = false,
-    interactive = false,
-    motionProps,
-    children,
-    ...props
-  },
-  ref
-) => {
-  const baseClasses = [
-    'transition-all duration-200',
-    cardVariants[variant],
-    sizeVariants[size],
-    roundedVariants[rounded],
-    shadowVariants[shadow],
-    hover && 'hover:shadow-lg hover:-translate-y-1',
-    interactive && 'cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-  ].filter(Boolean).join(' ');
+const Card = forwardRef<HTMLDivElement, CardProps>(
+  (
+    {
+      className,
+      variant = 'default',
+      size = 'md',
+      rounded = 'lg',
+      shadow = 'none',
+      hover = false,
+      interactive = false,
+      motionProps,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    const baseClasses = [
+      'transition-all duration-200',
+      cardVariants[variant],
+      sizeVariants[size],
+      roundedVariants[rounded],
+      shadowVariants[shadow],
+      hover && 'hover:shadow-lg hover:-translate-y-1',
+      interactive &&
+        'cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+    ]
+      .filter(Boolean)
+      .join(' ');
 
-  if (motionProps) {
+    if (motionProps) {
+      return (
+        <motion.div
+          ref={ref}
+          className={cn(baseClasses, className)}
+          {...motionProps}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      );
+    }
+
     return (
-      <motion.div
-        ref={ref}
-        className={cn(baseClasses, className)}
-        {...motionProps}
-        {...props}
-      >
+      <div ref={ref} className={cn(baseClasses, className)} {...props}>
         {children}
-      </motion.div>
+      </div>
     );
   }
-
-  return (
-    <div
-      ref={ref}
-      className={cn(baseClasses, className)}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-});
+);
 
 Card.displayName = 'Card';
 
 export { Card };
 
 // Card Header Component
-export const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>((
-  { className, ...props },
-  ref
-) => (
+export const CardHeader = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn('flex flex-col space-y-1.5 pb-4', className)}
@@ -112,23 +115,26 @@ export const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEleme
 CardHeader.displayName = 'CardHeader';
 
 // Card Title Component
-export const CardTitle = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLHeadingElement>>((
-  { className, ...props },
-  ref
-) => (
+export const CardTitle = forwardRef<
+  HTMLParagraphElement,
+  HTMLAttributes<HTMLHeadingElement>
+>(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn('text-lg font-semibold leading-none tracking-tight', className)}
+    className={cn(
+      'text-lg font-semibold leading-none tracking-tight',
+      className
+    )}
     {...props}
   />
 ));
 CardTitle.displayName = 'CardTitle';
 
 // Card Description Component
-export const CardDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>((
-  { className, ...props },
-  ref
-) => (
+export const CardDescription = forwardRef<
+  HTMLParagraphElement,
+  HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
   <p
     ref={ref}
     className={cn('text-sm text-gray-600 dark:text-gray-400', className)}
@@ -138,23 +144,19 @@ export const CardDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<H
 CardDescription.displayName = 'CardDescription';
 
 // Card Content Component
-export const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>((
-  { className, ...props },
-  ref
-) => (
-  <div
-    ref={ref}
-    className={cn('pt-0', className)}
-    {...props}
-  />
+export const CardContent = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn('pt-0', className)} {...props} />
 ));
 CardContent.displayName = 'CardContent';
 
 // Card Footer Component
-export const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>((
-  { className, ...props },
-  ref
-) => (
+export const CardFooter = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn('flex items-center pt-4', className)}
@@ -166,21 +168,21 @@ CardFooter.displayName = 'CardFooter';
 export default Card;
 
 // Specialized Card Components
-export const StatsCard = forwardRef<HTMLDivElement, {
-  title: string;
-  value: string | number;
-  change?: string;
-  changeType?: 'positive' | 'negative' | 'neutral';
-  icon?: React.ReactNode;
-  className?: string;
-}>((
-  { title, value, change, changeType = 'neutral', icon, className },
-  ref
-) => {
+export const StatsCard = forwardRef<
+  HTMLDivElement,
+  {
+    title: string;
+    value: string | number;
+    change?: string;
+    changeType?: 'positive' | 'negative' | 'neutral';
+    icon?: React.ReactNode;
+    className?: string;
+  }
+>(({ title, value, change, changeType = 'neutral', icon, className }, ref) => {
   const changeColors = {
     positive: 'text-green-600 dark:text-green-400',
     negative: 'text-red-600 dark:text-red-400',
-    neutral: 'text-gray-600 dark:text-gray-400'
+    neutral: 'text-gray-600 dark:text-gray-400',
   };
 
   return (
@@ -192,7 +194,7 @@ export const StatsCard = forwardRef<HTMLDivElement, {
       motionProps={{
         initial: { opacity: 0, y: 20 },
         animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.3 }
+        transition: { duration: 0.3 },
       }}
     >
       <CardContent className="p-6">
@@ -211,9 +213,7 @@ export const StatsCard = forwardRef<HTMLDivElement, {
             )}
           </div>
           {icon && (
-            <div className="text-gray-400 dark:text-gray-500">
-              {icon}
-            </div>
+            <div className="text-gray-400 dark:text-gray-500">{icon}</div>
           )}
         </div>
       </CardContent>
@@ -222,16 +222,16 @@ export const StatsCard = forwardRef<HTMLDivElement, {
 });
 StatsCard.displayName = 'StatsCard';
 
-export const FeatureCard = forwardRef<HTMLDivElement, {
-  title: string;
-  description: string;
-  icon?: React.ReactNode;
-  action?: React.ReactNode;
-  className?: string;
-}>((
-  { title, description, icon, action, className },
-  ref
-) => {
+export const FeatureCard = forwardRef<
+  HTMLDivElement,
+  {
+    title: string;
+    description: string;
+    icon?: React.ReactNode;
+    action?: React.ReactNode;
+    className?: string;
+  }
+>(({ title, description, icon, action, className }, ref) => {
   return (
     <Card
       ref={ref}
@@ -242,7 +242,7 @@ export const FeatureCard = forwardRef<HTMLDivElement, {
       motionProps={{
         initial: { opacity: 0, scale: 0.95 },
         animate: { opacity: 1, scale: 1 },
-        transition: { duration: 0.3 }
+        transition: { duration: 0.3 },
       }}
     >
       <CardHeader>
@@ -254,15 +254,9 @@ export const FeatureCard = forwardRef<HTMLDivElement, {
         <CardTitle className="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
           {title}
         </CardTitle>
-        <CardDescription>
-          {description}
-        </CardDescription>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
-      {action && (
-        <CardFooter>
-          {action}
-        </CardFooter>
-      )}
+      {action && <CardFooter>{action}</CardFooter>}
     </Card>
   );
 });

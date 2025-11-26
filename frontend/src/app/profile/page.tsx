@@ -13,7 +13,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User, Mail, AtSign, FileText, Camera, Save, ArrowLeft, Shield, LogOut } from 'lucide-react';
+import {
+  User,
+  Mail,
+  AtSign,
+  FileText,
+  Camera,
+  Save,
+  ArrowLeft,
+  Shield,
+  LogOut,
+} from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
@@ -23,13 +33,21 @@ import Button from '@/components/ui/Button';
 const profileSchema = z.object({
   full_name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
-  username: z.string()
+  username: z
+    .string()
     .min(3, 'Username must be at least 3 characters')
     .max(20, 'Username must be less than 20 characters')
-    .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores')
+    .regex(
+      /^[a-zA-Z0-9_]+$/,
+      'Username can only contain letters, numbers, and underscores'
+    )
     .optional()
     .or(z.literal('')),
-  bio: z.string().max(200, 'Bio must be less than 200 characters').optional().or(z.literal('')),
+  bio: z
+    .string()
+    .max(200, 'Bio must be less than 200 characters')
+    .optional()
+    .or(z.literal('')),
 });
 
 type ProfileForm = z.infer<typeof profileSchema>;
@@ -87,7 +105,7 @@ export default function ProfilePage() {
 
     try {
       // TODO: Replace with actual API call when backend endpoint is ready
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       toast.success('Profile updated successfully!', {
         id: toastId,
@@ -95,10 +113,11 @@ export default function ProfilePage() {
         icon: '✅',
       });
       setIsEditing(false);
-      
+
       // TODO: Update user context with new data
     } catch (error: any) {
-      const errorMsg = error?.message || 'Failed to update profile. Please try again.';
+      const errorMsg =
+        error?.message || 'Failed to update profile. Please try again.';
       toast.error(errorMsg, { id: toastId, duration: 4000 });
     }
   };
@@ -136,7 +155,9 @@ export default function ProfilePage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-600 dark:text-gray-400">Loading your profile...</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            Loading your profile...
+          </p>
         </div>
       </div>
     );
@@ -244,7 +265,9 @@ export default function ProfilePage() {
                   <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                     {user.full_name || 'Your Profile'}
                   </h1>
-                  <p className="text-gray-600 dark:text-gray-400">{user.email}</p>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {user.email}
+                  </p>
                 </div>
                 {!isEditing ? (
                   <Button
@@ -369,7 +392,9 @@ export default function ProfilePage() {
                         <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
                           Email
                         </label>
-                        <p className="text-lg text-gray-900 dark:text-white">{user.email}</p>
+                        <p className="text-lg text-gray-900 dark:text-white">
+                          {user.email}
+                        </p>
                       </div>
 
                       <div className="space-y-2">
@@ -407,10 +432,15 @@ export default function ProfilePage() {
                     className="flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group"
                   >
                     <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                      <Shield size={20} className="text-blue-600 dark:text-blue-400" />
+                      <Shield
+                        size={20}
+                        className="text-blue-600 dark:text-blue-400"
+                      />
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900 dark:text-white">Account Settings</h4>
+                      <h4 className="font-medium text-gray-900 dark:text-white">
+                        Account Settings
+                      </h4>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         Manage security and preferences
                       </p>
@@ -422,10 +452,15 @@ export default function ProfilePage() {
                     className="flex items-center gap-3 p-4 rounded-xl border-2 border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group"
                   >
                     <div className="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                      <LogOut size={20} className="text-red-600 dark:text-red-400" />
+                      <LogOut
+                        size={20}
+                        className="text-red-600 dark:text-red-400"
+                      />
                     </div>
                     <div className="text-left">
-                      <h4 className="font-medium text-gray-900 dark:text-white">Logout</h4>
+                      <h4 className="font-medium text-gray-900 dark:text-white">
+                        Logout
+                      </h4>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         Sign out of your account
                       </p>
@@ -443,11 +478,15 @@ export default function ProfilePage() {
             transition={{ delay: 0.3 }}
             className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400"
           >
-            Account created on {new Date(user.created_at || Date.now()).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
+            Account created on{' '}
+            {new Date(user.created_at || Date.now()).toLocaleDateString(
+              'en-US',
+              {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }
+            )}
           </motion.div>
         </div>
       </div>

@@ -38,7 +38,9 @@ describe('PasswordStrength - Simple Tests', () => {
       // Should show some strength level (Weak, Fair, Good, or Strong)
       // Use getAllByText to handle multiple matches and get the visible one
       const strengthTexts = screen.getAllByText(/weak|fair|good|strong/i);
-      const visibleStrengthText = strengthTexts.find(el => el.style.display !== 'none');
+      const visibleStrengthText = strengthTexts.find(
+        (el) => el.style.display !== 'none'
+      );
       expect(visibleStrengthText).toBeInTheDocument();
     });
   });
@@ -97,7 +99,9 @@ describe('PasswordStrength - Simple Tests', () => {
     it('shows progress bar', () => {
       const { container } = render(<PasswordStrength password="test123" />);
       // Look for progress bar structure - it has background-color style
-      const progressBar = container.querySelector('[style*="background-color"]');
+      const progressBar = container.querySelector(
+        '[style*="background-color"]'
+      );
       expect(progressBar).toBeInTheDocument();
     });
   });
@@ -105,7 +109,9 @@ describe('PasswordStrength - Simple Tests', () => {
   describe('Edge Cases', () => {
     it('handles very long passwords', () => {
       const longPassword = 'a'.repeat(100) + 'A1!';
-      const { container } = render(<PasswordStrength password={longPassword} />);
+      const { container } = render(
+        <PasswordStrength password={longPassword} />
+      );
       expect(container.firstChild).not.toBeNull();
     });
 

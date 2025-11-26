@@ -1,10 +1,24 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useCallback,
+} from 'react';
 
 export interface Notification {
   id: string;
-  type: 'like' | 'comment' | 'follow' | 'mention' | 'repost' | 'message' | 'system';
+  type:
+    | 'like'
+    | 'comment'
+    | 'follow'
+    | 'mention'
+    | 'repost'
+    | 'message'
+    | 'system';
   from: {
     id: string;
     username: string;
@@ -27,7 +41,9 @@ interface NotificationsContextType {
   addNotification: (notification: Notification) => void;
 }
 
-const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
+const NotificationsContext = createContext<
+  NotificationsContextType | undefined
+>(undefined);
 
 const mockNotifications: Notification[] = [
   {
@@ -37,12 +53,13 @@ const mockNotifications: Notification[] = [
       id: 'user_002',
       username: 'priya_sharma',
       displayName: 'Priya Sharma',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=c0aede',
-      verified: true
+      avatar:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=c0aede',
+      verified: true,
     },
     content: 'started following you',
     timestamp: new Date(Date.now() - 1000 * 60 * 5),
-    read: false
+    read: false,
   },
   {
     id: 'notif_002',
@@ -51,18 +68,22 @@ const mockNotifications: Notification[] = [
       id: 'user_003',
       username: 'arjun_tech',
       displayName: 'Arjun Kumar',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun&backgroundColor=ffd5dc',
-      verified: false
+      avatar:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun&backgroundColor=ffd5dc',
+      verified: false,
     },
     content: 'liked your post',
     relatedId: 'post_123',
     timestamp: new Date(Date.now() - 1000 * 60 * 15),
-    read: false
-  }
+    read: false,
+  },
 ];
 
-export const NotificationsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+export const NotificationsProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [notifications, setNotifications] =
+    useState<Notification[]>(mockNotifications);
 
   // Load from localStorage
   useEffect(() => {
@@ -70,13 +91,13 @@ export const NotificationsProvider: React.FC<{ children: ReactNode }> = ({ child
     if (savedNotifications) {
       try {
         const parsed = JSON.parse(savedNotifications);
-        setNotifications(parsed.map((n: any) => ({
-          ...n,
-          timestamp: new Date(n.timestamp)
-        })));
-      } catch (error) {
-
-      }
+        setNotifications(
+          parsed.map((n: any) => ({
+            ...n,
+            timestamp: new Date(n.timestamp),
+          }))
+        );
+      } catch (error) {}
     }
   }, []);
 
@@ -85,16 +106,16 @@ export const NotificationsProvider: React.FC<{ children: ReactNode }> = ({ child
     localStorage.setItem('echo-notifications', JSON.stringify(notifications));
   }, [notifications]);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const markNotificationRead = useCallback((notificationId: string) => {
-    setNotifications(prev => prev.map(n =>
-      n.id === notificationId ? { ...n, read: true } : n
-    ));
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
+    );
   }, []);
 
   const markAllNotificationsRead = useCallback(() => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   }, []);
 
   const clearNotifications = useCallback(() => {
@@ -102,7 +123,7 @@ export const NotificationsProvider: React.FC<{ children: ReactNode }> = ({ child
   }, []);
 
   const addNotification = useCallback((notification: Notification) => {
-    setNotifications(prev => [notification, ...prev]);
+    setNotifications((prev) => [notification, ...prev]);
   }, []);
 
   const contextValue: NotificationsContextType = {
@@ -111,7 +132,7 @@ export const NotificationsProvider: React.FC<{ children: ReactNode }> = ({ child
     markNotificationRead,
     markAllNotificationsRead,
     clearNotifications,
-    addNotification
+    addNotification,
   };
 
   return (
@@ -124,7 +145,9 @@ export const NotificationsProvider: React.FC<{ children: ReactNode }> = ({ child
 export const useNotifications = (): NotificationsContextType => {
   const context = useContext(NotificationsContext);
   if (context === undefined) {
-    throw new Error('useNotifications must be used within a NotificationsProvider');
+    throw new Error(
+      'useNotifications must be used within a NotificationsProvider'
+    );
   }
   return context;
 };
