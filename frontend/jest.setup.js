@@ -83,6 +83,9 @@ jest.mock('framer-motion', () => {
 });
 
 // Mock browser APIs
+// Mock window.alert to prevent "Not implemented" errors in tests
+global.alert = jest.fn();
+
 global.ClipboardEvent = class ClipboardEvent extends Event {
   constructor(type, eventInitDict = {}) {
     super(type, eventInitDict);
