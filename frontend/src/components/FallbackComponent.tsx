@@ -1,1 +1,60 @@
-'use client';\n\nimport React from 'react';\n\ninterface FallbackComponentProps {\n  error?: Error;\n  componentName?: string;\n}\n\nexport default function FallbackComponent({ error, componentName = 'Component' }: FallbackComponentProps) {\n  return (\n    <div style={{\n      padding: '2rem',\n      textAlign: 'center',\n      background: 'var(--surface, #f8f9fa)',\n      border: '1px solid var(--border, #e0e0e0)',\n      borderRadius: '8px',\n      margin: '1rem'\n    }}>\n      <h3 style={{ color: 'var(--fg, #333)', marginBottom: '1rem' }}>\n        ⚠️ {componentName} Error\n      </h3>\n      <p style={{ color: 'var(--muted, #666)', marginBottom: '1rem' }}>\n        There was an issue loading this component.\n      </p>\n      {error && (\n        <details style={{ textAlign: 'left', marginTop: '1rem' }}>\n          <summary style={{ cursor: 'pointer', color: 'var(--accent, #007aff)' }}>\n            Error Details\n          </summary>\n          <pre style={{\n            background: 'var(--bg, #fff)',\n            padding: '1rem',\n            borderRadius: '4px',\n            overflow: 'auto',\n            fontSize: '0.8rem',\n            marginTop: '0.5rem'\n          }}>\n            {error.message}\n            {error.stack && `\\n\\n${error.stack}`}\n          </pre>\n        </details>\n      )}\n      <button\n        onClick={() => window.location.reload()}\n        style={{\n          padding: '0.5rem 1rem',\n          background: 'var(--accent, #007aff)',\n          color: 'white',\n          border: 'none',\n          borderRadius: '4px',\n          cursor: 'pointer',\n          marginTop: '1rem'\n        }}\n      >\n        Reload Page\n      </button>\n    </div>\n  );\n}\n"
+'use client';
+
+import React from 'react';
+
+interface FallbackComponentProps {
+  error?: Error;
+  componentName?: string;
+}
+
+export default function FallbackComponent({ error, componentName = 'Component' }: FallbackComponentProps) {
+  return (
+    <div style={{
+      padding: '2rem',
+      textAlign: 'center',
+      background: 'var(--surface, #f8f9fa)',
+      border: '1px solid var(--border, #e0e0e0)',
+      borderRadius: '8px',
+      margin: '1rem'
+    }}>
+      <h3 style={{ color: 'var(--fg, #333)', marginBottom: '1rem' }}>
+        ⚠️ {componentName} Error
+      </h3>
+      <p style={{ color: 'var(--muted, #666)', marginBottom: '1rem' }}>
+        There was an issue loading this component.
+      </p>
+      {error && (
+        <details style={{ textAlign: 'left', marginTop: '1rem' }}>
+          <summary style={{ cursor: 'pointer', color: 'var(--accent, #007aff)' }}>
+            Error Details
+          </summary>
+          <pre style={{
+            background: 'var(--bg, #fff)',
+            padding: '1rem',
+            borderRadius: '4px',
+            overflow: 'auto',
+            fontSize: '0.8rem',
+            marginTop: '0.5rem'
+          }}>
+            {error.message}
+            {error.stack && `\n\n${error.stack}`}
+          </pre>
+        </details>
+      )}
+      <button
+        onClick={() => window.location.reload()}
+        style={{
+          padding: '0.5rem 1rem',
+          background: 'var(--accent, #007aff)',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          marginTop: '1rem'
+        }}
+      >
+        Reload Page
+      </button>
+    </div>
+  );
+}

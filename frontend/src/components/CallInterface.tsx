@@ -230,7 +230,7 @@ export default function CallInterface({
     try {
       if (!isScreenSharing) {
         const screenStream = await navigator.mediaDevices.getDisplayMedia({
-          video: { cursor: 'always' },
+          video: { cursor: 'always' } as DisplayMediaStreamOptions['video'],
           audio: false,
         });
 
