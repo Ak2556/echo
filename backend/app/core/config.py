@@ -203,6 +203,9 @@ class DevelopmentSettings(Settings):
     
     # Development database
     database_url: str = "postgresql+asyncpg://echo:echo@localhost/echo_dev"
+    
+    # Development CORS origins
+    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:3001", "http://localhost:8080"]
 
     # Relaxed limits for development
     rate_limit_requests: int = 1000
@@ -255,6 +258,9 @@ class TestSettings(Settings):
     
     # Test database
     database_url: str = "postgresql+asyncpg://echo:echo@localhost/echo_test"
+    
+    # Test CORS origins
+    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:3001", "http://testserver"]
     
     # Disable external services
     enable_metrics: bool = False
