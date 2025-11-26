@@ -75,7 +75,10 @@ export default function ResetPasswordPage() {
 
   const onSubmit = async (data: ResetPasswordForm) => {
     try {
-      await apiClient.resetPassword(data);
+      await apiClient.resetPassword({
+        token: data.token,
+        password: data.new_password,
+      });
       setState('success');
 
       // Redirect to login after 3 seconds

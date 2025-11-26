@@ -12,7 +12,7 @@ export interface ThemeColors {
   cardHover: string;
 
   // Text colors
-  text: string;
+  text: string & { white: string };
   textSecondary: string;
   textMuted: string;
 
@@ -26,13 +26,34 @@ export interface ThemeColors {
   accentLight: string;
   accentRgb: string;
 
+  // Brand colors
+  brand: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+  };
+
   // Status colors
+  status: {
+    success: string;
+    warning: string;
+    danger: string;
+    error: string;
+    info: string;
+  };
   success: string;
   warning: string;
   danger: string;
   info: string;
 
+  // Chart colors
+  chart: string[];
+
   // Gradients
+  gradient: {
+    primary: string;
+    secondary: string;
+  };
   gradientPrimary: string;
   gradientSecondary: string;
 
@@ -62,7 +83,7 @@ export function useThemeColors(): ThemeColors {
         cardHover: 'rgba(40, 30, 70, 1)',
 
         // Text colors
-        text: '#f8fafc',
+        text: Object.assign('#f8fafc', { white: '#ffffff' }),
         textSecondary: '#cbd5e1',
         textMuted: '#a78bfa',
 
@@ -76,13 +97,34 @@ export function useThemeColors(): ThemeColors {
         accentLight: '#ddd6fe',
         accentRgb: '167, 139, 250',
 
+        // Brand colors
+        brand: {
+          primary: '#a78bfa',
+          secondary: '#c4b5fd',
+          tertiary: '#ddd6fe',
+        },
+
         // Status colors
+        status: {
+          success: '#34d399',
+          warning: '#fbbf24',
+          danger: '#f87171',
+          error: '#f87171',
+          info: '#60a5fa',
+        },
         success: '#34d399',
         warning: '#fbbf24',
         danger: '#f87171',
         info: '#60a5fa',
 
+        // Chart colors
+        chart: ['#a78bfa', '#34d399', '#fbbf24', '#60a5fa', '#f87171', '#ec4899', '#8b5cf6', '#10b981'],
+
         // Gradients
+        gradient: {
+          primary: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          secondary: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+        },
         gradientPrimary: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         gradientSecondary: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
 
@@ -105,7 +147,7 @@ export function useThemeColors(): ThemeColors {
         cardHover: 'rgba(255, 255, 255, 1)',
 
         // Text colors
-        text: '#1e1b4b',
+        text: Object.assign('#1e1b4b', { white: '#ffffff' }),
         textSecondary: '#4c1d95',
         textMuted: '#6366f1',
 
@@ -119,13 +161,34 @@ export function useThemeColors(): ThemeColors {
         accentLight: '#c4b5fd',
         accentRgb: '139, 92, 246',
 
+        // Brand colors
+        brand: {
+          primary: '#8b5cf6',
+          secondary: '#7c3aed',
+          tertiary: '#c4b5fd',
+        },
+
         // Status colors
+        status: {
+          success: '#10b981',
+          warning: '#f59e0b',
+          danger: '#ef4444',
+          error: '#ef4444',
+          info: '#3b82f6',
+        },
         success: '#10b981',
         warning: '#f59e0b',
         danger: '#ef4444',
         info: '#3b82f6',
 
+        // Chart colors
+        chart: ['#8b5cf6', '#10b981', '#f59e0b', '#3b82f6', '#ef4444', '#ec4899', '#6366f1', '#059669'],
+
         // Gradients
+        gradient: {
+          primary: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          secondary: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+        },
         gradientPrimary: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         gradientSecondary: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
 

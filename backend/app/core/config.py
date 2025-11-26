@@ -72,7 +72,7 @@ class Settings(BaseSettings):
     rate_limit_burst: int = 20
     
     # CORS
-    cors_origins: List[AnyHttpUrl] = []
+    cors_origins: List[AnyHttpUrl] = ["http://localhost:3000", "http://localhost:3001"]
     cors_allow_credentials: bool = True
     cors_allow_methods: List[str] = ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
     cors_allow_headers: List[str] = ["*"]

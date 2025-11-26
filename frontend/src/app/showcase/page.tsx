@@ -16,9 +16,6 @@ import {
   Sparkles,
 } from 'lucide-react';
 import ThemeSelector from '@/components/ThemeSelector';
-import ParticleBackground, {
-  StarsBackground,
-} from '@/components/ParticleBackground';
 import AdvancedModal, { ConfirmModal } from '@/components/AdvancedModal';
 import {
   EmptyFeed,
@@ -80,9 +77,6 @@ export default function ShowcasePage() {
 
   return (
     <div style={{ minHeight: '100vh', position: 'relative' }}>
-      {/* Particle Background */}
-      <StarsBackground />
-
       {/* Main Content */}
       <div
         style={{

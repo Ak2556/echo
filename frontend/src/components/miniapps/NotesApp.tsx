@@ -66,7 +66,7 @@ export default function NotesApp({ isVisible, onClose }: NotesAppProps) {
 
   // Categories and colors
   const categories = ['Personal', 'Work', 'Ideas', 'To-Do', 'Journal'];
-  const colors = [
+  const colorOptions = [
     'colors.brand.primary',
     'colors.status.success',
     'colors.status.warning',
