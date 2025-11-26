@@ -1,7 +1,19 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { X, Mic, MicOff, Video, VideoOff, Phone, PhoneOff, Monitor, Settings, Users, MessageSquare } from 'lucide-react';
+import {
+  X,
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+  Phone,
+  PhoneOff,
+  Monitor,
+  Settings,
+  Users,
+  MessageSquare,
+} from 'lucide-react';
 import { useToast } from '@/contexts/ToastContext';
 
 type CallType = 'video' | 'audio';
@@ -29,11 +41,13 @@ export default function CallInterface({
   callType: initialCallType,
   isInitiator,
   participants,
-  onEndCall
+  onEndCall,
 }: CallInterfaceProps) {
   const toast = useToast();
   const [callType, setCallType] = useState<CallType>(initialCallType);
-  const [status, setStatus] = useState<CallStatus>(isInitiator ? 'ringing' : 'connecting');
+  const [status, setStatus] = useState<CallStatus>(
+    isInitiator ? 'ringing' : 'connecting'
+  );
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(callType === 'audio');
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
@@ -61,11 +75,14 @@ export default function CallInterface({
     try {
       const constraints: MediaStreamConstraints = {
         audio: true,
-        video: callType === 'video' ? {
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          facingMode: 'user'
-        } : false
+        video:
+          callType === 'video'
+            ? {
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+                facingMode: 'user',
+              }
+            : false,
       };
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -90,14 +107,14 @@ export default function CallInterface({
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
-      ]
+      ],
     };
 
     const pc = new RTCPeerConnection(configuration);
 
     // Add local stream tracks to peer connection
     if (localStreamRef.current) {
-      localStreamRef.current.getTracks().forEach(track => {
+      localStreamRef.current.getTracks().forEach((track) => {
         pc.addTrack(track, localStreamRef.current!);
       });
     }
@@ -125,7 +142,10 @@ export default function CallInterface({
         setStatus('connected');
         callStartTimeRef.current = Date.now();
         toast.success('Call connected!');
-      } else if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed') {
+      } else if (
+        pc.connectionState === 'disconnected' ||
+        pc.connectionState === 'failed'
+      ) {
         setStatus('ended');
         toast.error('Call disconnected');
       }
@@ -157,7 +177,7 @@ export default function CallInterface({
     return () => {
       // Cleanup on unmount
       if (localStreamRef.current) {
-        localStreamRef.current.getTracks().forEach(track => track.stop());
+        localStreamRef.current.getTracks().forEach((track) => track.stop());
       }
       if (peerConnectionRef.current) {
         peerConnectionRef.current.close();
@@ -170,7 +190,9 @@ export default function CallInterface({
     if (status !== 'connected') return;
 
     const interval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - callStartTimeRef.current) / 1000);
+      const elapsed = Math.floor(
+        (Date.now() - callStartTimeRef.current) / 1000
+      );
       setCallDuration(elapsed);
     }, 1000);
 
@@ -184,7 +206,9 @@ export default function CallInterface({
       if (audioTrack) {
         audioTrack.enabled = !audioTrack.enabled;
         setIsMuted(!audioTrack.enabled);
-        toast.info(audioTrack.enabled ? 'Microphone unmuted' : 'Microphone muted');
+        toast.info(
+          audioTrack.enabled ? 'Microphone unmuted' : 'Microphone muted'
+        );
       }
     }
   }, [toast]);
@@ -207,14 +231,16 @@ export default function CallInterface({
       if (!isScreenSharing) {
         const screenStream = await navigator.mediaDevices.getDisplayMedia({
           video: { cursor: 'always' },
-          audio: false
+          audio: false,
         });
 
         const screenTrack = screenStream.getVideoTracks()[0];
 
         // Replace video track with screen track
         if (peerConnectionRef.current && localStreamRef.current) {
-          const sender = peerConnectionRef.current.getSenders().find(s => s.track?.kind === 'video');
+          const sender = peerConnectionRef.current
+            .getSenders()
+            .find((s) => s.track?.kind === 'video');
           if (sender) {
             sender.replaceTrack(screenTrack);
           }
@@ -226,7 +252,9 @@ export default function CallInterface({
           // Switch back to camera
           if (localStreamRef.current) {
             const videoTrack = localStreamRef.current.getVideoTracks()[0];
-            const sender = peerConnectionRef.current?.getSenders().find(s => s.track?.kind === 'video');
+            const sender = peerConnectionRef.current
+              ?.getSenders()
+              .find((s) => s.track?.kind === 'video');
             if (sender && videoTrack) {
               sender.replaceTrack(videoTrack);
             }
@@ -239,7 +267,9 @@ export default function CallInterface({
         // Stop screen sharing
         if (localStreamRef.current) {
           const videoTrack = localStreamRef.current.getVideoTracks()[0];
-          const sender = peerConnectionRef.current?.getSenders().find(s => s.track?.kind === 'video');
+          const sender = peerConnectionRef.current
+            ?.getSenders()
+            .find((s) => s.track?.kind === 'video');
           if (sender && videoTrack) {
             sender.replaceTrack(videoTrack);
           }
@@ -256,7 +286,7 @@ export default function CallInterface({
   // End call
   const handleEndCall = useCallback(() => {
     if (localStreamRef.current) {
-      localStreamRef.current.getTracks().forEach(track => track.stop());
+      localStreamRef.current.getTracks().forEach((track) => track.stop());
     }
     if (peerConnectionRef.current) {
       peerConnectionRef.current.close();
@@ -270,18 +300,25 @@ export default function CallInterface({
   const switchToVideo = useCallback(async () => {
     if (callType === 'audio') {
       try {
-        const videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const videoStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
         const videoTrack = videoStream.getVideoTracks()[0];
 
         if (localStreamRef.current) {
           localStreamRef.current.addTrack(videoTrack);
         }
 
-        const sender = peerConnectionRef.current?.getSenders().find(s => s.track?.kind === 'video');
+        const sender = peerConnectionRef.current
+          ?.getSenders()
+          .find((s) => s.track?.kind === 'video');
         if (sender) {
           sender.replaceTrack(videoTrack);
         } else {
-          peerConnectionRef.current?.addTrack(videoTrack, localStreamRef.current!);
+          peerConnectionRef.current?.addTrack(
+            videoTrack,
+            localStreamRef.current!
+          );
         }
 
         setCallType('video');
@@ -296,45 +333,53 @@ export default function CallInterface({
   if (!isOpen) return null;
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: '#000',
-      zIndex: 10001,
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
-      {/* Header */}
-      <div style={{
-        padding: '1rem 1.5rem',
-        background: 'rgba(0, 0, 0, 0.8)',
-        backdropFilter: 'blur(10px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        position: 'absolute',
+    <div
+      style={{
+        position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
-        zIndex: 10
-      }}>
+        bottom: 0,
+        backgroundColor: '#000',
+        zIndex: 10001,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          padding: '1rem 1.5rem',
+          background: 'rgba(0, 0, 0, 0.8)',
+          backdropFilter: 'blur(10px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10,
+        }}
+      >
         <div>
-          <h3 style={{
-            margin: 0,
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            color: 'white'
-          }}>
+          <h3
+            style={{
+              margin: 0,
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              color: 'white',
+            }}
+          >
             {participants[0]?.name || 'Calling...'}
           </h3>
-          <p style={{
-            margin: '0.25rem 0 0 0',
-            fontSize: '0.85rem',
-            color: 'rgba(255, 255, 255, 0.7)'
-          }}>
+          <p
+            style={{
+              margin: '0.25rem 0 0 0',
+              fontSize: '0.85rem',
+              color: 'rgba(255, 255, 255, 0.7)',
+            }}
+          >
             {status === 'connecting' && '⏳ Connecting...'}
             {status === 'ringing' && '📞 Ringing...'}
             {status === 'connected' && `⏱️ ${formatDuration(callDuration)}`}
@@ -355,23 +400,29 @@ export default function CallInterface({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transition: 'background 0.2s'
+            transition: 'background 0.2s',
           }}
-          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
-          onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)')
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)')
+          }
         >
           <Settings size={20} />
         </button>
       </div>
 
       {/* Video Container */}
-      <div style={{
-        flex: 1,
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
+      <div
+        style={{
+          flex: 1,
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         {/* Remote Video (Main) */}
         {callType === 'video' && !isScreenSharing ? (
           <video
@@ -381,38 +432,44 @@ export default function CallInterface({
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'cover'
+              objectFit: 'cover',
             }}
           />
         ) : (
-          <div style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-          }}>
-            <div style={{
-              width: '120px',
-              height: '120px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.2)',
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '3rem',
-              marginBottom: '1rem'
-            }}>
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            }}
+          >
+            <div
+              style={{
+                width: '120px',
+                height: '120px',
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '3rem',
+                marginBottom: '1rem',
+              }}
+            >
               {participants[0]?.name?.[0]?.toUpperCase() || '👤'}
             </div>
-            <h2 style={{
-              margin: 0,
-              color: 'white',
-              fontSize: '1.5rem',
-              fontWeight: 600
-            }}>
+            <h2
+              style={{
+                margin: 0,
+                color: 'white',
+                fontSize: '1.5rem',
+                fontWeight: 600,
+              }}
+            >
               {participants[0]?.name}
             </h2>
           </div>
@@ -420,27 +477,31 @@ export default function CallInterface({
 
         {/* Local Video (Picture-in-Picture) */}
         {callType === 'video' && (
-          <div style={{
-            position: 'absolute',
-            top: '5rem',
-            right: '1.5rem',
-            width: '200px',
-            height: '150px',
-            borderRadius: '12px',
-            overflow: 'hidden',
-            border: '2px solid rgba(255, 255, 255, 0.3)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
-          }}>
+          <div
+            style={{
+              position: 'absolute',
+              top: '5rem',
+              right: '1.5rem',
+              width: '200px',
+              height: '150px',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              border: '2px solid rgba(255, 255, 255, 0.3)',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+            }}
+          >
             {isVideoOff ? (
-              <div style={{
-                width: '100%',
-                height: '100%',
-                background: '#1a1a1a',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white'
-              }}>
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  background: '#1a1a1a',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                }}
+              >
                 <VideoOff size={32} />
               </div>
             ) : (
@@ -453,7 +514,7 @@ export default function CallInterface({
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  transform: 'scaleX(-1)' // Mirror effect
+                  transform: 'scaleX(-1)', // Mirror effect
                 }}
               />
             )}
@@ -462,36 +523,40 @@ export default function CallInterface({
 
         {/* Error Message */}
         {error && (
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            background: 'rgba(239, 68, 68, 0.9)',
-            color: 'white',
-            padding: '1rem 1.5rem',
-            borderRadius: '8px',
-            fontSize: '0.9rem'
-          }}>
+          <div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              background: 'rgba(239, 68, 68, 0.9)',
+              color: 'white',
+              padding: '1rem 1.5rem',
+              borderRadius: '8px',
+              fontSize: '0.9rem',
+            }}
+          >
             {error}
           </div>
         )}
       </div>
 
       {/* Controls */}
-      <div style={{
-        padding: '2rem 1.5rem',
-        background: 'rgba(0, 0, 0, 0.8)',
-        backdropFilter: 'blur(10px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '1rem',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0
-      }}>
+      <div
+        style={{
+          padding: '2rem 1.5rem',
+          background: 'rgba(0, 0, 0, 0.8)',
+          backdropFilter: 'blur(10px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '1rem',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+        }}
+      >
         {/* Mute Button */}
         <button
           onClick={toggleMute}
@@ -506,13 +571,15 @@ export default function CallInterface({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transition: 'all 0.2s'
+            transition: 'all 0.2s',
           }}
           onMouseEnter={(e) => {
-            if (!isMuted) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+            if (!isMuted)
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
           }}
           onMouseLeave={(e) => {
-            if (!isMuted) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+            if (!isMuted)
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
           }}
         >
           {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
@@ -533,13 +600,15 @@ export default function CallInterface({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
-              if (!isVideoOff) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+              if (!isVideoOff)
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
             }}
             onMouseLeave={(e) => {
-              if (!isVideoOff) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              if (!isVideoOff)
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
             }}
           >
             {isVideoOff ? <VideoOff size={24} /> : <Video size={24} />}
@@ -555,19 +624,23 @@ export default function CallInterface({
               height: '56px',
               borderRadius: '50%',
               border: 'none',
-              background: isScreenSharing ? '#3b82f6' : 'rgba(255, 255, 255, 0.2)',
+              background: isScreenSharing
+                ? '#3b82f6'
+                : 'rgba(255, 255, 255, 0.2)',
               color: 'white',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
-              if (!isScreenSharing) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+              if (!isScreenSharing)
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
             }}
             onMouseLeave={(e) => {
-              if (!isScreenSharing) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              if (!isScreenSharing)
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
             }}
           >
             <Monitor size={24} />
@@ -589,10 +662,14 @@ export default function CallInterface({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
             }}
-            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
-            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)')
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)')
+            }
           >
             <Video size={24} />
           </button>
@@ -613,10 +690,10 @@ export default function CallInterface({
             alignItems: 'center',
             justifyContent: 'center',
             transition: 'all 0.2s',
-            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)'
+            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
           }}
-          onMouseEnter={(e) => e.currentTarget.style.background = '#dc2626'}
-          onMouseLeave={(e) => e.currentTarget.style.background = '#ef4444'}
+          onMouseEnter={(e) => (e.currentTarget.style.background = '#dc2626')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = '#ef4444')}
         >
           <PhoneOff size={28} />
         </button>
@@ -635,13 +712,15 @@ export default function CallInterface({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transition: 'all 0.2s'
+            transition: 'all 0.2s',
           }}
           onMouseEnter={(e) => {
-            if (!showChat) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+            if (!showChat)
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
           }}
           onMouseLeave={(e) => {
-            if (!showChat) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+            if (!showChat)
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
           }}
         >
           <MessageSquare size={24} />
@@ -650,17 +729,19 @@ export default function CallInterface({
 
       {/* Call Stats Overlay */}
       {status === 'connected' && (
-        <div style={{
-          position: 'absolute',
-          top: '5rem',
-          left: '1.5rem',
-          background: 'rgba(0, 0, 0, 0.6)',
-          backdropFilter: 'blur(10px)',
-          padding: '0.75rem 1rem',
-          borderRadius: '8px',
-          fontSize: '0.8rem',
-          color: 'white'
-        }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: '5rem',
+            left: '1.5rem',
+            background: 'rgba(0, 0, 0, 0.6)',
+            backdropFilter: 'blur(10px)',
+            padding: '0.75rem 1rem',
+            borderRadius: '8px',
+            fontSize: '0.8rem',
+            color: 'white',
+          }}
+        >
           <div>📡 Connection: Excellent</div>
           <div>🎥 Quality: HD 720p</div>
           <div>⏱️ Duration: {formatDuration(callDuration)}</div>

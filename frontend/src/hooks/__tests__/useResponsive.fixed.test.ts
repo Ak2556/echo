@@ -4,7 +4,12 @@
  */
 
 import { renderHook, act } from '@testing-library/react';
-import { useResponsive, useBreakpoint, useWindowSize, useOrientation } from '../useResponsive';
+import {
+  useResponsive,
+  useBreakpoint,
+  useWindowSize,
+  useOrientation,
+} from '../useResponsive';
 
 // Store original window for restoration
 let originalWindow: any;
@@ -86,7 +91,6 @@ describe('useResponsive', () => {
     it('returns correct initial state for desktop', () => {
       mockWindowDimensions(1024, 768);
       const { result } = renderHook(() => useResponsive());
-
 
       expect(result.current.width).toBe(1024);
       expect(result.current.height).toBe(768);

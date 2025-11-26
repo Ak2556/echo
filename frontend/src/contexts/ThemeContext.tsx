@@ -1,6 +1,14 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useMemo,
+  useCallback,
+} from 'react';
 
 type Theme = 'nothing';
 type ColorMode = 'dark' | 'light' | 'auto';
@@ -36,16 +44,18 @@ const COLOR_PALETTES: Record<Theme, ThemePalettes> = {
     // Dark mode inverse
     dark: { primary: '#1C1C1E', secondary: '#2C2C2E', accent: '#3A3A3C' },
     // Nothing Phone signature dotted pattern accent
-    glyph: { primary: '#FF6B6B', secondary: '#FFB3B3', accent: '#FFCCCC' }
-  }
+    glyph: { primary: '#FF6B6B', secondary: '#FFB3B3', accent: '#FFCCCC' },
+  },
 };
 
 const DEFAULT_PALETTE: Record<Theme, string> = {
-  nothing: 'mono'
+  nothing: 'mono',
 };
 
 const isValidPalette = (theme: Theme, key: string): boolean => {
-  return Boolean(COLOR_PALETTES[theme] && (COLOR_PALETTES[theme] as ThemePalettes)[key]);
+  return Boolean(
+    COLOR_PALETTES[theme] && (COLOR_PALETTES[theme] as ThemePalettes)[key]
+  );
 };
 
 interface ThemeContextType {
@@ -67,7 +77,10 @@ interface ThemeContextType {
   previewTheme: (mode: 'dark' | 'light', duration?: number) => void;
   getColors: () => PaletteEntry | null;
   getSystemPreference: () => 'dark' | 'light';
-  getSunriseSunset: (lat: number, lng: number) => Promise<{ sunrise: string; sunset: string }>;
+  getSunriseSunset: (
+    lat: number,
+    lng: number
+  ) => Promise<{ sunrise: string; sunset: string }>;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -79,83 +92,113 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Always use the same defaults for SSR and initial client render to prevent hydration mismatch
   const [theme, setTheme] = useState<Theme>('nothing');
   const [colorMode, setColorMode] = useState<ColorMode>('auto'); // Default to auto mode
-  const [colorPalette, setColorPalette] = useState<string>(DEFAULT_PALETTE['nothing']);
+  const [colorPalette, setColorPalette] = useState<string>(
+    DEFAULT_PALETTE['nothing']
+  );
   const [accentColor, setAccentColor] = useState<string>('#007aff');
-  const [accessibilityPrefs, setAccessibilityPrefs] = useState<AccessibilityPreferences>({
-    reducedMotion: false,
-    highContrast: false,
-    forcedColors: false
-  });
+  const [accessibilityPrefs, setAccessibilityPrefs] =
+    useState<AccessibilityPreferences>({
+      reducedMotion: false,
+      highContrast: false,
+      forcedColors: false,
+    });
   const [themeSchedule, setThemeSchedule] = useState<ThemeScheduleSettings>({
-    type: 'off'
+    type: 'off',
   });
-  const [actualColorMode, setActualColorMode] = useState<'dark' | 'light'>('light');
+  const [actualColorMode, setActualColorMode] = useState<'dark' | 'light'>(
+    'light'
+  );
   const [previewMode, setPreviewMode] = useState<'dark' | 'light' | null>(null);
-  const [previewTimeout, setPreviewTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [previewTimeout, setPreviewTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
 
   // Utility functions
   const getSystemPreference = useCallback((): 'dark' | 'light' => {
     if (typeof window === 'undefined') return 'light';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
   }, []);
 
-  const detectAccessibilityPreferences = useCallback((): AccessibilityPreferences => {
-    if (typeof window === 'undefined') {
-      return { reducedMotion: false, highContrast: false, forcedColors: false };
-    }
-    
-    return {
-      reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-      highContrast: window.matchMedia('(prefers-contrast: high)').matches,
-      forcedColors: window.matchMedia('(forced-colors: active)').matches
-    };
-  }, []);
-
-  const getSunriseSunset = useCallback(async (lat: number, lng: number): Promise<{ sunrise: string; sunset: string }> => {
-    try {
-      // Using a free sunrise-sunset API
-      const response = await fetch(`https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&formatted=0`);
-      const data = await response.json();
-      
-      if (data.status === 'OK') {
-        const sunrise = new Date(data.results.sunrise);
-        const sunset = new Date(data.results.sunset);
-        
+  const detectAccessibilityPreferences =
+    useCallback((): AccessibilityPreferences => {
+      if (typeof window === 'undefined') {
         return {
-          sunrise: sunrise.toTimeString().slice(0, 5),
-          sunset: sunset.toTimeString().slice(0, 5)
+          reducedMotion: false,
+          highContrast: false,
+          forcedColors: false,
         };
       }
-    } catch (error) {
-      console.warn('Failed to fetch sunrise/sunset times:', error);
-    }
-    
-    // Fallback times
-    return { sunrise: '06:00', sunset: '18:00' };
-  }, []);
 
-  const resolveColorMode = useCallback((mode: ColorMode): 'dark' | 'light' => {
-    if (mode === 'auto') {
-      return getSystemPreference();
-    }
-    return mode;
-  }, [getSystemPreference]);
+      return {
+        reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)')
+          .matches,
+        highContrast: window.matchMedia('(prefers-contrast: high)').matches,
+        forcedColors: window.matchMedia('(forced-colors: active)').matches,
+      };
+    }, []);
+
+  const getSunriseSunset = useCallback(
+    async (
+      lat: number,
+      lng: number
+    ): Promise<{ sunrise: string; sunset: string }> => {
+      try {
+        // Using a free sunrise-sunset API
+        const response = await fetch(
+          `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&formatted=0`
+        );
+        const data = await response.json();
+
+        if (data.status === 'OK') {
+          const sunrise = new Date(data.results.sunrise);
+          const sunset = new Date(data.results.sunset);
+
+          return {
+            sunrise: sunrise.toTimeString().slice(0, 5),
+            sunset: sunset.toTimeString().slice(0, 5),
+          };
+        }
+      } catch (error) {
+        console.warn('Failed to fetch sunrise/sunset times:', error);
+      }
+
+      // Fallback times
+      return { sunrise: '06:00', sunset: '18:00' };
+    },
+    []
+  );
+
+  const resolveColorMode = useCallback(
+    (mode: ColorMode): 'dark' | 'light' => {
+      if (mode === 'auto') {
+        return getSystemPreference();
+      }
+      return mode;
+    },
+    [getSystemPreference]
+  );
 
   const shouldUseDarkMode = useCallback((): boolean => {
     if (previewMode) return previewMode === 'dark';
-    
+
     const resolvedMode = resolveColorMode(colorMode);
     if (resolvedMode === 'dark') return true;
     if (resolvedMode === 'light') return false;
-    
+
     // Check schedule
-    if (themeSchedule.type === 'time' && themeSchedule.lightTime && themeSchedule.darkTime) {
+    if (
+      themeSchedule.type === 'time' &&
+      themeSchedule.lightTime &&
+      themeSchedule.darkTime
+    ) {
       const now = new Date();
       const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-      
+
       const lightTime = themeSchedule.lightTime;
       const darkTime = themeSchedule.darkTime;
-      
+
       if (darkTime > lightTime) {
         // Normal day (dark time is after light time)
         return currentTime >= darkTime || currentTime < lightTime;
@@ -164,7 +207,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         return currentTime >= darkTime && currentTime < lightTime;
       }
     }
-    
+
     return false;
   }, [colorMode, themeSchedule, previewMode, resolveColorMode]);
 
@@ -172,19 +215,29 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('echo-theme') as Theme | null;
-      const savedColorMode = localStorage.getItem('echo-color-mode') as ColorMode | null;
+      const savedColorMode = localStorage.getItem(
+        'echo-color-mode'
+      ) as ColorMode | null;
       const savedPalette = localStorage.getItem('echo-color-palette');
       const savedAccentColor = localStorage.getItem('echo-accent-color');
-      const savedAccessibilityPrefs = localStorage.getItem('echo-accessibility-prefs');
+      const savedAccessibilityPrefs = localStorage.getItem(
+        'echo-accessibility-prefs'
+      );
       const savedThemeSchedule = localStorage.getItem('echo-theme-schedule');
 
       if (savedTheme && ['nothing'].includes(savedTheme)) {
         setTheme(savedTheme);
       }
-      if (savedColorMode && ['dark','light','auto'].includes(savedColorMode)) {
+      if (
+        savedColorMode &&
+        ['dark', 'light', 'auto'].includes(savedColorMode)
+      ) {
         setColorMode(savedColorMode);
       }
-      if (savedPalette && isValidPalette(savedTheme || 'nothing', savedPalette)) {
+      if (
+        savedPalette &&
+        isValidPalette(savedTheme || 'nothing', savedPalette)
+      ) {
         setColorPalette(savedPalette);
       }
       if (savedAccentColor) {
@@ -206,10 +259,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           console.warn('Failed to parse theme schedule:', error);
         }
       }
-      
+
       // Detect system accessibility preferences
       const detectedPrefs = detectAccessibilityPreferences();
-      setAccessibilityPrefs(prev => ({ ...detectedPrefs, ...prev }));
+      setAccessibilityPrefs((prev) => ({ ...detectedPrefs, ...prev }));
     }
     setMounted(true);
   }, [detectAccessibilityPreferences]);
@@ -220,10 +273,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const body = document.body;
     const root = document.documentElement;
-    
+
     // Start transition
     setIsTransitioning(true);
-    
+
     // Determine actual color mode
     const isDark = shouldUseDarkMode();
     const newActualMode = isDark ? 'dark' : 'light';
@@ -235,12 +288,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     // Set color mode as data attribute for CSS
     root.setAttribute('data-theme', newActualMode);
-    
+
     // Apply accessibility preferences
-    root.setAttribute('data-reduced-motion', accessibilityPrefs.reducedMotion.toString());
-    root.setAttribute('data-high-contrast', accessibilityPrefs.highContrast.toString());
-    root.setAttribute('data-forced-colors', accessibilityPrefs.forcedColors.toString());
-    
+    root.setAttribute(
+      'data-reduced-motion',
+      accessibilityPrefs.reducedMotion.toString()
+    );
+    root.setAttribute(
+      'data-high-contrast',
+      accessibilityPrefs.highContrast.toString()
+    );
+    root.setAttribute(
+      'data-forced-colors',
+      accessibilityPrefs.forcedColors.toString()
+    );
+
     // Add transition class for smooth theme changes
     if (!accessibilityPrefs.reducedMotion) {
       root.classList.add('theme-transitioning');
@@ -253,7 +315,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Ensure palette validity; if invalid, swap to default for current theme
-    const paletteKey = isValidPalette(theme, colorPalette) ? colorPalette : DEFAULT_PALETTE[theme];
+    const paletteKey = isValidPalette(theme, colorPalette)
+      ? colorPalette
+      : DEFAULT_PALETTE[theme];
     if (paletteKey !== colorPalette) setColorPalette(paletteKey);
 
     const palette = COLOR_PALETTES[theme][paletteKey];
@@ -268,16 +332,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       // Convert hex to RGB for rgba usage
       const hexToRgb = (hex: string) => {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-          r: parseInt(result[1], 16),
-          g: parseInt(result[2], 16),
-          b: parseInt(result[3], 16)
-        } : null;
+        return result
+          ? {
+              r: parseInt(result[1], 16),
+              g: parseInt(result[2], 16),
+              b: parseInt(result[3], 16),
+            }
+          : null;
       };
 
       const rgb = hexToRgb(palette.primary);
       if (rgb) {
-        root.style.setProperty('--nothing-glyph-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+        root.style.setProperty(
+          '--nothing-glyph-rgb',
+          `${rgb.r}, ${rgb.g}, ${rgb.b}`
+        );
       }
     } else {
       // Fallback: only primary accent available
@@ -299,15 +368,30 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('echo-color-mode', colorMode);
       localStorage.setItem('echo-color-palette', paletteKey);
       localStorage.setItem('echo-accent-color', accentColor);
-      localStorage.setItem('echo-accessibility-prefs', JSON.stringify(accessibilityPrefs));
-      localStorage.setItem('echo-theme-schedule', JSON.stringify(themeSchedule));
+      localStorage.setItem(
+        'echo-accessibility-prefs',
+        JSON.stringify(accessibilityPrefs)
+      );
+      localStorage.setItem(
+        'echo-theme-schedule',
+        JSON.stringify(themeSchedule)
+      );
     }
-  }, [theme, colorMode, colorPalette, accentColor, accessibilityPrefs, themeSchedule, mounted, shouldUseDarkMode]);
+  }, [
+    theme,
+    colorMode,
+    colorPalette,
+    accentColor,
+    accessibilityPrefs,
+    themeSchedule,
+    mounted,
+    shouldUseDarkMode,
+  ]);
 
   // Listen for system preference changes
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    
+
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = () => {
       if (colorMode === 'auto') {
@@ -315,7 +399,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         setActualColorMode(getSystemPreference());
       }
     };
-    
+
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [colorMode, getSystemPreference]);
@@ -324,14 +408,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (e.key === 'echo-theme' && e.newValue) setTheme(e.newValue as Theme);
-      if (e.key === 'echo-color-mode' && e.newValue) setColorMode(e.newValue as ColorMode);
-      if (e.key === 'echo-color-palette' && e.newValue) setColorPalette(e.newValue);
-      if (e.key === 'echo-accent-color' && e.newValue) setAccentColor(e.newValue);
+      if (e.key === 'echo-color-mode' && e.newValue)
+        setColorMode(e.newValue as ColorMode);
+      if (e.key === 'echo-color-palette' && e.newValue)
+        setColorPalette(e.newValue);
+      if (e.key === 'echo-accent-color' && e.newValue)
+        setAccentColor(e.newValue);
       if (e.key === 'echo-accessibility-prefs' && e.newValue) {
         try {
           setAccessibilityPrefs(JSON.parse(e.newValue));
         } catch (error) {
-          console.warn('Failed to parse accessibility preferences from storage:', error);
+          console.warn(
+            'Failed to parse accessibility preferences from storage:',
+            error
+          );
         }
       }
       if (e.key === 'echo-theme-schedule' && e.newValue) {
@@ -349,44 +439,50 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Schedule-based theme switching
   useEffect(() => {
     if (themeSchedule.type === 'off') return;
-    
+
     const checkSchedule = () => {
       const newMode = shouldUseDarkMode() ? 'dark' : 'light';
       if (newMode !== actualColorMode) {
         setActualColorMode(newMode);
       }
     };
-    
+
     // Check every minute
     const interval = setInterval(checkSchedule, 60000);
     return () => clearInterval(interval);
   }, [themeSchedule, shouldUseDarkMode, actualColorMode]);
 
   const toggleColorMode = useCallback(() => {
-    setColorMode(prev => {
+    setColorMode((prev) => {
       if (prev === 'auto') return 'light';
       if (prev === 'light') return 'dark';
       return 'auto';
     });
   }, []);
 
-  const previewTheme = useCallback((mode: 'dark' | 'light', duration: number = 3000) => {
-    if (previewTimeout) {
-      clearTimeout(previewTimeout);
-    }
-    
-    setPreviewMode(mode);
-    const timeout = setTimeout(() => {
-      setPreviewMode(null);
-      setPreviewTimeout(null);
-    }, duration);
-    
-    setPreviewTimeout(timeout);
-  }, [previewTimeout]);
+  const previewTheme = useCallback(
+    (mode: 'dark' | 'light', duration: number = 3000) => {
+      if (previewTimeout) {
+        clearTimeout(previewTimeout);
+      }
 
-  const updateAccessibilityPrefs = useCallback((prefs: Partial<AccessibilityPreferences>) => {
-    setAccessibilityPrefs(prev => ({ ...prev, ...prefs }));
-  }, []);
+      setPreviewMode(mode);
+      const timeout = setTimeout(() => {
+        setPreviewMode(null);
+        setPreviewTimeout(null);
+      }, duration);
+
+      setPreviewTimeout(timeout);
+    },
+    [previewTimeout]
+  );
+
+  const updateAccessibilityPrefs = useCallback(
+    (prefs: Partial<AccessibilityPreferences>) => {
+      setAccessibilityPrefs((prev) => ({ ...prev, ...prefs }));
+    },
+    []
+  );
 
   const updateThemeSchedule = useCallback((schedule: ThemeScheduleSettings) => {
     setThemeSchedule(schedule);
@@ -394,52 +490,57 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const getColors = useCallback((): PaletteEntry | null => {
     const themePalettes = COLOR_PALETTES[theme];
-    const key = isValidPalette(theme, colorPalette) ? colorPalette : DEFAULT_PALETTE[theme];
-    return themePalettes && (themePalettes as ThemePalettes)[key] ? (themePalettes as ThemePalettes)[key] : null;
+    const key = isValidPalette(theme, colorPalette)
+      ? colorPalette
+      : DEFAULT_PALETTE[theme];
+    return themePalettes && (themePalettes as ThemePalettes)[key]
+      ? (themePalettes as ThemePalettes)[key]
+      : null;
   }, [theme, colorPalette]);
 
-  const value = useMemo(() => ({
-    theme,
-    colorMode,
-    actualColorMode,
-    colorPalette,
-    accentColor,
-    accessibilityPrefs,
-    themeSchedule,
-    isTransitioning,
-    setTheme,
-    setColorMode,
-    setColorPalette,
-    setAccentColor,
-    setAccessibilityPrefs: updateAccessibilityPrefs,
-    setThemeSchedule: updateThemeSchedule,
-    toggleColorMode,
-    previewTheme,
-    getColors,
-    getSystemPreference,
-    getSunriseSunset
-  }), [
-    theme,
-    colorMode,
-    actualColorMode,
-    colorPalette,
-    accentColor,
-    accessibilityPrefs,
-    themeSchedule,
-    isTransitioning,
-    toggleColorMode,
-    previewTheme,
-    getColors,
-    getSystemPreference,
-    getSunriseSunset,
-    updateAccessibilityPrefs,
-    updateThemeSchedule
-  ]);
+  const value = useMemo(
+    () => ({
+      theme,
+      colorMode,
+      actualColorMode,
+      colorPalette,
+      accentColor,
+      accessibilityPrefs,
+      themeSchedule,
+      isTransitioning,
+      setTheme,
+      setColorMode,
+      setColorPalette,
+      setAccentColor,
+      setAccessibilityPrefs: updateAccessibilityPrefs,
+      setThemeSchedule: updateThemeSchedule,
+      toggleColorMode,
+      previewTheme,
+      getColors,
+      getSystemPreference,
+      getSunriseSunset,
+    }),
+    [
+      theme,
+      colorMode,
+      actualColorMode,
+      colorPalette,
+      accentColor,
+      accessibilityPrefs,
+      themeSchedule,
+      isTransitioning,
+      toggleColorMode,
+      previewTheme,
+      getColors,
+      getSystemPreference,
+      getSunriseSunset,
+      updateAccessibilityPrefs,
+      updateThemeSchedule,
+    ]
+  );
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
 

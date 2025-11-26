@@ -11,7 +11,13 @@
 
 'use client';
 
-import { useState, useRef, useEffect, KeyboardEvent, ClipboardEvent } from 'react';
+import {
+  useState,
+  useRef,
+  useEffect,
+  KeyboardEvent,
+  ClipboardEvent,
+} from 'react';
 import { motion } from 'framer-motion';
 
 interface OTPInputProps {
@@ -25,7 +31,7 @@ export default function OTPInput({
   length = 6,
   onComplete,
   error = '',
-  loading = false
+  loading = false,
 }: OTPInputProps) {
   const [otp, setOtp] = useState<string[]>(new Array(length).fill(''));
   const [activeIndex, setActiveIndex] = useState(0);
@@ -168,13 +174,15 @@ export default function OTPInput({
             transition={{ delay: index * 0.05 }}
           >
             <input
-              ref={el => { inputRefs.current[index] = el; }}
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
               type="text"
               inputMode="numeric"
               maxLength={1}
               value={digit}
-              onChange={e => handleChange(e.target.value, index)}
-              onKeyDown={e => handleKeyDown(e, index)}
+              onChange={(e) => handleChange(e.target.value, index)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
               onPaste={handlePaste}
               onFocus={() => handleFocus(index)}
               disabled={loading}
@@ -183,13 +191,14 @@ export default function OTPInput({
                 border-2 rounded-xl
                 transition-all duration-200
                 focus:outline-none focus:ring-2 focus:ring-offset-2
-                ${error
-                  ? 'border-red-500 focus:ring-red-500 bg-red-50'
-                  : activeIndex === index
-                    ? 'border-indigo-600 focus:ring-indigo-600 bg-white'
-                    : digit
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-gray-300 bg-gray-50'
+                ${
+                  error
+                    ? 'border-red-500 focus:ring-red-500 bg-red-50'
+                    : activeIndex === index
+                      ? 'border-indigo-600 focus:ring-indigo-600 bg-white'
+                      : digit
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-300 bg-gray-50'
                 }
                 ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-text'}
                 hover:border-indigo-400
@@ -233,8 +242,13 @@ export default function OTPInput({
       )}
 
       {/* Accessibility: Hidden live region for screen readers */}
-      <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
-        {otp.filter(d => d).length} of {length} digits entered
+      <div
+        className="sr-only"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {otp.filter((d) => d).length} of {length} digits entered
         {error && `. Error: ${error}`}
       </div>
 
@@ -251,7 +265,7 @@ export default function OTPInput({
           margin: 0;
         }
 
-        input[type=number] {
+        input[type='number'] {
           -moz-appearance: textfield;
         }
       `}</style>

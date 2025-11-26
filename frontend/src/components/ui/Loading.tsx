@@ -11,9 +11,18 @@ interface LoadingProps {
   fullscreen?: boolean;
 }
 
-const sizeMap = { sm: 'w-4 h-4', md: 'w-8 h-8', lg: 'w-12 h-12', xl: 'w-16 h-16' };
+const sizeMap = {
+  sm: 'w-4 h-4',
+  md: 'w-8 h-8',
+  lg: 'w-12 h-12',
+  xl: 'w-16 h-16',
+};
 
-export function Loading({ size = 'md', text, fullscreen = false }: LoadingProps) {
+export function Loading({
+  size = 'md',
+  text,
+  fullscreen = false,
+}: LoadingProps) {
   const content = (
     <div className="flex flex-col items-center justify-center gap-3">
       <Loader2 className={`${sizeMap[size]} animate-spin text-blue-600`} />
@@ -25,7 +34,9 @@ export function Loading({ size = 'md', text, fullscreen = false }: LoadingProps)
     <div className="fixed inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm z-50">
       {content}
     </div>
-  ) : content;
+  ) : (
+    content
+  );
 }
 
 interface SkeletonProps {
@@ -35,7 +46,12 @@ interface SkeletonProps {
   count?: number;
 }
 
-export function Skeleton({ className = '', width, height, count = 1 }: SkeletonProps) {
+export function Skeleton({
+  className = '',
+  width,
+  height,
+  count = 1,
+}: SkeletonProps) {
   const skeletonClass = `animate-pulse bg-gray-200 dark:bg-gray-700 rounded ${className}`;
   const style = { width, height };
 

@@ -18,7 +18,11 @@ interface TwoFactorSetupProps {
 
 type SetupStep = 'scan' | 'verify' | 'backup';
 
-export default function TwoFactorSetup({ onComplete, onCancel, className = '' }: TwoFactorSetupProps) {
+export default function TwoFactorSetup({
+  onComplete,
+  onCancel,
+  className = '',
+}: TwoFactorSetupProps) {
   const [step, setStep] = useState<SetupStep>('scan');
   const [setupData, setSetupData] = useState<Setup2FAResponse | null>(null);
   const [verificationCode, setVerificationCode] = useState('');
@@ -38,7 +42,8 @@ export default function TwoFactorSetup({ onComplete, onCancel, className = '' }:
       setSetupData(data);
       setStep('scan');
     } catch (err) {
-      const message = err instanceof APIError ? err.message : 'Failed to initialize 2FA';
+      const message =
+        err instanceof APIError ? err.message : 'Failed to initialize 2FA';
       setError(message);
     } finally {
       setLoading(false);
@@ -57,7 +62,8 @@ export default function TwoFactorSetup({ onComplete, onCancel, className = '' }:
       setBackupCodes(response.backup_codes);
       setStep('backup');
     } catch (err) {
-      const message = err instanceof APIError ? err.message : 'Invalid verification code';
+      const message =
+        err instanceof APIError ? err.message : 'Invalid verification code';
       setError(message);
       throw err;
     } finally {
@@ -109,7 +115,8 @@ export default function TwoFactorSetup({ onComplete, onCancel, className = '' }:
                 Scan QR Code
               </h3>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Use an authenticator app like Google Authenticator or Authy to scan this QR code
+                Use an authenticator app like Google Authenticator or Authy to
+                scan this QR code
               </p>
             </div>
 
@@ -131,7 +138,9 @@ export default function TwoFactorSetup({ onComplete, onCancel, className = '' }:
                 Can't scan? Enter manually
               </summary>
               <div className="mt-3 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Secret Key:</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                  Secret Key:
+                </p>
                 <code className="block p-2 bg-white dark:bg-gray-900 rounded font-mono text-xs break-all">
                   {setupData.secret}
                 </code>
@@ -237,7 +246,8 @@ export default function TwoFactorSetup({ onComplete, onCancel, className = '' }:
             {/* Warning */}
             <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                <strong>Important:</strong> Each backup code can only be used once. Store them securely.
+                <strong>Important:</strong> Each backup code can only be used
+                once. Store them securely.
               </p>
             </div>
 

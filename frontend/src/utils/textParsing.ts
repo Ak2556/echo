@@ -27,24 +27,24 @@ export function parseText(text: string): ParsedEntity[] {
       entities.push({
         type: 'mention',
         content: mention,
-        value: mention.slice(1) // Remove @
+        value: mention.slice(1), // Remove @
       });
     } else if (hashtag) {
       entities.push({
         type: 'hashtag',
         content: hashtag,
-        value: hashtag.slice(1) // Remove #
+        value: hashtag.slice(1), // Remove #
       });
     } else if (url) {
       entities.push({
         type: 'url',
         content: url,
-        value: url
+        value: url,
       });
     } else if (other) {
       entities.push({
         type: 'text',
-        content: other
+        content: other,
       });
     }
 
@@ -87,7 +87,10 @@ export function extractHashtags(text: string): string[] {
 /**
  * Get current word being typed and cursor position context
  */
-export function getCurrentWord(text: string, cursorPosition: number): {
+export function getCurrentWord(
+  text: string,
+  cursorPosition: number
+): {
   word: string;
   type: 'mention' | 'hashtag' | 'text';
   startIndex: number;
@@ -95,14 +98,22 @@ export function getCurrentWord(text: string, cursorPosition: number): {
 } | null {
   // Find the start of the current word
   let startIndex = cursorPosition - 1;
-  while (startIndex >= 0 && text[startIndex] !== ' ' && text[startIndex] !== '\n') {
+  while (
+    startIndex >= 0 &&
+    text[startIndex] !== ' ' &&
+    text[startIndex] !== '\n'
+  ) {
     startIndex--;
   }
   startIndex++;
 
   // Find the end of the current word
   let endIndex = cursorPosition;
-  while (endIndex < text.length && text[endIndex] !== ' ' && text[endIndex] !== '\n') {
+  while (
+    endIndex < text.length &&
+    text[endIndex] !== ' ' &&
+    text[endIndex] !== '\n'
+  ) {
     endIndex++;
   }
 
@@ -116,14 +127,14 @@ export function getCurrentWord(text: string, cursorPosition: number): {
       word: word.slice(1),
       type: 'mention',
       startIndex,
-      endIndex
+      endIndex,
     };
   } else if (word.startsWith('#')) {
     return {
       word: word.slice(1),
       type: 'hashtag',
       startIndex,
-      endIndex
+      endIndex,
     };
   }
 
@@ -134,14 +145,54 @@ export function getCurrentWord(text: string, cursorPosition: number): {
  * Mock data for autocomplete suggestions
  */
 export const mockUsers = [
-  { username: 'priya_sharma', name: 'Priya Sharma', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya', verified: true },
-  { username: 'arjun_singh', name: 'Arjun Singh', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun', verified: false },
-  { username: 'sarah_jones', name: 'Sarah Jones', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah', verified: true },
-  { username: 'raj_kumar', name: 'Raj Kumar', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Raj', verified: false },
-  { username: 'emily_chen', name: 'Emily Chen', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emily', verified: true },
-  { username: 'david_miller', name: 'David Miller', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David', verified: false },
-  { username: 'ananya_patel', name: 'Ananya Patel', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ananya', verified: false },
-  { username: 'michael_brown', name: 'Michael Brown', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael', verified: true },
+  {
+    username: 'priya_sharma',
+    name: 'Priya Sharma',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya',
+    verified: true,
+  },
+  {
+    username: 'arjun_singh',
+    name: 'Arjun Singh',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun',
+    verified: false,
+  },
+  {
+    username: 'sarah_jones',
+    name: 'Sarah Jones',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
+    verified: true,
+  },
+  {
+    username: 'raj_kumar',
+    name: 'Raj Kumar',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Raj',
+    verified: false,
+  },
+  {
+    username: 'emily_chen',
+    name: 'Emily Chen',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emily',
+    verified: true,
+  },
+  {
+    username: 'david_miller',
+    name: 'David Miller',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David',
+    verified: false,
+  },
+  {
+    username: 'ananya_patel',
+    name: 'Ananya Patel',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ananya',
+    verified: false,
+  },
+  {
+    username: 'michael_brown',
+    name: 'Michael Brown',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael',
+    verified: true,
+  },
 ];
 
 export const mockHashtags = [
@@ -162,10 +213,13 @@ export const mockHashtags = [
  */
 export function searchUsers(query: string) {
   const q = query.toLowerCase();
-  return mockUsers.filter(user =>
-    user.username.toLowerCase().includes(q) ||
-    user.name.toLowerCase().includes(q)
-  ).slice(0, 5);
+  return mockUsers
+    .filter(
+      (user) =>
+        user.username.toLowerCase().includes(q) ||
+        user.name.toLowerCase().includes(q)
+    )
+    .slice(0, 5);
 }
 
 /**
@@ -173,7 +227,7 @@ export function searchUsers(query: string) {
  */
 export function searchHashtags(query: string) {
   const q = query.toLowerCase();
-  return mockHashtags.filter(hashtag =>
-    hashtag.tag.toLowerCase().includes(q)
-  ).slice(0, 5);
+  return mockHashtags
+    .filter((hashtag) => hashtag.tag.toLowerCase().includes(q))
+    .slice(0, 5);
 }

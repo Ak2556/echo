@@ -19,15 +19,20 @@ interface TaskManagerAppProps {
   onClose: () => void;
 }
 
-export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManagerAppProps) {
-  const [activeFilter, setActiveFilter] = useState<'all' | 'today' | 'upcoming' | 'overdue'>('all');
+export default function TaskManagerAppUnified({
+  isVisible,
+  onClose,
+}: TaskManagerAppProps) {
+  const [activeFilter, setActiveFilter] = useState<
+    'all' | 'today' | 'upcoming' | 'overdue'
+  >('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [newTask, setNewTask] = useState({
     title: '',
     description: '',
     priority: 'medium' as const,
     category: 'work' as const,
-    dueDate: ''
+    dueDate: '',
   });
 
   // Sample tasks data
@@ -41,7 +46,7 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
       category: 'work',
       createdAt: new Date('2024-01-15'),
       dueDate: new Date('2024-01-20'),
-      tags: ['work', 'important']
+      tags: ['work', 'important'],
     },
     {
       id: '2',
@@ -51,7 +56,7 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
       priority: 'medium',
       category: 'shopping',
       createdAt: new Date('2024-01-16'),
-      tags: ['personal', 'shopping']
+      tags: ['personal', 'shopping'],
     },
     {
       id: '3',
@@ -61,14 +66,14 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
       priority: 'medium',
       category: 'health',
       createdAt: new Date('2024-01-10'),
-      dueDate: new Date('2024-01-18')
-    }
+      dueDate: new Date('2024-01-18'),
+    },
   ]);
 
   // Filter tasks based on active filter
   const filteredTasks = useMemo(() => {
     let filtered = tasks;
-    
+
     switch (activeFilter) {
       case 'today':
         filtered = filtered.filter((t: Task) => {
@@ -102,7 +107,7 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
   // Calculate stats
   const stats = useMemo(() => {
     const total = tasks.length;
-    const completed = tasks.filter(t => t.completed).length;
+    const completed = tasks.filter((t) => t.completed).length;
     const overdue = tasks.filter((t: Task) => {
       if (!t.dueDate) return false;
       return new Date(t.dueDate) < new Date() && !t.completed;
@@ -120,18 +125,20 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
   }, [tasks]);
 
   const toggleTask = useCallback((taskId: string) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    ));
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    );
   }, []);
 
   const deleteTask = useCallback((taskId: string) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId));
+    setTasks((prev) => prev.filter((task) => task.id !== taskId));
   }, []);
 
   const addTask = useCallback(() => {
     if (!newTask.title.trim()) return;
-    
+
     const task: Task = {
       id: Date.now().toString(),
       title: newTask.title,
@@ -140,31 +147,47 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
       category: newTask.category,
       completed: false,
       createdAt: new Date(),
-      dueDate: newTask.dueDate ? new Date(newTask.dueDate) : undefined
+      dueDate: newTask.dueDate ? new Date(newTask.dueDate) : undefined,
     };
-    
-    setTasks(prev => [task, ...prev]);
-    setNewTask({ title: '', description: '', priority: 'medium', category: 'work', dueDate: '' });
+
+    setTasks((prev) => [task, ...prev]);
+    setNewTask({
+      title: '',
+      description: '',
+      priority: 'medium',
+      category: 'work',
+      dueDate: '',
+    });
     setShowAddModal(false);
   }, [newTask]);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return '#ef4444';
-      case 'high': return '#f97316';
-      case 'medium': return '#eab308';
-      case 'low': return '#22c55e';
-      default: return '#6b7280';
+      case 'urgent':
+        return '#ef4444';
+      case 'high':
+        return '#f97316';
+      case 'medium':
+        return '#eab308';
+      case 'low':
+        return '#22c55e';
+      default:
+        return '#6b7280';
     }
   };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'work': return '💼';
-      case 'personal': return '👤';
-      case 'shopping': return '🛒';
-      case 'health': return '🏥';
-      default: return '📋';
+      case 'work':
+        return '💼';
+      case 'personal':
+        return '👤';
+      case 'shopping':
+        return '🛒';
+      case 'health':
+        return '🏥';
+      default:
+        return '📋';
     }
   };
 
@@ -195,19 +218,29 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
       {/* Stats Cards */}
       <div className="miniapp-grid miniapp-grid-cols-4 miniapp-gap-4 miniapp-mb-6">
         <div className="miniapp-card miniapp-text-center">
-          <div className="miniapp-text-2xl miniapp-font-bold miniapp-text-primary">{stats.total}</div>
+          <div className="miniapp-text-2xl miniapp-font-bold miniapp-text-primary">
+            {stats.total}
+          </div>
           <div className="miniapp-text-sm miniapp-text-secondary">Total</div>
         </div>
         <div className="miniapp-card miniapp-text-center">
-          <div className="miniapp-text-2xl miniapp-font-bold miniapp-text-success">{stats.completed}</div>
-          <div className="miniapp-text-sm miniapp-text-secondary">Completed</div>
+          <div className="miniapp-text-2xl miniapp-font-bold miniapp-text-success">
+            {stats.completed}
+          </div>
+          <div className="miniapp-text-sm miniapp-text-secondary">
+            Completed
+          </div>
         </div>
         <div className="miniapp-card miniapp-text-center">
-          <div className="miniapp-text-2xl miniapp-font-bold miniapp-text-warning">{stats.today}</div>
+          <div className="miniapp-text-2xl miniapp-font-bold miniapp-text-warning">
+            {stats.today}
+          </div>
           <div className="miniapp-text-sm miniapp-text-secondary">Today</div>
         </div>
         <div className="miniapp-card miniapp-text-center">
-          <div className="miniapp-text-2xl miniapp-font-bold miniapp-text-error">{stats.overdue}</div>
+          <div className="miniapp-text-2xl miniapp-font-bold miniapp-text-error">
+            {stats.overdue}
+          </div>
           <div className="miniapp-text-sm miniapp-text-secondary">Overdue</div>
         </div>
       </div>
@@ -247,14 +280,13 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
             <div className="miniapp-empty-state-icon">📋</div>
             <div className="miniapp-empty-state-title">No tasks found</div>
             <div className="miniapp-empty-state-description">
-              {activeFilter === 'all' 
+              {activeFilter === 'all'
                 ? 'Create your first task to get started'
-                : `No ${activeFilter} tasks at the moment`
-              }
+                : `No ${activeFilter} tasks at the moment`}
             </div>
           </div>
         ) : (
-          filteredTasks.map(task => (
+          filteredTasks.map((task) => (
             <div
               key={task.id}
               className={`miniapp-card miniapp-hover-lift ${task.completed ? 'opacity-70' : ''}`}
@@ -268,43 +300,45 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
                   style={{
                     width: '18px',
                     height: '18px',
-                    accentColor: 'var(--miniapp-primary)'
+                    accentColor: 'var(--miniapp-primary)',
                   }}
                 />
-                
+
                 <div className="miniapp-flex-1">
                   <div className="miniapp-flex miniapp-items-center miniapp-gap-2 miniapp-mb-2">
-                    <h3 className={`miniapp-h4 miniapp-text-primary ${
-                      task.completed ? 'line-through opacity-60' : ''
-                    }`}>
+                    <h3
+                      className={`miniapp-h4 miniapp-text-primary ${
+                        task.completed ? 'line-through opacity-60' : ''
+                      }`}
+                    >
                       {task.title}
                     </h3>
                     <span style={{ fontSize: '0.8rem' }}>
                       {getCategoryIcon(task.category)}
                     </span>
                   </div>
-                  
+
                   {task.description && (
                     <p className="miniapp-text-sm miniapp-text-secondary miniapp-mb-3">
                       {task.description}
                     </p>
                   )}
-                  
+
                   <div className="miniapp-flex miniapp-items-center miniapp-gap-2 miniapp-flex-wrap">
                     <span
                       className="miniapp-text-xs miniapp-font-semibold miniapp-px-2 miniapp-py-1 miniapp-rounded-full"
                       style={{
                         backgroundColor: getPriorityColor(task.priority),
-                        color: 'white'
+                        color: 'white',
                       }}
                     >
                       {task.priority}
                     </span>
-                    
+
                     <span className="miniapp-text-xs miniapp-bg-surface miniapp-px-2 miniapp-py-1 miniapp-rounded-full miniapp-border">
                       {task.category}
                     </span>
-                    
+
                     {task.dueDate && (
                       <span className="miniapp-text-xs miniapp-text-secondary">
                         📅 {task.dueDate.toLocaleDateString()}
@@ -312,7 +346,7 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
                     )}
                   </div>
                 </div>
-                
+
                 <div className="miniapp-flex miniapp-gap-2">
                   <button
                     onClick={() => deleteTask(task.id)}
@@ -330,12 +364,12 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
 
       {/* Add Task Modal */}
       {showAddModal && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           onClick={() => setShowAddModal(false)}
         >
-          <div 
-            className="miniapp-modern-card" 
+          <div
+            className="miniapp-modern-card"
             style={{ width: '90%', maxWidth: '500px' }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -348,36 +382,48 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
                 ✕
               </button>
             </div>
-            
+
             <div className="miniapp-flex miniapp-flex-col miniapp-gap-4">
               <div className="miniapp-form-group">
                 <label className="miniapp-label">Task Title</label>
                 <input
                   type="text"
                   value={newTask.title}
-                  onChange={(e) => setNewTask(prev => ({ ...prev, title: e.target.value }))}
+                  onChange={(e) =>
+                    setNewTask((prev) => ({ ...prev, title: e.target.value }))
+                  }
                   className="miniapp-input"
                   placeholder="Enter task title"
                 />
               </div>
-              
+
               <div className="miniapp-form-group">
                 <label className="miniapp-label">Description</label>
                 <textarea
                   value={newTask.description}
-                  onChange={(e) => setNewTask(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) =>
+                    setNewTask((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
                   className="miniapp-input miniapp-textarea"
                   placeholder="Enter task description"
                   rows={3}
                 />
               </div>
-              
+
               <div className="miniapp-grid miniapp-grid-cols-2 miniapp-gap-4">
                 <div className="miniapp-form-group">
                   <label className="miniapp-label">Priority</label>
                   <select
                     value={newTask.priority}
-                    onChange={(e) => setNewTask(prev => ({ ...prev, priority: e.target.value as any }))}
+                    onChange={(e) =>
+                      setNewTask((prev) => ({
+                        ...prev,
+                        priority: e.target.value as any,
+                      }))
+                    }
                     className="miniapp-input miniapp-select"
                   >
                     <option value="low">Low</option>
@@ -386,12 +432,17 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
                     <option value="urgent">Urgent</option>
                   </select>
                 </div>
-                
+
                 <div className="miniapp-form-group">
                   <label className="miniapp-label">Category</label>
                   <select
                     value={newTask.category}
-                    onChange={(e) => setNewTask(prev => ({ ...prev, category: e.target.value as any }))}
+                    onChange={(e) =>
+                      setNewTask((prev) => ({
+                        ...prev,
+                        category: e.target.value as any,
+                      }))
+                    }
                     className="miniapp-input miniapp-select"
                   >
                     <option value="work">💼 Work</option>
@@ -401,18 +452,20 @@ export default function TaskManagerAppUnified({ isVisible, onClose }: TaskManage
                   </select>
                 </div>
               </div>
-              
+
               <div className="miniapp-form-group">
                 <label className="miniapp-label">Due Date</label>
                 <input
                   type="date"
                   value={newTask.dueDate}
-                  onChange={(e) => setNewTask(prev => ({ ...prev, dueDate: e.target.value }))}
+                  onChange={(e) =>
+                    setNewTask((prev) => ({ ...prev, dueDate: e.target.value }))
+                  }
                   className="miniapp-input"
                 />
               </div>
             </div>
-            
+
             <div className="miniapp-flex miniapp-justify-end miniapp-gap-3 miniapp-mt-6">
               <button
                 onClick={() => setShowAddModal(false)}

@@ -6,7 +6,7 @@ import { RefreshCw, Wifi, WifiOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function OfflinePage() {
-  const { } = useLanguage(); // Remove unused 't' variable
+  const {} = useLanguage(); // Remove unused 't' variable
   const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
@@ -43,11 +43,9 @@ export default function OfflinePage() {
           )}
 
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-foreground">
-              📱 Echo
-            </h1>
+            <h1 className="text-2xl font-bold text-foreground">📱 Echo</h1>
             <h2 className="text-xl font-semibold text-foreground">
-              {isOnline ? 'Connection Restored' : 'You\'re Offline'}
+              {isOnline ? 'Connection Restored' : "You're Offline"}
             </h2>
           </div>
         </div>
@@ -55,16 +53,16 @@ export default function OfflinePage() {
         <div className="space-y-4 text-muted-foreground">
           {isOnline ? (
             <p>
-              Your internet connection has been restored. You can now return to Echo.
+              Your internet connection has been restored. You can now return to
+              Echo.
             </p>
           ) : (
             <>
               <p>
-                It looks like you&apos;re not connected to the internet. Some features may not be available.
+                It looks like you&apos;re not connected to the internet. Some
+                features may not be available.
               </p>
-              <p>
-                Check your connection and try again.
-              </p>
+              <p>Check your connection and try again.</p>
             </>
           )}
         </div>
@@ -89,7 +87,8 @@ export default function OfflinePage() {
 
         <div className="pt-4 border-t border-border">
           <p className="text-xs text-muted-foreground">
-            Echo works best with an internet connection, but some features are available offline.
+            Echo works best with an internet connection, but some features are
+            available offline.
           </p>
         </div>
       </div>

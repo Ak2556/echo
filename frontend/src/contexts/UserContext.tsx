@@ -1,6 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
 // User data types
 export interface User {
@@ -29,7 +35,14 @@ export interface User {
 
 export interface Notification {
   id: string;
-  type: 'like' | 'comment' | 'follow' | 'mention' | 'repost' | 'message' | 'system';
+  type:
+    | 'like'
+    | 'comment'
+    | 'follow'
+    | 'mention'
+    | 'repost'
+    | 'message'
+    | 'system';
   from: {
     id: string;
     username: string;
@@ -122,7 +135,12 @@ interface UserContextType {
   // Auth
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  signup: (data: { email: string; password: string; username: string; displayName: string }) => Promise<boolean>;
+  signup: (data: {
+    email: string;
+    password: string;
+    username: string;
+    displayName: string;
+  }) => Promise<boolean>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -133,7 +151,8 @@ const mockUser: User = {
   username: 'demo_user',
   displayName: 'Demo User',
   email: 'demo@echo.app',
-  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=DemoUser&backgroundColor=b6e3f4',
+  avatar:
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=DemoUser&backgroundColor=b6e3f4',
   bio: 'Tech enthusiast | Content creator | Building awesome things 🚀',
   location: 'Mumbai, India',
   website: 'https://echo.app',
@@ -143,13 +162,13 @@ const mockUser: User = {
     followers: 12453,
     following: 543,
     posts: 1234,
-    likes: 45678
+    likes: 45678,
   },
   preferences: {
     language: 'en',
     timezone: 'Asia/Kolkata',
-    currency: 'INR'
-  }
+    currency: 'INR',
+  },
 };
 
 const mockNotifications: Notification[] = [
@@ -160,12 +179,13 @@ const mockNotifications: Notification[] = [
       id: 'user_002',
       username: 'priya_sharma',
       displayName: 'Priya Sharma',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=c0aede',
-      verified: true
+      avatar:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=c0aede',
+      verified: true,
     },
     content: 'started following you',
     timestamp: new Date(Date.now() - 1000 * 60 * 5),
-    read: false
+    read: false,
   },
   {
     id: 'notif_002',
@@ -174,13 +194,14 @@ const mockNotifications: Notification[] = [
       id: 'user_003',
       username: 'arjun_tech',
       displayName: 'Arjun Kumar',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun&backgroundColor=ffd5dc',
-      verified: false
+      avatar:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun&backgroundColor=ffd5dc',
+      verified: false,
     },
     content: 'liked your post',
     relatedId: 'post_123',
     timestamp: new Date(Date.now() - 1000 * 60 * 15),
-    read: false
+    read: false,
   },
   {
     id: 'notif_003',
@@ -189,13 +210,14 @@ const mockNotifications: Notification[] = [
       id: 'user_004',
       username: 'ravi_dev',
       displayName: 'Ravi Singh',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ravi&backgroundColor=ffe6d5',
-      verified: false
+      avatar:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=Ravi&backgroundColor=ffe6d5',
+      verified: false,
     },
     content: 'commented on your post: "Great content! 🔥"',
     relatedId: 'post_456',
     timestamp: new Date(Date.now() - 1000 * 60 * 30),
-    read: true
+    read: true,
   },
   {
     id: 'notif_004',
@@ -204,13 +226,14 @@ const mockNotifications: Notification[] = [
       id: 'user_005',
       username: 'anjali_writes',
       displayName: 'Anjali Reddy',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Anjali&backgroundColor=d1f5d3',
-      verified: true
+      avatar:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=Anjali&backgroundColor=d1f5d3',
+      verified: true,
     },
     content: 'mentioned you in a post',
     relatedId: 'post_789',
     timestamp: new Date(Date.now() - 1000 * 60 * 60),
-    read: true
+    read: true,
   },
   {
     id: 'notif_005',
@@ -219,24 +242,32 @@ const mockNotifications: Notification[] = [
       id: 'user_006',
       username: 'techguru',
       displayName: 'Tech Guru',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tech&backgroundColor=e6f3ff',
-      verified: true
+      avatar:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=Tech&backgroundColor=e6f3ff',
+      verified: true,
     },
     content: 'reposted your post',
     relatedId: 'post_321',
     timestamp: new Date(Date.now() - 1000 * 60 * 120),
-    read: true
-  }
+    read: true,
+  },
 ];
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const UserProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(mockUser);
   const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [following, setFollowing] = useState<Set<string>>(new Set(['user_002', 'user_003', 'user_005']));
-  const [followers, setFollowers] = useState<Set<string>>(new Set(['user_002', 'user_004', 'user_006']));
+  const [following, setFollowing] = useState<Set<string>>(
+    new Set(['user_002', 'user_003', 'user_005'])
+  );
+  const [followers, setFollowers] = useState<Set<string>>(
+    new Set(['user_002', 'user_004', 'user_006'])
+  );
   const [blocked, setBlocked] = useState<Set<string>>(new Set());
   const [muted, setMuted] = useState<Set<string>>(new Set());
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const [notifications, setNotifications] =
+    useState<Notification[]>(mockNotifications);
 
   // Load from localStorage
   useEffect(() => {
@@ -250,45 +281,37 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         setUser(JSON.parse(savedUser));
         setIsAuthenticated(true);
-      } catch (error) {
-
-      }
+      } catch (error) {}
     }
 
     if (savedFollowing) {
       try {
         setFollowing(new Set(JSON.parse(savedFollowing)));
-      } catch (error) {
-
-      }
+      } catch (error) {}
     }
 
     if (savedBlocked) {
       try {
         setBlocked(new Set(JSON.parse(savedBlocked)));
-      } catch (error) {
-
-      }
+      } catch (error) {}
     }
 
     if (savedMuted) {
       try {
         setMuted(new Set(JSON.parse(savedMuted)));
-      } catch (error) {
-
-      }
+      } catch (error) {}
     }
 
     if (savedNotifications) {
       try {
         const parsed = JSON.parse(savedNotifications);
-        setNotifications(parsed.map((n: any) => ({
-          ...n,
-          timestamp: new Date(n.timestamp)
-        })));
-      } catch (error) {
-
-      }
+        setNotifications(
+          parsed.map((n: any) => ({
+            ...n,
+            timestamp: new Date(n.timestamp),
+          }))
+        );
+      } catch (error) {}
     }
   }, []);
 
@@ -318,9 +341,12 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Social actions
   const followUser = async (userId: string): Promise<boolean> => {
     try {
-      setFollowing(prev => new Set([...prev, userId]));
+      setFollowing((prev) => new Set([...prev, userId]));
       if (user) {
-        setUser({ ...user, stats: { ...user.stats, following: user.stats.following + 1 } });
+        setUser({
+          ...user,
+          stats: { ...user.stats, following: user.stats.following + 1 },
+        });
       }
 
       // Add notification (simulated)
@@ -333,98 +359,98 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             username: 'echo',
             displayName: 'Echo',
             avatar: '/favicon.ico',
-            verified: true
+            verified: true,
           },
           content: `You are now following user ${userId}`,
           timestamp: new Date(),
-          read: false
+          read: false,
         };
-        setNotifications(prev => [newNotif, ...prev]);
+        setNotifications((prev) => [newNotif, ...prev]);
       }, 500);
 
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
   const unfollowUser = async (userId: string): Promise<boolean> => {
     try {
-      setFollowing(prev => {
+      setFollowing((prev) => {
         const newSet = new Set(prev);
         newSet.delete(userId);
         return newSet;
       });
       if (user) {
-        setUser({ ...user, stats: { ...user.stats, following: user.stats.following - 1 } });
+        setUser({
+          ...user,
+          stats: { ...user.stats, following: user.stats.following - 1 },
+        });
       }
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
   const blockUser = async (userId: string): Promise<boolean> => {
     try {
-      setBlocked(prev => new Set([...prev, userId]));
-      setFollowing(prev => {
+      setBlocked((prev) => new Set([...prev, userId]));
+      setFollowing((prev) => {
         const newSet = new Set(prev);
         newSet.delete(userId);
         return newSet;
       });
-      setFollowers(prev => {
+      setFollowers((prev) => {
         const newSet = new Set(prev);
         newSet.delete(userId);
         return newSet;
       });
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
   const unblockUser = async (userId: string): Promise<boolean> => {
     try {
-      setBlocked(prev => {
+      setBlocked((prev) => {
         const newSet = new Set(prev);
         newSet.delete(userId);
         return newSet;
       });
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
   const muteUser = async (userId: string): Promise<boolean> => {
     try {
-      setMuted(prev => new Set([...prev, userId]));
+      setMuted((prev) => new Set([...prev, userId]));
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
   const unmuteUser = async (userId: string): Promise<boolean> => {
     try {
-      setMuted(prev => {
+      setMuted((prev) => {
         const newSet = new Set(prev);
         newSet.delete(userId);
         return newSet;
       });
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
-  const reportUser = async (userId: string, reason: string): Promise<boolean> => {
+  const reportUser = async (
+    userId: string,
+    reason: string
+  ): Promise<boolean> => {
     try {
       // In real app, send to moderation system
       console.log(`Reporting user ${userId} for reason: ${reason}`);
@@ -437,77 +463,80 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Content actions
   const likePost = async (postId: string): Promise<boolean> => {
     try {
-
       if (user) {
-        setUser({ ...user, stats: { ...user.stats, likes: user.stats.likes + 1 } });
+        setUser({
+          ...user,
+          stats: { ...user.stats, likes: user.stats.likes + 1 },
+        });
       }
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
   const unlikePost = async (postId: string): Promise<boolean> => {
     try {
-
       if (user) {
-        setUser({ ...user, stats: { ...user.stats, likes: user.stats.likes - 1 } });
+        setUser({
+          ...user,
+          stats: { ...user.stats, likes: user.stats.likes - 1 },
+        });
       }
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
   const repostPost = async (postId: string): Promise<boolean> => {
     try {
-
       if (user) {
-        setUser({ ...user, stats: { ...user.stats, posts: user.stats.posts + 1 } });
+        setUser({
+          ...user,
+          stats: { ...user.stats, posts: user.stats.posts + 1 },
+        });
       }
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
   const unrepostPost = async (postId: string): Promise<boolean> => {
     try {
-
       if (user) {
-        setUser({ ...user, stats: { ...user.stats, posts: user.stats.posts - 1 } });
+        setUser({
+          ...user,
+          stats: { ...user.stats, posts: user.stats.posts - 1 },
+        });
       }
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
   const bookmarkPost = async (postId: string): Promise<boolean> => {
     try {
-
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
   const unbookmarkPost = async (postId: string): Promise<boolean> => {
     try {
-
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
-  const reportPost = async (postId: string, reason: string): Promise<boolean> => {
+  const reportPost = async (
+    postId: string,
+    reason: string
+  ): Promise<boolean> => {
     try {
       // In real app, would send to moderation system
       console.log(`Reporting post ${postId} for reason: ${reason}`);
@@ -538,28 +567,29 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const deletePost = async (postId: string): Promise<boolean> => {
     try {
-
       if (user) {
-        setUser({ ...user, stats: { ...user.stats, posts: user.stats.posts - 1 } });
+        setUser({
+          ...user,
+          stats: { ...user.stats, posts: user.stats.posts - 1 },
+        });
       }
       return true;
     } catch (error) {
-
       return false;
     }
   };
 
   // Notifications
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const markNotificationRead = (notificationId: string) => {
-    setNotifications(prev => prev.map(n =>
-      n.id === notificationId ? { ...n, read: true } : n
-    ));
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
+    );
   };
 
   const markAllNotificationsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
   const clearNotifications = () => {
@@ -574,7 +604,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       return true;
     } catch (error) {
-
       return false;
     }
   };
@@ -590,7 +619,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       localStorage.removeItem('echo-notifications');
       return true;
     } catch (error) {
-
       return false;
     }
   };
@@ -603,7 +631,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setIsAuthenticated(true);
       return true;
     } catch (error) {
-
       return false;
     }
   };
@@ -614,7 +641,12 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem('echo-user');
   };
 
-  const signup = async (data: { email: string; password: string; username: string; displayName: string }): Promise<boolean> => {
+  const signup = async (data: {
+    email: string;
+    password: string;
+    username: string;
+    displayName: string;
+  }): Promise<boolean> => {
     try {
       const newUser: User = {
         ...mockUser,
@@ -627,14 +659,13 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           followers: 0,
           following: 0,
           posts: 0,
-          likes: 0
-        }
+          likes: 0,
+        },
       };
       setUser(newUser);
       setIsAuthenticated(true);
       return true;
     } catch (error) {
-
       return false;
     }
   };
@@ -672,13 +703,11 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     deleteAccount,
     login,
     logout,
-    signup
+    signup,
   };
 
   return (
-    <UserContext.Provider value={contextValue}>
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
   );
 };
 

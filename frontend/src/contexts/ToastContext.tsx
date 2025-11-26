@@ -1,6 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from 'react';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -17,7 +23,12 @@ export interface Toast {
 
 interface ToastContextType {
   toasts: Toast[];
-  showToast: (message: string, type?: ToastType, duration?: number, action?: Toast['action']) => void;
+  showToast: (
+    message: string,
+    type?: ToastType,
+    duration?: number,
+    action?: Toast['action']
+  ) => void;
   removeToast: (id: string) => void;
   success: (message: string, duration?: number) => void;
   error: (message: string, duration?: number) => void;
@@ -27,49 +38,68 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const ToastProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
-  const showToast = useCallback((
-    message: string,
-    type: ToastType = 'info',
-    duration: number = 5000,
-    action?: Toast['action']
-  ) => {
-    const id = `toast-${Date.now()}-${Math.random()}`;
-    const newToast: Toast = { id, message, type, duration, action };
+  const showToast = useCallback(
+    (
+      message: string,
+      type: ToastType = 'info',
+      duration: number = 5000,
+      action?: Toast['action']
+    ) => {
+      const id = `toast-${Date.now()}-${Math.random()}`;
+      const newToast: Toast = { id, message, type, duration, action };
 
-    setToasts((prev) => [...prev, newToast]);
+      setToasts((prev) => [...prev, newToast]);
 
-    if (duration > 0) {
-      setTimeout(() => {
-        removeToast(id);
-      }, duration);
-    }
-  }, [removeToast]);
+      if (duration > 0) {
+        setTimeout(() => {
+          removeToast(id);
+        }, duration);
+      }
+    },
+    [removeToast]
+  );
 
-  const success = useCallback((message: string, duration?: number) => {
-    showToast(message, 'success', duration);
-  }, [showToast]);
+  const success = useCallback(
+    (message: string, duration?: number) => {
+      showToast(message, 'success', duration);
+    },
+    [showToast]
+  );
 
-  const error = useCallback((message: string, duration?: number) => {
-    showToast(message, 'error', duration);
-  }, [showToast]);
+  const error = useCallback(
+    (message: string, duration?: number) => {
+      showToast(message, 'error', duration);
+    },
+    [showToast]
+  );
 
-  const warning = useCallback((message: string, duration?: number) => {
-    showToast(message, 'warning', duration);
-  }, [showToast]);
+  const warning = useCallback(
+    (message: string, duration?: number) => {
+      showToast(message, 'warning', duration);
+    },
+    [showToast]
+  );
 
-  const info = useCallback((message: string, duration?: number) => {
-    showToast(message, 'info', duration);
-  }, [showToast]);
+  const info = useCallback(
+    (message: string, duration?: number) => {
+      showToast(message, 'info', duration);
+    },
+    [showToast]
+  );
 
   return (
-    <ToastContext.Provider value={{ toasts, showToast, removeToast, success, error, warning, info }}>
+    <ToastContext.Provider
+      value={{ toasts, showToast, removeToast, success, error, warning, info }}
+    >
       {children}
     </ToastContext.Provider>
   );

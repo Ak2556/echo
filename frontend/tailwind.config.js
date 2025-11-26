@@ -81,12 +81,12 @@ module.exports = {
         },
       },
       screens: {
-        'xs': '475px',
+        xs: '475px',
         '3xl': '1600px',
       },
       spacing: {
-        '18': '4.5rem',
-        '88': '22rem',
+        18: '4.5rem',
+        88: '22rem',
       },
       maxWidth: {
         '8xl': '88rem',
@@ -95,7 +95,7 @@ module.exports = {
     },
   },
   plugins: [],
-  
+
   // Performance optimizations
   corePlugins: {
     // Disable unused core plugins for better performance
@@ -247,14 +247,16 @@ module.exports = {
   safelist: [
     // Keep dynamic classes that might be generated
     {
-      pattern: /^(bg|text|border)-(red|green|blue|yellow|purple|pink|indigo)-(50|100|200|300|400|500|600|700|800|900)$/,
+      pattern:
+        /^(bg|text|border)-(red|green|blue|yellow|purple|pink|indigo)-(50|100|200|300|400|500|600|700|800|900)$/,
       variants: ['hover', 'focus', 'active', 'dark'],
     },
     {
       pattern: /^(w|h)-(1|2|3|4|5|6|8|10|12|16|20|24|32|40|48|56|64|72|80|96)$/,
     },
     {
-      pattern: /^(p|m)(t|r|b|l|x|y)?-(0|1|2|3|4|5|6|8|10|12|16|20|24|32|40|48|56|64|72|80|96)$/,
+      pattern:
+        /^(p|m)(t|r|b|l|x|y)?-(0|1|2|3|4|5|6|8|10|12|16|20|24|32|40|48|56|64|72|80|96)$/,
     },
     // Theme-specific classes
     'light-theme',

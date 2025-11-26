@@ -18,7 +18,7 @@ export default function AnalyticsDashboard() {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">Analytics Dashboard</h1>
-      
+
       <div className="grid grid-cols-3 gap-6 mb-6">
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-gray-500">Daily Active Users</h3>
@@ -43,7 +43,10 @@ export default function AnalyticsDashboard() {
               <span>{analytics.bounce_rate}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded">
-              <div className="bg-blue-500 h-2 rounded" style={{width: analytics.bounce_rate + '%'}}></div>
+              <div
+                className="bg-blue-500 h-2 rounded"
+                style={{ width: analytics.bounce_rate + '%' }}
+              ></div>
             </div>
           </div>
           <div>
@@ -52,7 +55,10 @@ export default function AnalyticsDashboard() {
               <span>65.4%</span>
             </div>
             <div className="w-full bg-gray-200 rounded">
-              <div className="bg-green-500 h-2 rounded" style={{width: '65.4%'}}></div>
+              <div
+                className="bg-green-500 h-2 rounded"
+                style={{ width: '65.4%' }}
+              ></div>
             </div>
           </div>
         </div>

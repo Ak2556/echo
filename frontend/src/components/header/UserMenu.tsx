@@ -12,7 +12,13 @@ interface UserMenuProps {
   onNavigate: (route: string) => void;
 }
 
-export function UserMenu({ isOpen, onClose, user, onLogout, onNavigate }: UserMenuProps) {
+export function UserMenu({
+  isOpen,
+  onClose,
+  user,
+  onLogout,
+  onNavigate,
+}: UserMenuProps) {
   if (!isOpen) return null;
 
   const handleMenuItemClick = (action: () => void) => {
@@ -21,10 +27,7 @@ export function UserMenu({ isOpen, onClose, user, onLogout, onNavigate }: UserMe
   };
 
   return (
-    <div
-      className="user-menu-dropdown"
-      onClick={(e) => e.stopPropagation()}
-    >
+    <div className="user-menu-dropdown" onClick={(e) => e.stopPropagation()}>
       {/* User Info */}
       {user && (
         <div className="user-menu-header">

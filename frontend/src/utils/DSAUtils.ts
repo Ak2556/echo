@@ -11,7 +11,8 @@ export class PriorityQueue<T> {
   private compareFn: (a: T, b: T) => number;
 
   constructor(compareFn?: (a: T, b: T) => number) {
-    this.compareFn = compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
+    this.compareFn =
+      compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
   }
 
   enqueue(item: T): void {
@@ -49,7 +50,8 @@ export class PriorityQueue<T> {
 
   extractMax(): T | null {
     if (this.heap.length === 0) return null;
-    if (this.heap.length === 1) return (this.heap.pop() as any).item || this.heap.pop()!;
+    if (this.heap.length === 1)
+      return (this.heap.pop() as any).item || this.heap.pop()!;
 
     const max = (this.heap[0] as any).item || this.heap[0];
     this.heap[0] = this.heap.pop()!;
@@ -74,13 +76,17 @@ export class PriorityQueue<T> {
       const rightChild = 2 * index + 2;
 
       // For min heap: pick the smaller child
-      if (leftChild < this.heap.length &&
-          this.compareFn(this.heap[leftChild], this.heap[minIndex]) < 0) {
+      if (
+        leftChild < this.heap.length &&
+        this.compareFn(this.heap[leftChild], this.heap[minIndex]) < 0
+      ) {
         minIndex = leftChild;
       }
 
-      if (rightChild < this.heap.length &&
-          this.compareFn(this.heap[rightChild], this.heap[minIndex]) < 0) {
+      if (
+        rightChild < this.heap.length &&
+        this.compareFn(this.heap[rightChild], this.heap[minIndex]) < 0
+      ) {
         minIndex = rightChild;
       }
 
@@ -286,7 +292,11 @@ export class SearchAlgorithms {
   /**
    * Binary search - O(log n)
    */
-  static binarySearch<T>(array: T[], target: T, compareFn: (a: T, b: T) => number): number {
+  static binarySearch<T>(
+    array: T[],
+    target: T,
+    compareFn: (a: T, b: T) => number
+  ): number {
     let left = 0;
     let right = array.length - 1;
 
@@ -324,7 +334,7 @@ export class SearchAlgorithms {
 
       if (j < 0) {
         positions.push(skip);
-        skip += (skip + m < n) ? m - badChar[text.charCodeAt(skip + m)] : 1;
+        skip += skip + m < n ? m - badChar[text.charCodeAt(skip + m)] : 1;
       } else {
         skip += Math.max(1, j - badChar[text.charCodeAt(skip + j)]);
       }
@@ -344,21 +354,28 @@ export class SearchAlgorithms {
   /**
    * Fuzzy search using Levenshtein distance with optimizations
    */
-  static fuzzySearch(query: string, candidates: string[], threshold: number = 0.6): Array<{item: string, score: number}> {
-    const results = candidates.map(candidate => ({
+  static fuzzySearch(
+    query: string,
+    candidates: string[],
+    threshold: number = 0.6
+  ): Array<{ item: string; score: number }> {
+    const results = candidates.map((candidate) => ({
       item: candidate,
-      score: this.jaroWinklerSimilarity(query.toLowerCase(), candidate.toLowerCase())
+      score: this.jaroWinklerSimilarity(
+        query.toLowerCase(),
+        candidate.toLowerCase()
+      ),
     }));
 
     return results
-      .filter(result => result.score >= threshold)
+      .filter((result) => result.score >= threshold)
       .sort((a, b) => b.score - a.score);
   }
 
   private static jaroWinklerSimilarity(s1: string, s2: string): number {
     const jaro = this.jaroSimilarity(s1, s2);
     const prefixLength = this.commonPrefixLength(s1, s2, 4);
-    return jaro + (0.1 * prefixLength * (1 - jaro));
+    return jaro + 0.1 * prefixLength * (1 - jaro);
   }
 
   private static jaroSimilarity(s1: string, s2: string): number {
@@ -396,10 +413,19 @@ export class SearchAlgorithms {
       k++;
     }
 
-    return (matches / s1.length + matches / s2.length + (matches - transpositions / 2) / matches) / 3;
+    return (
+      (matches / s1.length +
+        matches / s2.length +
+        (matches - transpositions / 2) / matches) /
+      3
+    );
   }
 
-  private static commonPrefixLength(s1: string, s2: string, maxLength: number): number {
+  private static commonPrefixLength(
+    s1: string,
+    s2: string,
+    maxLength: number
+  ): number {
     let length = 0;
     for (let i = 0; i < Math.min(s1.length, s2.length, maxLength); i++) {
       if (s1[i] === s2[i]) length++;
@@ -417,10 +443,10 @@ export class GraphAlgorithms {
    * Find shortest path using Dijkstra's algorithm
    */
   static dijkstra<T>(
-    graph: Map<T, Array<{node: T, weight: number}>>,
+    graph: Map<T, Array<{ node: T; weight: number }>>,
     start: T,
     end: T
-  ): {path: T[], distance: number} | null {
+  ): { path: T[]; distance: number } | null {
     const distances = new Map<T, number>();
     const previous = new Map<T, T | null>();
     const unvisited = new PriorityQueue<T>();
@@ -460,7 +486,7 @@ export class GraphAlgorithms {
 
     return {
       path,
-      distance: distances.get(end)!
+      distance: distances.get(end)!,
     };
   }
 
@@ -514,13 +540,10 @@ export class OptimizedSorting {
   /**
    * Hybrid sorting algorithm that chooses best approach based on data characteristics
    */
-  static smartSort<T>(
-    array: T[],
-    compareFn?: (a: T, b: T) => number
-  ): T[] {
+  static smartSort<T>(array: T[], compareFn?: (a: T, b: T) => number): T[] {
     if (array.length <= 1) return [...array];
 
-    const compare = compareFn || ((a, b) => a < b ? -1 : a > b ? 1 : 0);
+    const compare = compareFn || ((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 
     // Choose algorithm based on array characteristics
     if (array.length < 50) {
@@ -534,7 +557,10 @@ export class OptimizedSorting {
     }
   }
 
-  private static isNearlySorted<T>(array: T[], compare: (a: T, b: T) => number): boolean {
+  private static isNearlySorted<T>(
+    array: T[],
+    compare: (a: T, b: T) => number
+  ): boolean {
     let inversions = 0;
     for (let i = 0; i < array.length - 1; i++) {
       if (compare(array[i], array[i + 1]) > 0) {
@@ -545,7 +571,10 @@ export class OptimizedSorting {
     return true;
   }
 
-  private static insertionSort<T>(array: T[], compare: (a: T, b: T) => number): T[] {
+  private static insertionSort<T>(
+    array: T[],
+    compare: (a: T, b: T) => number
+  ): T[] {
     for (let i = 1; i < array.length; i++) {
       const key = array[i];
       let j = i - 1;
@@ -558,18 +587,21 @@ export class OptimizedSorting {
     return array;
   }
 
-  private static quickSort<T>(array: T[], compare: (a: T, b: T) => number): T[] {
+  private static quickSort<T>(
+    array: T[],
+    compare: (a: T, b: T) => number
+  ): T[] {
     if (array.length <= 1) return array;
 
     const pivot = array[Math.floor(array.length / 2)];
-    const left = array.filter(x => compare(x, pivot) < 0);
-    const middle = array.filter(x => compare(x, pivot) === 0);
-    const right = array.filter(x => compare(x, pivot) > 0);
+    const left = array.filter((x) => compare(x, pivot) < 0);
+    const middle = array.filter((x) => compare(x, pivot) === 0);
+    const right = array.filter((x) => compare(x, pivot) > 0);
 
     return [
       ...this.quickSort(left, compare),
       ...middle,
-      ...this.quickSort(right, compare)
+      ...this.quickSort(right, compare),
     ];
   }
 
@@ -588,9 +620,14 @@ export class OptimizedSorting {
     return this.merge(left, right, compare);
   }
 
-  private static merge<T>(left: T[], right: T[], compare: (a: T, b: T) => number): T[] {
+  private static merge<T>(
+    left: T[],
+    right: T[],
+    compare: (a: T, b: T) => number
+  ): T[] {
     const result: T[] = [];
-    let i = 0, j = 0;
+    let i = 0,
+      j = 0;
 
     while (i < left.length && j < right.length) {
       if (compare(left[i], right[j]) <= 0) {
@@ -603,7 +640,10 @@ export class OptimizedSorting {
     return result.concat(left.slice(i)).concat(right.slice(j));
   }
 
-  private static parallelQuickSort<T>(array: T[], compare: (a: T, b: T) => number): T[] {
+  private static parallelQuickSort<T>(
+    array: T[],
+    compare: (a: T, b: T) => number
+  ): T[] {
     // Simplified parallel sorting (would use Web Workers in real implementation)
     return this.quickSort(array, compare);
   }
@@ -629,7 +669,7 @@ export class MemoryOptimizedOperations {
       results.push(...chunkResults);
 
       // Allow garbage collection between chunks
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     }
 
     return results;
@@ -644,10 +684,13 @@ export class MemoryOptimizedOperations {
     containerHeight: number,
     scrollTop: number,
     buffer: number = 5
-  ): {startIndex: number, endIndex: number, offsetY: number} {
+  ): { startIndex: number; endIndex: number; offsetY: number } {
     const visibleCount = Math.ceil(containerHeight / itemHeight);
     const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - buffer);
-    const endIndex = Math.min(totalItems - 1, startIndex + visibleCount + 2 * buffer);
+    const endIndex = Math.min(
+      totalItems - 1,
+      startIndex + visibleCount + 2 * buffer
+    );
     const offsetY = startIndex * itemHeight;
 
     return { startIndex, endIndex, offsetY };
@@ -703,7 +746,7 @@ export class PerformanceAnalytics {
         totalTime: 0,
         averageTime: 0,
         minTime: 0,
-        maxTime: 0
+        maxTime: 0,
       };
     }
 
@@ -713,7 +756,7 @@ export class PerformanceAnalytics {
       totalTime: sum,
       averageTime: sum / times.length,
       minTime: Math.min(...times),
-      maxTime: Math.max(...times)
+      maxTime: Math.max(...times),
     };
   }
 

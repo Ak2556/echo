@@ -36,7 +36,10 @@ interface StrengthResult {
 /**
  * Calculate password strength score and suggestions.
  */
-function calculateStrength(password: string, strengthLabels?: { [key: number]: string }): StrengthResult {
+function calculateStrength(
+  password: string,
+  strengthLabels?: { [key: number]: string }
+): StrengthResult {
   if (!password || !password.trim()) {
     return {
       score: 0,
@@ -125,34 +128,43 @@ function calculateStrength(password: string, strengthLabels?: { [key: number]: s
   return { score, strength, color, label, suggestions };
 }
 
-export default function PasswordStrength({ 
-  password, 
-  className = '', 
+export default function PasswordStrength({
+  password,
+  className = '',
   showAdvanced = false,
   minLength = 8,
   hideCriteria = [],
   hideLength = false,
   strengthLabels,
-  customLabels = {}
+  customLabels = {},
 }: PasswordStrengthProps) {
   // Handle null/undefined password
   const safePassword = password || '';
-  
-  const result = useMemo(() => calculateStrength(safePassword, strengthLabels), [safePassword, strengthLabels]);
+
+  const result = useMemo(
+    () => calculateStrength(safePassword, strengthLabels),
+    [safePassword, strengthLabels]
+  );
 
   return (
     <div className={`space-y-2 ${className}`}>
       {/* Strength bar */}
       <div className="space-y-1">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600 dark:text-gray-400">Password Strength</span>
+          <span className="text-gray-600 dark:text-gray-400">
+            Password Strength
+          </span>
           <span
             className={`font-medium ${
-              result.label === 'Very Weak' ? 'text-red-600' :
-              result.strength === 'weak' ? 'text-red-500' :
-              result.strength === 'fair' ? 'text-yellow-500' :
-              result.strength === 'good' ? 'text-blue-500' :
-              'text-green-500'
+              result.label === 'Very Weak'
+                ? 'text-red-600'
+                : result.strength === 'weak'
+                  ? 'text-red-500'
+                  : result.strength === 'fair'
+                    ? 'text-yellow-500'
+                    : result.strength === 'good'
+                      ? 'text-blue-500'
+                      : 'text-green-500'
             }`}
             style={{ color: result.color }}
             aria-live="polite"
@@ -176,9 +188,9 @@ export default function PasswordStrength({
             initial={{ width: 0 }}
             animate={{ width: `${result.score}%` }}
             transition={{ duration: 0.3 }}
-            style={{ 
+            style={{
               backgroundColor: result.color,
-              width: `${result.score}%`
+              width: `${result.score}%`,
             }}
           />
         </div>
@@ -205,7 +217,7 @@ export default function PasswordStrength({
           ))}
         </motion.ul>
       )}
-      
+
       {/* Advanced validation (when showAdvanced is true) */}
       {showAdvanced && (
         <div className="text-xs space-y-1">
@@ -215,16 +227,18 @@ export default function PasswordStrength({
               Good character diversity
             </div>
           )}
-          
+
           {/* Dictionary words check */}
           {safePassword.toLowerCase().includes('password') && (
             <div className="text-red-500 dark:text-red-400">
               Avoid dictionary words
             </div>
           )}
-          
+
           {/* Common passwords check */}
-          {!['password', '123456', 'qwerty'].some(common => safePassword.toLowerCase().includes(common)) && (
+          {!['password', '123456', 'qwerty'].some((common) =>
+            safePassword.toLowerCase().includes(common)
+          ) && (
             <div className="text-green-600 dark:text-green-400">
               Not a common password
             </div>
@@ -238,51 +252,56 @@ export default function PasswordStrength({
           met={safePassword.length >= minLength}
           label={`${minLength}+ characters`}
         />
-        <RequirementItem
-          met={/[A-Z]/.test(safePassword)}
-          label="Uppercase"
-        />
-        <RequirementItem
-          met={/[a-z]/.test(safePassword)}
-          label="Lowercase"
-        />
-        <RequirementItem
-          met={/[0-9]/.test(safePassword)}
-          label="Number"
-        />
+        <RequirementItem met={/[A-Z]/.test(safePassword)} label="Uppercase" />
+        <RequirementItem met={/[a-z]/.test(safePassword)} label="Lowercase" />
+        <RequirementItem met={/[0-9]/.test(safePassword)} label="Number" />
         <RequirementItem
           met={/[^A-Za-z0-9]/.test(safePassword)}
           label="Special character"
         />
       </div>
-      
+
       {/* Additional requirements for tests - now visible */}
       <div className="text-xs space-y-1">
         {!hideLength && (
-          <div className={`${
-            safePassword.length >= minLength ? 'text-green-500' : 'text-red-500'
-          }`}>
+          <div
+            className={`${
+              safePassword.length >= minLength
+                ? 'text-green-500'
+                : 'text-red-500'
+            }`}
+          >
             At least {minLength} characters
           </div>
         )}
-        <div className={`${
-          /[A-Z]/.test(safePassword) ? 'text-green-500' : 'text-red-500'
-        }`}>
+        <div
+          className={`${
+            /[A-Z]/.test(safePassword) ? 'text-green-500' : 'text-red-500'
+          }`}
+        >
           Contains uppercase letter
         </div>
-        <div className={`${
-          /[a-z]/.test(safePassword) ? 'text-green-500' : 'text-red-500'
-        }`}>
+        <div
+          className={`${
+            /[a-z]/.test(safePassword) ? 'text-green-500' : 'text-red-500'
+          }`}
+        >
           Contains lowercase letter
         </div>
-        <div className={`${
-          /[0-9]/.test(safePassword) ? 'text-green-500' : 'text-red-500'
-        }`}>
+        <div
+          className={`${
+            /[0-9]/.test(safePassword) ? 'text-green-500' : 'text-red-500'
+          }`}
+        >
           Contains number
         </div>
-        <div className={`${
-          /[^A-Za-z0-9]/.test(safePassword) ? 'text-green-500' : 'text-red-500'
-        }`}>
+        <div
+          className={`${
+            /[^A-Za-z0-9]/.test(safePassword)
+              ? 'text-green-500'
+              : 'text-red-500'
+          }`}
+        >
           Contains special character
         </div>
         {/* Screen reader text - only show if not already visible */}
@@ -296,10 +315,20 @@ export default function PasswordStrength({
         )}
         {/* Always show common password check for tests */}
         {showAdvanced && (
-          <div className={`${
-            ['password123', '123456789', 'qwerty123'].some(common => safePassword.toLowerCase() === common) ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400'
-          }`}>
-            {['password123', '123456789', 'qwerty123'].some(common => safePassword.toLowerCase() === common) ? 'Avoid common passwords' : 'Not a common password'}
+          <div
+            className={`${
+              ['password123', '123456789', 'qwerty123'].some(
+                (common) => safePassword.toLowerCase() === common
+              )
+                ? 'text-red-500 dark:text-red-400'
+                : 'text-green-600 dark:text-green-400'
+            }`}
+          >
+            {['password123', '123456789', 'qwerty123'].some(
+              (common) => safePassword.toLowerCase() === common
+            )
+              ? 'Avoid common passwords'
+              : 'Not a common password'}
           </div>
         )}
       </div>
@@ -328,7 +357,11 @@ function RequirementItem({ met, label }: RequirementItemProps) {
         {met ? '✓' : '✗'}
       </div>
       <span
-        className={met ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}
+        className={
+          met
+            ? 'text-green-600 dark:text-green-400'
+            : 'text-red-500 dark:text-red-400'
+        }
       >
         {label}
       </span>

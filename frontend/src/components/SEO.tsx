@@ -28,7 +28,7 @@ export default function SEO({
   author = 'Echo Team',
   publishedTime,
   modifiedTime,
-  product
+  product,
 }: SEOProps) {
   const fullTitle = title.includes('Echo') ? title : `${title} | Echo`;
 
@@ -40,22 +40,23 @@ export default function SEO({
     description,
     url,
     image,
-    ...(type === 'product' && product && {
-      offers: {
-        '@type': 'Offer',
-        price: product.price,
-        priceCurrency: product.currency || 'INR',
-        availability: `https://schema.org/${product.availability || 'InStock'}`,
-        itemCondition: `https://schema.org/${product.condition || 'NewCondition'}`
-      }
-    }),
+    ...(type === 'product' &&
+      product && {
+        offers: {
+          '@type': 'Offer',
+          price: product.price,
+          priceCurrency: product.currency || 'INR',
+          availability: `https://schema.org/${product.availability || 'InStock'}`,
+          itemCondition: `https://schema.org/${product.condition || 'NewCondition'}`,
+        },
+      }),
     ...(type === 'website' && {
       potentialAction: {
         '@type': 'SearchAction',
         target: `${url}/search?q={search_term_string}`,
-        'query-input': 'required name=search_term_string'
-      }
-    })
+        'query-input': 'required name=search_term_string',
+      },
+    }),
   };
 
   return (
@@ -97,17 +98,37 @@ export default function SEO({
       <meta property="twitter:creator" content="@EchoSocial" />
 
       {/* Mobile */}
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+      />
       <meta name="theme-color" content="#667eea" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="black-translucent"
+      />
       <meta name="apple-mobile-web-app-title" content="Echo" />
 
       {/* PWA */}
       <link rel="manifest" href="/manifest.json" />
-      <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-      <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-      <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="/favicon-32x32.png"
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="16x16"
+        href="/favicon-16x16.png"
+      />
+      <link
+        rel="apple-touch-icon"
+        sizes="180x180"
+        href="/apple-touch-icon.png"
+      />
 
       {/* Canonical URL */}
       <link rel="canonical" href={url} />

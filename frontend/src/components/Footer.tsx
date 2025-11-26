@@ -36,17 +36,17 @@ export default function Footer({ onNavigate }: FooterProps) {
   const [systemStatus, setSystemStatus] = useState({
     status: 'operational',
     uptime: '99.9%',
-    lastChecked: new Date()
+    lastChecked: new Date(),
   });
   const [appStats, setAppStats] = useState({
     users: 0,
     posts: 0,
-    countries: 0
+    countries: 0,
   });
   const [animatedStats, setAnimatedStats] = useState({
     users: '0',
     posts: '0',
-    countries: '0'
+    countries: '0',
   });
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isFooterVisible, setIsFooterVisible] = useState(false);
@@ -55,41 +55,56 @@ export default function Footer({ onNavigate }: FooterProps) {
   const hasAnimated = useRef(false);
 
   // Animated counter function
-  const animateCounter = useCallback((start: number, end: number, duration: number, suffix: string, setter: (val: string) => void) => {
-    const startTime = performance.now();
-    const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      // Easing function for smooth animation
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      const current = Math.floor(start + (end - start) * easeOutQuart);
+  const animateCounter = useCallback(
+    (
+      start: number,
+      end: number,
+      duration: number,
+      suffix: string,
+      setter: (val: string) => void
+    ) => {
+      const startTime = performance.now();
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const current = Math.floor(start + (end - start) * easeOutQuart);
 
-      if (end >= 1000000) {
-        setter((current / 1000000).toFixed(1) + 'M' + suffix);
-      } else if (end >= 1000) {
-        setter((current / 1000).toFixed(0) + 'K' + suffix);
-      } else {
-        setter(current.toString() + suffix);
-      }
+        if (end >= 1000000) {
+          setter((current / 1000000).toFixed(1) + 'M' + suffix);
+        } else if (end >= 1000) {
+          setter((current / 1000).toFixed(0) + 'K' + suffix);
+        } else {
+          setter(current.toString() + suffix);
+        }
 
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-    requestAnimationFrame(animate);
-  }, []);
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+      requestAnimationFrame(animate);
+    },
+    []
+  );
 
   // Intersection observer for stats animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting && !hasAnimated.current) {
             hasAnimated.current = true;
             // Trigger animations
-            animateCounter(0, 2500000, 2000, '+', (val) => setAnimatedStats(prev => ({ ...prev, users: val })));
-            animateCounter(0, 50000000, 2000, '+', (val) => setAnimatedStats(prev => ({ ...prev, posts: val })));
-            animateCounter(0, 150, 1500, '+', (val) => setAnimatedStats(prev => ({ ...prev, countries: val })));
+            animateCounter(0, 2500000, 2000, '+', (val) =>
+              setAnimatedStats((prev) => ({ ...prev, users: val }))
+            );
+            animateCounter(0, 50000000, 2000, '+', (val) =>
+              setAnimatedStats((prev) => ({ ...prev, posts: val }))
+            );
+            animateCounter(0, 150, 1500, '+', (val) =>
+              setAnimatedStats((prev) => ({ ...prev, countries: val }))
+            );
           }
         });
       },
@@ -154,13 +169,13 @@ export default function Footer({ onNavigate }: FooterProps) {
         setSystemStatus({
           status: 'operational',
           uptime: uptime + '%',
-          lastChecked: new Date()
+          lastChecked: new Date(),
         });
       } catch {
-        setSystemStatus(prev => ({
+        setSystemStatus((prev) => ({
           ...prev,
           status: 'degraded',
-          lastChecked: new Date()
+          lastChecked: new Date(),
         }));
       }
     };
@@ -178,7 +193,7 @@ export default function Footer({ onNavigate }: FooterProps) {
       setAppStats({
         users: '2.5M+',
         posts: '50M+',
-        countries: '150+'
+        countries: '150+',
       });
     };
     fetchStats();
@@ -188,7 +203,7 @@ export default function Footer({ onNavigate }: FooterProps) {
     try {
       setLanguage(langCode as any);
       setShowLanguageSelector(false);
-      const lang = languages.find(l => l.code === langCode);
+      const lang = languages.find((l) => l.code === langCode);
       toast.success(`Language changed to ${lang?.name}`);
     } catch {
       toast.error('Failed to change language');
@@ -220,13 +235,18 @@ export default function Footer({ onNavigate }: FooterProps) {
       // });
 
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Store subscription locally for demo
-      const subscriptions = JSON.parse(localStorage.getItem('echo-newsletter-subs') || '[]');
+      const subscriptions = JSON.parse(
+        localStorage.getItem('echo-newsletter-subs') || '[]'
+      );
       if (!subscriptions.includes(email)) {
         subscriptions.push(email);
-        localStorage.setItem('echo-newsletter-subs', JSON.stringify(subscriptions));
+        localStorage.setItem(
+          'echo-newsletter-subs',
+          JSON.stringify(subscriptions)
+        );
       }
 
       setSubscribed(true);
@@ -262,20 +282,28 @@ export default function Footer({ onNavigate }: FooterProps) {
   // Social media sharing
   const handleSocialShare = (platform: string) => {
     const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent('Check out Echo - the modern social platform!');
-    
+    const text = encodeURIComponent(
+      'Check out Echo - the modern social platform!'
+    );
+
     const shareUrls = {
       twitter: `https://twitter.com/intent/tweet?url=${url}&text=${text}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
       instagram: 'https://www.instagram.com/echo_platform',
-      github: 'https://github.com/echo-platform'
+      github: 'https://github.com/echo-platform',
     };
 
     const shareUrl = shareUrls[platform as keyof typeof shareUrls];
     if (shareUrl) {
-      window.open(shareUrl, '_blank', 'width=600,height=400,noopener,noreferrer');
-      toast.success(`Opening ${platform.charAt(0).toUpperCase() + platform.slice(1)}...`);
+      window.open(
+        shareUrl,
+        '_blank',
+        'width=600,height=400,noopener,noreferrer'
+      );
+      toast.success(
+        `Opening ${platform.charAt(0).toUpperCase() + platform.slice(1)}...`
+      );
     }
   };
 
@@ -283,8 +311,15 @@ export default function Footer({ onNavigate }: FooterProps) {
   const quickActions = [
     {
       icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 5v14M5 12h14"/>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M12 5v14M5 12h14" />
         </svg>
       ),
       label: 'Create Post',
@@ -292,43 +327,65 @@ export default function Footer({ onNavigate }: FooterProps) {
       action: () => {
         handleNavigation('feed');
         toast.info('Ready to create a new post!');
-      }
+      },
     },
     {
       icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
       ),
       label: 'Discover',
       shortcut: 'D',
-      action: () => handleNavigation('discover')
+      action: () => handleNavigation('discover'),
     },
     {
       icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
       ),
       label: 'Messages',
       shortcut: 'M',
-      action: () => handleNavigation('messages')
+      action: () => handleNavigation('messages'),
     },
     {
       icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <circle cx="12" cy="12" r="3" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
         </svg>
       ),
       label: 'Settings',
       shortcut: 'S',
-      action: () => handleNavigation('settings')
-    }
+      action: () => handleNavigation('settings'),
+    },
   ];
 
-  const currentLang = languages.find(l => l.code === language) || languages[0];
+  const currentLang =
+    languages.find((l) => l.code === language) || languages[0];
 
   return (
     <footer className="modern-footer" ref={footerRef}>
@@ -338,7 +395,10 @@ export default function Footer({ onNavigate }: FooterProps) {
       {/* Wave Animation */}
       <div className="footer-wave">
         <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-          <path d="M0,64L48,58.7C96,53,192,43,288,48C384,53,480,75,576,80C672,85,768,75,864,64C960,53,1056,43,1152,48C1248,53,1344,75,1392,85.3L1440,96L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z" fill="currentColor"></path>
+          <path
+            d="M0,64L48,58.7C96,53,192,43,288,48C384,53,480,75,576,80C672,85,768,75,864,64C960,53,1056,43,1152,48C1248,53,1344,75,1392,85.3L1440,96L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
+            fill="currentColor"
+          ></path>
         </svg>
       </div>
 
@@ -349,7 +409,14 @@ export default function Footer({ onNavigate }: FooterProps) {
           onClick={scrollToTop}
           aria-label="Scroll to top"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <polyline points="18 15 12 9 6 15"></polyline>
           </svg>
         </button>
@@ -361,13 +428,22 @@ export default function Footer({ onNavigate }: FooterProps) {
           <div className="status-indicator">
             <span className={`status-dot ${systemStatus.status}`}></span>
             <span className="status-text">
-              {systemStatus.status === 'operational' ? 'All Systems Operational' :
-               systemStatus.status === 'degraded' ? 'Some Systems Degraded' :
-               'System Issues Detected'}
+              {systemStatus.status === 'operational'
+                ? 'All Systems Operational'
+                : systemStatus.status === 'degraded'
+                  ? 'Some Systems Degraded'
+                  : 'System Issues Detected'}
             </span>
           </div>
           <div className="uptime-badge">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
             </svg>
             <span>{systemStatus.uptime} Uptime</span>
@@ -389,7 +465,7 @@ export default function Footer({ onNavigate }: FooterProps) {
               }}
             >
               <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
               </svg>
               <div className="btn-text">
                 <span className="small">Download on the</span>
@@ -400,11 +476,14 @@ export default function Footer({ onNavigate }: FooterProps) {
               className="download-btn play-store"
               onClick={() => {
                 toast.info('Play Store link coming soon!');
-                handleNavigation('https://play.google.com/store/apps/details?id=com.echo', true);
+                handleNavigation(
+                  'https://play.google.com/store/apps/details?id=com.echo',
+                  true
+                );
               }}
             >
               <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
               </svg>
               <div className="btn-text">
                 <span className="small">Get it on</span>
@@ -441,7 +520,14 @@ export default function Footer({ onNavigate }: FooterProps) {
           <div className="stats-grid">
             <div className="stat-item">
               <div className="stat-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                   <circle cx="9" cy="7" r="4"></circle>
                   <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -453,7 +539,14 @@ export default function Footer({ onNavigate }: FooterProps) {
             </div>
             <div className="stat-item">
               <div className="stat-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
               </div>
@@ -462,7 +555,14 @@ export default function Footer({ onNavigate }: FooterProps) {
             </div>
             <div className="stat-item">
               <div className="stat-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <circle cx="12" cy="12" r="10"></circle>
                   <line x1="2" y1="12" x2="22" y2="12"></line>
                   <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
@@ -478,53 +578,75 @@ export default function Footer({ onNavigate }: FooterProps) {
         <div className="footer-main">
           {/* Brand Section */}
           <div className="footer-brand">
-            <div className="footer-logo" onClick={() => handleNavigation('home')} style={{ cursor: 'pointer' }}>
+            <div
+              className="footer-logo"
+              onClick={() => handleNavigation('home')}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="logo-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M8 12l2 2 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <path
+                    d="M8 12l2 2 4-4"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </div>
               <span className="logo-text">Echo</span>
             </div>
             <p className="footer-description">
-              Connect, share, and discover with the modern social platform that brings people together through meaningful conversations and shared experiences.
+              Connect, share, and discover with the modern social platform that
+              brings people together through meaningful conversations and shared
+              experiences.
             </p>
             <div className="social-links">
-              <button 
-                onClick={() => handleSocialShare('twitter')} 
-                aria-label="Share on Twitter" 
+              <button
+                onClick={() => handleSocialShare('twitter')}
+                aria-label="Share on Twitter"
                 className="social-link"
               >
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>
               </button>
-              <button 
-                onClick={() => handleSocialShare('github')} 
-                aria-label="View on GitHub" 
+              <button
+                onClick={() => handleSocialShare('github')}
+                aria-label="View on GitHub"
                 className="social-link"
               >
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                 </svg>
               </button>
-              <button 
-                onClick={() => handleSocialShare('linkedin')} 
-                aria-label="Share on LinkedIn" 
+              <button
+                onClick={() => handleSocialShare('linkedin')}
+                aria-label="Share on LinkedIn"
                 className="social-link"
               >
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                 </svg>
               </button>
-              <button 
-                onClick={() => handleSocialShare('instagram')} 
-                aria-label="Follow on Instagram" 
+              <button
+                onClick={() => handleSocialShare('instagram')}
+                aria-label="Follow on Instagram"
                 className="social-link"
               >
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                 </svg>
               </button>
             </div>
@@ -535,57 +657,220 @@ export default function Footer({ onNavigate }: FooterProps) {
             <div className="footer-section">
               <h3>Platform</h3>
               <ul>
-                <li><button onClick={() => handleNavigation('feed')} className="footer-link">Home</button></li>
-                <li><button onClick={() => handleNavigation('feed')} className="footer-link">Feed</button></li>
-                <li><button onClick={() => handleNavigation('discover')} className="footer-link">Discover</button></li>
-                <li><button onClick={() => handleNavigation('live')} className="footer-link">Live</button></li>
-                <li><button onClick={() => handleNavigation('messages')} className="footer-link">Messages</button></li>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('feed')}
+                    className="footer-link"
+                  >
+                    Home
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('feed')}
+                    className="footer-link"
+                  >
+                    Feed
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('discover')}
+                    className="footer-link"
+                  >
+                    Discover
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('live')}
+                    className="footer-link"
+                  >
+                    Live
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('messages')}
+                    className="footer-link"
+                  >
+                    Messages
+                  </button>
+                </li>
               </ul>
             </div>
 
             <div className="footer-section">
               <h3>Features</h3>
               <ul>
-                <li><button onClick={() => {
-                  // Dispatch event to open mini apps
-                  window.dispatchEvent(new CustomEvent('openMiniApp', { detail: 'mini-apps' }));
-                  toast.info('Opening Mini Apps...');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }} className="footer-link">Mini Apps</button></li>
-                <li><button onClick={() => {
-                  // Navigate to messages where AI Assistant is available
-                  handleNavigation('messages');
-                  // Dispatch event to open AI chat
-                  setTimeout(() => {
-                    window.dispatchEvent(new CustomEvent('openAiChat'));
-                    toast.info('AI Assistant ready in Messages');
-                  }, 300);
-                }} className="footer-link">AI Assistant</button></li>
-                <li><button onClick={() => handleNavigation('discover')} className="footer-link">Communities</button></li>
-                <li><button onClick={() => handleNavigation('discover')} className="footer-link">Creators</button></li>
-                <li><button onClick={() => handleNavigation('live')} className="footer-link">Live Events</button></li>
+                <li>
+                  <button
+                    onClick={() => {
+                      // Dispatch event to open mini apps
+                      window.dispatchEvent(
+                        new CustomEvent('openMiniApp', { detail: 'mini-apps' })
+                      );
+                      toast.info('Opening Mini Apps...');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="footer-link"
+                  >
+                    Mini Apps
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      // Navigate to messages where AI Assistant is available
+                      handleNavigation('messages');
+                      // Dispatch event to open AI chat
+                      setTimeout(() => {
+                        window.dispatchEvent(new CustomEvent('openAiChat'));
+                        toast.info('AI Assistant ready in Messages');
+                      }, 300);
+                    }}
+                    className="footer-link"
+                  >
+                    AI Assistant
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('discover')}
+                    className="footer-link"
+                  >
+                    Communities
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('discover')}
+                    className="footer-link"
+                  >
+                    Creators
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('live')}
+                    className="footer-link"
+                  >
+                    Live Events
+                  </button>
+                </li>
               </ul>
             </div>
 
             <div className="footer-section">
               <h3>Resources</h3>
               <ul>
-                <li><button onClick={() => handleNavigation('settings')} className="footer-link">Help Center</button></li>
-                <li><button onClick={() => handleNavigation('https://github.com/echo-platform/api-docs', true)} className="footer-link">Developer API</button></li>
-                <li><button onClick={() => handleNavigation('discover')} className="footer-link">Blog</button></li>
-                <li><button onClick={() => handleNavigation('settings')} className="footer-link">User Guides</button></li>
-                <li><button onClick={() => toast.info(`System Status: ${systemStatus.status === 'operational' ? 'All systems operational' : 'Some issues detected'} - ${systemStatus.uptime} uptime`)} className="footer-link">System Status</button></li>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('settings')}
+                    className="footer-link"
+                  >
+                    Help Center
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() =>
+                      handleNavigation(
+                        'https://github.com/echo-platform/api-docs',
+                        true
+                      )
+                    }
+                    className="footer-link"
+                  >
+                    Developer API
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('discover')}
+                    className="footer-link"
+                  >
+                    Blog
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('settings')}
+                    className="footer-link"
+                  >
+                    User Guides
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() =>
+                      toast.info(
+                        `System Status: ${systemStatus.status === 'operational' ? 'All systems operational' : 'Some issues detected'} - ${systemStatus.uptime} uptime`
+                      )
+                    }
+                    className="footer-link"
+                  >
+                    System Status
+                  </button>
+                </li>
               </ul>
             </div>
 
             <div className="footer-section">
               <h3>Company</h3>
               <ul>
-                <li><button onClick={() => toast.info('Echo - Connecting people worldwide since 2024')} className="footer-link">About Us</button></li>
-                <li><button onClick={() => toast.info('We are hiring! Send your resume to careers@echo.app')} className="footer-link">Careers</button></li>
-                <li><button onClick={() => toast.info('Press kit available at press@echo.app')} className="footer-link">Press Kit</button></li>
-                <li><button onClick={() => toast.info('Contact us at support@echo.app')} className="footer-link">Contact</button></li>
-                <li><button onClick={() => toast.info('Investor inquiries: investors@echo.app')} className="footer-link">Investors</button></li>
+                <li>
+                  <button
+                    onClick={() =>
+                      toast.info(
+                        'Echo - Connecting people worldwide since 2024'
+                      )
+                    }
+                    className="footer-link"
+                  >
+                    About Us
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() =>
+                      toast.info(
+                        'We are hiring! Send your resume to careers@echo.app'
+                      )
+                    }
+                    className="footer-link"
+                  >
+                    Careers
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() =>
+                      toast.info('Press kit available at press@echo.app')
+                    }
+                    className="footer-link"
+                  >
+                    Press Kit
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => toast.info('Contact us at support@echo.app')}
+                    className="footer-link"
+                  >
+                    Contact
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() =>
+                      toast.info('Investor inquiries: investors@echo.app')
+                    }
+                    className="footer-link"
+                  >
+                    Investors
+                  </button>
+                </li>
               </ul>
             </div>
           </div>
@@ -595,7 +880,10 @@ export default function Footer({ onNavigate }: FooterProps) {
         <div className="footer-newsletter">
           <div className="newsletter-content">
             <h3>Stay Updated</h3>
-            <p>Get the latest updates, features, and community highlights delivered to your inbox.</p>
+            <p>
+              Get the latest updates, features, and community highlights
+              delivered to your inbox.
+            </p>
             <form className="newsletter-form" onSubmit={handleNewsletterSubmit}>
               <input
                 type="email"
@@ -611,7 +899,13 @@ export default function Footer({ onNavigate }: FooterProps) {
                 disabled={isNewsletterLoading || subscribed}
               >
                 {isNewsletterLoading ? (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                    }}
+                  >
                     <span className="loading-spinner"></span>
                     Subscribing...
                   </span>
@@ -631,10 +925,36 @@ export default function Footer({ onNavigate }: FooterProps) {
             <div className="footer-legal">
               <p>© {currentYear} Echo. All rights reserved.</p>
               <div className="legal-links">
-                <button onClick={() => handleNavigation('/privacy', true)} className="footer-link">Privacy Policy</button>
-                <button onClick={() => handleNavigation('/terms', true)} className="footer-link">Terms of Service</button>
-                <button onClick={() => toast.info('Cookie preferences can be managed in settings')} className="footer-link">Cookie Policy</button>
-                <button onClick={() => toast.info('Echo is committed to accessibility for all users')} className="footer-link">Accessibility</button>
+                <button
+                  onClick={() => handleNavigation('/privacy', true)}
+                  className="footer-link"
+                >
+                  Privacy Policy
+                </button>
+                <button
+                  onClick={() => handleNavigation('/terms', true)}
+                  className="footer-link"
+                >
+                  Terms of Service
+                </button>
+                <button
+                  onClick={() =>
+                    toast.info('Cookie preferences can be managed in settings')
+                  }
+                  className="footer-link"
+                >
+                  Cookie Policy
+                </button>
+                <button
+                  onClick={() =>
+                    toast.info(
+                      'Echo is committed to accessibility for all users'
+                    )
+                  }
+                  className="footer-link"
+                >
+                  Accessibility
+                </button>
               </div>
             </div>
             <div className="footer-meta">
@@ -646,13 +966,20 @@ export default function Footer({ onNavigate }: FooterProps) {
                 >
                   <span className="lang-flag">{currentLang?.flag}</span>
                   <span className="lang-name">{currentLang?.name}</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <polyline points="6 9 12 15 18 9"></polyline>
                   </svg>
                 </button>
                 {showLanguageSelector && (
                   <div className="language-dropdown">
-                    {languages.map(lang => (
+                    {languages.map((lang) => (
                       <button
                         key={lang.code}
                         className={`lang-option ${language === lang.code ? 'active' : ''}`}
@@ -661,7 +988,14 @@ export default function Footer({ onNavigate }: FooterProps) {
                         <span className="lang-flag">{lang.flag}</span>
                         <span className="lang-name">{lang.name}</span>
                         {language === lang.code && (
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
                             <polyline points="20 6 9 17 4 12"></polyline>
                           </svg>
                         )}
@@ -671,10 +1005,18 @@ export default function Footer({ onNavigate }: FooterProps) {
                 )}
               </div>
               <div className="footer-badges">
-                <span className="badge" title="End-to-end encryption">🔒 Secure</span>
-                <span className="badge" title="Available in 150+ countries">🌍 Global</span>
-                <span className="badge" title="Optimized for speed">🚀 Fast</span>
-                <span className="badge" title="99.9% uptime">✨ Reliable</span>
+                <span className="badge" title="End-to-end encryption">
+                  🔒 Secure
+                </span>
+                <span className="badge" title="Available in 150+ countries">
+                  🌍 Global
+                </span>
+                <span className="badge" title="Optimized for speed">
+                  🚀 Fast
+                </span>
+                <span className="badge" title="99.9% uptime">
+                  ✨ Reliable
+                </span>
               </div>
             </div>
           </div>

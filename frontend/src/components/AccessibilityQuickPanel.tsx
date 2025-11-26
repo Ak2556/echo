@@ -28,7 +28,10 @@ interface AccessibilityQuickPanelProps {
   onClose: () => void;
 }
 
-export default function AccessibilityQuickPanel({ isOpen, onClose }: AccessibilityQuickPanelProps) {
+export default function AccessibilityQuickPanel({
+  isOpen,
+  onClose,
+}: AccessibilityQuickPanelProps) {
   const {
     settings,
     updateSetting,
@@ -42,7 +45,9 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
     accessibilityScore,
   } = useAccessibilitySettings();
 
-  const [activeTab, setActiveTab] = useState<'visual' | 'audio' | 'keyboard' | 'test'>('visual');
+  const [activeTab, setActiveTab] = useState<
+    'visual' | 'audio' | 'keyboard' | 'test'
+  >('visual');
   const [isListening, setIsListening] = useState(false);
 
   const handleVoiceToggle = () => {
@@ -55,7 +60,9 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
     }
   };
 
-  const handleTestRun = async (testType: 'contrast' | 'keyboard' | 'screenreader' | 'focus') => {
+  const handleTestRun = async (
+    testType: 'contrast' | 'keyboard' | 'screenreader' | 'focus'
+  ) => {
     await runAccessibilityTest(testType);
     playUISound('success');
   };
@@ -91,7 +98,10 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                  <Accessibility size={16} className="text-blue-600 dark:text-blue-400" />
+                  <Accessibility
+                    size={16}
+                    className="text-blue-600 dark:text-blue-400"
+                  />
                 </div>
                 <h3 className="font-semibold text-gray-900 dark:text-white">
                   Accessibility
@@ -157,12 +167,16 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                           playUISound('click');
                         }}
                         className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                          settings.highContrast ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                          settings.highContrast
+                            ? 'bg-blue-600'
+                            : 'bg-gray-300 dark:bg-gray-600'
                         }`}
                       >
                         <span
                           className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                            settings.highContrast ? 'translate-x-5' : 'translate-x-1'
+                            settings.highContrast
+                              ? 'translate-x-5'
+                              : 'translate-x-1'
                           }`}
                         />
                       </button>
@@ -184,12 +198,16 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                           playUISound('click');
                         }}
                         className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                          settings.largeText ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                          settings.largeText
+                            ? 'bg-blue-600'
+                            : 'bg-gray-300 dark:bg-gray-600'
                         }`}
                       >
                         <span
                           className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                            settings.largeText ? 'translate-x-5' : 'translate-x-1'
+                            settings.largeText
+                              ? 'translate-x-5'
+                              : 'translate-x-1'
                           }`}
                         />
                       </button>
@@ -207,16 +225,23 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                       </div>
                       <button
                         onClick={() => {
-                          updateSetting('reducedMotion', !settings.reducedMotion);
+                          updateSetting(
+                            'reducedMotion',
+                            !settings.reducedMotion
+                          );
                           playUISound('click');
                         }}
                         className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                          settings.reducedMotion ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                          settings.reducedMotion
+                            ? 'bg-blue-600'
+                            : 'bg-gray-300 dark:bg-gray-600'
                         }`}
                       >
                         <span
                           className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                            settings.reducedMotion ? 'translate-x-5' : 'translate-x-1'
+                            settings.reducedMotion
+                              ? 'translate-x-5'
+                              : 'translate-x-1'
                           }`}
                         />
                       </button>
@@ -271,16 +296,23 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                       </div>
                       <button
                         onClick={() => {
-                          updateSetting('screenReaderOptimization', !settings.screenReaderOptimization);
+                          updateSetting(
+                            'screenReaderOptimization',
+                            !settings.screenReaderOptimization
+                          );
                           playUISound('click');
                         }}
                         className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                          settings.screenReaderOptimization ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                          settings.screenReaderOptimization
+                            ? 'bg-blue-600'
+                            : 'bg-gray-300 dark:bg-gray-600'
                         }`}
                       >
                         <span
                           className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                            settings.screenReaderOptimization ? 'translate-x-5' : 'translate-x-1'
+                            settings.screenReaderOptimization
+                              ? 'translate-x-5'
+                              : 'translate-x-1'
                           }`}
                         />
                       </button>
@@ -298,16 +330,23 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                       </div>
                       <button
                         onClick={() => {
-                          updateSetting('audioFeedback', !settings.audioFeedback);
+                          updateSetting(
+                            'audioFeedback',
+                            !settings.audioFeedback
+                          );
                           playUISound('click');
                         }}
                         className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                          settings.audioFeedback ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                          settings.audioFeedback
+                            ? 'bg-blue-600'
+                            : 'bg-gray-300 dark:bg-gray-600'
                         }`}
                       >
                         <span
                           className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                            settings.audioFeedback ? 'translate-x-5' : 'translate-x-1'
+                            settings.audioFeedback
+                              ? 'translate-x-5'
+                              : 'translate-x-1'
                           }`}
                         />
                       </button>
@@ -325,16 +364,23 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                       </div>
                       <button
                         onClick={() => {
-                          updateSetting('voiceNavigation', !settings.voiceNavigation);
+                          updateSetting(
+                            'voiceNavigation',
+                            !settings.voiceNavigation
+                          );
                           playUISound('click');
                         }}
                         className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                          settings.voiceNavigation ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                          settings.voiceNavigation
+                            ? 'bg-blue-600'
+                            : 'bg-gray-300 dark:bg-gray-600'
                         }`}
                       >
                         <span
                           className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                            settings.voiceNavigation ? 'translate-x-5' : 'translate-x-1'
+                            settings.voiceNavigation
+                              ? 'translate-x-5'
+                              : 'translate-x-1'
                           }`}
                         />
                       </button>
@@ -351,8 +397,14 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                               : 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
                           }`}
                         >
-                          {isListening ? <Pause size={16} /> : <Play size={16} />}
-                          {isListening ? 'Stop Listening' : 'Start Voice Control'}
+                          {isListening ? (
+                            <Pause size={16} />
+                          ) : (
+                            <Play size={16} />
+                          )}
+                          {isListening
+                            ? 'Stop Listening'
+                            : 'Start Voice Control'}
                         </button>
                       </div>
                     )}
@@ -373,7 +425,12 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                             min="0"
                             max="100"
                             value={settings.uiSoundsVolume}
-                            onChange={(e) => updateSetting('uiSoundsVolume', parseInt(e.target.value))}
+                            onChange={(e) =>
+                              updateSetting(
+                                'uiSoundsVolume',
+                                parseInt(e.target.value)
+                              )
+                            }
                             className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
                           />
                         </div>
@@ -387,7 +444,12 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                             min="0"
                             max="100"
                             value={settings.voiceFeedbackVolume}
-                            onChange={(e) => updateSetting('voiceFeedbackVolume', parseInt(e.target.value))}
+                            onChange={(e) =>
+                              updateSetting(
+                                'voiceFeedbackVolume',
+                                parseInt(e.target.value)
+                              )
+                            }
                             className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
                           />
                         </div>
@@ -413,16 +475,23 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                       </div>
                       <button
                         onClick={() => {
-                          updateSetting('enhancedFocusIndicators', !settings.enhancedFocusIndicators);
+                          updateSetting(
+                            'enhancedFocusIndicators',
+                            !settings.enhancedFocusIndicators
+                          );
                           playUISound('click');
                         }}
                         className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                          settings.enhancedFocusIndicators ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                          settings.enhancedFocusIndicators
+                            ? 'bg-blue-600'
+                            : 'bg-gray-300 dark:bg-gray-600'
                         }`}
                       >
                         <span
                           className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                            settings.enhancedFocusIndicators ? 'translate-x-5' : 'translate-x-1'
+                            settings.enhancedFocusIndicators
+                              ? 'translate-x-5'
+                              : 'translate-x-1'
                           }`}
                         />
                       </button>
@@ -440,16 +509,23 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                       </div>
                       <button
                         onClick={() => {
-                          updateSetting('skipNavigationLinks', !settings.skipNavigationLinks);
+                          updateSetting(
+                            'skipNavigationLinks',
+                            !settings.skipNavigationLinks
+                          );
                           playUISound('click');
                         }}
                         className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                          settings.skipNavigationLinks ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                          settings.skipNavigationLinks
+                            ? 'bg-blue-600'
+                            : 'bg-gray-300 dark:bg-gray-600'
                         }`}
                       >
                         <span
                           className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                            settings.skipNavigationLinks ? 'translate-x-5' : 'translate-x-1'
+                            settings.skipNavigationLinks
+                              ? 'translate-x-5'
+                              : 'translate-x-1'
                           }`}
                         />
                       </button>
@@ -467,16 +543,23 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                       </div>
                       <button
                         onClick={() => {
-                          updateSetting('keyboardShortcuts', !settings.keyboardShortcuts);
+                          updateSetting(
+                            'keyboardShortcuts',
+                            !settings.keyboardShortcuts
+                          );
                           playUISound('click');
                         }}
                         className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                          settings.keyboardShortcuts ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                          settings.keyboardShortcuts
+                            ? 'bg-blue-600'
+                            : 'bg-gray-300 dark:bg-gray-600'
                         }`}
                       >
                         <span
                           className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                            settings.keyboardShortcuts ? 'translate-x-5' : 'translate-x-1'
+                            settings.keyboardShortcuts
+                              ? 'translate-x-5'
+                              : 'translate-x-1'
                           }`}
                         />
                       </button>
@@ -491,15 +574,21 @@ export default function AccessibilityQuickPanel({ isOpen, onClose }: Accessibili
                         <div className="space-y-1 text-xs">
                           <div className="flex justify-between">
                             <span>Toggle Accessibility</span>
-                            <kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-600 rounded text-xs">Alt+A</kbd>
+                            <kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-600 rounded text-xs">
+                              Alt+A
+                            </kbd>
                           </div>
                           <div className="flex justify-between">
                             <span>Open Settings</span>
-                            <kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-600 rounded text-xs">Alt+S</kbd>
+                            <kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-600 rounded text-xs">
+                              Alt+S
+                            </kbd>
                           </div>
                           <div className="flex justify-between">
                             <span>Read Content</span>
-                            <kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-600 rounded text-xs">Alt+R</kbd>
+                            <kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-600 rounded text-xs">
+                              Alt+R
+                            </kbd>
                           </div>
                         </div>
                       </div>

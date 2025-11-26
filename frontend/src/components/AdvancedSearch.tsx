@@ -30,9 +30,7 @@ export default function AdvancedSearch() {
       const response = await fetch(url.toString());
       const data = await response.json();
       setSuggestions(data.suggestions || []);
-    } catch (error) {
-
-    }
+    } catch (error) {}
   };
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -48,7 +46,6 @@ export default function AdvancedSearch() {
       const data = await response.json();
       setResults(data.results || {});
     } catch (error) {
-
     } finally {
       setLoading(false);
     }
@@ -94,7 +91,9 @@ export default function AdvancedSearch() {
                 className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
                 onClick={() => setQuery(suggestion.text)}
               >
-                <span className="text-xs text-gray-500 mr-2">{suggestion.type}</span>
+                <span className="text-xs text-gray-500 mr-2">
+                  {suggestion.type}
+                </span>
                 {suggestion.text}
               </div>
             ))}

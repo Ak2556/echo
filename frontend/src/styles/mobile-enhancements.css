@@ -7,10 +7,10 @@
 @media (max-width: 768px) {
   /* Minimum 44x44px touch targets on mobile */
   button,
-  [role="button"],
+  [role='button'],
   a[href],
-  input[type="submit"],
-  input[type="button"] {
+  input[type='submit'],
+  input[type='button'] {
     min-height: 44px;
     min-width: 44px;
     touch-action: manipulation; /* Prevents double-tap zoom */
@@ -28,7 +28,7 @@
 @media (hover: none) and (pointer: coarse) {
   /* Mobile devices only */
   button:active,
-  [role="button"]:active,
+  [role='button']:active,
   a:active {
     transform: scale(0.97);
     transition: transform 100ms ease-out;
@@ -100,7 +100,7 @@
 @media (min-width: 768px) and (max-width: 1024px) {
   /* Slightly larger touch targets for tablets */
   button,
-  [role="button"] {
+  [role='button'] {
     min-height: 48px;
     min-width: 48px;
   }
@@ -213,7 +213,8 @@
 }
 
 @keyframes haptic-pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -224,12 +225,7 @@
 /* === Loading Skeleton for Mobile === */
 @media (max-width: 768px) {
   .skeleton {
-    background: linear-gradient(
-      90deg,
-      #f0f0f0 25%,
-      #e0e0e0 50%,
-      #f0f0f0 75%
-    );
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
     background-size: 200% 100%;
     animation: loading 1.5s ease-in-out infinite;
   }

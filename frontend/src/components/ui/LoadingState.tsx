@@ -6,7 +6,13 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useReducedMotion } from '@/hooks/useMotionPreference';
 
-type LoadingType = 'page' | 'section' | 'inline' | 'button' | 'overlay' | 'refresh';
+type LoadingType =
+  | 'page'
+  | 'section'
+  | 'inline'
+  | 'button'
+  | 'overlay'
+  | 'refresh';
 type LoadingSize = 'sm' | 'md' | 'lg';
 
 interface LoadingStateProps {
@@ -49,17 +55,16 @@ const LoadingState = memo(function LoadingState({
         )}
       >
         <Loader2
-          className={cn(
-            'animate-spin text-blue-600',
-            sizeClasses.lg
-          )}
+          className={cn('animate-spin text-blue-600', sizeClasses.lg)}
           aria-hidden="true"
         />
         {message && (
-          <p className={cn(
-            'mt-4 text-gray-600 dark:text-gray-400',
-            textSizeClasses.lg
-          )}>
+          <p
+            className={cn(
+              'mt-4 text-gray-600 dark:text-gray-400',
+              textSizeClasses.lg
+            )}
+          >
             {message}
           </p>
         )}
@@ -81,17 +86,16 @@ const LoadingState = memo(function LoadingState({
         aria-live="polite"
       >
         <Loader2
-          className={cn(
-            'animate-spin text-blue-600',
-            sizeClasses[size]
-          )}
+          className={cn('animate-spin text-blue-600', sizeClasses[size])}
           aria-hidden="true"
         />
         {message && (
-          <p className={cn(
-            'mt-3 text-gray-600 dark:text-gray-400',
-            textSizeClasses[size]
-          )}>
+          <p
+            className={cn(
+              'mt-3 text-gray-600 dark:text-gray-400',
+              textSizeClasses[size]
+            )}
+          >
             {message}
           </p>
         )}
@@ -109,14 +113,16 @@ const LoadingState = memo(function LoadingState({
         aria-live="polite"
       >
         <Loader2
-          className={cn(
-            'animate-spin text-blue-600',
-            sizeClasses[size]
-          )}
+          className={cn('animate-spin text-blue-600', sizeClasses[size])}
           aria-hidden="true"
         />
         {message && (
-          <span className={cn('text-gray-600 dark:text-gray-400', textSizeClasses[size])}>
+          <span
+            className={cn(
+              'text-gray-600 dark:text-gray-400',
+              textSizeClasses[size]
+            )}
+          >
             {message}
           </span>
         )}
@@ -128,7 +134,10 @@ const LoadingState = memo(function LoadingState({
   // Button Loading - Optimized for button state
   if (type === 'button') {
     return (
-      <span className={cn('inline-flex items-center gap-2', className)} role="status">
+      <span
+        className={cn('inline-flex items-center gap-2', className)}
+        role="status"
+      >
         <Loader2
           className={cn('animate-spin', sizeClasses[size])}
           aria-hidden="true"
@@ -157,17 +166,16 @@ const LoadingState = memo(function LoadingState({
       >
         <div className="flex flex-col items-center">
           <Loader2
-            className={cn(
-              'animate-spin text-blue-600',
-              sizeClasses[size]
-            )}
+            className={cn('animate-spin text-blue-600', sizeClasses[size])}
             aria-hidden="true"
           />
           {message && (
-            <p className={cn(
-              'mt-3 text-gray-600 dark:text-gray-400',
-              textSizeClasses[size]
-            )}>
+            <p
+              className={cn(
+                'mt-3 text-gray-600 dark:text-gray-400',
+                textSizeClasses[size]
+              )}
+            >
               {message}
             </p>
           )}
@@ -181,25 +189,21 @@ const LoadingState = memo(function LoadingState({
   if (type === 'refresh') {
     return (
       <div
-        className={cn(
-          'flex items-center justify-center p-4',
-          className
-        )}
+        className={cn('flex items-center justify-center p-4', className)}
         role="status"
         aria-live="polite"
       >
         <Loader2
-          className={cn(
-            'animate-spin text-blue-600',
-            sizeClasses.sm
-          )}
+          className={cn('animate-spin text-blue-600', sizeClasses.sm)}
           aria-hidden="true"
         />
         {message && (
-          <span className={cn(
-            'ml-2 text-gray-600 dark:text-gray-400',
-            textSizeClasses.sm
-          )}>
+          <span
+            className={cn(
+              'ml-2 text-gray-600 dark:text-gray-400',
+              textSizeClasses.sm
+            )}
+          >
             {message}
           </span>
         )}
@@ -222,9 +226,11 @@ export const SectionLoader = memo(({ message }: { message?: string }) => (
   <LoadingState type="section" size="md" message={message} />
 ));
 
-export const InlineLoader = memo(({ message, size = 'sm' }: { message?: string; size?: LoadingSize }) => (
-  <LoadingState type="inline" size={size} message={message} />
-));
+export const InlineLoader = memo(
+  ({ message, size = 'sm' }: { message?: string; size?: LoadingSize }) => (
+    <LoadingState type="inline" size={size} message={message} />
+  )
+);
 
 export const ButtonLoader = memo(({ message }: { message?: string }) => (
   <LoadingState type="button" size="sm" message={message} />

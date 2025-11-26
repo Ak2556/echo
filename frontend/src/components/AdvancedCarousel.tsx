@@ -32,7 +32,7 @@ export default function AdvancedCarousel({
   showNavigation = true,
   itemsPerView = 1,
   gap = 16,
-  onSlideChange
+  onSlideChange,
 }: AdvancedCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -104,7 +104,7 @@ export default function AdvancedCarousel({
       style={{
         position: 'relative',
         width: '100%',
-        overflow: 'hidden'
+        overflow: 'hidden',
       }}
     >
       {/* Carousel Track */}
@@ -114,9 +114,11 @@ export default function AdvancedCarousel({
         onTouchEnd={handleTouchEnd}
         style={{
           display: 'flex',
-          transition: isTransitioning ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+          transition: isTransitioning
+            ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+            : 'none',
           transform: `translateX(-${currentIndex * 100}%)`,
-          gap: `${gap}px`
+          gap: `${gap}px`,
         }}
       >
         {items.map((item) => (
@@ -124,7 +126,7 @@ export default function AdvancedCarousel({
             key={item.id}
             style={{
               flex: `0 0 calc((100% - ${(itemsPerView - 1) * gap}px) / ${itemsPerView})`,
-              minWidth: 0
+              minWidth: 0,
             }}
           >
             {item.content}
@@ -150,7 +152,7 @@ export default function AdvancedCarousel({
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              zIndex: 10
+              zIndex: 10,
             }}
             aria-label="Previous slide"
           >
@@ -172,7 +174,7 @@ export default function AdvancedCarousel({
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              zIndex: 10
+              zIndex: 10,
             }}
             aria-label="Next slide"
           >
@@ -191,7 +193,7 @@ export default function AdvancedCarousel({
             transform: 'translateX(-50%)',
             display: 'flex',
             gap: '0.5rem',
-            zIndex: 10
+            zIndex: 10,
           }}
         >
           {Array.from({ length: totalSlides }).map((_, index) => (
@@ -203,10 +205,13 @@ export default function AdvancedCarousel({
                 width: currentIndex === index ? '32px' : '12px',
                 height: '12px',
                 borderRadius: '6px',
-                background: currentIndex === index ? 'var(--accent)' : 'rgba(255, 255, 255, 0.5)',
+                background:
+                  currentIndex === index
+                    ? 'var(--accent)'
+                    : 'rgba(255, 255, 255, 0.5)',
                 border: 'none',
                 cursor: 'pointer',
-                transition: 'all 0.3s'
+                transition: 'all 0.3s',
               }}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -222,7 +227,7 @@ export default function AdvancedCarousel({
  */
 export function HeroCarousel({
   slides,
-  height = '500px'
+  height = '500px',
 }: {
   slides: Array<{
     id: string;
@@ -250,7 +255,7 @@ export function HeroCarousel({
                 backgroundPosition: 'center',
                 position: 'relative',
                 borderRadius: 'var(--radius-xl)',
-                overflow: 'hidden'
+                overflow: 'hidden',
               }}
             >
               <div
@@ -260,11 +265,12 @@ export function HeroCarousel({
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)',
+                  background:
+                    'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'flex-end',
-                  padding: '3rem'
+                  padding: '3rem',
                 }}
               >
                 <h2
@@ -273,7 +279,7 @@ export function HeroCarousel({
                     fontSize: '2.5rem',
                     fontWeight: 700,
                     color: 'white',
-                    marginBottom: '1rem'
+                    marginBottom: '1rem',
                   }}
                 >
                   {slide.title}
@@ -286,7 +292,7 @@ export function HeroCarousel({
                     marginBottom: '2rem',
                     maxWidth: '600px',
                     animationDelay: '0.1s',
-                    animationFillMode: 'backwards'
+                    animationFillMode: 'backwards',
                   }}
                 >
                   {slide.description}
@@ -301,7 +307,7 @@ export function HeroCarousel({
                       fontWeight: 600,
                       alignSelf: 'flex-start',
                       animationDelay: '0.2s',
-                      animationFillMode: 'backwards'
+                      animationFillMode: 'backwards',
                     }}
                   >
                     {slide.cta.label}
@@ -309,7 +315,7 @@ export function HeroCarousel({
                 )}
               </div>
             </div>
-          )
+          ),
         }))}
         autoPlay
         autoPlayInterval={6000}
@@ -324,7 +330,7 @@ export function HeroCarousel({
  * Testimonial Carousel
  */
 export function TestimonialCarousel({
-  testimonials
+  testimonials,
 }: {
   testimonials: Array<{
     id: string;
@@ -340,7 +346,10 @@ export function TestimonialCarousel({
       items={testimonials.map((testimonial) => ({
         id: testimonial.id,
         content: (
-          <div className="modern-card glass-premium" style={{ padding: '2rem', textAlign: 'center' }}>
+          <div
+            className="modern-card glass-premium"
+            style={{ padding: '2rem', textAlign: 'center' }}
+          >
             <div style={{ marginBottom: '1.5rem' }}>
               <img
                 src={testimonial.avatar}
@@ -351,7 +360,7 @@ export function TestimonialCarousel({
                   borderRadius: '50%',
                   objectFit: 'cover',
                   margin: '0 auto',
-                  border: '3px solid var(--accent)'
+                  border: '3px solid var(--accent)',
                 }}
               />
             </div>
@@ -361,7 +370,7 @@ export function TestimonialCarousel({
                   key={i}
                   style={{
                     color: i < testimonial.rating ? '#fbbf24' : '#6b7280',
-                    fontSize: '1.25rem'
+                    fontSize: '1.25rem',
                   }}
                 >
                   ★
@@ -373,17 +382,25 @@ export function TestimonialCarousel({
                 fontSize: '1.125rem',
                 lineHeight: 1.7,
                 marginBottom: '1.5rem',
-                fontStyle: 'italic'
+                fontStyle: 'italic',
               }}
             >
               "{testimonial.content}"
             </p>
-            <h4 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+            <h4
+              style={{
+                fontSize: '1.125rem',
+                fontWeight: 600,
+                marginBottom: '0.25rem',
+              }}
+            >
               {testimonial.name}
             </h4>
-            <p style={{ fontSize: '0.875rem', color: 'var(--muted)' }}>{testimonial.role}</p>
+            <p style={{ fontSize: '0.875rem', color: 'var(--muted)' }}>
+              {testimonial.role}
+            </p>
           </div>
-        )
+        ),
       }))}
       autoPlay
       autoPlayInterval={7000}
@@ -398,7 +415,7 @@ export function TestimonialCarousel({
  */
 export function ProductCarousel({
   products,
-  itemsPerView = 3
+  itemsPerView = 3,
 }: {
   products: Array<{
     id: string;
@@ -419,7 +436,7 @@ export function ProductCarousel({
             className="modern-card hover-lift transition-smooth"
             style={{
               cursor: 'pointer',
-              overflow: 'hidden'
+              overflow: 'hidden',
             }}
           >
             <img
@@ -428,7 +445,7 @@ export function ProductCarousel({
               style={{
                 width: '100%',
                 aspectRatio: '1',
-                objectFit: 'cover'
+                objectFit: 'cover',
               }}
             />
             <div style={{ padding: '1rem' }}>
@@ -439,17 +456,23 @@ export function ProductCarousel({
                   marginBottom: '0.5rem',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {product.name}
               </h4>
-              <p style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent)' }}>
+              <p
+                style={{
+                  fontSize: '1.25rem',
+                  fontWeight: 700,
+                  color: 'var(--accent)',
+                }}
+              >
                 ₹{product.price}
               </p>
             </div>
           </div>
-        )
+        ),
       }))}
       itemsPerView={itemsPerView}
       showIndicators={false}

@@ -155,7 +155,11 @@ export function NoSearchResultsEmptyState({ query }: { query: string }) {
   );
 }
 
-export function NoConnectionsEmptyState({ onInvite }: { onInvite?: () => void }) {
+export function NoConnectionsEmptyState({
+  onInvite,
+}: {
+  onInvite?: () => void;
+}) {
   return (
     <EmptyState
       icon="👥"

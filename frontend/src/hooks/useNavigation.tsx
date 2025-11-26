@@ -5,41 +5,62 @@ import { useEffect, useState, useCallback } from 'react';
 export const useNavigation = () => {
   const [currentRoute, setCurrentRoute] = useState('home');
 
-  const navigate = useCallback((route: string, push = true) => {
-    try {
-      const targetRoute = route || 'home';
-      const validSections = ['home', 'feed', 'discover', 'live', 'messages', 'profile', 'settings', 'miniapps'];
-      const target = validSections.includes(targetRoute) ? targetRoute : 'home';
+  const navigate = useCallback(
+    (route: string, push = true) => {
+      try {
+        const targetRoute = route || 'home';
+        const validSections = [
+          'home',
+          'feed',
+          'discover',
+          'live',
+          'messages',
+          'profile',
+          'settings',
+          'miniapps',
+        ];
+        const target = validSections.includes(targetRoute)
+          ? targetRoute
+          : 'home';
 
-      // Debug logging (matching original)
+        // Debug logging (matching original)
 
-      setCurrentRoute(target);
+        setCurrentRoute(target);
 
-      // Scroll to top respecting reduced motion preference
-      if (typeof window !== 'undefined') {
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+        // Scroll to top respecting reduced motion preference
+        if (typeof window !== 'undefined') {
+          const prefersReducedMotion = window.matchMedia(
+            '(prefers-reduced-motion: reduce)'
+          ).matches;
+          window.scrollTo({
+            top: 0,
+            behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          });
 
-        // Push history state
-        if (push) {
-          history.pushState({ route: target }, '', `#/${target}`);
+          // Push history state
+          if (push) {
+            history.pushState({ route: target }, '', `#/${target}`);
+          }
         }
-      }
-    } catch (error) {
-
-    }
-  }, [currentRoute]);
+      } catch (error) {}
+    },
+    [currentRoute]
+  );
 
   useEffect(() => {
     // Handle popstate events (browser back/forward)
     const handlePopState = (e: PopStateEvent) => {
-      const route = e.state?.route || (location.hash.startsWith('#/') ? location.hash.slice(2) : 'home');
+      const route =
+        e.state?.route ||
+        (location.hash.startsWith('#/') ? location.hash.slice(2) : 'home');
       navigate(route, false);
     };
 
     // Handle hash changes (deep-linking)
     const handleHashChange = () => {
-      const route = location.hash.startsWith('#/') ? location.hash.slice(2) : 'home';
+      const route = location.hash.startsWith('#/')
+        ? location.hash.slice(2)
+        : 'home';
       navigate(route, false);
     };
 

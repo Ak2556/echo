@@ -15,7 +15,7 @@ export class ChatUtils {
     return new Intl.DateTimeFormat('en-US', {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true
+      hour12: true,
     }).format(date);
   }
 
@@ -23,19 +23,21 @@ export class ChatUtils {
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     }).format(date);
   }
 
   static formatRelativeTime(date: Date): string {
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
+
     if (diffInSeconds < 60) return 'Just now';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-    
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 604800)
+      return `${Math.floor(diffInSeconds / 86400)}d ago`;
+
     return this.formatDate(date);
   }
 
@@ -46,7 +48,7 @@ export class ChatUtils {
 
   static highlightSearchTerm(text: string, searchTerm: string): string {
     if (!searchTerm) return text;
-    
+
     const regex = new RegExp(`(${searchTerm})`, 'gi');
     return text.replace(regex, '<mark>$1</mark>');
   }
@@ -59,7 +61,7 @@ export class ChatUtils {
     while ((match = codeBlockRegex.exec(text)) !== null) {
       blocks.push({
         language: match[1] || 'text',
-        code: match[2].trim()
+        code: match[2].trim(),
       });
     }
 
@@ -69,23 +71,26 @@ export class ChatUtils {
   static formatMessageContent(content: string): string {
     // Convert markdown-style formatting to HTML
     let formatted = content;
-    
+
     // Bold text
     formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
+
     // Italic text
     formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    
+
     // Inline code
     formatted = formatted.replace(/`(.*?)`/g, '<code>$1</code>');
-    
+
     // Line breaks
     formatted = formatted.replace(/\n/g, '<br>');
-    
+
     return formatted;
   }
 
-  static exportConversation(conversation: Conversation, options: ExportOptions): string {
+  static exportConversation(
+    conversation: Conversation,
+    options: ExportOptions
+  ): string {
     switch (options.format) {
       case 'json':
         return this.exportAsJSON(conversation, options);
@@ -98,10 +103,13 @@ export class ChatUtils {
     }
   }
 
-  private static exportAsJSON(conversation: Conversation, options: ExportOptions): string {
+  private static exportAsJSON(
+    conversation: Conversation,
+    options: ExportOptions
+  ): string {
     const data: any = {
       title: conversation.title,
-      messages: conversation.messages
+      messages: conversation.messages,
     };
 
     if (options.includeMetadata) {
@@ -112,14 +120,17 @@ export class ChatUtils {
         model: conversation.model,
         personality: conversation.personality,
         tags: conversation.tags,
-        isBookmarked: conversation.isBookmarked
+        isBookmarked: conversation.isBookmarked,
       };
     }
 
     return JSON.stringify(data, null, 2);
   }
 
-  private static exportAsMarkdown(conversation: Conversation, options: ExportOptions): string {
+  private static exportAsMarkdown(
+    conversation: Conversation,
+    options: ExportOptions
+  ): string {
     let markdown = `# ${conversation.title}\n\n`;
 
     if (options.includeMetadata) {
@@ -133,9 +144,10 @@ export class ChatUtils {
     }
 
     conversation.messages.forEach((message, index) => {
-      const role = message.role === 'user' ? '👤 **You**' : '🤖 **AI Assistant**';
+      const role =
+        message.role === 'user' ? '👤 **You**' : '🤖 **AI Assistant**';
       markdown += `${role}:\n\n${message.content}\n\n`;
-      
+
       if (index < conversation.messages.length - 1) {
         markdown += '---\n\n';
       }
@@ -144,7 +156,10 @@ export class ChatUtils {
     return markdown;
   }
 
-  private static exportAsText(conversation: Conversation, options: ExportOptions): string {
+  private static exportAsText(
+    conversation: Conversation,
+    options: ExportOptions
+  ): string {
     let text = `${conversation.title}\n`;
     text += '='.repeat(conversation.title.length) + '\n\n';
 
@@ -166,23 +181,28 @@ export class ChatUtils {
     return text;
   }
 
-  static downloadFile(content: string, filename: string, mimeType: string = 'text/plain'): void {
+  static downloadFile(
+    content: string,
+    filename: string,
+    mimeType: string = 'text/plain'
+  ): void {
     const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
   }
 
   static copyToClipboard(text: string): Promise<boolean> {
     if (navigator.clipboard && window.isSecureContext) {
-      return navigator.clipboard.writeText(text)
+      return navigator.clipboard
+        .writeText(text)
         .then(() => true)
         .catch(() => false);
     } else {
@@ -195,7 +215,7 @@ export class ChatUtils {
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
-      
+
       try {
         const successful = document.execCommand('copy');
         document.body.removeChild(textArea);
@@ -207,12 +227,15 @@ export class ChatUtils {
     }
   }
 
-  static generateConversationSummary(messages: ChatMessage[], maxLength: number = 100): string {
+  static generateConversationSummary(
+    messages: ChatMessage[],
+    maxLength: number = 100
+  ): string {
     if (messages.length === 0) return 'Empty conversation';
-    
-    const firstUserMessage = messages.find(m => m.role === 'user');
+
+    const firstUserMessage = messages.find((m) => m.role === 'user');
     if (!firstUserMessage) return 'New conversation';
-    
+
     return this.truncateText(firstUserMessage.content, maxLength);
   }
 
@@ -227,11 +250,14 @@ export class ChatUtils {
     return Math.ceil(words / 200);
   }
 
-  static searchInMessages(messages: ChatMessage[], query: string): ChatMessage[] {
+  static searchInMessages(
+    messages: ChatMessage[],
+    query: string
+  ): ChatMessage[] {
     if (!query.trim()) return messages;
-    
+
     const searchTerm = query.toLowerCase();
-    return messages.filter(message => 
+    return messages.filter((message) =>
       message.content.toLowerCase().includes(searchTerm)
     );
   }
@@ -243,16 +269,18 @@ export class ChatUtils {
     totalTokens: number;
     estimatedReadingTime: number;
   } {
-    const userMessages = messages.filter(m => m.role === 'user').length;
-    const assistantMessages = messages.filter(m => m.role === 'assistant').length;
-    const totalText = messages.map(m => m.content).join(' ');
-    
+    const userMessages = messages.filter((m) => m.role === 'user').length;
+    const assistantMessages = messages.filter(
+      (m) => m.role === 'assistant'
+    ).length;
+    const totalText = messages.map((m) => m.content).join(' ');
+
     return {
       totalMessages: messages.length,
       userMessages,
       assistantMessages,
       totalTokens: this.calculateTokenCount(totalText),
-      estimatedReadingTime: this.estimateReadingTime(totalText)
+      estimatedReadingTime: this.estimateReadingTime(totalText),
     };
   }
 }

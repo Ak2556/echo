@@ -34,21 +34,38 @@ export default function PasswordStrength({ password }: PasswordStrengthProps) {
   ];
 
   const metCount = requirements.filter((r) => r.met).length;
-  const strength = metCount === 0 ? 0 : metCount <= 1 ? 25 : metCount === 2 ? 50 : metCount === 3 ? 75 : 100;
+  const strength =
+    metCount === 0
+      ? 0
+      : metCount <= 1
+        ? 25
+        : metCount === 2
+          ? 50
+          : metCount === 3
+            ? 75
+            : 100;
 
   const strengthColor =
     strength === 0
       ? 'bg-gray-300'
       : strength <= 25
-      ? 'bg-red-500'
-      : strength <= 50
-      ? 'bg-orange-500'
-      : strength <= 75
-      ? 'bg-yellow-500'
-      : 'bg-green-500';
+        ? 'bg-red-500'
+        : strength <= 50
+          ? 'bg-orange-500'
+          : strength <= 75
+            ? 'bg-yellow-500'
+            : 'bg-green-500';
 
   const strengthLabel =
-    strength === 0 ? '' : strength <= 25 ? 'Weak' : strength <= 50 ? 'Fair' : strength <= 75 ? 'Good' : 'Strong';
+    strength === 0
+      ? ''
+      : strength <= 25
+        ? 'Weak'
+        : strength <= 50
+          ? 'Fair'
+          : strength <= 75
+            ? 'Good'
+            : 'Strong';
 
   if (!password) return null;
 
@@ -57,17 +74,19 @@ export default function PasswordStrength({ password }: PasswordStrengthProps) {
       {/* Strength Bar */}
       <div>
         <div className="flex items-center justify-between mb-1.5">
-          <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Password Strength</span>
+          <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            Password Strength
+          </span>
           {strengthLabel && (
             <span
               className={`text-xs font-semibold ${
                 strength <= 25
                   ? 'text-red-600 dark:text-red-400'
                   : strength <= 50
-                  ? 'text-orange-600 dark:text-orange-400'
-                  : strength <= 75
-                  ? 'text-yellow-600 dark:text-yellow-400'
-                  : 'text-green-600 dark:text-green-400'
+                    ? 'text-orange-600 dark:text-orange-400'
+                    : strength <= 75
+                      ? 'text-yellow-600 dark:text-yellow-400'
+                      : 'text-green-600 dark:text-green-400'
               }`}
             >
               {strengthLabel}
@@ -101,11 +120,17 @@ export default function PasswordStrength({ password }: PasswordStrengthProps) {
                   : 'bg-gray-200 dark:bg-gray-700 text-gray-400 scale-90'
               }`}
             >
-              {req.met ? <Check size={10} strokeWidth={3} /> : <X size={10} strokeWidth={2} />}
+              {req.met ? (
+                <Check size={10} strokeWidth={3} />
+              ) : (
+                <X size={10} strokeWidth={2} />
+              )}
             </div>
             <span
               className={`transition-colors duration-200 ${
-                req.met ? 'text-gray-700 dark:text-gray-300' : 'text-gray-500 dark:text-gray-500'
+                req.met
+                  ? 'text-gray-700 dark:text-gray-300'
+                  : 'text-gray-500 dark:text-gray-500'
               }`}
             >
               {req.label}

@@ -15,7 +15,8 @@ export class SortingAlgorithms {
    * In-place, not stable
    */
   static quickSort<T>(arr: T[], compareFn?: (a: T, b: T) => number): T[] {
-    const compare = compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
+    const compare =
+      compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
     const result = [...arr];
     this.quickSortHelper(result, 0, result.length - 1, compare);
     return result;
@@ -59,7 +60,8 @@ export class SortingAlgorithms {
    * Stable, requires O(n) extra space
    */
   static mergeSort<T>(arr: T[], compareFn?: (a: T, b: T) => number): T[] {
-    const compare = compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
+    const compare =
+      compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
 
     if (arr.length <= 1) return [...arr];
 
@@ -70,9 +72,14 @@ export class SortingAlgorithms {
     return this.merge(left, right, compare);
   }
 
-  private static merge<T>(left: T[], right: T[], compare: (a: T, b: T) => number): T[] {
+  private static merge<T>(
+    left: T[],
+    right: T[],
+    compare: (a: T, b: T) => number
+  ): T[] {
     const result: T[] = [];
-    let i = 0, j = 0;
+    let i = 0,
+      j = 0;
 
     while (i < left.length && j < right.length) {
       if (compare(left[i], right[j]) <= 0) {
@@ -90,7 +97,8 @@ export class SortingAlgorithms {
    * In-place, not stable
    */
   static heapSort<T>(arr: T[], compareFn?: (a: T, b: T) => number): T[] {
-    const compare = compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
+    const compare =
+      compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
     const result = [...arr];
     const n = result.length;
 
@@ -137,7 +145,8 @@ export class SortingAlgorithms {
    * Efficient for small arrays, stable
    */
   static insertionSort<T>(arr: T[], compareFn?: (a: T, b: T) => number): T[] {
-    const compare = compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
+    const compare =
+      compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
     const result = [...arr];
 
     for (let i = 1; i < result.length; i++) {
@@ -238,8 +247,13 @@ export class SearchingAlgorithms {
    * Binary Search - O(log n)
    * Array must be sorted
    */
-  static binarySearch<T>(arr: T[], target: T, compareFn?: (a: T, b: T) => number): number {
-    const compare = compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
+  static binarySearch<T>(
+    arr: T[],
+    target: T,
+    compareFn?: (a: T, b: T) => number
+  ): number {
+    const compare =
+      compareFn || ((a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0));
     let left = 0;
     let right = arr.length - 1;
 
@@ -301,9 +315,11 @@ export class SearchingAlgorithms {
         return arr[low] === target ? low : -1;
       }
 
-      const pos = low + Math.floor(
-        ((high - low) / (arr[high] - arr[low])) * (target - arr[low])
-      );
+      const pos =
+        low +
+        Math.floor(
+          ((high - low) / (arr[high] - arr[low])) * (target - arr[low])
+        );
 
       if (arr[pos] === target) return pos;
       if (arr[pos] < target) low = pos + 1;
@@ -325,10 +341,20 @@ export class SearchingAlgorithms {
       i *= 2;
     }
 
-    return this.binarySearchRange(arr, target, i / 2, Math.min(i, arr.length - 1));
+    return this.binarySearchRange(
+      arr,
+      target,
+      i / 2,
+      Math.min(i, arr.length - 1)
+    );
   }
 
-  private static binarySearchRange(arr: number[], target: number, left: number, right: number): number {
+  private static binarySearchRange(
+    arr: number[],
+    target: number,
+    left: number,
+    right: number
+  ): number {
     while (left <= right) {
       const mid = Math.floor((left + right) / 2);
 
@@ -458,7 +484,9 @@ export class StringAlgorithms {
   static longestCommonSubsequence(str1: string, str2: string): string {
     const m = str1.length;
     const n = str2.length;
-    const dp: number[][] = Array(m + 1).fill(0).map(() => Array(n + 1).fill(0));
+    const dp: number[][] = Array(m + 1)
+      .fill(0)
+      .map(() => Array(n + 1).fill(0));
 
     for (let i = 1; i <= m; i++) {
       for (let j = 1; j <= n; j++) {
@@ -472,7 +500,8 @@ export class StringAlgorithms {
 
     // Reconstruct LCS
     let lcs = '';
-    let i = m, j = n;
+    let i = m,
+      j = n;
 
     while (i > 0 && j > 0) {
       if (str1[i - 1] === str2[j - 1]) {
@@ -495,7 +524,9 @@ export class StringAlgorithms {
   static longestCommonSubstring(str1: string, str2: string): string {
     const m = str1.length;
     const n = str2.length;
-    const dp: number[][] = Array(m + 1).fill(0).map(() => Array(n + 1).fill(0));
+    const dp: number[][] = Array(m + 1)
+      .fill(0)
+      .map(() => Array(n + 1).fill(0));
     let maxLength = 0;
     let endIndex = 0;
 
@@ -520,7 +551,9 @@ export class StringAlgorithms {
   static editDistance(str1: string, str2: string): number {
     const m = str1.length;
     const n = str2.length;
-    const dp: number[][] = Array(m + 1).fill(0).map(() => Array(n + 1).fill(0));
+    const dp: number[][] = Array(m + 1)
+      .fill(0)
+      .map(() => Array(n + 1).fill(0));
 
     for (let i = 0; i <= m; i++) dp[i][0] = i;
     for (let j = 0; j <= n; j++) dp[0][j] = j;
@@ -530,11 +563,13 @@ export class StringAlgorithms {
         if (str1[i - 1] === str2[j - 1]) {
           dp[i][j] = dp[i - 1][j - 1];
         } else {
-          dp[i][j] = 1 + Math.min(
-            dp[i - 1][j],     // Delete
-            dp[i][j - 1],     // Insert
-            dp[i - 1][j - 1]  // Replace
-          );
+          dp[i][j] =
+            1 +
+            Math.min(
+              dp[i - 1][j], // Delete
+              dp[i][j - 1], // Insert
+              dp[i - 1][j - 1] // Replace
+            );
         }
       }
     }
@@ -552,7 +587,8 @@ export class StringAlgorithms {
     const z = new Array(n).fill(0);
     const positions: number[] = [];
 
-    let left = 0, right = 0;
+    let left = 0,
+      right = 0;
 
     for (let i = 1; i < n; i++) {
       if (i > right) {
@@ -610,9 +646,15 @@ export class DynamicProgramming {
   /**
    * 0/1 Knapsack - O(n * W)
    */
-  static knapsack(weights: number[], values: number[], capacity: number): number {
+  static knapsack(
+    weights: number[],
+    values: number[],
+    capacity: number
+  ): number {
     const n = weights.length;
-    const dp: number[][] = Array(n + 1).fill(0).map(() => Array(capacity + 1).fill(0));
+    const dp: number[][] = Array(n + 1)
+      .fill(0)
+      .map(() => Array(capacity + 1).fill(0));
 
     for (let i = 1; i <= n; i++) {
       for (let w = 1; w <= capacity; w++) {
@@ -682,7 +724,9 @@ export class DynamicProgramming {
    */
   static matrixChainMultiplication(dimensions: number[]): number {
     const n = dimensions.length - 1;
-    const dp: number[][] = Array(n).fill(0).map(() => Array(n).fill(0));
+    const dp: number[][] = Array(n)
+      .fill(0)
+      .map(() => Array(n).fill(0));
 
     for (let len = 2; len <= n; len++) {
       for (let i = 0; i < n - len + 1; i++) {
@@ -690,8 +734,10 @@ export class DynamicProgramming {
         dp[i][j] = Infinity;
 
         for (let k = i; k < j; k++) {
-          const cost = dp[i][k] + dp[k + 1][j] +
-                      dimensions[i] * dimensions[k + 1] * dimensions[j + 1];
+          const cost =
+            dp[i][k] +
+            dp[k + 1][j] +
+            dimensions[i] * dimensions[k + 1] * dimensions[j + 1];
           dp[i][j] = Math.min(dp[i][j], cost);
         }
       }
@@ -770,7 +816,7 @@ export class MathAlgorithms {
       }
     }
 
-    return isPrime.map((val, idx) => val ? idx : -1).filter(x => x !== -1);
+    return isPrime.map((val, idx) => (val ? idx : -1)).filter((x) => x !== -1);
   }
 
   /**
@@ -816,7 +862,7 @@ export class MathAlgorithms {
 
     let result = 1;
     for (let i = 0; i < r; i++) {
-      result = result * (n - i) / (i + 1);
+      result = (result * (n - i)) / (i + 1);
     }
 
     return Math.round(result);
@@ -829,7 +875,7 @@ export class MathAlgorithms {
     if (r > n) return 0;
     let result = 1;
     for (let i = 0; i < r; i++) {
-      result *= (n - i);
+      result *= n - i;
     }
     return result;
   }
@@ -844,5 +890,5 @@ export default {
   Searching: SearchingAlgorithms,
   String: StringAlgorithms,
   DP: DynamicProgramming,
-  Math: MathAlgorithms
+  Math: MathAlgorithms,
 };

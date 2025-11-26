@@ -18,19 +18,25 @@ interface MentionHashtagInputProps {
 export default function MentionHashtagInput({
   value,
   onChange,
-  placeholder = 'What\'s on your mind?',
+  placeholder = "What's on your mind?",
   maxLength,
   rows = 4,
   autoFocus = false,
   style = {},
-  className = ''
+  className = '',
 }: MentionHashtagInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [showAutocomplete, setShowAutocomplete] = useState(false);
-  const [autocompleteType, setAutocompleteType] = useState<'mention' | 'hashtag'>('mention');
+  const [autocompleteType, setAutocompleteType] = useState<
+    'mention' | 'hashtag'
+  >('mention');
   const [autocompleteQuery, setAutocompleteQuery] = useState('');
-  const [autocompletePosition, setAutocompletePosition] = useState({ top: 0, left: 0 });
-  const [currentWordContext, setCurrentWordContext] = useState<ReturnType<typeof getCurrentWord>>(null);
+  const [autocompletePosition, setAutocompletePosition] = useState({
+    top: 0,
+    left: 0,
+  });
+  const [currentWordContext, setCurrentWordContext] =
+    useState<ReturnType<typeof getCurrentWord>>(null);
 
   // Update autocomplete state when text or cursor position changes
   const updateAutocomplete = useCallback(() => {
@@ -42,7 +48,10 @@ export default function MentionHashtagInput({
 
     setCurrentWordContext(wordContext);
 
-    if (wordContext && (wordContext.type === 'mention' || wordContext.type === 'hashtag')) {
+    if (
+      wordContext &&
+      (wordContext.type === 'mention' || wordContext.type === 'hashtag')
+    ) {
       // Calculate position for autocomplete dropdown
       const textBeforeCursor = value.substring(0, cursorPosition);
       const lines = textBeforeCursor.split('\n');
@@ -55,7 +64,7 @@ export default function MentionHashtagInput({
 
       setAutocompletePosition({
         top: rect.top + topOffset + window.scrollY,
-        left: rect.left + 12 + window.scrollX
+        left: rect.left + 12 + window.scrollX,
       });
 
       setAutocompleteType(wordContext.type);
@@ -87,7 +96,8 @@ export default function MentionHashtagInput({
     // Set cursor position after the inserted text
     setTimeout(() => {
       if (textareaRef.current) {
-        const newCursorPos = beforeWord.length + prefix.length + selectedValue.length + 1;
+        const newCursorPos =
+          beforeWord.length + prefix.length + selectedValue.length + 1;
         textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
         textareaRef.current.focus();
       }

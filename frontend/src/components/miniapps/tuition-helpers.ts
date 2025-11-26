@@ -13,30 +13,35 @@ export interface User {
 export const authService = {
   login: async (email: string, password: string): Promise<User> => {
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const user: User = {
       id: `user_${Date.now()}`,
       email,
       name: email.split('@')[0],
       role: email.includes('teacher') ? 'teacher' : 'student',
-      token: `jwt_${btoa(email)}_${Date.now()}`
+      token: `jwt_${btoa(email)}_${Date.now()}`,
     };
 
     localStorage.setItem('tuition_user', JSON.stringify(user));
     return user;
   },
 
-  signup: async (email: string, password: string, name: string, role: 'student' | 'teacher'): Promise<User> => {
+  signup: async (
+    email: string,
+    password: string,
+    name: string,
+    role: 'student' | 'teacher'
+  ): Promise<User> => {
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const user: User = {
       id: `user_${Date.now()}`,
       email,
       name,
       role,
-      token: `jwt_${btoa(email)}_${Date.now()}`
+      token: `jwt_${btoa(email)}_${Date.now()}`,
     };
 
     localStorage.setItem('tuition_user', JSON.stringify(user));
@@ -54,7 +59,7 @@ export const authService = {
 
   isAuthenticated: (): boolean => {
     return !!localStorage.getItem('tuition_user');
-  }
+  },
 };
 
 // 2. Payment Helper (Razorpay Integration)
@@ -71,17 +76,21 @@ export const paymentService = {
 
   createOrder: async (amount: number, classId: string): Promise<any> => {
     // Simulate API call to create order
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     return {
       id: `order_${Date.now()}`,
       amount: amount * 100, // Razorpay uses paise
       currency: 'INR',
-      classId
+      classId,
     };
   },
 
-  processPayment: async (amount: number, classId: string, className: string): Promise<boolean> => {
+  processPayment: async (
+    amount: number,
+    classId: string,
+    className: string
+  ): Promise<boolean> => {
     const res = await paymentService.initializeRazorpay();
 
     if (!res) {
@@ -107,10 +116,12 @@ export const paymentService = {
             signature: response.razorpay_signature,
             classId,
             amount: amount,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           };
 
-          const payments = JSON.parse(localStorage.getItem('tuition_payments') || '[]');
+          const payments = JSON.parse(
+            localStorage.getItem('tuition_payments') || '[]'
+          );
           payments.push(payment);
           localStorage.setItem('tuition_payments', JSON.stringify(payments));
 
@@ -118,23 +129,23 @@ export const paymentService = {
         },
         prefill: {
           name: authService.getCurrentUser()?.name || '',
-          email: authService.getCurrentUser()?.email || ''
+          email: authService.getCurrentUser()?.email || '',
         },
         theme: {
-          color: '#ff4d44'
+          color: '#ff4d44',
         },
         modal: {
-          ondismiss: function() {
+          ondismiss: function () {
             resolve(false);
-          }
-        }
+          },
+        },
       };
 
       // @ts-ignore
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     });
-  }
+  },
 };
 
 // 3. Database/API Helper
@@ -144,13 +155,13 @@ export const apiService = {
   get: async (endpoint: string) => {
     // Simulate API call - replace with actual fetch
     const data = localStorage.getItem(`tuition_${endpoint}`);
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     return data ? JSON.parse(data) : [];
   },
 
   post: async (endpoint: string, data: any) => {
     // Simulate API call - replace with actual fetch
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     const existing = localStorage.getItem(`tuition_${endpoint}`) || '[]';
     const items = JSON.parse(existing);
     items.push({ ...data, id: `${endpoint}_${Date.now()}` });
@@ -160,7 +171,7 @@ export const apiService = {
 
   put: async (endpoint: string, id: string, data: any) => {
     // Simulate API call - replace with actual fetch
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     const existing = localStorage.getItem(`tuition_${endpoint}`) || '[]';
     const items = JSON.parse(existing);
     const index = items.findIndex((item: any) => item.id === id);
@@ -174,13 +185,13 @@ export const apiService = {
 
   delete: async (endpoint: string, id: string) => {
     // Simulate API call - replace with actual fetch
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     const existing = localStorage.getItem(`tuition_${endpoint}`) || '[]';
     const items = JSON.parse(existing);
     const filtered = items.filter((item: any) => item.id !== id);
     localStorage.setItem(`tuition_${endpoint}`, JSON.stringify(filtered));
     return true;
-  }
+  },
 };
 
 // 4. Notification Helper
@@ -188,18 +199,23 @@ export const notificationService = {
   sendEmail: async (to: string, subject: string, body: string) => {
     // Simulate email sending - replace with actual email service (SendGrid, etc.)
 
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     // Log notification
-    const notifications = JSON.parse(localStorage.getItem('tuition_notifications') || '[]');
+    const notifications = JSON.parse(
+      localStorage.getItem('tuition_notifications') || '[]'
+    );
     notifications.push({
       type: 'email',
       to,
       subject,
       body,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-    localStorage.setItem('tuition_notifications', JSON.stringify(notifications));
+    localStorage.setItem(
+      'tuition_notifications',
+      JSON.stringify(notifications)
+    );
 
     return true;
   },
@@ -207,22 +223,31 @@ export const notificationService = {
   sendSMS: async (to: string, message: string) => {
     // Simulate SMS sending - replace with actual SMS service (Twilio, MSG91, etc.)
 
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     // Log notification
-    const notifications = JSON.parse(localStorage.getItem('tuition_notifications') || '[]');
+    const notifications = JSON.parse(
+      localStorage.getItem('tuition_notifications') || '[]'
+    );
     notifications.push({
       type: 'sms',
       to,
       message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-    localStorage.setItem('tuition_notifications', JSON.stringify(notifications));
+    localStorage.setItem(
+      'tuition_notifications',
+      JSON.stringify(notifications)
+    );
 
     return true;
   },
 
-  sendClassReminder: async (studentEmail: string, className: string, schedule: string) => {
+  sendClassReminder: async (
+    studentEmail: string,
+    className: string,
+    schedule: string
+  ) => {
     const subject = `Reminder: ${className} Class Starting Soon`;
     const body = `Your class "${className}" is scheduled for ${schedule}. Don't forget to join!`;
 
@@ -232,12 +257,16 @@ export const notificationService = {
     // await notificationService.sendSMS(studentPhone, `Class reminder: ${className} at ${schedule}`);
   },
 
-  sendEnrollmentConfirmation: async (studentEmail: string, className: string, amount: number) => {
+  sendEnrollmentConfirmation: async (
+    studentEmail: string,
+    className: string,
+    amount: number
+  ) => {
     const subject = `Enrollment Confirmed: ${className}`;
     const body = `You've successfully enrolled in "${className}" for ₹${amount}. We're excited to have you!`;
 
     await notificationService.sendEmail(studentEmail, subject, body);
-  }
+  },
 };
 
 // 5. Calendar Helper (Google Calendar Integration)
@@ -249,7 +278,12 @@ export const calendarService = {
     document.body.appendChild(script);
   },
 
-  createCalendarEvent: async (title: string, description: string, startTime: string, endTime: string) => {
+  createCalendarEvent: async (
+    title: string,
+    description: string,
+    startTime: string,
+    endTime: string
+  ) => {
     // Simulate calendar event creation
     const event = {
       id: `event_${Date.now()}`,
@@ -257,10 +291,12 @@ export const calendarService = {
       description,
       startTime,
       endTime,
-      created: new Date().toISOString()
+      created: new Date().toISOString(),
     };
 
-    const events = JSON.parse(localStorage.getItem('tuition_calendar_events') || '[]');
+    const events = JSON.parse(
+      localStorage.getItem('tuition_calendar_events') || '[]'
+    );
     events.push(event);
     localStorage.setItem('tuition_calendar_events', JSON.stringify(events));
 
@@ -288,35 +324,46 @@ END:VCALENDAR`;
         a.href = url;
         a.download = `${title.replace(/\s+/g, '_')}.ics`;
         a.click();
-      }
+      },
     };
   },
 
-  addToGoogleCalendar: (title: string, description: string, startTime: string, endTime: string) => {
+  addToGoogleCalendar: (
+    title: string,
+    description: string,
+    startTime: string,
+    endTime: string
+  ) => {
     // Open Google Calendar with pre-filled event
     const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&details=${encodeURIComponent(description)}&dates=${startTime.replace(/[-:]/g, '').split('.')[0]}Z/${endTime.replace(/[-:]/g, '').split('.')[0]}Z`;
     window.open(googleCalendarUrl, '_blank');
-  }
+  },
 };
 
 // 6. Analytics Helper
 export const analyticsService = {
-  trackEvent: (category: string, action: string, label?: string, value?: number) => {
+  trackEvent: (
+    category: string,
+    action: string,
+    label?: string,
+    value?: number
+  ) => {
     const event = {
       category,
       action,
       label,
       value,
       timestamp: new Date().toISOString(),
-      userId: authService.getCurrentUser()?.id
+      userId: authService.getCurrentUser()?.id,
     };
 
-    const events = JSON.parse(localStorage.getItem('tuition_analytics_events') || '[]');
+    const events = JSON.parse(
+      localStorage.getItem('tuition_analytics_events') || '[]'
+    );
     events.push(event);
     localStorage.setItem('tuition_analytics_events', JSON.stringify(events));
 
     // Send to analytics service (Google Analytics, Mixpanel, etc.)
-
   },
 
   trackPageView: (page: string) => {
@@ -332,23 +379,30 @@ export const analyticsService = {
   },
 
   getAnalytics: () => {
-    const events = JSON.parse(localStorage.getItem('tuition_analytics_events') || '[]');
+    const events = JSON.parse(
+      localStorage.getItem('tuition_analytics_events') || '[]'
+    );
 
     // Calculate metrics
     const totalEvents = events.length;
     const enrollments = events.filter((e: any) => e.action === 'Enroll');
     const payments = events.filter((e: any) => e.action === 'Complete');
-    const totalRevenue = payments.reduce((sum: number, e: any) => sum + (e.value || 0), 0);
+    const totalRevenue = payments.reduce(
+      (sum: number, e: any) => sum + (e.value || 0),
+      0
+    );
 
     return {
       totalEvents,
       totalEnrollments: enrollments.length,
       totalPayments: payments.length,
       totalRevenue,
-      averageOrderValue: payments.length > 0 ? totalRevenue / payments.length : 0,
-      conversionRate: totalEvents > 0 ? (enrollments.length / totalEvents) * 100 : 0
+      averageOrderValue:
+        payments.length > 0 ? totalRevenue / payments.length : 0,
+      conversionRate:
+        totalEvents > 0 ? (enrollments.length / totalEvents) * 100 : 0,
     };
-  }
+  },
 };
 
 // 7. WebRTC Video Helper
@@ -366,8 +420,8 @@ export class VideoCallService {
     const configuration = {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' }
-      ]
+        { urls: 'stun:stun1.l.google.com:19302' },
+      ],
     };
 
     this.peerConnection = new RTCPeerConnection(configuration);
@@ -375,7 +429,6 @@ export class VideoCallService {
     this.peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         // Send candidate to remote peer via signaling server
-
       }
     };
 
@@ -392,19 +445,19 @@ export class VideoCallService {
       this.localStream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: 1280 },
-          height: { ideal: 720 }
+          height: { ideal: 720 },
         },
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
-          autoGainControl: true
-        }
+          autoGainControl: true,
+        },
       });
 
       videoElement.srcObject = this.localStream;
 
       // Add tracks to peer connection
-      this.localStream.getTracks().forEach(track => {
+      this.localStream.getTracks().forEach((track) => {
         if (this.localStream && this.peerConnection) {
           this.peerConnection.addTrack(track, this.localStream);
         }
@@ -412,7 +465,6 @@ export class VideoCallService {
 
       return this.localStream;
     } catch (error) {
-
       throw error;
     }
   }
@@ -422,14 +474,16 @@ export class VideoCallService {
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: {
           // @ts-ignore - cursor is a valid property but not in TypeScript types
-          cursor: 'always'
+          cursor: 'always',
         } as MediaTrackConstraints,
-        audio: false
+        audio: false,
       });
 
       // Replace video track with screen share track
       const videoTrack = screenStream.getVideoTracks()[0];
-      const sender = this.peerConnection?.getSenders().find(s => s.track?.kind === 'video');
+      const sender = this.peerConnection
+        ?.getSenders()
+        .find((s) => s.track?.kind === 'video');
 
       if (sender) {
         sender.replaceTrack(videoTrack);
@@ -445,14 +499,13 @@ export class VideoCallService {
 
       return screenStream;
     } catch (error) {
-
       throw error;
     }
   }
 
   toggleAudio(enabled: boolean) {
     if (this.localStream) {
-      this.localStream.getAudioTracks().forEach(track => {
+      this.localStream.getAudioTracks().forEach((track) => {
         track.enabled = enabled;
       });
     }
@@ -460,7 +513,7 @@ export class VideoCallService {
 
   toggleVideo(enabled: boolean) {
     if (this.localStream) {
-      this.localStream.getVideoTracks().forEach(track => {
+      this.localStream.getVideoTracks().forEach((track) => {
         track.enabled = enabled;
       });
     }
@@ -499,7 +552,7 @@ export class VideoCallService {
 
   stopCall() {
     if (this.localStream) {
-      this.localStream.getTracks().forEach(track => track.stop());
+      this.localStream.getTracks().forEach((track) => track.stop());
     }
 
     if (this.peerConnection) {

@@ -17,17 +17,19 @@ describe('PasswordStrength', () => {
 
     it('shows all strength criteria', () => {
       render(<PasswordStrength password="" />);
-      
+
       expect(screen.getByText('At least 8 characters')).toBeInTheDocument();
       expect(screen.getByText('Contains uppercase letter')).toBeInTheDocument();
       expect(screen.getByText('Contains lowercase letter')).toBeInTheDocument();
       expect(screen.getByText('Contains number')).toBeInTheDocument();
-      expect(screen.getByText('Contains special character')).toBeInTheDocument();
+      expect(
+        screen.getByText('Contains special character')
+      ).toBeInTheDocument();
     });
 
     it('shows strength meter', () => {
       render(<PasswordStrength password="" />);
-      
+
       const strengthMeter = screen.getByRole('progressbar');
       expect(strengthMeter).toBeInTheDocument();
     });
@@ -36,107 +38,123 @@ describe('PasswordStrength', () => {
   describe('Password Validation', () => {
     it('validates minimum length requirement', () => {
       const { rerender } = render(<PasswordStrength password="short" />);
-      
+
       // Short password should not meet length requirement
-      expect(screen.getByText('At least 8 characters')).toHaveClass('text-red-500');
-      
+      expect(screen.getByText('At least 8 characters')).toHaveClass(
+        'text-red-500'
+      );
+
       rerender(<PasswordStrength password="longenough" />);
-      
+
       // Long enough password should meet length requirement
-      expect(screen.getByText('At least 8 characters')).toHaveClass('text-green-500');
+      expect(screen.getByText('At least 8 characters')).toHaveClass(
+        'text-green-500'
+      );
     });
 
     it('validates uppercase letter requirement', () => {
       const { rerender } = render(<PasswordStrength password="lowercase" />);
-      
+
       // No uppercase should fail
-      expect(screen.getByText('Contains uppercase letter')).toHaveClass('text-red-500');
-      
+      expect(screen.getByText('Contains uppercase letter')).toHaveClass(
+        'text-red-500'
+      );
+
       rerender(<PasswordStrength password="Uppercase" />);
-      
+
       // With uppercase should pass
-      expect(screen.getByText('Contains uppercase letter')).toHaveClass('text-green-500');
+      expect(screen.getByText('Contains uppercase letter')).toHaveClass(
+        'text-green-500'
+      );
     });
 
     it('validates lowercase letter requirement', () => {
       const { rerender } = render(<PasswordStrength password="UPPERCASE" />);
-      
+
       // No lowercase should fail
-      expect(screen.getByText('Contains lowercase letter')).toHaveClass('text-red-500');
-      
+      expect(screen.getByText('Contains lowercase letter')).toHaveClass(
+        'text-red-500'
+      );
+
       rerender(<PasswordStrength password="lowercase" />);
-      
+
       // With lowercase should pass
-      expect(screen.getByText('Contains lowercase letter')).toHaveClass('text-green-500');
+      expect(screen.getByText('Contains lowercase letter')).toHaveClass(
+        'text-green-500'
+      );
     });
 
     it('validates number requirement', () => {
       const { rerender } = render(<PasswordStrength password="NoNumbers" />);
-      
+
       // No numbers should fail
       expect(screen.getByText('Contains number')).toHaveClass('text-red-500');
-      
+
       rerender(<PasswordStrength password="WithNumber1" />);
-      
+
       // With number should pass
       expect(screen.getByText('Contains number')).toHaveClass('text-green-500');
     });
 
     it('validates special character requirement', () => {
       const { rerender } = render(<PasswordStrength password="NoSpecial" />);
-      
+
       // No special characters should fail
-      expect(screen.getByText('Contains special character')).toHaveClass('text-red-500');
-      
+      expect(screen.getByText('Contains special character')).toHaveClass(
+        'text-red-500'
+      );
+
       rerender(<PasswordStrength password="WithSpecial!" />);
-      
+
       // With special character should pass
-      expect(screen.getByText('Contains special character')).toHaveClass('text-green-500');
+      expect(screen.getByText('Contains special character')).toHaveClass(
+        'text-green-500'
+      );
     });
   });
 
   describe('Strength Calculation', () => {
     it('shows very weak for empty password', () => {
       render(<PasswordStrength password="" />);
-      
+
       expect(screen.getByText('Very Weak')).toBeInTheDocument();
-      
+
       const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toHaveAttribute('aria-valuenow', '0');
     });
 
     it('shows weak for password meeting few criteria', () => {
       render(<PasswordStrength password="weak" />);
-      
+
       expect(screen.getByText('Weak')).toBeInTheDocument();
-      
+
       const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toHaveAttribute('aria-valuenow', '20');
     });
 
     it('shows fair for password meeting some criteria', () => {
       render(<PasswordStrength password="Fair123" />);
-      
+
       expect(screen.getByText('Fair')).toBeInTheDocument();
-      
+
       const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toHaveAttribute('aria-valuenow', '60');
     });
 
     it('shows good for password meeting most criteria', () => {
       render(<PasswordStrength password="GoodPass123" />);
-      
+
       expect(screen.getByText('Good')).toBeInTheDocument();
-      
+
       const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toHaveAttribute('aria-valuenow', '80');
     });
 
     it('shows strong for password meeting all criteria', () => {
       render(<PasswordStrength password="StrongPass123!" />);
-      
+
       expect(screen.getByText('Strong')).toBeInTheDocument();
-      
+
       const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toHaveAttribute('aria-valuenow', '100');
     });
@@ -145,45 +163,45 @@ describe('PasswordStrength', () => {
   describe('Visual Indicators', () => {
     it('uses correct colors for strength levels', () => {
       const { rerender } = render(<PasswordStrength password="" />);
-      
+
       // Very weak - red
       expect(screen.getByText('Very Weak')).toHaveClass('text-red-600');
-      
+
       rerender(<PasswordStrength password="weak" />);
-      
+
       // Weak - red
       expect(screen.getByText('Weak')).toHaveClass('text-red-500');
-      
+
       rerender(<PasswordStrength password="Fair123" />);
-      
+
       // Fair - yellow
       expect(screen.getByText('Fair')).toHaveClass('text-yellow-500');
-      
+
       rerender(<PasswordStrength password="GoodPass123" />);
-      
+
       // Good - blue
       expect(screen.getByText('Good')).toHaveClass('text-blue-500');
-      
+
       rerender(<PasswordStrength password="StrongPass123!" />);
-      
+
       // Strong - green
       expect(screen.getByText('Strong')).toHaveClass('text-green-500');
     });
 
     it('shows progress bar with correct width', () => {
       const { rerender } = render(<PasswordStrength password="Fair123" />);
-      
+
       const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toHaveStyle('width: 60%');
-      
+
       rerender(<PasswordStrength password="StrongPass123!" />);
-      
+
       expect(progressBar).toHaveStyle('width: 100%');
     });
 
     it('shows checkmarks for met criteria', () => {
       render(<PasswordStrength password="StrongPass123!" />);
-      
+
       // All criteria should show checkmarks (✓)
       const checkmarks = screen.getAllByText('✓');
       expect(checkmarks).toHaveLength(5);
@@ -191,7 +209,7 @@ describe('PasswordStrength', () => {
 
     it('shows X marks for unmet criteria', () => {
       render(<PasswordStrength password="weak" />);
-      
+
       // Most criteria should show X marks
       const xMarks = screen.getAllByText('✗');
       expect(xMarks.length).toBeGreaterThan(0);
@@ -201,25 +219,25 @@ describe('PasswordStrength', () => {
   describe('Advanced Validation', () => {
     it('detects common patterns', () => {
       render(<PasswordStrength password="123456789" showAdvanced={true} />);
-      
+
       expect(screen.getByText('Avoid common patterns')).toBeInTheDocument();
     });
 
     it('validates character diversity', () => {
       render(<PasswordStrength password="aaaaaaaaA1!" showAdvanced={true} />);
-      
+
       expect(screen.getByText('Good character diversity')).toBeInTheDocument();
     });
 
     it('checks for dictionary words', () => {
       render(<PasswordStrength password="password123!" showAdvanced={true} />);
-      
+
       expect(screen.getByText('Avoid dictionary words')).toBeInTheDocument();
     });
 
     it('validates against common passwords', () => {
       render(<PasswordStrength password="Password123!" showAdvanced={true} />);
-      
+
       expect(screen.getByText('Not a common password')).toBeInTheDocument();
     });
   });
@@ -227,7 +245,7 @@ describe('PasswordStrength', () => {
   describe('Accessibility', () => {
     it('has proper ARIA attributes', () => {
       render(<PasswordStrength password="test" />);
-      
+
       const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toHaveAttribute('aria-label', 'Password strength');
       expect(progressBar).toHaveAttribute('aria-valuenow');
@@ -237,14 +255,14 @@ describe('PasswordStrength', () => {
 
     it('provides screen reader friendly text', () => {
       render(<PasswordStrength password="StrongPass123!" />);
-      
+
       const strengthText = screen.getByText('Strong');
       expect(strengthText).toHaveAttribute('aria-live', 'polite');
     });
 
     it('has proper color contrast', () => {
       render(<PasswordStrength password="StrongPass123!" />);
-      
+
       // Green text should have sufficient contrast
       const strongText = screen.getByText('Strong');
       expect(strongText).toHaveClass('text-green-500');
@@ -254,21 +272,23 @@ describe('PasswordStrength', () => {
   describe('Performance', () => {
     it('updates efficiently on password change', () => {
       const { rerender } = render(<PasswordStrength password="test" />);
-      
+
       // Multiple rapid updates should not cause performance issues
       for (let i = 0; i < 10; i++) {
         rerender(<PasswordStrength password={`test${i}`} />);
       }
-      
+
       expect(screen.getByText('Password Strength')).toBeInTheDocument();
     });
 
     it('memoizes expensive calculations', () => {
-      const { rerender } = render(<PasswordStrength password="ComplexPassword123!" />);
-      
+      const { rerender } = render(
+        <PasswordStrength password="ComplexPassword123!" />
+      );
+
       // Re-render with same password should use memoized result
       rerender(<PasswordStrength password="ComplexPassword123!" />);
-      
+
       expect(screen.getByText('Strong')).toBeInTheDocument();
     });
   });
@@ -277,33 +297,33 @@ describe('PasswordStrength', () => {
     it('handles very long passwords', () => {
       const longPassword = 'a'.repeat(1000) + 'A1!';
       render(<PasswordStrength password={longPassword} />);
-      
+
       expect(screen.getByText('Password Strength')).toBeInTheDocument();
     });
 
     it('handles special Unicode characters', () => {
       render(<PasswordStrength password="Pässwörd123!🔒" />);
-      
+
       expect(screen.getByText('Password Strength')).toBeInTheDocument();
     });
 
     it('handles empty and whitespace passwords', () => {
       const { rerender } = render(<PasswordStrength password="" />);
-      
+
       expect(screen.getByText('Very Weak')).toBeInTheDocument();
-      
+
       rerender(<PasswordStrength password="   " />);
-      
+
       expect(screen.getByText('Very Weak')).toBeInTheDocument();
     });
 
     it('handles null and undefined passwords', () => {
       const { rerender } = render(<PasswordStrength password={null as any} />);
-      
+
       expect(screen.getByText('Very Weak')).toBeInTheDocument();
-      
+
       rerender(<PasswordStrength password={undefined as any} />);
-      
+
       expect(screen.getByText('Very Weak')).toBeInTheDocument();
     });
   });
@@ -311,21 +331,25 @@ describe('PasswordStrength', () => {
   describe('Customization', () => {
     it('accepts custom className', () => {
       render(<PasswordStrength password="test" className="custom-class" />);
-      
-      const container = screen.getByText('Password Strength').closest('.custom-class');
+
+      const container = screen
+        .getByText('Password Strength')
+        .closest('.custom-class');
       expect(container).toBeInTheDocument();
     });
 
     it('supports custom minimum length', () => {
       render(<PasswordStrength password="short" minLength={12} />);
-      
+
       expect(screen.getByText('At least 12 characters')).toBeInTheDocument();
     });
 
     it('allows hiding specific criteria', () => {
       render(<PasswordStrength password="test" hideLength={true} />);
-      
-      expect(screen.queryByText('At least 8 characters')).not.toBeInTheDocument();
+
+      expect(
+        screen.queryByText('At least 8 characters')
+      ).not.toBeInTheDocument();
     });
 
     it('supports custom strength labels', () => {
@@ -335,10 +359,15 @@ describe('PasswordStrength', () => {
         40: 'Okay',
         60: 'Better',
         80: 'Great',
-        100: 'Perfect'
+        100: 'Perfect',
       };
 
-      render(<PasswordStrength password="StrongPass123!" strengthLabels={customLabels} />);
+      render(
+        <PasswordStrength
+          password="StrongPass123!"
+          strengthLabels={customLabels}
+        />
+      );
 
       expect(screen.getByText('Perfect')).toBeInTheDocument();
     });
@@ -348,7 +377,9 @@ describe('PasswordStrength', () => {
     describe('Malicious Input Handling', () => {
       it('handles SQL injection attempts', () => {
         const sqlInjection = "'; DROP TABLE users; --";
-        const { container } = render(<PasswordStrength password={sqlInjection} />);
+        const { container } = render(
+          <PasswordStrength password={sqlInjection} />
+        );
 
         expect(container).toBeInTheDocument();
         // Should treat as normal password, not execute
@@ -357,7 +388,9 @@ describe('PasswordStrength', () => {
 
       it('handles XSS script injection', () => {
         const xssAttempt = '<script>alert("xss")</script>';
-        const { container } = render(<PasswordStrength password={xssAttempt} />);
+        const { container } = render(
+          <PasswordStrength password={xssAttempt} />
+        );
 
         expect(container).toBeInTheDocument();
         // Should not execute script
@@ -374,7 +407,9 @@ describe('PasswordStrength', () => {
 
       it('handles NULL bytes', () => {
         const nullBytePassword = 'password\x00admin';
-        const { container } = render(<PasswordStrength password={nullBytePassword} />);
+        const { container } = render(
+          <PasswordStrength password={nullBytePassword} />
+        );
 
         expect(container).toBeInTheDocument();
         expect(screen.getByRole('progressbar')).toBeInTheDocument();
@@ -382,7 +417,9 @@ describe('PasswordStrength', () => {
 
       it('handles Unicode exploits', () => {
         const unicodeExploit = 'admin\u202E\u202Duser';
-        const { container } = render(<PasswordStrength password={unicodeExploit} />);
+        const { container } = render(
+          <PasswordStrength password={unicodeExploit} />
+        );
 
         expect(container).toBeInTheDocument();
       });
@@ -391,7 +428,9 @@ describe('PasswordStrength', () => {
     describe('Extreme Input Sizes', () => {
       it('handles extremely long passwords (10,000 characters)', () => {
         const longPassword = 'A'.repeat(10000) + 'a1!';
-        const { container } = render(<PasswordStrength password={longPassword} />);
+        const { container } = render(
+          <PasswordStrength password={longPassword} />
+        );
 
         expect(container).toBeInTheDocument();
         // Should still calculate strength
@@ -400,7 +439,9 @@ describe('PasswordStrength', () => {
 
       it('handles extremely long passwords (100,000 characters)', () => {
         const veryLongPassword = 'A'.repeat(100000) + 'a1!';
-        const { container } = render(<PasswordStrength password={veryLongPassword} />);
+        const { container } = render(
+          <PasswordStrength password={veryLongPassword} />
+        );
 
         // Should render without hanging
         expect(container).toBeInTheDocument();
@@ -410,7 +451,9 @@ describe('PasswordStrength', () => {
         render(<PasswordStrength password="" />);
 
         expect(screen.getByText('Very Weak')).toBeInTheDocument();
-        expect(screen.getByText('Enter a password to check strength')).toBeInTheDocument();
+        expect(
+          screen.getByText('Enter a password to check strength')
+        ).toBeInTheDocument();
       });
 
       it('handles whitespace-only passwords', () => {
@@ -489,10 +532,14 @@ describe('PasswordStrength', () => {
           'VeryLongAndComplexPassword123!@#',
         ];
 
-        const { rerender } = render(<PasswordStrength password={passwords[0]} />);
+        const { rerender } = render(
+          <PasswordStrength password={passwords[0]} />
+        );
 
         for (let i = 0; i < 50; i++) {
-          rerender(<PasswordStrength password={passwords[i % passwords.length]} />);
+          rerender(
+            <PasswordStrength password={passwords[i % passwords.length]} />
+          );
         }
 
         expect(screen.getByRole('progressbar')).toBeInTheDocument();
@@ -534,7 +581,9 @@ describe('PasswordStrength', () => {
       it('detects repeated characters', () => {
         render(<PasswordStrength password="aaaaaaaa" />);
 
-        expect(screen.getByText(/Avoid repeated characters/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(/Avoid repeated characters/i)
+        ).toBeInTheDocument();
       });
 
       it('detects password variations', () => {
@@ -570,14 +619,18 @@ describe('PasswordStrength', () => {
       });
 
       it('handles null password gracefully', () => {
-        const { container } = render(<PasswordStrength password={null as any} />);
+        const { container } = render(
+          <PasswordStrength password={null as any} />
+        );
 
         expect(container).toBeInTheDocument();
         expect(screen.getByText('Very Weak')).toBeInTheDocument();
       });
 
       it('handles undefined password gracefully', () => {
-        const { container } = render(<PasswordStrength password={undefined as any} />);
+        const { container } = render(
+          <PasswordStrength password={undefined as any} />
+        );
 
         expect(container).toBeInTheDocument();
         expect(screen.getByText('Very Weak')).toBeInTheDocument();
@@ -642,13 +695,18 @@ describe('PasswordStrength', () => {
 
         rerender(<PasswordStrength password="StrongPassword123!" />);
 
-        expect(screen.getByText('Strong')).toHaveAttribute('aria-live', 'polite');
+        expect(screen.getByText('Strong')).toHaveAttribute(
+          'aria-live',
+          'polite'
+        );
       });
     });
 
     describe('Prop Validation Edge Cases', () => {
       it('handles negative minLength', () => {
-        const { container } = render(<PasswordStrength password="test" minLength={-5} />);
+        const { container } = render(
+          <PasswordStrength password="test" minLength={-5} />
+        );
 
         expect(container).toBeInTheDocument();
       });
@@ -656,29 +714,42 @@ describe('PasswordStrength', () => {
       it('handles extremely large minLength', () => {
         render(<PasswordStrength password="test" minLength={10000} />);
 
-        expect(screen.getByText('At least 10000 characters')).toBeInTheDocument();
+        expect(
+          screen.getByText('At least 10000 characters')
+        ).toBeInTheDocument();
       });
 
       it('handles showAdvanced toggle during render', () => {
-        const { rerender } = render(<PasswordStrength password="Password123!" showAdvanced={false} />);
+        const { rerender } = render(
+          <PasswordStrength password="Password123!" showAdvanced={false} />
+        );
 
-        rerender(<PasswordStrength password="Password123!" showAdvanced={true} />);
+        rerender(
+          <PasswordStrength password="Password123!" showAdvanced={true} />
+        );
 
         expect(screen.getByText(/character diversity/i)).toBeInTheDocument();
       });
 
       it('handles empty strengthLabels object', () => {
-        const { container } = render(<PasswordStrength password="Test123!" strengthLabels={{}} />);
+        const { container } = render(
+          <PasswordStrength password="Test123!" strengthLabels={{}} />
+        );
 
         expect(container).toBeInTheDocument();
       });
 
       it('handles partial strengthLabels', () => {
         const partialLabels = {
-          100: 'Great'
+          100: 'Great',
         };
 
-        render(<PasswordStrength password="StrongPass123!" strengthLabels={partialLabels} />);
+        render(
+          <PasswordStrength
+            password="StrongPass123!"
+            strengthLabels={partialLabels}
+          />
+        );
 
         expect(screen.getByText('Great')).toBeInTheDocument();
       });

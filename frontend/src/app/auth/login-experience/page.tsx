@@ -2,8 +2,22 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { Mail, Lock, ArrowRight, Eye, EyeOff, Sparkles, Zap, Star } from 'lucide-react';
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from 'framer-motion';
+import {
+  Mail,
+  Lock,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Sparkles,
+  Zap,
+  Star,
+} from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import confetti from 'canvas-confetti';
 import { useThemeColors } from '@/hooks/useThemeColors';
@@ -49,9 +63,14 @@ export default function LoginExperiencePage() {
       spread: 60,
       origin: {
         x: x / window.innerWidth,
-        y: y / window.innerHeight
+        y: y / window.innerHeight,
       },
-      colors: [colors.chart[0], colors.chart[3], colors.chart[7], colors.brand.primary],
+      colors: [
+        colors.chart[0],
+        colors.chart[3],
+        colors.chart[7],
+        colors.brand.primary,
+      ],
       ticks: 100,
     });
   };
@@ -62,7 +81,7 @@ export default function LoginExperiencePage() {
     if (!email || !password) {
       toast.error('Please fill in all fields', {
         icon: '⚠️',
-        style: { borderLeft: `4px solid ${colors.status.error}` }
+        style: { borderLeft: `4px solid ${colors.status.error}` },
       });
       return;
     }
@@ -72,7 +91,7 @@ export default function LoginExperiencePage() {
     if (!emailRegex.test(email)) {
       toast.error('Please enter a valid email address', {
         icon: '⚠️',
-        style: { borderLeft: `4px solid ${colors.status.error}` }
+        style: { borderLeft: `4px solid ${colors.status.error}` },
       });
       return;
     }
@@ -81,7 +100,7 @@ export default function LoginExperiencePage() {
     if (password.length < 6) {
       toast.error('Password must be at least 6 characters long', {
         icon: '⚠️',
-        style: { borderLeft: `4px solid ${colors.status.error}` }
+        style: { borderLeft: `4px solid ${colors.status.error}` },
       });
       return;
     }
@@ -125,7 +144,13 @@ export default function LoginExperiencePage() {
         particleCount: 150,
         spread: 120,
         origin: { y: 0.6 },
-        colors: [colors.chart[0], colors.chart[3], colors.chart[7], colors.brand.primary, colors.brand.secondary],
+        colors: [
+          colors.chart[0],
+          colors.chart[3],
+          colors.chart[7],
+          colors.brand.primary,
+          colors.brand.secondary,
+        ],
       });
 
       setTimeout(() => {
@@ -160,22 +185,25 @@ export default function LoginExperiencePage() {
       setTimeout(() => {
         router.push(decodeURIComponent(returnUrl));
       }, 2000);
-
     } catch (error: any) {
       console.error('Login error:', error);
-      
+
       // Show user-friendly error message
       let errorMessage = 'Login failed. Please try again.';
       if (error.message) {
         errorMessage = error.message;
-      } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        errorMessage = 'Unable to connect to server. Please check your internet connection.';
+      } else if (
+        error.name === 'TypeError' &&
+        error.message.includes('fetch')
+      ) {
+        errorMessage =
+          'Unable to connect to server. Please check your internet connection.';
       }
-      
+
       toast.error(errorMessage, {
         icon: '❌',
         style: { borderLeft: `4px solid ${colors.status.error}` },
-        duration: 4000
+        duration: 4000,
       });
       setIsLoading(false);
     }
@@ -204,25 +232,26 @@ export default function LoginExperiencePage() {
         }}
       >
         {/* Animated floating particles */}
-        {mounted && [...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-blue-400/30 rounded-full"
-            initial={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
-            }}
-            animate={{
-              y: [null, Math.random() * window.innerHeight],
-              x: [null, Math.random() * window.innerWidth],
-            }}
-            transition={{
-              duration: Math.random() * 20 + 10,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-        ))}
+        {mounted &&
+          [...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-blue-400/30 rounded-full"
+              initial={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+              }}
+              animate={{
+                y: [null, Math.random() * window.innerHeight],
+                x: [null, Math.random() * window.innerWidth],
+              }}
+              transition={{
+                duration: Math.random() * 20 + 10,
+                repeat: Infinity,
+                ease: 'linear',
+              }}
+            />
+          ))}
 
         {/* Cinematic background orbs with parallax */}
         <motion.div
@@ -236,7 +265,7 @@ export default function LoginExperiencePage() {
               x: [0, 100, 0],
               y: [0, 50, 0],
             }}
-            transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
             className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-gradient-to-br from-blue-400/40 to-indigo-400/40 rounded-full blur-3xl"
           />
           <motion.div
@@ -246,7 +275,7 @@ export default function LoginExperiencePage() {
               x: [0, -80, 0],
               y: [0, 80, 0],
             }}
-            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
             className="absolute -bottom-40 -right-40 w-[700px] h-[700px] bg-gradient-to-br from-purple-400/40 to-pink-400/40 rounded-full blur-3xl"
           />
         </motion.div>
@@ -262,7 +291,7 @@ export default function LoginExperiencePage() {
               x: [0, -60, 0],
               y: [0, -60, 0],
             }}
-            transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-indigo-400/30 to-blue-400/30 rounded-full blur-3xl"
           />
         </motion.div>
@@ -274,13 +303,13 @@ export default function LoginExperiencePage() {
               initial={{ opacity: 0, scale: 0.5, rotateY: -180 }}
               animate={{ opacity: 1, scale: 1, rotateY: 0 }}
               exit={{ opacity: 0, scale: 1.2 }}
-              transition={{ duration: 0.8, type: "spring", stiffness: 100 }}
+              transition={{ duration: 0.8, type: 'spring', stiffness: 100 }}
               className="text-center z-10"
             >
               <motion.div
                 initial={{ scale: 0, rotate: -360 }}
                 animate={{ scale: 1, rotate: 0 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
+                transition={{ delay: 0.2, type: 'spring', stiffness: 150 }}
                 className="relative inline-block"
               >
                 <motion.div
@@ -374,7 +403,8 @@ export default function LoginExperiencePage() {
                   <motion.div
                     className="absolute inset-0"
                     style={{
-                      background: 'linear-gradient(45deg, #3b82f6, #6366f1, #8b5cf6, #3b82f6)',
+                      background:
+                        'linear-gradient(45deg, #3b82f6, #6366f1, #8b5cf6, #3b82f6)',
                       backgroundSize: '400% 400%',
                     }}
                     animate={{
@@ -391,7 +421,11 @@ export default function LoginExperiencePage() {
                     <motion.div
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
-                      transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 200,
+                        delay: 0.1,
+                      }}
                       className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg relative cursor-pointer"
                       onClick={(e) => createParticleBurst(e.clientX, e.clientY)}
                     >
@@ -427,7 +461,11 @@ export default function LoginExperiencePage() {
                       Continue your journey
                       <motion.span
                         animate={{ rotate: [0, 14, -8, 14, 0] }}
-                        transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          repeatDelay: 1,
+                        }}
                       >
                         ✨
                       </motion.span>
@@ -453,11 +491,26 @@ export default function LoginExperiencePage() {
                         initial={{ x: '-100%' }}
                         transition={{ duration: 0.6 }}
                       />
-                      <svg className="w-5 h-5 relative z-10" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                      <svg
+                        className="w-5 h-5 relative z-10"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="#4285F4"
+                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                        />
+                        <path
+                          fill="#34A853"
+                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                        />
+                        <path
+                          fill="#FBBC05"
+                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                        />
+                        <path
+                          fill="#EA4335"
+                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                        />
                       </svg>
                       <span className="font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors relative z-10">
                         Continue with Google
@@ -498,9 +551,7 @@ export default function LoginExperiencePage() {
                         Email Address
                       </label>
                       <div className="relative group">
-                        <motion.div
-                          className="absolute left-4 top-1/2 -translate-y-1/2"
-                        >
+                        <motion.div className="absolute left-4 top-1/2 -translate-y-1/2">
                           <Mail className="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                         </motion.div>
                         <input
@@ -523,9 +574,7 @@ export default function LoginExperiencePage() {
                         Password
                       </label>
                       <div className="relative group">
-                        <motion.div
-                          className="absolute left-4 top-1/2 -translate-y-1/2"
-                        >
+                        <motion.div className="absolute left-4 top-1/2 -translate-y-1/2">
                           <Lock className="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                         </motion.div>
                         <input
@@ -541,7 +590,11 @@ export default function LoginExperiencePage() {
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         >
-                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          {showPassword ? (
+                            <EyeOff className="w-5 h-5" />
+                          ) : (
+                            <Eye className="w-5 h-5" />
+                          )}
                         </button>
                       </div>
                     </motion.div>
@@ -552,9 +605,7 @@ export default function LoginExperiencePage() {
                       transition={{ delay: 0.9 }}
                       className="flex items-center justify-between"
                     >
-                      <label
-                        className="flex items-center gap-2 cursor-pointer group"
-                      >
+                      <label className="flex items-center gap-2 cursor-pointer group">
                         <input
                           type="checkbox"
                           checked={rememberMe}
@@ -587,13 +638,20 @@ export default function LoginExperiencePage() {
                           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
                           initial={{ x: '-100%' }}
                           animate={{ x: isLoading ? '100%' : '-100%' }}
-                          transition={{ duration: 1, repeat: isLoading ? Infinity : 0 }}
+                          transition={{
+                            duration: 1,
+                            repeat: isLoading ? Infinity : 0,
+                          }}
                         />
                         {isLoading ? (
                           <>
                             <motion.div
                               animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              transition={{
+                                duration: 1,
+                                repeat: Infinity,
+                                ease: 'linear',
+                              }}
                               className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
                             />
                             <span>Signing in...</span>
@@ -644,26 +702,30 @@ export default function LoginExperiencePage() {
                 transition={{ delay: 1.2 }}
                 className="mt-8 flex items-center justify-center gap-8 text-sm text-gray-500 dark:text-gray-400"
               >
-                <div
-                  className="flex items-center gap-2"
-                >
+                <div className="flex items-center gap-2">
                   <motion.div
                     animate={{
                       scale: [1, 1.3, 1],
-                      boxShadow: ['0 0 0 0 rgba(16, 185, 129, 0.7)', '0 0 0 10px rgba(16, 185, 129, 0)', '0 0 0 0 rgba(16, 185, 129, 0)'],
+                      boxShadow: [
+                        '0 0 0 0 rgba(16, 185, 129, 0.7)',
+                        '0 0 0 10px rgba(16, 185, 129, 0)',
+                        '0 0 0 0 rgba(16, 185, 129, 0)',
+                      ],
                     }}
                     transition={{ duration: 2, repeat: Infinity }}
                     className="w-2 h-2 bg-green-500 rounded-full"
                   />
                   <span>Secure Login</span>
                 </div>
-                <div
-                  className="flex items-center gap-2"
-                >
+                <div className="flex items-center gap-2">
                   <motion.div
                     animate={{
                       scale: [1, 1.3, 1],
-                      boxShadow: ['0 0 0 0 rgba(16, 185, 129, 0.7)', '0 0 0 10px rgba(16, 185, 129, 0)', '0 0 0 0 rgba(16, 185, 129, 0)'],
+                      boxShadow: [
+                        '0 0 0 0 rgba(16, 185, 129, 0.7)',
+                        '0 0 0 10px rgba(16, 185, 129, 0)',
+                        '0 0 0 0 rgba(16, 185, 129, 0)',
+                      ],
                     }}
                     transition={{ duration: 2, repeat: Infinity, delay: 1 }}
                     className="w-2 h-2 bg-green-500 rounded-full"

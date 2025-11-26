@@ -24,7 +24,7 @@ interface TimelineItem {
 
 export function Timeline({
   items,
-  variant = 'default'
+  variant = 'default',
 }: {
   items: TimelineItem[];
   variant?: 'default' | 'compact' | 'minimal';
@@ -40,13 +40,19 @@ export function Timeline({
             top: '10px',
             bottom: '10px',
             width: '2px',
-            background: 'var(--gradient-primary)'
+            background: 'var(--gradient-primary)',
           }}
         />
       )}
 
       {/* Timeline Items */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: variant === 'compact' ? '1rem' : '2rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: variant === 'compact' ? '1rem' : '2rem',
+        }}
+      >
         {items.map((item, index) => (
           <div
             key={item.id}
@@ -56,7 +62,7 @@ export function Timeline({
               gap: '1rem',
               position: 'relative',
               animationDelay: `${index * 0.1}s`,
-              animationFillMode: 'backwards'
+              animationFillMode: 'backwards',
             }}
           >
             {/* Icon/Dot */}
@@ -73,24 +79,61 @@ export function Timeline({
                   color: 'white',
                   flexShrink: 0,
                   boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                  zIndex: 1
+                  zIndex: 1,
                 }}
               >
-                {item.icon || <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'white' }} />}
+                {item.icon || (
+                  <div
+                    style={{
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '50%',
+                      background: 'white',
+                    }}
+                  />
+                )}
               </div>
             )}
 
             {/* Content */}
-            <div className="modern-card hover-lift" style={{ flex: 1, padding: '1.5rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                <h4 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600 }}>{item.title}</h4>
-                <span style={{ fontSize: '0.875rem', color: 'var(--muted)', whiteSpace: 'nowrap', marginLeft: '1rem' }}>
+            <div
+              className="modern-card hover-lift"
+              style={{ flex: 1, padding: '1.5rem' }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                <h4
+                  style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600 }}
+                >
+                  {item.title}
+                </h4>
+                <span
+                  style={{
+                    fontSize: '0.875rem',
+                    color: 'var(--muted)',
+                    whiteSpace: 'nowrap',
+                    marginLeft: '1rem',
+                  }}
+                >
                   {item.time}
                 </span>
               </div>
 
               {item.description && (
-                <p style={{ margin: '0.5rem 0 0', fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--muted)' }}>
+                <p
+                  style={{
+                    margin: '0.5rem 0 0',
+                    fontSize: '0.95rem',
+                    lineHeight: 1.6,
+                    color: 'var(--muted)',
+                  }}
+                >
                   {item.description}
                 </p>
               )}
@@ -104,7 +147,7 @@ export function Timeline({
                     maxHeight: '200px',
                     objectFit: 'cover',
                     borderRadius: 'var(--radius-md)',
-                    marginTop: '1rem'
+                    marginTop: '1rem',
                   }}
                 />
               )}
@@ -126,10 +169,16 @@ export function Tag({
   onRemove,
   icon,
   clickable = false,
-  onClick
+  onClick,
 }: {
   label: string;
-  variant?: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'gradient';
+  variant?:
+    | 'default'
+    | 'primary'
+    | 'success'
+    | 'warning'
+    | 'danger'
+    | 'gradient';
   onRemove?: () => void;
   icon?: React.ReactNode;
   clickable?: boolean;
@@ -148,7 +197,11 @@ export function Tag({
       case 'gradient':
         return { background: 'var(--gradient-primary)', color: 'white' };
       default:
-        return { background: 'var(--bg-secondary)', color: 'var(--fg)', border: '1px solid var(--border)' };
+        return {
+          background: 'var(--bg-secondary)',
+          color: 'var(--fg)',
+          border: '1px solid var(--border)',
+        };
     }
   };
 
@@ -164,7 +217,7 @@ export function Tag({
         fontSize: '0.875rem',
         fontWeight: 500,
         cursor: clickable || onRemove ? 'pointer' : 'default',
-        ...getVariantStyle()
+        ...getVariantStyle(),
       }}
     >
       {icon && <span>{icon}</span>}
@@ -181,7 +234,7 @@ export function Tag({
             padding: 0,
             cursor: 'pointer',
             display: 'flex',
-            color: 'inherit'
+            color: 'inherit',
           }}
           aria-label="Remove tag"
         >
@@ -207,7 +260,7 @@ export function TagGroup({ children }: { children: React.ReactNode }) {
 export function Tooltip({
   children,
   content,
-  position = 'top'
+  position = 'top',
 }: {
   children: React.ReactNode;
   content: string;
@@ -237,10 +290,26 @@ export function Tooltip({
             borderRadius: 'var(--radius-sm)',
             whiteSpace: 'nowrap',
             boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-            ...(position === 'top' && { bottom: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)' }),
-            ...(position === 'bottom' && { top: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)' }),
-            ...(position === 'left' && { right: 'calc(100% + 8px)', top: '50%', transform: 'translateY(-50%)' }),
-            ...(position === 'right' && { left: 'calc(100% + 8px)', top: '50%', transform: 'translateY(-50%)' })
+            ...(position === 'top' && {
+              bottom: 'calc(100% + 8px)',
+              left: '50%',
+              transform: 'translateX(-50%)',
+            }),
+            ...(position === 'bottom' && {
+              top: 'calc(100% + 8px)',
+              left: '50%',
+              transform: 'translateX(-50%)',
+            }),
+            ...(position === 'left' && {
+              right: 'calc(100% + 8px)',
+              top: '50%',
+              transform: 'translateY(-50%)',
+            }),
+            ...(position === 'right' && {
+              left: 'calc(100% + 8px)',
+              top: '50%',
+              transform: 'translateY(-50%)',
+            }),
           }}
         >
           {content}
@@ -264,7 +333,7 @@ interface AccordionItem {
 export function Accordion({
   items,
   allowMultiple = false,
-  defaultOpen
+  defaultOpen,
 }: {
   items: AccordionItem[];
   allowMultiple?: boolean;
@@ -274,7 +343,9 @@ export function Accordion({
 
   const toggleItem = (id: string) => {
     if (allowMultiple) {
-      setOpenItems((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+      setOpenItems((prev) =>
+        prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+      );
     } else {
       setOpenItems((prev) => (prev.includes(id) ? [] : [id]));
     }
@@ -291,7 +362,7 @@ export function Accordion({
             className="modern-card"
             style={{
               overflow: 'hidden',
-              transition: 'all var(--transition-base)'
+              transition: 'all var(--transition-base)',
             }}
           >
             {/* Header */}
@@ -308,19 +379,25 @@ export function Accordion({
                 alignItems: 'center',
                 cursor: 'pointer',
                 color: 'var(--fg)',
-                textAlign: 'left'
+                textAlign: 'left',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                {item.icon && <span style={{ color: 'var(--accent)' }}>{item.icon}</span>}
-                <span style={{ fontSize: '1rem', fontWeight: 600 }}>{item.title}</span>
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}
+              >
+                {item.icon && (
+                  <span style={{ color: 'var(--accent)' }}>{item.icon}</span>
+                )}
+                <span style={{ fontSize: '1rem', fontWeight: 600 }}>
+                  {item.title}
+                </span>
               </div>
 
               <ChevronDown
                 size={20}
                 style={{
                   transition: 'transform var(--transition-base)',
-                  transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                  transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                 }}
               />
             </button>
@@ -330,10 +407,14 @@ export function Accordion({
               style={{
                 maxHeight: isOpen ? '1000px' : '0',
                 overflow: 'hidden',
-                transition: 'max-height var(--transition-base)'
+                transition: 'max-height var(--transition-base)',
               }}
             >
-              <div style={{ padding: '0 1.25rem 1.25rem', color: 'var(--muted)' }}>{item.content}</div>
+              <div
+                style={{ padding: '0 1.25rem 1.25rem', color: 'var(--muted)' }}
+              >
+                {item.content}
+              </div>
             </div>
           </div>
         );
@@ -349,7 +430,7 @@ export function Accordion({
 export function AvatarGroup({
   avatars,
   max = 5,
-  size = 40
+  size = 40,
 }: {
   avatars: Array<{ id: string; src: string; name: string }>;
   max?: number;
@@ -375,7 +456,7 @@ export function AvatarGroup({
               cursor: 'pointer',
               transition: 'transform var(--transition-base)',
               position: 'relative',
-              zIndex: displayAvatars.length - index
+              zIndex: displayAvatars.length - index,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'scale(1.1)';
@@ -383,7 +464,9 @@ export function AvatarGroup({
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.zIndex = String(displayAvatars.length - index);
+              e.currentTarget.style.zIndex = String(
+                displayAvatars.length - index
+              );
             }}
           />
         </Tooltip>
@@ -405,7 +488,7 @@ export function AvatarGroup({
               fontSize: '0.875rem',
               fontWeight: 600,
               cursor: 'pointer',
-              zIndex: 0
+              zIndex: 0,
             }}
           >
             +{remaining}
@@ -423,7 +506,7 @@ export function AvatarGroup({
 export function Divider({
   label,
   orientation = 'horizontal',
-  variant = 'solid'
+  variant = 'solid',
 }: {
   label?: string;
   orientation?: 'horizontal' | 'vertical';
@@ -435,8 +518,12 @@ export function Divider({
         style={{
           width: '1px',
           height: '100%',
-          background: variant === 'gradient' ? 'var(--gradient-primary)' : 'var(--border)',
-          borderLeft: variant === 'dashed' ? '1px dashed var(--border)' : 'none'
+          background:
+            variant === 'gradient'
+              ? 'var(--gradient-primary)'
+              : 'var(--border)',
+          borderLeft:
+            variant === 'dashed' ? '1px dashed var(--border)' : 'none',
         }}
       />
     );
@@ -449,24 +536,40 @@ export function Divider({
           display: 'flex',
           alignItems: 'center',
           gap: '1rem',
-          margin: '1.5rem 0'
+          margin: '1.5rem 0',
         }}
       >
         <div
           style={{
             flex: 1,
             height: '1px',
-            background: variant === 'gradient' ? 'var(--gradient-primary)' : 'var(--border)',
-            borderTop: variant === 'dashed' ? '1px dashed var(--border)' : 'none'
+            background:
+              variant === 'gradient'
+                ? 'var(--gradient-primary)'
+                : 'var(--border)',
+            borderTop:
+              variant === 'dashed' ? '1px dashed var(--border)' : 'none',
           }}
         />
-        <span style={{ fontSize: '0.875rem', color: 'var(--muted)', fontWeight: 500 }}>{label}</span>
+        <span
+          style={{
+            fontSize: '0.875rem',
+            color: 'var(--muted)',
+            fontWeight: 500,
+          }}
+        >
+          {label}
+        </span>
         <div
           style={{
             flex: 1,
             height: '1px',
-            background: variant === 'gradient' ? 'var(--gradient-primary)' : 'var(--border)',
-            borderTop: variant === 'dashed' ? '1px dashed var(--border)' : 'none'
+            background:
+              variant === 'gradient'
+                ? 'var(--gradient-primary)'
+                : 'var(--border)',
+            borderTop:
+              variant === 'dashed' ? '1px dashed var(--border)' : 'none',
           }}
         />
       </div>
@@ -478,9 +581,10 @@ export function Divider({
       style={{
         width: '100%',
         height: '1px',
-        background: variant === 'gradient' ? 'var(--gradient-primary)' : 'var(--border)',
+        background:
+          variant === 'gradient' ? 'var(--gradient-primary)' : 'var(--border)',
         borderTop: variant === 'dashed' ? '1px dashed var(--border)' : 'none',
-        margin: '1.5rem 0'
+        margin: '1.5rem 0',
       }}
     />
   );
@@ -493,5 +597,5 @@ export default {
   Tooltip,
   Accordion,
   AvatarGroup,
-  Divider
+  Divider,
 };

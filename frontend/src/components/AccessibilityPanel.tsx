@@ -7,7 +7,13 @@
 
 import React, { useState } from 'react';
 import { useAccessibilityContext } from '@/components/AccessibilityProvider';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import Button from '@/components/ui/Button';
 
 interface AccessibilityPanelProps {
@@ -15,7 +21,10 @@ interface AccessibilityPanelProps {
   onClose: () => void;
 }
 
-export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPanelProps) {
+export default function AccessibilityPanel({
+  isOpen,
+  onClose,
+}: AccessibilityPanelProps) {
   const {
     report,
     isAnalyzing,
@@ -68,7 +77,10 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle id="accessibility-panel-title" className="text-xl font-semibold">
+              <CardTitle
+                id="accessibility-panel-title"
+                className="text-xl font-semibold"
+              >
                 ♿ Accessibility Center
               </CardTitle>
               <CardDescription>
@@ -117,18 +129,29 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
 
         <CardContent className="flex-1 overflow-y-auto p-6">
           {activeTab === 'settings' && (
-            <div id="settings-panel" role="tabpanel" aria-labelledby="settings-tab">
+            <div
+              id="settings-panel"
+              role="tabpanel"
+              aria-labelledby="settings-tab"
+            >
               <div className="space-y-6">
                 {/* Visual Settings */}
                 <section>
-                  <h3 className="text-lg font-semibold mb-4">Visual Preferences</h3>
+                  <h3 className="text-lg font-semibold mb-4">
+                    Visual Preferences
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="flex items-center space-x-3">
                         <input
                           type="checkbox"
                           checked={settings.enableHighContrast}
-                          onChange={(e) => handleSettingChange('enableHighContrast', e.target.checked)}
+                          onChange={(e) =>
+                            handleSettingChange(
+                              'enableHighContrast',
+                              e.target.checked
+                            )
+                          }
                           className="w-4 h-4"
                         />
                         <span>High Contrast Mode</span>
@@ -143,7 +166,12 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
                         <input
                           type="checkbox"
                           checked={settings.enableLargeText}
-                          onChange={(e) => handleSettingChange('enableLargeText', e.target.checked)}
+                          onChange={(e) =>
+                            handleSettingChange(
+                              'enableLargeText',
+                              e.target.checked
+                            )
+                          }
                           className="w-4 h-4"
                         />
                         <span>Large Text</span>
@@ -160,7 +188,9 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
                       <select
                         id="font-size"
                         value={settings.fontSize}
-                        onChange={(e) => handleSettingChange('fontSize', e.target.value)}
+                        onChange={(e) =>
+                          handleSettingChange('fontSize', e.target.value)
+                        }
                         className="w-full p-2 border border-border rounded-md bg-card"
                       >
                         <option value="small">Small (14px)</option>
@@ -171,13 +201,18 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
                     </div>
 
                     <div className="space-y-2">
-                      <label htmlFor="contrast-level" className="block font-medium">
+                      <label
+                        htmlFor="contrast-level"
+                        className="block font-medium"
+                      >
                         Contrast Level
                       </label>
                       <select
                         id="contrast-level"
                         value={settings.contrastLevel}
-                        onChange={(e) => handleSettingChange('contrastLevel', e.target.value)}
+                        onChange={(e) =>
+                          handleSettingChange('contrastLevel', e.target.value)
+                        }
                         className="w-full p-2 border border-border rounded-md bg-card"
                       >
                         <option value="normal">Normal</option>
@@ -190,13 +225,20 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
 
                 {/* Motion Settings */}
                 <section>
-                  <h3 className="text-lg font-semibold mb-4">Motion Preferences</h3>
+                  <h3 className="text-lg font-semibold mb-4">
+                    Motion Preferences
+                  </h3>
                   <div className="space-y-2">
                     <label className="flex items-center space-x-3">
                       <input
                         type="checkbox"
                         checked={settings.enableReducedMotion}
-                        onChange={(e) => handleSettingChange('enableReducedMotion', e.target.checked)}
+                        onChange={(e) =>
+                          handleSettingChange(
+                            'enableReducedMotion',
+                            e.target.checked
+                          )
+                        }
                         className="w-4 h-4"
                       />
                       <span>Reduced Motion</span>
@@ -209,14 +251,21 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
 
                 {/* Navigation Settings */}
                 <section>
-                  <h3 className="text-lg font-semibold mb-4">Navigation Preferences</h3>
+                  <h3 className="text-lg font-semibold mb-4">
+                    Navigation Preferences
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="flex items-center space-x-3">
                         <input
                           type="checkbox"
                           checked={settings.enableKeyboardNavigation}
-                          onChange={(e) => handleSettingChange('enableKeyboardNavigation', e.target.checked)}
+                          onChange={(e) =>
+                            handleSettingChange(
+                              'enableKeyboardNavigation',
+                              e.target.checked
+                            )
+                          }
                           className="w-4 h-4"
                         />
                         <span>Enhanced Keyboard Navigation</span>
@@ -231,7 +280,12 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
                         <input
                           type="checkbox"
                           checked={settings.enableScreenReaderOptimizations}
-                          onChange={(e) => handleSettingChange('enableScreenReaderOptimizations', e.target.checked)}
+                          onChange={(e) =>
+                            handleSettingChange(
+                              'enableScreenReaderOptimizations',
+                              e.target.checked
+                            )
+                          }
                           className="w-4 h-4"
                         />
                         <span>Screen Reader Optimizations</span>
@@ -310,7 +364,9 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
                           >
                             {report.score}/100
                           </div>
-                          <div className="text-sm text-muted">Overall Score</div>
+                          <div className="text-sm text-muted">
+                            Overall Score
+                          </div>
                         </CardContent>
                       </Card>
 
@@ -318,7 +374,11 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
                         <CardContent className="p-4 text-center">
                           <div
                             className="text-2xl font-bold mb-2"
-                            style={{ color: getComplianceColor(report.compliance.wcagA) }}
+                            style={{
+                              color: getComplianceColor(
+                                report.compliance.wcagA
+                              ),
+                            }}
                           >
                             {report.compliance.wcagA ? '✓' : '✗'}
                           </div>
@@ -330,7 +390,11 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
                         <CardContent className="p-4 text-center">
                           <div
                             className="text-2xl font-bold mb-2"
-                            style={{ color: getComplianceColor(report.compliance.wcagAA) }}
+                            style={{
+                              color: getComplianceColor(
+                                report.compliance.wcagAA
+                              ),
+                            }}
                           >
                             {report.compliance.wcagAA ? '✓' : '✗'}
                           </div>
@@ -342,7 +406,11 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
                         <CardContent className="p-4 text-center">
                           <div
                             className="text-2xl font-bold mb-2"
-                            style={{ color: getComplianceColor(report.compliance.wcagAAA) }}
+                            style={{
+                              color: getComplianceColor(
+                                report.compliance.wcagAAA
+                              ),
+                            }}
                           >
                             {report.compliance.wcagAAA ? '✓' : '✗'}
                           </div>
@@ -366,21 +434,33 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
                                     className="text-sm px-2 py-1 rounded-md font-medium"
                                     style={{
                                       backgroundColor:
-                                        issue.severity === 'critical' ? '#fee2e2' :
-                                        issue.severity === 'major' ? '#fef3c7' : '#f0f9ff',
+                                        issue.severity === 'critical'
+                                          ? '#fee2e2'
+                                          : issue.severity === 'major'
+                                            ? '#fef3c7'
+                                            : '#f0f9ff',
                                       color:
-                                        issue.severity === 'critical' ? '#dc2626' :
-                                        issue.severity === 'major' ? '#d97706' : '#0369a1',
+                                        issue.severity === 'critical'
+                                          ? '#dc2626'
+                                          : issue.severity === 'major'
+                                            ? '#d97706'
+                                            : '#0369a1',
                                     }}
                                   >
                                     {issue.severity}
                                   </span>
                                   <div className="flex-1">
-                                    <h5 className="font-medium mb-1">{issue.description}</h5>
-                                    <p className="text-sm text-muted mb-2">{issue.recommendation}</p>
+                                    <h5 className="font-medium mb-1">
+                                      {issue.description}
+                                    </h5>
+                                    <p className="text-sm text-muted mb-2">
+                                      {issue.recommendation}
+                                    </p>
                                     <div className="flex items-center gap-4 text-xs text-muted">
                                       <span>Element: {issue.element}</span>
-                                      <span>Reference: {issue.wcagReference}</span>
+                                      <span>
+                                        Reference: {issue.wcagReference}
+                                      </span>
                                     </div>
                                   </div>
                                 </div>
@@ -393,7 +473,9 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
 
                     {/* Recommendations */}
                     <section>
-                      <h4 className="text-lg font-semibold mb-4">Recommendations</h4>
+                      <h4 className="text-lg font-semibold mb-4">
+                        Recommendations
+                      </h4>
                       <ul className="space-y-2">
                         {report.recommendations.map((recommendation, index) => (
                           <li key={index} className="flex items-start gap-2">
@@ -409,7 +491,10 @@ export default function AccessibilityPanel({ isOpen, onClose }: AccessibilityPan
                 {!report && !isAnalyzing && (
                   <div className="text-center py-8 text-muted">
                     <p>No accessibility analysis has been run yet.</p>
-                    <p className="text-sm mt-2">Click &quot;Run Analysis&quot; to generate a compliance report.</p>
+                    <p className="text-sm mt-2">
+                      Click &quot;Run Analysis&quot; to generate a compliance
+                      report.
+                    </p>
                   </div>
                 )}
               </div>

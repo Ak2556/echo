@@ -54,6 +54,7 @@ username=user@example.com&password=SecurePassword123!
 ```
 
 **Response**:
+
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIs...",
@@ -86,6 +87,7 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
 ```
 
 **Response**:
+
 ```json
 {
   "id": "123",
@@ -118,6 +120,7 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
 ```
 
 **Query Parameters**:
+
 - `page` (integer): Page number (default: 1)
 - `page_size` (integer): Items per page (default: 20, max: 100)
 - `search` (string): Search term
@@ -147,6 +150,7 @@ GET /api/v1/posts/?page=1&page_size=20
 ```
 
 **Query Parameters**:
+
 - `page` (integer): Page number
 - `page_size` (integer): Items per page
 - `tag` (string): Filter by tag
@@ -196,6 +200,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
   "id": "msg_123",
@@ -227,6 +232,7 @@ file: (binary)
 ```
 
 **Response**:
+
 ```json
 {
   "id": "file_123",
@@ -261,6 +267,7 @@ GET /api/v1/search/?q=query&type=post&category=tech
 ```
 
 **Query Parameters**:
+
 - `q` (string, required): Search query
 - `type` (string): Content type (post, user, course)
 - `category` (string): Category filter
@@ -277,6 +284,7 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
 ```
 
 **Response**:
+
 ```json
 {
   "views": 1234,
@@ -391,6 +399,7 @@ GET /api/v1/posts/?page=2&page_size=20
 ```
 
 **Response**:
+
 ```json
 {
   "items": [...],
@@ -451,13 +460,13 @@ Official SDKs are available for:
 import { EchoClient } from '@echo/sdk';
 
 const client = new EchoClient({
-  apiKey: 'YOUR_API_KEY'
+  apiKey: 'YOUR_API_KEY',
 });
 
 // Create a post
 const post = await client.posts.create({
   title: 'My Post',
-  content: 'Content here'
+  content: 'Content here',
 });
 
 // Get user

@@ -38,7 +38,8 @@ export function useSession(): SessionState & SessionActions {
       const sessions = await apiClient.getSessions();
       setState({ sessions, loading: false, error: null });
     } catch (error) {
-      const message = error instanceof APIError ? error.message : 'Failed to load sessions';
+      const message =
+        error instanceof APIError ? error.message : 'Failed to load sessions';
       setState((prev) => ({ ...prev, loading: false, error: message }));
     }
   }, []);
@@ -57,30 +58,36 @@ export function useSession(): SessionState & SessionActions {
   /**
    * Revoke a specific session.
    */
-  const revokeSession = useCallback(async (sessionId: string) => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
+  const revokeSession = useCallback(
+    async (sessionId: string) => {
+      setState((prev) => ({ ...prev, loading: true, error: null }));
 
-    try {
-      // Find the session to check if it's the current one
-      const session = state.sessions.find((s) => s.id === sessionId);
+      try {
+        // Find the session to check if it's the current one
+        const session = state.sessions.find((s) => s.id === sessionId);
 
-      if (session?.is_current) {
-        // Revoking current session = logout
-        await apiClient.logout(false);
-        setState({ sessions: [], loading: false, error: null });
-      } else {
-        // Revoke specific session via logout endpoint
-        // Note: Backend would need a DELETE /sessions/{id} endpoint
-        // For now, we'll just refresh the list after logout
-        await apiClient.logout(false);
-        await loadSessions();
+        if (session?.is_current) {
+          // Revoking current session = logout
+          await apiClient.logout(false);
+          setState({ sessions: [], loading: false, error: null });
+        } else {
+          // Revoke specific session via logout endpoint
+          // Note: Backend would need a DELETE /sessions/{id} endpoint
+          // For now, we'll just refresh the list after logout
+          await apiClient.logout(false);
+          await loadSessions();
+        }
+      } catch (error) {
+        const message =
+          error instanceof APIError
+            ? error.message
+            : 'Failed to revoke session';
+        setState((prev) => ({ ...prev, loading: false, error: message }));
+        throw error;
       }
-    } catch (error) {
-      const message = error instanceof APIError ? error.message : 'Failed to revoke session';
-      setState((prev) => ({ ...prev, loading: false, error: message }));
-      throw error;
-    }
-  }, [state.sessions, loadSessions]);
+    },
+    [state.sessions, loadSessions]
+  );
 
   /**
    * Revoke all sessions except current.
@@ -96,7 +103,8 @@ export function useSession(): SessionState & SessionActions {
       // Reload sessions
       await loadSessions();
     } catch (error) {
-      const message = error instanceof APIError ? error.message : 'Failed to revoke sessions';
+      const message =
+        error instanceof APIError ? error.message : 'Failed to revoke sessions';
       setState((prev) => ({ ...prev, loading: false, error: message }));
       throw error;
     }

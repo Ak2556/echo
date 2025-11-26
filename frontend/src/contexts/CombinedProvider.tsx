@@ -16,29 +16,29 @@ interface CombinedProviderProps {
 }
 
 // Memoized provider wrapper to prevent unnecessary re-renders
-const MemoizedProviderWrapper = React.memo(({ children }: { children: ReactNode }) => {
-  return (
-    <AccessibilityProvider>
-      <ThemeProvider>
-        <BackgroundProvider>
-          <SettingsProvider>
-            <ToastProvider>
-              <UserProvider>
-                <LanguageProvider>
-                  <CartProvider>
-                    <WishlistProvider>
-                      {children}
-                    </WishlistProvider>
-                  </CartProvider>
-                </LanguageProvider>
-              </UserProvider>
-            </ToastProvider>
-          </SettingsProvider>
-        </BackgroundProvider>
-      </ThemeProvider>
-    </AccessibilityProvider>
-  );
-});
+const MemoizedProviderWrapper = React.memo(
+  ({ children }: { children: ReactNode }) => {
+    return (
+      <AccessibilityProvider>
+        <ThemeProvider>
+          <BackgroundProvider>
+            <SettingsProvider>
+              <ToastProvider>
+                <UserProvider>
+                  <LanguageProvider>
+                    <CartProvider>
+                      <WishlistProvider>{children}</WishlistProvider>
+                    </CartProvider>
+                  </LanguageProvider>
+                </UserProvider>
+              </ToastProvider>
+            </SettingsProvider>
+          </BackgroundProvider>
+        </ThemeProvider>
+      </AccessibilityProvider>
+    );
+  }
+);
 
 MemoizedProviderWrapper.displayName = 'MemoizedProviderWrapper';
 
@@ -47,11 +47,7 @@ export function CombinedProvider({ children }: CombinedProviderProps) {
   // Memoize the provider tree to prevent unnecessary re-renders
   const memoizedChildren = useMemo(() => children, [children]);
 
-  return (
-    <MemoizedProviderWrapper>
-      {memoizedChildren}
-    </MemoizedProviderWrapper>
-  );
+  return <MemoizedProviderWrapper>{memoizedChildren}</MemoizedProviderWrapper>;
 }
 
 // Alternative: Lightweight provider for specific use cases
@@ -59,9 +55,7 @@ export function LightweightProvider({ children }: CombinedProviderProps) {
   return (
     <ThemeProvider>
       <ToastProvider>
-        <UserProvider>
-          {children}
-        </UserProvider>
+        <UserProvider>{children}</UserProvider>
       </ToastProvider>
     </ThemeProvider>
   );
@@ -72,9 +66,7 @@ export function AuthProvider({ children }: CombinedProviderProps) {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <ToastProvider>
-          {children}
-        </ToastProvider>
+        <ToastProvider>{children}</ToastProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

@@ -21,20 +21,35 @@ interface WhiteboardAppProps {
   onClose: () => void;
 }
 
-export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps) {
+export default function WhiteboardApp({
+  isVisible,
+  onClose,
+}: WhiteboardAppProps) {
   const colors = useThemeColors();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentStroke, setCurrentStroke] = useState<DrawingPoint[]>([]);
   const [strokes, setStrokes] = useState<DrawingStroke[]>([]);
-  const [selectedTool, setSelectedTool] = useState<'pen' | 'eraser' | 'highlighter'>('pen');
+  const [selectedTool, setSelectedTool] = useState<
+    'pen' | 'eraser' | 'highlighter'
+  >('pen');
   const [selectedColor, setSelectedColor] = useState('colors.brand.primary');
   const [brushSize, setBrushSize] = useState(3);
   const [showGrid, setShowGrid] = useState(false);
 
   const colors = [
-    'colors.brand.primary', 'colors.brand.tertiary', '#ff6b6b', '#ffa502', '#2ed573', '#1e90ff',
-    '#ffffff', '#000000', '#888888', '#ff00ff', '#00ffff', '#ffff00'
+    'colors.brand.primary',
+    'colors.brand.tertiary',
+    '#ff6b6b',
+    '#ffa502',
+    '#2ed573',
+    '#1e90ff',
+    '#ffffff',
+    '#000000',
+    '#888888',
+    '#ff00ff',
+    '#00ffff',
+    '#ffff00',
   ];
 
   const brushSizes = [2, 4, 6, 8, 12, 16];
@@ -72,7 +87,7 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
       }
     }
 
-    strokes.forEach(stroke => drawStroke(ctx, stroke));
+    strokes.forEach((stroke) => drawStroke(ctx, stroke));
 
     if (currentStroke.length > 0) {
       drawStroke(ctx, {
@@ -80,10 +95,18 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
         points: currentStroke,
         color: selectedColor,
         width: brushSize,
-        tool: selectedTool
+        tool: selectedTool,
       });
     }
-  }, [isVisible, strokes, currentStroke, selectedColor, brushSize, selectedTool, showGrid]);
+  }, [
+    isVisible,
+    strokes,
+    currentStroke,
+    selectedColor,
+    brushSize,
+    selectedTool,
+    showGrid,
+  ]);
 
   const drawStroke = (ctx: CanvasRenderingContext2D, stroke: DrawingStroke) => {
     if (stroke.points.length < 2) return;
@@ -114,36 +137,48 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
     ctx.restore();
   };
 
-  const getPointFromEvent = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return null;
-    const rect = canvas.getBoundingClientRect();
-    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-  }, []);
+  const getPointFromEvent = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return null;
+      const rect = canvas.getBoundingClientRect();
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    },
+    []
+  );
 
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    const point = getPointFromEvent(e);
-    if (!point) return;
-    setIsDrawing(true);
-    setCurrentStroke([point]);
-  }, [getPointFromEvent]);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      const point = getPointFromEvent(e);
+      if (!point) return;
+      setIsDrawing(true);
+      setCurrentStroke([point]);
+    },
+    [getPointFromEvent]
+  );
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
-    const point = getPointFromEvent(e);
-    if (!point) return;
-    setCurrentStroke(prev => [...prev, point]);
-  }, [isDrawing, getPointFromEvent]);
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      if (!isDrawing) return;
+      const point = getPointFromEvent(e);
+      if (!point) return;
+      setCurrentStroke((prev) => [...prev, point]);
+    },
+    [isDrawing, getPointFromEvent]
+  );
 
   const handleMouseUp = useCallback(() => {
     if (!isDrawing || currentStroke.length === 0) return;
-    setStrokes(prev => [...prev, {
-      id: Date.now().toString(),
-      points: currentStroke,
-      color: selectedColor,
-      width: brushSize,
-      tool: selectedTool
-    }]);
+    setStrokes((prev) => [
+      ...prev,
+      {
+        id: Date.now().toString(),
+        points: currentStroke,
+        color: selectedColor,
+        width: brushSize,
+        tool: selectedTool,
+      },
+    ]);
     setCurrentStroke([]);
     setIsDrawing(false);
   }, [isDrawing, currentStroke, selectedColor, brushSize, selectedTool]);
@@ -154,7 +189,7 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
   }, []);
 
   const undoLastStroke = useCallback(() => {
-    setStrokes(prev => prev.slice(0, -1));
+    setStrokes((prev) => prev.slice(0, -1));
   }, []);
 
   const downloadCanvas = useCallback(() => {
@@ -169,31 +204,52 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
   if (!isVisible) return null;
 
   return (
-    <div style={{
-      width: '100%',
-      height: '100%',
-      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-      display: 'flex',
-      flexDirection: 'column',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      color: '#ffffff',
-      overflow: 'hidden'
-    }}>
-      {/* Header */}
-      <div style={{
-        padding: '20px 24px',
-        background: 'rgba(255, 255, 255, 0.05)',
-        backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        background:
+          'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
         display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
+        flexDirection: 'column',
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        color: '#ffffff',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          padding: '20px 24px',
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <div>
-          <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <h2
+            style={{
+              margin: 0,
+              fontSize: '1.5rem',
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
             <span>🎨</span> Whiteboard Pro
           </h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.6)' }}>
+          <p
+            style={{
+              margin: '4px 0 0 0',
+              fontSize: '0.85rem',
+              color: 'rgba(255, 255, 255, 0.6)',
+            }}
+          >
             Draw, sketch, and create
           </p>
         </div>
@@ -207,7 +263,7 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
               padding: '8px 12px',
               color: 'white',
               cursor: 'pointer',
-              fontSize: '0.85rem'
+              fontSize: '0.85rem',
             }}
           >
             💾
@@ -216,35 +272,45 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
       </div>
 
       {/* Toolbar */}
-      <div style={{
-        padding: '12px 24px',
-        background: 'rgba(255, 255, 255, 0.03)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px'
-      }}>
+      <div
+        style={{
+          padding: '12px 24px',
+          background: 'rgba(255, 255, 255, 0.03)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+        }}
+      >
         {/* Tools */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            flexWrap: 'wrap',
+          }}
+        >
           <div style={{ display: 'flex', gap: '4px' }}>
             {[
               { id: 'pen', icon: '✏️', label: 'Pen' },
               { id: 'highlighter', icon: '🖍️', label: 'Highlighter' },
-              { id: 'eraser', icon: '🧽', label: 'Eraser' }
-            ].map(tool => (
+              { id: 'eraser', icon: '🧽', label: 'Eraser' },
+            ].map((tool) => (
               <button
                 key={tool.id}
                 onClick={() => setSelectedTool(tool.id as typeof selectedTool)}
                 title={tool.label}
                 style={{
-                  background: selectedTool === tool.id
-                    ? 'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)'
-                    : 'rgba(255, 255, 255, 0.1)',
+                  background:
+                    selectedTool === tool.id
+                      ? 'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)'
+                      : 'rgba(255, 255, 255, 0.1)',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   borderRadius: '8px',
                   padding: '8px 12px',
                   cursor: 'pointer',
-                  fontSize: '1rem'
+                  fontSize: '1rem',
                 }}
               >
                 {tool.icon}
@@ -252,7 +318,13 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
             ))}
           </div>
 
-          <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.2)' }} />
+          <div
+            style={{
+              width: '1px',
+              height: '24px',
+              background: 'rgba(255, 255, 255, 0.2)',
+            }}
+          />
 
           <div style={{ display: 'flex', gap: '4px' }}>
             <button
@@ -266,7 +338,7 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
                 cursor: strokes.length > 0 ? 'pointer' : 'not-allowed',
                 opacity: strokes.length > 0 ? 1 : 0.5,
                 fontSize: '0.9rem',
-                color: 'white'
+                color: 'white',
               }}
             >
               ↶
@@ -282,7 +354,7 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
                 cursor: strokes.length > 0 ? 'pointer' : 'not-allowed',
                 opacity: strokes.length > 0 ? 1 : 0.5,
                 fontSize: '0.9rem',
-                color: 'white'
+                color: 'white',
               }}
             >
               🗑️
@@ -290,13 +362,15 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
             <button
               onClick={() => setShowGrid(!showGrid)}
               style={{
-                background: showGrid ? 'rgba(102, 126, 234, 0.3)' : 'rgba(255, 255, 255, 0.1)',
+                background: showGrid
+                  ? 'rgba(102, 126, 234, 0.3)'
+                  : 'rgba(255, 255, 255, 0.1)',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 borderRadius: '8px',
                 padding: '8px 12px',
                 cursor: 'pointer',
                 fontSize: '0.9rem',
-                color: 'white'
+                color: 'white',
               }}
             >
               ⊞
@@ -307,7 +381,7 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
         {/* Colors */}
         {selectedTool !== 'eraser' && (
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-            {colors.map(color => (
+            {colors.map((color) => (
               <button
                 key={color}
                 onClick={() => setSelectedColor(color)}
@@ -315,12 +389,16 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
                   width: '28px',
                   height: '28px',
                   borderRadius: '6px',
-                  border: selectedColor === color
-                    ? '2px solid rgba(255, 255, 255, 0.8)'
-                    : '2px solid transparent',
+                  border:
+                    selectedColor === color
+                      ? '2px solid rgba(255, 255, 255, 0.8)'
+                      : '2px solid transparent',
                   background: color,
                   cursor: 'pointer',
-                  boxShadow: selectedColor === color ? '0 0 8px rgba(102, 126, 234, 0.5)' : 'none'
+                  boxShadow:
+                    selectedColor === color
+                      ? '0 0 8px rgba(102, 126, 234, 0.5)'
+                      : 'none',
                 }}
               />
             ))}
@@ -329,8 +407,12 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
 
         {/* Brush Size */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.6)' }}>Size:</span>
-          {brushSizes.map(size => (
+          <span
+            style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.6)' }}
+          >
+            Size:
+          </span>
+          {brushSizes.map((size) => (
             <button
               key={size}
               onClick={() => setBrushSize(size)}
@@ -338,14 +420,18 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
                 width: '32px',
                 height: '32px',
                 borderRadius: '6px',
-                border: brushSize === size
-                  ? '2px solid rgba(102, 126, 234, 0.8)'
-                  : '1px solid rgba(255, 255, 255, 0.2)',
-                background: brushSize === size ? 'rgba(102, 126, 234, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                border:
+                  brushSize === size
+                    ? '2px solid rgba(102, 126, 234, 0.8)'
+                    : '1px solid rgba(255, 255, 255, 0.2)',
+                background:
+                  brushSize === size
+                    ? 'rgba(102, 126, 234, 0.2)'
+                    : 'rgba(255, 255, 255, 0.1)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
               }}
             >
               <div
@@ -353,7 +439,10 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
                   width: Math.min(size * 2, 16),
                   height: Math.min(size * 2, 16),
                   borderRadius: '50%',
-                  background: selectedTool === 'eraser' ? 'rgba(255, 255, 255, 0.5)' : selectedColor
+                  background:
+                    selectedTool === 'eraser'
+                      ? 'rgba(255, 255, 255, 0.5)'
+                      : selectedColor,
                 }}
               />
             </button>
@@ -372,38 +461,42 @@ export default function WhiteboardApp({ isVisible, onClose }: WhiteboardAppProps
           style={{
             width: '100%',
             height: '100%',
-            cursor: selectedTool === 'eraser' ? 'cell' : 'crosshair'
+            cursor: selectedTool === 'eraser' ? 'cell' : 'crosshair',
           }}
         />
 
         {/* Status Bar */}
-        <div style={{
-          position: 'absolute',
-          bottom: '8px',
-          left: '8px',
-          right: '8px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '8px 12px',
-          background: 'rgba(26, 26, 46, 0.8)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '8px',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          fontSize: '0.75rem',
-          color: 'rgba(255, 255, 255, 0.6)'
-        }}>
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '8px',
+            left: '8px',
+            right: '8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '8px 12px',
+            background: 'rgba(26, 26, 46, 0.8)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            fontSize: '0.75rem',
+            color: 'rgba(255, 255, 255, 0.6)',
+          }}
+        >
           <span>Strokes: {strokes.length}</span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             Tool: {selectedTool} | Size: {brushSize}px
             {selectedTool !== 'eraser' && (
-              <span style={{
-                width: '10px',
-                height: '10px',
-                borderRadius: '50%',
-                background: selectedColor,
-                border: '1px solid rgba(255, 255, 255, 0.3)'
-              }} />
+              <span
+                style={{
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  background: selectedColor,
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                }}
+              />
             )}
           </span>
         </div>

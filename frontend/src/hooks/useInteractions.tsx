@@ -13,7 +13,9 @@ import { useState, useEffect, useCallback, useRef } from 'react';
  * Creates Material Design-like ripple effect on click
  */
 export function useRipple() {
-  const [ripples, setRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
+  const [ripples, setRipples] = useState<
+    Array<{ x: number; y: number; id: number }>
+  >([]);
 
   const createRipple = useCallback((event: React.MouseEvent<HTMLElement>) => {
     const button = event.currentTarget;
@@ -56,16 +58,19 @@ export function useRipple() {
  * Provides vibration feedback on supported devices
  */
 export function useHaptic() {
-  const trigger = useCallback((type: 'light' | 'medium' | 'heavy' = 'light') => {
-    if ('vibrate' in navigator) {
-      const patterns = {
-        light: 10,
-        medium: 20,
-        heavy: 30,
-      };
-      navigator.vibrate(patterns[type]);
-    }
-  }, []);
+  const trigger = useCallback(
+    (type: 'light' | 'medium' | 'heavy' = 'light') => {
+      if ('vibrate' in navigator) {
+        const patterns = {
+          light: 10,
+          medium: 20,
+          heavy: 30,
+        };
+        navigator.vibrate(patterns[type]);
+      }
+    },
+    []
+  );
 
   return trigger;
 }
@@ -181,10 +186,7 @@ export function useSwipe(
  * Double Tap Hook
  * Detects double tap gestures
  */
-export function useDoubleTap(
-  callback: () => void,
-  { delay = 300 } = {}
-) {
+export function useDoubleTap(callback: () => void, { delay = 300 } = {}) {
   const lastTap = useRef<number>(0);
 
   const handleTap = useCallback(() => {
@@ -210,7 +212,8 @@ export function useDoubleTap(
 export function useScrollLock(locked: boolean) {
   useEffect(() => {
     if (locked) {
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = 'hidden';
       document.body.style.paddingRight = `${scrollbarWidth}px`;
     } else {
@@ -281,7 +284,9 @@ export function useHoverIntent(
  * Detects scroll direction
  */
 export function useScrollDirection() {
-  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(null);
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(
+    null
+  );
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -308,7 +313,9 @@ export function useScrollDirection() {
  * Intersection Observer Hook
  * Detects when element enters viewport
  */
-export function useInView<T extends HTMLElement = HTMLElement>(options?: IntersectionObserverInit) {
+export function useInView<T extends HTMLElement = HTMLElement>(
+  options?: IntersectionObserverInit
+) {
   const [isInView, setIsInView] = useState(false);
   const [hasBeenInView, setHasBeenInView] = useState(false);
   const ref = useRef<T>(null);

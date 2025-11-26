@@ -7,15 +7,19 @@ export async function POST(request: NextRequest) {
     const { events } = body;
 
     if (!Array.isArray(events)) {
-      return NextResponse.json({ error: 'Invalid events format' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid events format' },
+        { status: 400 }
+      );
     }
 
     // In production, you would send these to your analytics service
     // For now, we'll log them and store in a simple format
     const timestamp = new Date().toISOString();
-    const clientIP = request.headers.get('x-forwarded-for') ||
-                     request.headers.get('x-real-ip') ||
-                     'unknown';
+    const clientIP =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
 
     // Process each event
     const processedEvents = await Promise.all(
@@ -26,7 +30,9 @@ export async function POST(request: NextRequest) {
           timestamp: event.timestamp || Date.now(),
           userId: await sanitizeInput(event.userId || ''),
           sessionId: await sanitizeInput(event.sessionId || ''),
-          properties: event.properties ? await sanitizeEventProperties(event.properties) : {},
+          properties: event.properties
+            ? await sanitizeEventProperties(event.properties)
+            : {},
           serverTimestamp: timestamp,
           clientIP,
         };
@@ -54,11 +60,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      processed: processedEvents.length
+      processed: processedEvents.length,
     });
-
   } catch (error) {
-
     return NextResponse.json(
       { error: 'Failed to process analytics' },
       { status: 500 }

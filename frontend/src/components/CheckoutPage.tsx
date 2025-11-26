@@ -5,7 +5,14 @@ import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { ArrowLeft, CreditCard, Truck, CheckCircle, Shield, Package } from 'lucide-react';
+import {
+  ArrowLeft,
+  CreditCard,
+  Truck,
+  CheckCircle,
+  Shield,
+  Package,
+} from 'lucide-react';
 
 interface CheckoutPageProps {
   onBack: () => void;
@@ -22,7 +29,9 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
   const { cart, totalPrice, clearCart } = useCart();
   const { language } = useLanguage();
   const { colorMode } = useTheme();
-  const [step, setStep] = useState<'details' | 'payment' | 'success'>('details');
+  const [step, setStep] = useState<'details' | 'payment' | 'success'>(
+    'details'
+  );
   const [loading, setLoading] = useState(false);
 
   // Form state
@@ -34,7 +43,7 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
     city: '',
     state: '',
     pincode: '',
-    paymentMethod: 'razorpay'
+    paymentMethod: 'razorpay',
   });
 
   const [orderId, setOrderId] = useState('');
@@ -72,7 +81,7 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
         easyReturns: 'Easy Returns',
         razorpay: 'Credit/Debit Card (Razorpay)',
         cod: 'Cash on Delivery',
-        upi: 'UPI Payment'
+        upi: 'UPI Payment',
       },
       hi: {
         title: 'चेकआउट',
@@ -93,7 +102,8 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
         placeOrder: 'ऑर्डर करें',
         processing: 'प्रोसेस हो रहा है...',
         orderSuccess: 'ऑर्डर सफलतापूर्वक दिया गया!',
-        orderSuccessDesc: 'आपके ऑर्डर के लिए धन्यवाद। हम जल्द ही इसे डिलीवर करेंगे।',
+        orderSuccessDesc:
+          'आपके ऑर्डर के लिए धन्यवाद। हम जल्द ही इसे डिलीवर करेंगे।',
         orderNumber: 'ऑर्डर नंबर',
         continueShopping: 'खरीदारी जारी रखें',
         backToCart: 'कार्ट पर वापस जाएं',
@@ -104,7 +114,7 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
         easyReturns: 'आसान रिटर्न',
         razorpay: 'क्रेडिट/डेबिट कार्ड (Razorpay)',
         cod: 'कैश ऑन डिलीवरी',
-        upi: 'UPI भुगतान'
+        upi: 'UPI भुगतान',
       },
       pa: {
         title: 'ਚੈੱਕਆਉਟ',
@@ -125,10 +135,11 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
         placeOrder: 'ਆਰਡਰ ਕਰੋ',
         processing: 'ਪ੍ਰੋਸੈਸ ਹੋ ਰਿਹਾ ਹੈ...',
         orderSuccess: 'ਆਰਡਰ ਸਫਲਤਾਪੂਰਵਕ ਦਿੱਤਾ ਗਿਆ!',
-        orderSuccessDesc: 'ਤੁਹਾਡੇ ਆਰਡਰ ਲਈ ਧੰਨਵਾਦ। ਅਸੀਂ ਜਲਦੀ ਇਸਨੂੰ ਡਿਲੀਵਰ ਕਰਾਂਗੇ।',
+        orderSuccessDesc:
+          'ਤੁਹਾਡੇ ਆਰਡਰ ਲਈ ਧੰਨਵਾਦ। ਅਸੀਂ ਜਲਦੀ ਇਸਨੂੰ ਡਿਲੀਵਰ ਕਰਾਂਗੇ।',
         orderNumber: 'ਆਰਡਰ ਨੰਬਰ',
         continueShopping: 'ਖਰੀਦਦਾਰੀ ਜਾਰੀ ਰੱਖੋ',
-        backToCart: 'ਕਾਰਟ \'ਤੇ ਵਾਪਸ ਜਾਓ',
+        backToCart: "ਕਾਰਟ 'ਤੇ ਵਾਪਸ ਜਾਓ",
         free: 'ਮੁਫਤ',
         required: 'ਲੋੜੀਂਦਾ ਖੇਤਰ',
         securePayment: 'ਸੁਰੱਖਿਅਤ ਭੁਗਤਾਨ',
@@ -136,8 +147,8 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
         easyReturns: 'ਆਸਾਨ ਰਿਟਰਨ',
         razorpay: 'ਕ੍ਰੈਡਿਟ/ਡੈਬਿਟ ਕਾਰਡ (Razorpay)',
         cod: 'ਕੈਸ਼ ਆਨ ਡਿਲੀਵਰੀ',
-        upi: 'UPI ਭੁਗਤਾਨ'
-      }
+        upi: 'UPI ਭੁਗਤਾਨ',
+      },
     };
     return translations[language]?.[key] || translations.en[key];
   };
@@ -153,16 +164,30 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
     };
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const validateForm = () => {
-    const required = ['name', 'email', 'phone', 'address', 'city', 'state', 'pincode'];
-    return required.every(field => formData[field as keyof typeof formData].trim() !== '');
+    const required = [
+      'name',
+      'email',
+      'phone',
+      'address',
+      'city',
+      'state',
+      'pincode',
+    ];
+    return required.every(
+      (field) => formData[field as keyof typeof formData].trim() !== ''
+    );
   };
 
   const handlePlaceOrder = async () => {
@@ -189,10 +214,10 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
         prefill: {
           name: formData.name,
           email: formData.email,
-          contact: formData.phone
+          contact: formData.phone,
         },
         theme: {
-          color: '#667eea'
+          color: '#667eea',
         },
         handler: function (response: any) {
           // Payment successful
@@ -202,10 +227,10 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
           setLoading(false);
         },
         modal: {
-          ondismiss: function() {
+          ondismiss: function () {
             setLoading(false);
-          }
-        }
+          },
+        },
       };
 
       if (typeof window !== 'undefined' && window.Razorpay) {
@@ -228,43 +253,79 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
   // Success screen
   if (step === 'success') {
     return (
-      <section id="checkout-success" style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-        <div style={{
-          background: 'var(--bg)',
-          border: '1px solid var(--border)',
-          borderRadius: '16px',
-          padding: '3rem 2rem'
-        }}>
-          <div style={{
-            width: '80px',
-            height: '80px',
-            background: '#22c55e',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 1.5rem'
-          }}>
+      <section
+        id="checkout-success"
+        style={{
+          padding: '2rem',
+          maxWidth: '600px',
+          margin: '0 auto',
+          textAlign: 'center',
+        }}
+      >
+        <div
+          style={{
+            background: 'var(--bg)',
+            border: '1px solid var(--border)',
+            borderRadius: '16px',
+            padding: '3rem 2rem',
+          }}
+        >
+          <div
+            style={{
+              width: '80px',
+              height: '80px',
+              background: '#22c55e',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem',
+            }}
+          >
             <CheckCircle size={48} color="white" />
           </div>
 
-          <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem', color: '#22c55e' }}>
+          <h1
+            style={{
+              fontSize: '2rem',
+              fontWeight: 700,
+              marginBottom: '0.5rem',
+              color: '#22c55e',
+            }}
+          >
             {t('orderSuccess')}
           </h1>
           <p style={{ color: 'var(--muted)', marginBottom: '1.5rem' }}>
             {t('orderSuccessDesc')}
           </p>
 
-          <div style={{
-            background: colorMode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
-            padding: '1rem',
-            borderRadius: '8px',
-            marginBottom: '2rem'
-          }}>
-            <div style={{ fontSize: '0.875rem', color: 'var(--muted)', marginBottom: '0.25rem' }}>
+          <div
+            style={{
+              background:
+                colorMode === 'dark'
+                  ? 'rgba(255,255,255,0.05)'
+                  : 'rgba(0,0,0,0.03)',
+              padding: '1rem',
+              borderRadius: '8px',
+              marginBottom: '2rem',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '0.875rem',
+                color: 'var(--muted)',
+                marginBottom: '0.25rem',
+              }}
+            >
               {t('orderNumber')}
             </div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 700, fontFamily: 'monospace' }}>
+            <div
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                fontFamily: 'monospace',
+              }}
+            >
               {orderId}
             </div>
           </div>
@@ -279,7 +340,7 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
               borderRadius: '10px',
               fontSize: '1rem',
               fontWeight: 600,
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             {t('continueShopping')}
@@ -291,7 +352,10 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
 
   // Main checkout form
   return (
-    <section id="checkout" style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+    <section
+      id="checkout"
+      style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}
+    >
       {/* Header */}
       <div style={{ marginBottom: '2rem' }}>
         <button
@@ -306,7 +370,7 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
             borderRadius: '8px',
             cursor: 'pointer',
             marginBottom: '1rem',
-            color: 'var(--fg)'
+            color: 'var(--fg)',
           }}
         >
           <ArrowLeft size={20} />
@@ -315,20 +379,43 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
         <h1 style={{ fontSize: '2.5rem', fontWeight: 700 }}>{t('title')}</h1>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '2rem', alignItems: 'start' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 400px',
+          gap: '2rem',
+          alignItems: 'start',
+        }}
+      >
         {/* Left Column - Form */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+        >
           {/* Customer Details */}
-          <div style={{
-            background: 'var(--bg)',
-            border: '1px solid var(--border)',
-            borderRadius: '12px',
-            padding: '1.5rem'
-          }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>
+          <div
+            style={{
+              background: 'var(--bg)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              padding: '1.5rem',
+            }}
+          >
+            <h2
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                marginBottom: '1rem',
+              }}
+            >
               {t('customerDetails')}
             </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '1rem',
+              }}
+            >
               <input
                 type="text"
                 name="name"
@@ -343,7 +430,7 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
                   fontSize: '1rem',
                   background: 'var(--bg)',
                   color: 'var(--fg)',
-                  gridColumn: '1 / -1'
+                  gridColumn: '1 / -1',
                 }}
               />
               <input
@@ -359,7 +446,7 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
                   borderRadius: '8px',
                   fontSize: '1rem',
                   background: 'var(--bg)',
-                  color: 'var(--fg)'
+                  color: 'var(--fg)',
                 }}
               />
               <input
@@ -375,23 +462,33 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
                   borderRadius: '8px',
                   fontSize: '1rem',
                   background: 'var(--bg)',
-                  color: 'var(--fg)'
+                  color: 'var(--fg)',
                 }}
               />
             </div>
           </div>
 
           {/* Delivery Address */}
-          <div style={{
-            background: 'var(--bg)',
-            border: '1px solid var(--border)',
-            borderRadius: '12px',
-            padding: '1.5rem'
-          }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>
+          <div
+            style={{
+              background: 'var(--bg)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              padding: '1.5rem',
+            }}
+          >
+            <h2
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                marginBottom: '1rem',
+              }}
+            >
               {t('deliveryAddress')}
             </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+            >
               <textarea
                 name="address"
                 placeholder={t('address')}
@@ -407,10 +504,16 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
                   background: 'var(--bg)',
                   color: 'var(--fg)',
                   resize: 'vertical',
-                  fontFamily: 'inherit'
+                  fontFamily: 'inherit',
                 }}
               />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '1rem',
+                }}
+              >
                 <input
                   type="text"
                   name="city"
@@ -424,7 +527,7 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
                     borderRadius: '8px',
                     fontSize: '1rem',
                     background: 'var(--bg)',
-                    color: 'var(--fg)'
+                    color: 'var(--fg)',
                   }}
                 />
                 <input
@@ -440,7 +543,7 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
                     borderRadius: '8px',
                     fontSize: '1rem',
                     background: 'var(--bg)',
-                    color: 'var(--fg)'
+                    color: 'var(--fg)',
                   }}
                 />
               </div>
@@ -459,23 +562,37 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
                   fontSize: '1rem',
                   background: 'var(--bg)',
                   color: 'var(--fg)',
-                  maxWidth: '200px'
+                  maxWidth: '200px',
                 }}
               />
             </div>
           </div>
 
           {/* Payment Method */}
-          <div style={{
-            background: 'var(--bg)',
-            border: '1px solid var(--border)',
-            borderRadius: '12px',
-            padding: '1.5rem'
-          }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>
+          <div
+            style={{
+              background: 'var(--bg)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              padding: '1.5rem',
+            }}
+          >
+            <h2
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                marginBottom: '1rem',
+              }}
+            >
               {t('paymentMethod')}
             </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+              }}
+            >
               {['razorpay', 'cod', 'upi'].map((method) => (
                 <label
                   key={method}
@@ -487,7 +604,7 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
                     border: `2px solid ${formData.paymentMethod === method ? 'var(--accent)' : 'var(--border)'}`,
                     borderRadius: '8px',
                     cursor: 'pointer',
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
                   }}
                 >
                   <input
@@ -506,42 +623,66 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
           </div>
 
           {/* Trust Badges */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '1rem',
-            padding: '1rem',
-            background: colorMode === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-            borderRadius: '8px'
-          }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '1rem',
+              padding: '1rem',
+              background:
+                colorMode === 'dark'
+                  ? 'rgba(255,255,255,0.03)'
+                  : 'rgba(0,0,0,0.02)',
+              borderRadius: '8px',
+            }}
+          >
             {[
               { icon: Shield, text: t('securePayment') },
               { icon: Truck, text: t('fastDelivery') },
-              { icon: Package, text: t('easyReturns') }
+              { icon: Package, text: t('easyReturns') },
             ].map((badge, i) => (
               <div key={i} style={{ textAlign: 'center' }}>
-                <badge.icon size={24} style={{ margin: '0 auto 0.5rem', color: 'var(--accent)' }} />
-                <div style={{ fontSize: '0.875rem', fontWeight: 500 }}>{badge.text}</div>
+                <badge.icon
+                  size={24}
+                  style={{ margin: '0 auto 0.5rem', color: 'var(--accent)' }}
+                />
+                <div style={{ fontSize: '0.875rem', fontWeight: 500 }}>
+                  {badge.text}
+                </div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Right Column - Order Summary */}
-        <div style={{
-          position: 'sticky',
-          top: '2rem',
-          background: 'var(--bg)',
-          border: '1px solid var(--border)',
-          borderRadius: '12px',
-          padding: '1.5rem'
-        }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>
+        <div
+          style={{
+            position: 'sticky',
+            top: '2rem',
+            background: 'var(--bg)',
+            border: '1px solid var(--border)',
+            borderRadius: '12px',
+            padding: '1.5rem',
+          }}
+        >
+          <h2
+            style={{
+              fontSize: '1.25rem',
+              fontWeight: 600,
+              marginBottom: '1rem',
+            }}
+          >
             {t('orderSummary')}
           </h2>
 
           {/* Cart Items */}
-          <div style={{ maxHeight: '300px', overflowY: 'auto', marginBottom: '1rem' }}>
+          <div
+            style={{
+              maxHeight: '300px',
+              overflowY: 'auto',
+              marginBottom: '1rem',
+            }}
+          >
             {cart.map((item) => (
               <div
                 key={item.id}
@@ -550,18 +691,20 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
                   gap: '0.75rem',
                   marginBottom: '1rem',
                   paddingBottom: '1rem',
-                  borderBottom: '1px solid var(--border)'
+                  borderBottom: '1px solid var(--border)',
                 }}
               >
-                <div style={{
-                  position: 'relative',
-                  width: '60px',
-                  height: '60px',
-                  borderRadius: '6px',
-                  overflow: 'hidden',
-                  flexShrink: 0,
-                  background: '#f5f5f5'
-                }}>
+                <div
+                  style={{
+                    position: 'relative',
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '6px',
+                    overflow: 'hidden',
+                    flexShrink: 0,
+                    background: '#f5f5f5',
+                  }}
+                >
                   <Image
                     src={item.image}
                     alt={item.name}
@@ -571,13 +714,25 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
                   />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '0.875rem', fontWeight: 500, marginBottom: '0.25rem' }}>
+                  <div
+                    style={{
+                      fontSize: '0.875rem',
+                      fontWeight: 500,
+                      marginBottom: '0.25rem',
+                    }}
+                  >
                     {item.name}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
                     Qty: {item.quantity}
                   </div>
-                  <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--accent)' }}>
+                  <div
+                    style={{
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      color: 'var(--accent)',
+                    }}
+                  >
                     ₹{item.price * item.quantity}
                   </div>
                 </div>
@@ -586,24 +741,50 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
           </div>
 
           {/* Totals */}
-          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+          <div
+            style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginBottom: '0.5rem',
+              }}
+            >
               <span style={{ color: 'var(--muted)' }}>{t('subtotal')}</span>
               <span style={{ fontWeight: 600 }}>₹{totalPrice}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginBottom: '0.5rem',
+              }}
+            >
               <span style={{ color: 'var(--muted)' }}>{t('delivery')}</span>
-              <span style={{ fontWeight: 600, color: '#22c55e' }}>{t('free')}</span>
+              <span style={{ fontWeight: 600, color: '#22c55e' }}>
+                {t('free')}
+              </span>
             </div>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              paddingTop: '1rem',
-              borderTop: '1px solid var(--border)',
-              marginTop: '0.5rem'
-            }}>
-              <span style={{ fontSize: '1.125rem', fontWeight: 700 }}>{t('total')}</span>
-              <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent)' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                paddingTop: '1rem',
+                borderTop: '1px solid var(--border)',
+                marginTop: '0.5rem',
+              }}
+            >
+              <span style={{ fontSize: '1.125rem', fontWeight: 700 }}>
+                {t('total')}
+              </span>
+              <span
+                style={{
+                  fontSize: '1.5rem',
+                  fontWeight: 700,
+                  color: 'var(--accent)',
+                }}
+              >
                 ₹{totalPrice}
               </span>
             </div>
@@ -623,7 +804,7 @@ export default function CheckoutPage({ onBack }: CheckoutPageProps) {
               fontSize: '1.125rem',
               fontWeight: 700,
               cursor: loading ? 'not-allowed' : 'pointer',
-              marginTop: '1rem'
+              marginTop: '1rem',
             }}
           >
             {loading ? t('processing') : t('placeOrder')}

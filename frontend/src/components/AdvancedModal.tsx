@@ -33,7 +33,7 @@ export default function AdvancedModal({
   closeOnBackdrop = true,
   closeOnEscape = true,
   footer,
-  animation = 'scale'
+  animation = 'scale',
 }: AdvancedModalProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -91,26 +91,27 @@ export default function AdvancedModal({
           background: 'rgba(255, 255, 255, 0.08)',
           backdropFilter: 'blur(30px)',
           border: '1px solid rgba(255, 255, 255, 0.15)',
-          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
         };
       case 'gradient':
         return {
           background: 'var(--gradient-primary)',
           color: 'white',
-          border: 'none'
+          border: 'none',
         };
       case 'premium':
         return {
           background: 'var(--bg)',
           border: '1px solid rgba(var(--accent-rgb), 0.3)',
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(var(--accent-rgb), 0.2)',
-          borderTop: '3px solid var(--accent)'
+          boxShadow:
+            '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(var(--accent-rgb), 0.2)',
+          borderTop: '3px solid var(--accent)',
         };
       default:
         return {
           background: 'var(--bg)',
           border: '1px solid var(--border)',
-          boxShadow: 'var(--elevation-5)'
+          boxShadow: 'var(--elevation-5)',
         };
     }
   };
@@ -146,7 +147,7 @@ export default function AdvancedModal({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '1rem'
+        padding: '1rem',
       }}
     >
       {/* Backdrop */}
@@ -162,7 +163,7 @@ export default function AdvancedModal({
           backdropFilter: 'blur(5px)',
           opacity: isAnimating ? 1 : 0,
           transition: 'opacity var(--transition-base)',
-          cursor: closeOnBackdrop ? 'pointer' : 'default'
+          cursor: closeOnBackdrop ? 'pointer' : 'default',
         }}
       />
 
@@ -178,7 +179,7 @@ export default function AdvancedModal({
           transform: isAnimating ? 'scale(1)' : 'scale(0.9)',
           transition: 'all var(--transition-base)',
           ...getSizeStyles(),
-          ...getVariantStyles()
+          ...getVariantStyles(),
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -190,7 +191,8 @@ export default function AdvancedModal({
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '1.5rem',
-              borderBottom: variant === 'gradient' ? 'none' : '1px solid var(--border)'
+              borderBottom:
+                variant === 'gradient' ? 'none' : '1px solid var(--border)',
             }}
           >
             {title && (
@@ -199,7 +201,7 @@ export default function AdvancedModal({
                   margin: 0,
                   fontSize: '1.5rem',
                   fontWeight: 700,
-                  color: variant === 'gradient' ? 'white' : 'var(--fg)'
+                  color: variant === 'gradient' ? 'white' : 'var(--fg)',
                 }}
               >
                 {title}
@@ -216,7 +218,7 @@ export default function AdvancedModal({
                   padding: '0.5rem',
                   borderRadius: 'var(--radius-md)',
                   color: variant === 'gradient' ? 'white' : 'var(--fg)',
-                  marginLeft: 'auto'
+                  marginLeft: 'auto',
                 }}
                 aria-label="Close modal"
               >
@@ -232,7 +234,7 @@ export default function AdvancedModal({
             padding: '1.5rem',
             maxHeight: size === 'full' ? 'calc(95vh - 180px)' : '70vh',
             overflowY: 'auto',
-            color: variant === 'gradient' ? 'white' : 'var(--fg)'
+            color: variant === 'gradient' ? 'white' : 'var(--fg)',
           }}
           className="custom-scrollbar"
         >
@@ -244,10 +246,11 @@ export default function AdvancedModal({
           <div
             style={{
               padding: '1.5rem',
-              borderTop: variant === 'gradient' ? 'none' : '1px solid var(--border)',
+              borderTop:
+                variant === 'gradient' ? 'none' : '1px solid var(--border)',
               display: 'flex',
               gap: '1rem',
-              justifyContent: 'flex-end'
+              justifyContent: 'flex-end',
             }}
           >
             {footer}
@@ -269,7 +272,7 @@ export function ConfirmModal({
   message,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
-  variant = 'default'
+  variant = 'default',
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -309,7 +312,7 @@ export function ConfirmModal({
             style={{
               padding: '0.75rem 1.5rem',
               borderRadius: 'var(--radius-md)',
-              fontWeight: 600
+              fontWeight: 600,
             }}
           >
             {cancelText}
@@ -324,7 +327,7 @@ export function ConfirmModal({
               padding: '0.75rem 1.5rem',
               borderRadius: 'var(--radius-md)',
               fontWeight: 600,
-              background: getButtonColor()
+              background: getButtonColor(),
             }}
           >
             {confirmText}
@@ -344,7 +347,7 @@ export function ImageViewerModal({
   isOpen,
   onClose,
   imageUrl,
-  title
+  title,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -360,7 +363,13 @@ export function ImageViewerModal({
       variant="glass"
       animation="scale"
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <img
           src={imageUrl}
           alt={title || 'Image'}
@@ -368,7 +377,7 @@ export function ImageViewerModal({
             maxWidth: '100%',
             maxHeight: '80vh',
             borderRadius: 'var(--radius-lg)',
-            objectFit: 'contain'
+            objectFit: 'contain',
           }}
         />
       </div>
@@ -383,7 +392,7 @@ export function VideoPlayerModal({
   isOpen,
   onClose,
   videoUrl,
-  title
+  title,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -404,7 +413,7 @@ export function VideoPlayerModal({
         autoPlay
         style={{
           width: '100%',
-          borderRadius: 'var(--radius-lg)'
+          borderRadius: 'var(--radius-lg)',
         }}
       >
         <source src={videoUrl} type="video/mp4" />

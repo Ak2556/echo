@@ -1,6 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 import { useThemeColors } from '@/hooks/useThemeColors';
 
 interface QRHistory {
@@ -24,18 +30,46 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
   const [qrSize, setQrSize] = useState(200);
   const [qrColor, setQrColor] = useState('colors.brand.primary');
   const [bgColor, setBgColor] = useState('#ffffff');
-  const [activeTab, setActiveTab] = useState<'generate' | 'history' | 'templates'>('generate');
+  const [activeTab, setActiveTab] = useState<
+    'generate' | 'history' | 'templates'
+  >('generate');
   const [showStats, setShowStats] = useState(false);
 
   const templates = [
-    { id: 't1', name: 'WiFi', template: 'WIFI:T:WPA;S:{SSID};P:{PASSWORD};;', icon: '📶' },
-    { id: 't2', name: 'vCard', template: 'BEGIN:VCARD\nVERSION:3.0\nFN:{NAME}\nTEL:{PHONE}\nEMAIL:{EMAIL}\nEND:VCARD', icon: '👤' },
-    { id: 't3', name: 'Email', template: 'mailto:{EMAIL}?subject={SUBJECT}', icon: '📧' },
-    { id: 't4', name: 'SMS', template: 'sms:{PHONE}?body={MESSAGE}', icon: '💬' },
+    {
+      id: 't1',
+      name: 'WiFi',
+      template: 'WIFI:T:WPA;S:{SSID};P:{PASSWORD};;',
+      icon: '📶',
+    },
+    {
+      id: 't2',
+      name: 'vCard',
+      template:
+        'BEGIN:VCARD\nVERSION:3.0\nFN:{NAME}\nTEL:{PHONE}\nEMAIL:{EMAIL}\nEND:VCARD',
+      icon: '👤',
+    },
+    {
+      id: 't3',
+      name: 'Email',
+      template: 'mailto:{EMAIL}?subject={SUBJECT}',
+      icon: '📧',
+    },
+    {
+      id: 't4',
+      name: 'SMS',
+      template: 'sms:{PHONE}?body={MESSAGE}',
+      icon: '💬',
+    },
     { id: 't5', name: 'Phone', template: 'tel:{PHONE}', icon: '📞' },
     { id: 't6', name: 'URL', template: 'https://{DOMAIN}', icon: '🔗' },
     { id: 't7', name: 'Location', template: 'geo:{LAT},{LON}', icon: '📍' },
-    { id: 't8', name: 'Event', template: 'BEGIN:VEVENT\nSUMMARY:{TITLE}\nEND:VEVENT', icon: '📅' }
+    {
+      id: 't8',
+      name: 'Event',
+      template: 'BEGIN:VEVENT\nSUMMARY:{TITLE}\nEND:VEVENT',
+      icon: '📅',
+    },
   ];
 
   useEffect(() => {
@@ -43,7 +77,9 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
     if (history) {
       try {
         setQrHistory(JSON.parse(history));
-      } catch (e) { /* ignore */ }
+      } catch (e) {
+        /* ignore */
+      }
     }
   }, []);
 
@@ -69,16 +105,18 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
         id: `qr-${Date.now()}`,
         text,
         timestamp: new Date().toISOString(),
-        type: detectType(text)
+        type: detectType(text),
       };
-      setQrHistory(prev => [historyEntry, ...prev].slice(0, 50));
+      setQrHistory((prev) => [historyEntry, ...prev].slice(0, 50));
     }
   }, [text]);
 
   const copyToClipboard = useCallback(async (str: string) => {
     try {
       await navigator.clipboard.writeText(str);
-    } catch (err) { /* ignore */ }
+    } catch (err) {
+      /* ignore */
+    }
   }, []);
 
   const downloadQR = useCallback(() => {
@@ -98,7 +136,12 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
     const cellSize = qrSize / gridSize;
     for (let i = 0; i < gridSize; i++) {
       for (let j = 0; j < gridSize; j++) {
-        if ((i + j) % 2 === 0 || (i < 2 && j < 2) || (i < 2 && j > 5) || (i > 5 && j < 2)) {
+        if (
+          (i + j) % 2 === 0 ||
+          (i < 2 && j < 2) ||
+          (i < 2 && j > 5) ||
+          (i > 5 && j < 2)
+        ) {
           ctx.fillRect(j * cellSize, i * cellSize, cellSize - 1, cellSize - 1);
         }
       }
@@ -114,28 +157,35 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
     if (navigator.share) {
       try {
         await navigator.share({ title: 'QR Code', text });
-      } catch (err) { /* ignore */ }
+      } catch (err) {
+        /* ignore */
+      }
     } else {
       copyToClipboard(text);
     }
   }, [text, copyToClipboard]);
 
   const toggleFavorite = useCallback((id: string) => {
-    setQrHistory(prev => prev.map(item =>
-      item.id === id ? { ...item, favorite: !item.favorite } : item
-    ));
+    setQrHistory((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, favorite: !item.favorite } : item
+      )
+    );
   }, []);
 
   const deleteHistoryItem = useCallback((id: string) => {
-    setQrHistory(prev => prev.filter(item => item.id !== id));
+    setQrHistory((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
   const stats = useMemo(() => {
-    const favorites = qrHistory.filter(h => h.favorite).length;
-    const typeCount = qrHistory.reduce((acc, h) => {
-      acc[h.type] = (acc[h.type] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const favorites = qrHistory.filter((h) => h.favorite).length;
+    const typeCount = qrHistory.reduce(
+      (acc, h) => {
+        acc[h.type] = (acc[h.type] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     return { total: qrHistory.length, favorites, typeBreakdown: typeCount };
   }, [qrHistory]);
@@ -143,44 +193,67 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
   if (!isVisible) return null;
 
   return (
-    <div style={{
-      width: '100%',
-      height: '100%',
-      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-      display: 'flex',
-      flexDirection: 'column',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      color: '#ffffff',
-      overflow: 'hidden'
-    }}>
-      {/* Header */}
-      <div style={{
-        padding: '20px 24px',
-        background: 'rgba(255, 255, 255, 0.05)',
-        backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        background:
+          'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
         display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
+        flexDirection: 'column',
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        color: '#ffffff',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          padding: '20px 24px',
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <div>
-          <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <h2
+            style={{
+              margin: 0,
+              fontSize: '1.5rem',
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
             <span>📱</span> QR Code Pro
           </h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.6)' }}>
+          <p
+            style={{
+              margin: '4px 0 0 0',
+              fontSize: '0.85rem',
+              color: 'rgba(255, 255, 255, 0.6)',
+            }}
+          >
             Generate, customize & share QR codes
           </p>
         </div>
         <button
           onClick={() => setShowStats(!showStats)}
           style={{
-            background: showStats ? 'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)' : 'rgba(255, 255, 255, 0.1)',
+            background: showStats
+              ? 'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)'
+              : 'rgba(255, 255, 255, 0.1)',
             border: '1px solid rgba(255, 255, 255, 0.2)',
             borderRadius: '10px',
             padding: '8px 12px',
             color: 'white',
             cursor: 'pointer',
-            fontSize: '0.85rem'
+            fontSize: '0.85rem',
           }}
         >
           📊 Stats
@@ -189,28 +262,93 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
 
       {/* Stats Panel */}
       {showStats && (
-        <div style={{
-          padding: '16px 24px',
-          background: 'rgba(102, 126, 234, 0.1)',
-          borderBottom: '1px solid rgba(102, 126, 234, 0.3)',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
-          gap: '12px'
-        }}>
-          <div style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '12px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'colors.brand.primary' }}>{stats.total}</div>
-            <div style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.6)' }}>Total</div>
-          </div>
-          <div style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '12px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#ffd700' }}>{stats.favorites}</div>
-            <div style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.6)' }}>Favorites</div>
-          </div>
-          {Object.entries(stats.typeBreakdown).slice(0, 2).map(([type, count]) => (
-            <div key={type} style={{ background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', padding: '12px', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#2ed573' }}>{count}</div>
-              <div style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.6)' }}>{type}</div>
+        <div
+          style={{
+            padding: '16px 24px',
+            background: 'rgba(102, 126, 234, 0.1)',
+            borderBottom: '1px solid rgba(102, 126, 234, 0.3)',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
+            gap: '12px',
+          }}
+        >
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '12px',
+              textAlign: 'center',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                color: 'colors.brand.primary',
+              }}
+            >
+              {stats.total}
             </div>
-          ))}
+            <div
+              style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.6)' }}
+            >
+              Total
+            </div>
+          </div>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '12px',
+              textAlign: 'center',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                color: '#ffd700',
+              }}
+            >
+              {stats.favorites}
+            </div>
+            <div
+              style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.6)' }}
+            >
+              Favorites
+            </div>
+          </div>
+          {Object.entries(stats.typeBreakdown)
+            .slice(0, 2)
+            .map(([type, count]) => (
+              <div
+                key={type}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                    color: '#2ed573',
+                  }}
+                >
+                  {count}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.7rem',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                  }}
+                >
+                  {type}
+                </div>
+              </div>
+            ))}
         </div>
       )}
 
@@ -219,8 +357,8 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
         {[
           { id: 'generate', label: 'Generate', icon: '✨' },
           { id: 'templates', label: 'Templates', icon: '📋' },
-          { id: 'history', label: `History (${qrHistory.length})`, icon: '🕒' }
-        ].map(tab => (
+          { id: 'history', label: `History (${qrHistory.length})`, icon: '🕒' },
+        ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
@@ -228,9 +366,10 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
               flex: 1,
               padding: '10px 12px',
               border: 'none',
-              background: activeTab === tab.id
-                ? 'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)'
-                : 'rgba(255, 255, 255, 0.1)',
+              background:
+                activeTab === tab.id
+                  ? 'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)'
+                  : 'rgba(255, 255, 255, 0.1)',
               borderRadius: '10px',
               color: 'white',
               cursor: 'pointer',
@@ -239,7 +378,7 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '6px'
+              gap: '6px',
             }}
           >
             <span>{tab.icon}</span>
@@ -251,7 +390,9 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
       {/* Content */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 24px' }}>
         {activeTab === 'generate' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+          >
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
@@ -266,7 +407,7 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
                 color: 'white',
                 fontSize: '0.9rem',
                 resize: 'vertical',
-                outline: 'none'
+                outline: 'none',
               }}
             />
 
@@ -285,23 +426,46 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
                 fontSize: '1rem',
                 fontWeight: '600',
                 cursor: text.trim() ? 'pointer' : 'not-allowed',
-                opacity: text.trim() ? 1 : 0.5
+                opacity: text.trim() ? 1 : 0.5,
               }}
             >
               📱 Generate QR Code
             </button>
 
             {/* Customization */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.08)',
-              borderRadius: '16px',
-              padding: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
-            }}>
-              <div style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '12px' }}>Customization</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                borderRadius: '16px',
+                padding: '16px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  marginBottom: '12px',
+                }}
+              >
+                Customization
+              </div>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '12px',
+                }}
+              >
                 <div>
-                  <label style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.6)', display: 'block', marginBottom: '6px' }}>
+                  <label
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      display: 'block',
+                      marginBottom: '6px',
+                    }}
+                  >
                     Size: {qrSize}px
                   </label>
                   <input
@@ -315,25 +479,51 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <div style={{ flex: 1 }}>
-                    <label style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.6)', display: 'block', marginBottom: '6px' }}>
+                    <label
+                      style={{
+                        fontSize: '0.75rem',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        display: 'block',
+                        marginBottom: '6px',
+                      }}
+                    >
                       QR Color
                     </label>
                     <input
                       type="color"
                       value={qrColor}
                       onChange={(e) => setQrColor(e.target.value)}
-                      style={{ width: '100%', height: '36px', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+                      style={{
+                        width: '100%',
+                        height: '36px',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                      }}
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.6)', display: 'block', marginBottom: '6px' }}>
+                    <label
+                      style={{
+                        fontSize: '0.75rem',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        display: 'block',
+                        marginBottom: '6px',
+                      }}
+                    >
                       Background
                     </label>
                     <input
                       type="color"
                       value={bgColor}
                       onChange={(e) => setBgColor(e.target.value)}
-                      style={{ width: '100%', height: '36px', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+                      style={{
+                        width: '100%',
+                        height: '36px',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                      }}
                     />
                   </div>
                 </div>
@@ -342,53 +532,66 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
 
             {/* QR Result */}
             {qrGenerated && text && (
-              <div style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                borderRadius: '16px',
-                padding: '24px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  width: qrSize,
-                  height: qrSize,
-                  margin: '0 auto 16px',
-                  background: bgColor,
-                  borderRadius: '12px',
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(8, 1fr)',
-                  gap: '2px',
-                  padding: '12px'
-                }}>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    width: qrSize,
+                    height: qrSize,
+                    margin: '0 auto 16px',
+                    background: bgColor,
+                    borderRadius: '12px',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(8, 1fr)',
+                    gap: '2px',
+                    padding: '12px',
+                  }}
+                >
                   {Array.from({ length: 64 }).map((_, i) => (
                     <div
                       key={i}
                       style={{
-                        background: ((i % 8) + Math.floor(i / 8)) % 2 === 0 ||
-                          (i < 16 && (i % 8) < 2) ||
-                          (i < 16 && (i % 8) > 5) ||
-                          (i > 47 && (i % 8) < 2)
-                          ? qrColor
-                          : 'transparent',
-                        borderRadius: '2px'
+                        background:
+                          ((i % 8) + Math.floor(i / 8)) % 2 === 0 ||
+                          (i < 16 && i % 8 < 2) ||
+                          (i < 16 && i % 8 > 5) ||
+                          (i > 47 && i % 8 < 2)
+                            ? qrColor
+                            : 'transparent',
+                        borderRadius: '2px',
                       }}
                     />
                   ))}
                 </div>
 
-                <div style={{
-                  fontSize: '0.8rem',
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  padding: '12px',
-                  borderRadius: '8px',
-                  marginBottom: '16px',
-                  wordBreak: 'break-all'
-                }}>
+                <div
+                  style={{
+                    fontSize: '0.8rem',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    marginBottom: '16px',
+                    wordBreak: 'break-all',
+                  }}
+                >
                   {text.length > 100 ? text.substring(0, 100) + '...' : text}
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '8px',
+                    justifyContent: 'center',
+                  }}
+                >
                   <button
                     onClick={downloadQR}
                     style={{
@@ -401,7 +604,7 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
                       fontSize: '0.85rem',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px'
+                      gap: '6px',
                     }}
                   >
                     💾 Download
@@ -418,7 +621,7 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
                       fontSize: '0.85rem',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px'
+                      gap: '6px',
                     }}
                   >
                     📤 Share
@@ -435,7 +638,7 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
                       fontSize: '0.85rem',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px'
+                      gap: '6px',
                     }}
                   >
                     📋 Copy
@@ -447,8 +650,14 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
         )}
 
         {activeTab === 'templates' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
-            {templates.map(template => (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '12px',
+            }}
+          >
+            {templates.map((template) => (
               <button
                 key={template.id}
                 onClick={() => {
@@ -463,11 +672,15 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
                   cursor: 'pointer',
                   textAlign: 'center',
                   transition: 'all 0.3s ease',
-                  color: 'white'
+                  color: 'white',
                 }}
               >
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>{template.icon}</div>
-                <div style={{ fontSize: '0.85rem', fontWeight: '600' }}>{template.name}</div>
+                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
+                  {template.icon}
+                </div>
+                <div style={{ fontSize: '0.85rem', fontWeight: '600' }}>
+                  {template.name}
+                </div>
               </button>
             ))}
           </div>
@@ -476,12 +689,18 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
         {activeTab === 'history' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {qrHistory.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '48px', color: 'rgba(255, 255, 255, 0.5)' }}>
+              <div
+                style={{
+                  textAlign: 'center',
+                  padding: '48px',
+                  color: 'rgba(255, 255, 255, 0.5)',
+                }}
+              >
                 <div style={{ fontSize: '3rem', marginBottom: '12px' }}>📱</div>
                 <div>No QR codes generated yet</div>
               </div>
             ) : (
-              qrHistory.map(item => (
+              qrHistory.map((item) => (
                 <div
                   key={item.id}
                   style={{
@@ -491,23 +710,34 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
                     padding: '12px',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px'
+                    gap: '12px',
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                      fontSize: '0.85rem',
-                      fontWeight: '500',
-                      marginBottom: '4px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap'
-                    }}>
+                    <div
+                      style={{
+                        fontSize: '0.85rem',
+                        fontWeight: '500',
+                        marginBottom: '4px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
                       {item.text}
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.5)', display: 'flex', gap: '8px' }}>
+                    <div
+                      style={{
+                        fontSize: '0.7rem',
+                        color: 'rgba(255, 255, 255, 0.5)',
+                        display: 'flex',
+                        gap: '8px',
+                      }}
+                    >
                       <span>{item.type}</span>
-                      <span>{new Date(item.timestamp).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(item.timestamp).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                   <button
@@ -523,7 +753,7 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
                       padding: '6px 10px',
                       color: 'white',
                       cursor: 'pointer',
-                      fontSize: '0.75rem'
+                      fontSize: '0.75rem',
                     }}
                   >
                     Use
@@ -535,7 +765,7 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
                       border: 'none',
                       cursor: 'pointer',
                       fontSize: '1rem',
-                      padding: '4px'
+                      padding: '4px',
                     }}
                   >
                     {item.favorite ? '⭐' : '☆'}
@@ -548,7 +778,7 @@ export default function QRCodeApp({ isVisible, onClose }: QRCodeAppProps) {
                       cursor: 'pointer',
                       fontSize: '0.9rem',
                       color: '#ff4757',
-                      padding: '4px'
+                      padding: '4px',
                     }}
                   >
                     ×

@@ -145,7 +145,8 @@ const Tooltip = memo(function Tooltip({
           left: '50%',
           marginLeft: -arrowSize,
           borderWidth: `${arrowSize}px ${arrowSize}px 0 ${arrowSize}px`,
-          borderColor: 'var(--tooltip-bg, #1f2937) transparent transparent transparent',
+          borderColor:
+            'var(--tooltip-bg, #1f2937) transparent transparent transparent',
         };
       case 'bottom':
         return {
@@ -154,7 +155,8 @@ const Tooltip = memo(function Tooltip({
           left: '50%',
           marginLeft: -arrowSize,
           borderWidth: `0 ${arrowSize}px ${arrowSize}px ${arrowSize}px`,
-          borderColor: 'transparent transparent var(--tooltip-bg, #1f2937) transparent',
+          borderColor:
+            'transparent transparent var(--tooltip-bg, #1f2937) transparent',
         };
       case 'left':
         return {
@@ -163,7 +165,8 @@ const Tooltip = memo(function Tooltip({
           top: '50%',
           marginTop: -arrowSize,
           borderWidth: `${arrowSize}px 0 ${arrowSize}px ${arrowSize}px`,
-          borderColor: 'transparent transparent transparent var(--tooltip-bg, #1f2937)',
+          borderColor:
+            'transparent transparent transparent var(--tooltip-bg, #1f2937)',
         };
       case 'right':
         return {
@@ -172,7 +175,8 @@ const Tooltip = memo(function Tooltip({
           top: '50%',
           marginTop: -arrowSize,
           borderWidth: `${arrowSize}px ${arrowSize}px ${arrowSize}px 0`,
-          borderColor: 'transparent var(--tooltip-bg, #1f2937) transparent transparent',
+          borderColor:
+            'transparent var(--tooltip-bg, #1f2937) transparent transparent',
         };
       default:
         return baseStyles;
@@ -196,11 +200,13 @@ const Tooltip = memo(function Tooltip({
           sizeClasses[size],
           className
         )}
-        style={{
-          top: tooltipPosition.top,
-          left: tooltipPosition.left,
-          '--tooltip-bg': '#1f2937',
-        } as React.CSSProperties}
+        style={
+          {
+            top: tooltipPosition.top,
+            left: tooltipPosition.left,
+            '--tooltip-bg': '#1f2937',
+          } as React.CSSProperties
+        }
       >
         {content}
         <div

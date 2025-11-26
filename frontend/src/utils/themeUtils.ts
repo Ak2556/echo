@@ -51,8 +51,8 @@ export const THEME_PRESETS: ThemePreset[] = [
     preview: {
       background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
       foreground: '#1e293b',
-      accent: '#007aff'
-    }
+      accent: '#007aff',
+    },
   },
   {
     id: 'light',
@@ -64,8 +64,8 @@ export const THEME_PRESETS: ThemePreset[] = [
     preview: {
       background: '#ffffff',
       foreground: '#1e293b',
-      accent: '#007aff'
-    }
+      accent: '#007aff',
+    },
   },
   {
     id: 'dark',
@@ -77,8 +77,8 @@ export const THEME_PRESETS: ThemePreset[] = [
     preview: {
       background: '#0f172a',
       foreground: '#f8fafc',
-      accent: '#60a5fa'
-    }
+      accent: '#60a5fa',
+    },
   },
   {
     id: 'blue',
@@ -90,8 +90,8 @@ export const THEME_PRESETS: ThemePreset[] = [
     preview: {
       background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
       foreground: '#1e3a8a',
-      accent: '#3b82f6'
-    }
+      accent: '#3b82f6',
+    },
   },
   {
     id: 'green',
@@ -103,8 +103,8 @@ export const THEME_PRESETS: ThemePreset[] = [
     preview: {
       background: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)',
       foreground: '#064e3b',
-      accent: '#10b981'
-    }
+      accent: '#10b981',
+    },
   },
   {
     id: 'red',
@@ -116,9 +116,9 @@ export const THEME_PRESETS: ThemePreset[] = [
     preview: {
       background: 'linear-gradient(135deg, #fef2f2 0%, #fecaca 100%)',
       foreground: '#7f1d1d',
-      accent: '#ef4444'
-    }
-  }
+      accent: '#ef4444',
+    },
+  },
 ];
 
 /**
@@ -130,22 +130,22 @@ export const ACCESSIBILITY_PRESETS: Record<string, AccessibilitySettings> = {
     highContrast: false,
     forcedColors: false,
     fontSize: 'medium',
-    focusIndicators: 'subtle'
+    focusIndicators: 'subtle',
   },
   accessible: {
     reducedMotion: true,
     highContrast: true,
     forcedColors: false,
     fontSize: 'large',
-    focusIndicators: 'prominent'
+    focusIndicators: 'prominent',
   },
   lowVision: {
     reducedMotion: true,
     highContrast: true,
     forcedColors: true,
     fontSize: 'xl',
-    focusIndicators: 'prominent'
-  }
+    focusIndicators: 'prominent',
+  },
 };
 
 /**
@@ -162,15 +162,18 @@ export function detectSystemPreferences(): {
       colorScheme: 'light',
       reducedMotion: false,
       highContrast: false,
-      forcedColors: false
+      forcedColors: false,
     };
   }
 
   return {
-    colorScheme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
-    reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    colorScheme: window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light',
+    reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)')
+      .matches,
     highContrast: window.matchMedia('(prefers-contrast: high)').matches,
-    forcedColors: window.matchMedia('(forced-colors: active)').matches
+    forcedColors: window.matchMedia('(forced-colors: active)').matches,
   };
 }
 
@@ -185,20 +188,21 @@ export async function getSunriseSunset(
   try {
     const targetDate = date || new Date();
     const dateStr = targetDate.toISOString().split('T')[0];
-    
+
     const response = await fetch(
       `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&date=${dateStr}&formatted=0`
     );
-    
+
     if (!response.ok) throw new Error('Failed to fetch sunrise/sunset data');
-    
+
     const data = await response.json();
-    
-    if (data.status !== 'OK') throw new Error('Invalid sunrise/sunset response');
-    
+
+    if (data.status !== 'OK')
+      throw new Error('Invalid sunrise/sunset response');
+
     return {
       sunrise: new Date(data.results.sunrise),
-      sunset: new Date(data.results.sunset)
+      sunset: new Date(data.results.sunset),
     };
   } catch (error) {
     console.warn('Failed to fetch sunrise/sunset times:', error);
@@ -209,7 +213,11 @@ export async function getSunriseSunset(
 /**
  * Gets user's current location
  */
-export function getCurrentLocation(): Promise<{ lat: number; lng: number; name?: string }> {
+export function getCurrentLocation(): Promise<{
+  lat: number;
+  lng: number;
+  name?: string;
+}> {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       reject(new Error('Geolocation is not supported'));
@@ -219,16 +227,20 @@ export function getCurrentLocation(): Promise<{ lat: number; lng: number; name?:
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude: lat, longitude: lng } = position.coords;
-        
+
         try {
           // Try to get location name using reverse geocoding
           const response = await fetch(
             `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
           );
-          
+
           if (response.ok) {
             const data = await response.json();
-            const name = data.city || data.locality || data.countryName || 'Unknown Location';
+            const name =
+              data.city ||
+              data.locality ||
+              data.countryName ||
+              'Unknown Location';
             resolve({ lat, lng, name });
           } else {
             resolve({ lat, lng });
@@ -243,7 +255,7 @@ export function getCurrentLocation(): Promise<{ lat: number; lng: number; name?:
       {
         enableHighAccuracy: false,
         timeout: 10000,
-        maximumAge: 300000 // 5 minutes
+        maximumAge: 300000, // 5 minutes
       }
     );
   });
@@ -267,7 +279,7 @@ export function shouldUseDarkModeBySchedule(
   if (schedule.type === 'time' && schedule.lightTime && schedule.darkTime) {
     const [lightHour, lightMin] = schedule.lightTime.split(':').map(Number);
     const [darkHour, darkMin] = schedule.darkTime.split(':').map(Number);
-    
+
     const lightMinutes = lightHour * 60 + lightMin;
     const darkMinutes = darkHour * 60 + darkMin;
 
@@ -294,15 +306,15 @@ export function shouldUseDarkModeBySchedule(
 export function validateThemeConfig(config: any): boolean {
   try {
     if (!config || typeof config !== 'object') return false;
-    
+
     // Check required properties
     if (!['light', 'dark', 'auto'].includes(config.colorMode)) return false;
     if (typeof config.accentColor !== 'string') return false;
     if (typeof config.palette !== 'string') return false;
-    
+
     // Validate hex color
     if (!/^#[0-9A-F]{6}$/i.test(config.accentColor)) return false;
-    
+
     return true;
   } catch (error) {
     return false;
@@ -321,10 +333,10 @@ export function exportThemeConfig(theme: any): string {
       palette: theme.colorPalette,
       accentColor: theme.accentColor,
       accessibilityPrefs: theme.accessibilityPrefs,
-      themeSchedule: theme.themeSchedule
-    }
+      themeSchedule: theme.themeSchedule,
+    },
   };
-  
+
   return JSON.stringify(config, null, 2);
 }
 
@@ -334,11 +346,11 @@ export function exportThemeConfig(theme: any): string {
 export function importThemeConfig(configString: string): any | null {
   try {
     const config = JSON.parse(configString);
-    
+
     if (!config.theme || !validateThemeConfig(config.theme)) {
       throw new Error('Invalid theme configuration');
     }
-    
+
     return config.theme;
   } catch (error) {
     console.error('Failed to import theme configuration:', error);
@@ -351,23 +363,23 @@ export function importThemeConfig(configString: string): any | null {
  */
 export function generateThemeCSS(theme: any): string {
   const { colorMode, accentColor, accessibilityPrefs } = theme;
-  
+
   let css = ':root {\n';
   css += `  --accent: ${accentColor};\n`;
   css += `  --accent-rgb: ${hexToRgb(accentColor)};\n`;
-  
+
   if (accessibilityPrefs.highContrast) {
     css += '  --border-width: 2px;\n';
     css += '  --focus-ring-width: 3px;\n';
   }
-  
+
   if (accessibilityPrefs.reducedMotion) {
     css += '  --transition-duration: 0ms;\n';
     css += '  --animation-duration: 0ms;\n';
   }
-  
+
   css += '}\n';
-  
+
   return css;
 }
 
@@ -377,11 +389,11 @@ export function generateThemeCSS(theme: any): string {
 function hexToRgb(hex: string): string {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   if (!result) return '0, 0, 0';
-  
+
   const r = parseInt(result[1], 16);
   const g = parseInt(result[2], 16);
   const b = parseInt(result[3], 16);
-  
+
   return `${r}, ${g}, ${b}`;
 }
 
@@ -391,18 +403,18 @@ function hexToRgb(hex: string): string {
 export function getContrastRatio(color1: string, color2: string): number {
   const getLuminance = (hex: string): number => {
     const rgb = hexToRgb(hex).split(', ').map(Number);
-    const [r, g, b] = rgb.map(c => {
+    const [r, g, b] = rgb.map((c) => {
       c = c / 255;
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   };
-  
+
   const lum1 = getLuminance(color1);
   const lum2 = getLuminance(color2);
   const brightest = Math.max(lum1, lum2);
   const darkest = Math.min(lum1, lum2);
-  
+
   return (brightest + 0.05) / (darkest + 0.05);
 }
 

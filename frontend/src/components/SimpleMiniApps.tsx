@@ -8,10 +8,11 @@ interface SimpleMiniAppsProps {
   onClose: () => void;
 }
 
-export default function SimpleMiniApps({ activeApp, onClose }: SimpleMiniAppsProps) {
-
+export default function SimpleMiniApps({
+  activeApp,
+  onClose,
+}: SimpleMiniAppsProps) {
   if (!activeApp) {
-
     return null;
   }
 

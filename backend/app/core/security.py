@@ -19,7 +19,7 @@ from app.core.exceptions import AuthenticationException, AuthorizationException
 # Import secure implementations
 from app.auth.security import hash_password as secure_hash_password
 from app.auth.security import verify_password as secure_verify_password
-from app.auth.jwt_utils import create_token, verify_token as secure_verify_token
+from app.auth.jwt_utils import get_jwt_manager
 
 settings = get_settings()
 
@@ -53,29 +53,29 @@ class SecurityManager:
     ) -> str:
         """Create a JWT access token with RS256 signing."""
         # SECURITY FIX: Now uses proper RS256 JWT instead of base64
-        if expires_delta:
-            expire_minutes = int(expires_delta.total_seconds() / 60)
-        else:
-            expire_minutes = self.access_token_expire_minutes
+        jwt_manager = get_jwt_manager()
 
-        return create_token(
+        return jwt_manager.create_access_token(
             user_id=data.get("sub", ""),
-            token_type="access",
-            expires_in_minutes=expire_minutes
+            email=data.get("email", ""),
+            token_version=data.get("ver", 1),
+            session_id=data.get("sid"),
+            auth_methods=data.get("amr"),
+            scopes=data.get("scope", "").split() if data.get("scope") else None,
+            expires_delta=expires_delta
         )
 
     def verify_token(self, token: str, token_type: str = "access") -> Dict[str, Any]:
         """Verify and decode a JWT token with RS256."""
         # SECURITY FIX: Now uses proper RS256 JWT verification
+        jwt_manager = get_jwt_manager()
+
         try:
-            payload = secure_verify_token(token)
-
-            # Check token type
-            if payload.get("type") != token_type:
-                raise AuthenticationException("Invalid token type")
-
+            payload = jwt_manager.verify_token(token, token_type=token_type)
             return payload
 
+        except ValueError as e:
+            raise AuthenticationException(f"Invalid token: {str(e)}")
         except Exception as e:
             raise AuthenticationException(f"Invalid token: {str(e)}")
     

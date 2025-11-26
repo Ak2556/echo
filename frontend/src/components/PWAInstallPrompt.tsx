@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { usePWA } from '@/lib/pwa';
 import Button from '@/components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Download, X, Smartphone, Monitor, Share } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -31,16 +37,23 @@ export default function PWAInstallPrompt({ onClose }: PWAInstallPromptProps) {
     };
 
     // Check if we should show the prompt
-    const shouldShow = isInstallationSupported() &&
-                     !installState.isInstalled &&
-                     !localStorage.getItem('pwa-install-dismissed');
+    const shouldShow =
+      isInstallationSupported() &&
+      !installState.isInstalled &&
+      !localStorage.getItem('pwa-install-dismissed');
 
     setIsVisible(shouldShow);
 
-    window.addEventListener('pwa-installability-change', handleInstallabilityChange as EventListener);
+    window.addEventListener(
+      'pwa-installability-change',
+      handleInstallabilityChange as EventListener
+    );
 
     return () => {
-      window.removeEventListener('pwa-installability-change', handleInstallabilityChange as EventListener);
+      window.removeEventListener(
+        'pwa-installability-change',
+        handleInstallabilityChange as EventListener
+      );
     };
   }, [installState.isInstalled]);
 
@@ -115,9 +128,7 @@ export default function PWAInstallPrompt({ onClose }: PWAInstallPromptProps) {
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          <CardDescription>
-            To install Echo on your iPhone:
-          </CardDescription>
+          <CardDescription>To install Echo on your iPhone:</CardDescription>
 
           <ol className="text-sm space-y-2 text-muted-foreground">
             {getIOSInstallInstructions().map((instruction, index) => (
@@ -161,11 +172,7 @@ export default function PWAInstallPrompt({ onClose }: PWAInstallPromptProps) {
             {getPlatformIcon()}
             Install Echo
           </CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDismiss}
-          >
+          <Button variant="ghost" size="sm" onClick={handleDismiss}>
             <X className="w-4 h-4" />
           </Button>
         </div>

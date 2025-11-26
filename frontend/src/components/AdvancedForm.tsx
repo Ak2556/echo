@@ -1,7 +1,15 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { Eye, EyeOff, Check, X, AlertCircle, Upload, Search } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Check,
+  X,
+  AlertCircle,
+  Upload,
+  Search,
+} from 'lucide-react';
 
 /**
  * Advanced Form Components
@@ -23,7 +31,7 @@ export function InputField({
   disabled = false,
   icon,
   helper,
-  maxLength
+  maxLength,
 }: {
   label?: string;
   name: string;
@@ -52,7 +60,7 @@ export function InputField({
             marginBottom: '0.5rem',
             fontSize: '0.875rem',
             fontWeight: 600,
-            color: error ? '#ef4444' : success ? '#10b981' : 'var(--fg)'
+            color: error ? '#ef4444' : success ? '#10b981' : 'var(--fg)',
           }}
         >
           {label} {required && <span style={{ color: '#ef4444' }}>*</span>}
@@ -68,7 +76,7 @@ export function InputField({
               top: '50%',
               transform: 'translateY(-50%)',
               color: 'var(--muted)',
-              pointerEvents: 'none'
+              pointerEvents: 'none',
             }}
           >
             {icon}
@@ -96,12 +104,12 @@ export function InputField({
             borderColor: error
               ? '#ef4444'
               : success
-              ? '#10b981'
-              : focused
-              ? 'var(--accent)'
-              : 'rgba(255, 255, 255, 0.05)',
+                ? '#10b981'
+                : focused
+                  ? 'var(--accent)'
+                  : 'rgba(255, 255, 255, 0.05)',
             opacity: disabled ? 0.5 : 1,
-            cursor: disabled ? 'not-allowed' : 'text'
+            cursor: disabled ? 'not-allowed' : 'text',
           }}
         />
 
@@ -113,7 +121,7 @@ export function InputField({
               right: '1rem',
               top: '50%',
               transform: 'translateY(-50%)',
-              color: error ? '#ef4444' : '#10b981'
+              color: error ? '#ef4444' : '#10b981',
             }}
           >
             {error ? <X size={20} /> : <Check size={20} />}
@@ -129,10 +137,14 @@ export function InputField({
             justifyContent: 'space-between',
             alignItems: 'center',
             marginTop: '0.5rem',
-            fontSize: '0.75rem'
+            fontSize: '0.75rem',
           }}
         >
-          <span style={{ color: error ? '#ef4444' : success ? '#10b981' : 'var(--muted)' }}>
+          <span
+            style={{
+              color: error ? '#ef4444' : success ? '#10b981' : 'var(--muted)',
+            }}
+          >
             {error || success || helper}
           </span>
           {maxLength && (
@@ -165,7 +177,7 @@ export function PasswordField(props: Parameters<typeof InputField>[0]) {
           border: 'none',
           cursor: 'pointer',
           color: 'var(--muted)',
-          padding: '0.25rem'
+          padding: '0.25rem',
         }}
         aria-label={showPassword ? 'Hide password' : 'Show password'}
       >
@@ -185,7 +197,7 @@ export function TextareaField({
   placeholder,
   required = false,
   maxLength,
-  rows = 4
+  rows = 4,
 }: {
   label?: string;
   name: string;
@@ -207,7 +219,7 @@ export function TextareaField({
             marginBottom: '0.5rem',
             fontSize: '0.875rem',
             fontWeight: 600,
-            color: error ? '#ef4444' : 'var(--fg)'
+            color: error ? '#ef4444' : 'var(--fg)',
           }}
         >
           {label} {required && <span style={{ color: '#ef4444' }}>*</span>}
@@ -227,7 +239,7 @@ export function TextareaField({
           width: '100%',
           resize: 'vertical',
           minHeight: `${rows * 1.5}rem`,
-          borderColor: error ? '#ef4444' : 'rgba(255, 255, 255, 0.05)'
+          borderColor: error ? '#ef4444' : 'rgba(255, 255, 255, 0.05)',
         }}
       />
 
@@ -236,10 +248,12 @@ export function TextareaField({
           display: 'flex',
           justifyContent: 'space-between',
           marginTop: '0.5rem',
-          fontSize: '0.75rem'
+          fontSize: '0.75rem',
         }}
       >
-        <span style={{ color: error ? '#ef4444' : 'var(--muted)' }}>{error}</span>
+        <span style={{ color: error ? '#ef4444' : 'var(--muted)' }}>
+          {error}
+        </span>
         {maxLength && (
           <span style={{ color: 'var(--muted)' }}>
             {value.length}/{maxLength}
@@ -259,7 +273,7 @@ export function SelectField({
   options,
   error,
   required = false,
-  placeholder = 'Select an option'
+  placeholder = 'Select an option',
 }: {
   label?: string;
   name: string;
@@ -280,7 +294,7 @@ export function SelectField({
             marginBottom: '0.5rem',
             fontSize: '0.875rem',
             fontWeight: 600,
-            color: error ? '#ef4444' : 'var(--fg)'
+            color: error ? '#ef4444' : 'var(--fg)',
           }}
         >
           {label} {required && <span style={{ color: '#ef4444' }}>*</span>}
@@ -296,7 +310,7 @@ export function SelectField({
         style={{
           width: '100%',
           cursor: 'pointer',
-          borderColor: error ? '#ef4444' : 'rgba(255, 255, 255, 0.05)'
+          borderColor: error ? '#ef4444' : 'rgba(255, 255, 255, 0.05)',
         }}
       >
         <option value="">{placeholder}</option>
@@ -308,7 +322,11 @@ export function SelectField({
       </select>
 
       {error && (
-        <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#ef4444' }}>{error}</div>
+        <div
+          style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#ef4444' }}
+        >
+          {error}
+        </div>
       )}
     </div>
   );
@@ -319,7 +337,7 @@ export function Checkbox({
   label,
   checked,
   onChange,
-  disabled = false
+  disabled = false,
 }: {
   label: string;
   checked: boolean;
@@ -334,7 +352,7 @@ export function Checkbox({
         gap: '0.75rem',
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.5 : 1,
-        marginBottom: '1rem'
+        marginBottom: '1rem',
       }}
     >
       <input
@@ -355,7 +373,7 @@ export function Checkbox({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          flexShrink: 0
+          flexShrink: 0,
         }}
       >
         {checked && <Check size={14} color="white" />}
@@ -372,7 +390,7 @@ export function RadioGroup({
   options,
   value,
   onChange,
-  error
+  error,
 }: {
   label?: string;
   name: string;
@@ -384,7 +402,15 @@ export function RadioGroup({
   return (
     <div style={{ marginBottom: '1.5rem' }}>
       {label && (
-        <div style={{ marginBottom: '0.75rem', fontSize: '0.875rem', fontWeight: 600 }}>{label}</div>
+        <div
+          style={{
+            marginBottom: '0.75rem',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+          }}
+        >
+          {label}
+        </div>
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -395,7 +421,7 @@ export function RadioGroup({
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             <input
@@ -416,7 +442,7 @@ export function RadioGroup({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                flexShrink: 0
+                flexShrink: 0,
               }}
             >
               {value === option.value && (
@@ -425,18 +451,24 @@ export function RadioGroup({
                     width: '10px',
                     height: '10px',
                     borderRadius: '50%',
-                    background: 'var(--accent)'
+                    background: 'var(--accent)',
                   }}
                 />
               )}
             </div>
-            <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>{option.label}</span>
+            <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>
+              {option.label}
+            </span>
           </label>
         ))}
       </div>
 
       {error && (
-        <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#ef4444' }}>{error}</div>
+        <div
+          style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#ef4444' }}
+        >
+          {error}
+        </div>
       )}
     </div>
   );
@@ -448,7 +480,7 @@ export function FileUpload({
   accept,
   multiple = false,
   onUpload,
-  maxSize = 5 * 1024 * 1024 // 5MB default
+  maxSize = 5 * 1024 * 1024, // 5MB default
 }: {
   label?: string;
   accept?: string;
@@ -469,7 +501,9 @@ export function FileUpload({
     // Validate file size
     const oversized = fileArray.filter((f) => f.size > maxSize);
     if (oversized.length > 0) {
-      setError(`File size must be less than ${(maxSize / (1024 * 1024)).toFixed(0)}MB`);
+      setError(
+        `File size must be less than ${(maxSize / (1024 * 1024)).toFixed(0)}MB`
+      );
       return;
     }
 
@@ -479,7 +513,15 @@ export function FileUpload({
   return (
     <div style={{ marginBottom: '1.5rem' }}>
       {label && (
-        <div style={{ marginBottom: '0.75rem', fontSize: '0.875rem', fontWeight: 600 }}>{label}</div>
+        <div
+          style={{
+            marginBottom: '0.75rem',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+          }}
+        >
+          {label}
+        </div>
       )}
 
       <input
@@ -510,7 +552,9 @@ export function FileUpload({
           padding: '2rem',
           textAlign: 'center',
           cursor: 'pointer',
-          background: dragOver ? 'rgba(var(--accent-rgb), 0.05)' : 'var(--bg-secondary)'
+          background: dragOver
+            ? 'rgba(var(--accent-rgb), 0.05)'
+            : 'var(--bg-secondary)',
         }}
       >
         <Upload size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
@@ -518,12 +562,22 @@ export function FileUpload({
           {dragOver ? 'Drop files here' : 'Click to upload or drag and drop'}
         </p>
         <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--muted)' }}>
-          {accept || 'Any file type'} • Max {(maxSize / (1024 * 1024)).toFixed(0)}MB
+          {accept || 'Any file type'} • Max{' '}
+          {(maxSize / (1024 * 1024)).toFixed(0)}MB
         </p>
       </div>
 
       {error && (
-        <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+        <div
+          style={{
+            marginTop: '0.5rem',
+            fontSize: '0.75rem',
+            color: '#ef4444',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.25rem',
+          }}
+        >
           <AlertCircle size={14} />
           {error}
         </div>
@@ -538,7 +592,7 @@ export function SearchInput({
   onChange,
   onSearch,
   placeholder = 'Search...',
-  loading = false
+  loading = false,
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -555,7 +609,7 @@ export function SearchInput({
           left: '1rem',
           top: '50%',
           transform: 'translateY(-50%)',
-          color: 'var(--muted)'
+          color: 'var(--muted)',
         }}
       />
       <input
@@ -567,7 +621,7 @@ export function SearchInput({
         className="input-enhanced transition-smooth"
         style={{
           paddingLeft: '3rem',
-          paddingRight: loading ? '3rem' : '1rem'
+          paddingRight: loading ? '3rem' : '1rem',
         }}
       />
       {loading && (
@@ -582,7 +636,7 @@ export function SearchInput({
             height: '20px',
             border: '2px solid rgba(var(--accent-rgb), 0.2)',
             borderTopColor: 'var(--accent)',
-            borderRadius: '50%'
+            borderRadius: '50%',
           }}
         />
       )}
@@ -598,5 +652,5 @@ export default {
   Checkbox,
   RadioGroup,
   FileUpload,
-  SearchInput
+  SearchInput,
 };

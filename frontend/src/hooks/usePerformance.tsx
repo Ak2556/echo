@@ -29,14 +29,14 @@ export function usePerformance(options: UsePerformanceOptions = {}) {
     trackMemory = true,
     trackInteractions = true,
     sampleRate = 1000, // ms
-    onMetricsUpdate
+    onMetricsUpdate,
   } = options;
 
   const [metrics, setMetrics] = useState<PerformanceMetrics>({
     renderTime: 0,
     fps: 0,
     loadTime: 0,
-    interactionTime: 0
+    interactionTime: 0,
   });
 
   const renderStartTime = useRef<number>(0);
@@ -53,7 +53,7 @@ export function usePerformance(options: UsePerformanceOptions = {}) {
   const endRender = useCallback(() => {
     if (renderStartTime.current > 0) {
       const renderTime = performance.now() - renderStartTime.current;
-      setMetrics(prev => ({ ...prev, renderTime }));
+      setMetrics((prev) => ({ ...prev, renderTime }));
     }
   }, []);
 
@@ -71,7 +71,7 @@ export function usePerformance(options: UsePerformanceOptions = {}) {
     const elapsed = now - lastFrameTime.current;
     if (elapsed >= sampleRate) {
       const fps = Math.round((frameCount.current * 1000) / elapsed);
-      setMetrics(prev => ({ ...prev, fps }));
+      setMetrics((prev) => ({ ...prev, fps }));
       frameCount.current = 0;
       lastFrameTime.current = now;
     }
@@ -87,10 +87,12 @@ export function usePerformance(options: UsePerformanceOptions = {}) {
     const memoryUsage = {
       used: Math.round(memory.usedJSHeapSize / 1024 / 1024), // MB
       total: Math.round(memory.totalJSHeapSize / 1024 / 1024), // MB
-      percentage: Math.round((memory.usedJSHeapSize / memory.totalJSHeapSize) * 100)
+      percentage: Math.round(
+        (memory.usedJSHeapSize / memory.totalJSHeapSize) * 100
+      ),
     };
 
-    setMetrics(prev => ({ ...prev, memoryUsage }));
+    setMetrics((prev) => ({ ...prev, memoryUsage }));
   }, [trackMemory]);
 
   // Measure interaction time
@@ -101,9 +103,9 @@ export function usePerformance(options: UsePerformanceOptions = {}) {
 
   const endInteraction = useCallback(() => {
     if (!trackInteractions || interactionStartTime.current === 0) return;
-    
+
     const interactionTime = performance.now() - interactionStartTime.current;
-    setMetrics(prev => ({ ...prev, interactionTime }));
+    setMetrics((prev) => ({ ...prev, interactionTime }));
     interactionStartTime.current = 0;
   }, [trackInteractions]);
 
@@ -118,11 +120,11 @@ export function usePerformance(options: UsePerformanceOptions = {}) {
   // Setup performance monitoring
   useEffect(() => {
     // Measure initial load time
-    const loadTime = performance.timing 
+    const loadTime = performance.timing
       ? performance.timing.loadEventEnd - performance.timing.navigationStart
       : 0;
-    
-    setMetrics(prev => ({ ...prev, loadTime }));
+
+    setMetrics((prev) => ({ ...prev, loadTime }));
 
     // Start FPS monitoring
     if (trackFPS) {
@@ -156,7 +158,7 @@ export function usePerformance(options: UsePerformanceOptions = {}) {
     startRender,
     endRender,
     startInteraction,
-    endInteraction
+    endInteraction,
   };
 }
 
@@ -174,12 +176,15 @@ export function useRenderPerformance(componentName?: string) {
       const endTime = performance.now();
       const renderTime = endTime - startTime;
       totalRenderTime.current += renderTime;
-      
+
       const average = totalRenderTime.current / renderCount.current;
       setAverageRenderTime(average);
 
-      if (componentName && renderTime > 16) { // Warn if render takes longer than 16ms
-        console.warn(`Slow render detected in ${componentName}: ${renderTime.toFixed(2)}ms`);
+      if (componentName && renderTime > 16) {
+        // Warn if render takes longer than 16ms
+        console.warn(
+          `Slow render detected in ${componentName}: ${renderTime.toFixed(2)}ms`
+        );
       }
     };
   });
@@ -187,7 +192,7 @@ export function useRenderPerformance(componentName?: string) {
   return {
     renderCount: renderCount.current,
     averageRenderTime,
-    totalRenderTime: totalRenderTime.current
+    totalRenderTime: totalRenderTime.current,
   };
 }
 
@@ -209,7 +214,7 @@ export function useNetworkPerformance() {
           effectiveType: connection.effectiveType,
           downlink: connection.downlink,
           rtt: connection.rtt,
-          saveData: connection.saveData
+          saveData: connection.saveData,
         });
       };
 
@@ -236,7 +241,7 @@ export function useBundlePerformance() {
     totalSize: 0,
     loadedSize: 0,
     loadingProgress: 0,
-    resourceCount: 0
+    resourceCount: 0,
   });
 
   useEffect(() => {
@@ -262,7 +267,7 @@ export function useBundlePerformance() {
           totalSize,
           loadedSize,
           loadingProgress: (loadedSize / totalSize) * 100,
-          resourceCount
+          resourceCount,
         });
       }
     });
@@ -284,17 +289,17 @@ export function formatPerformanceMetrics(metrics: PerformanceMetrics) {
     fps: `${metrics.fps} FPS`,
     loadTime: `${(metrics.loadTime / 1000).toFixed(2)}s`,
     interactionTime: `${metrics.interactionTime.toFixed(2)}ms`,
-    memoryUsage: metrics.memoryUsage 
+    memoryUsage: metrics.memoryUsage
       ? `${metrics.memoryUsage.used}MB / ${metrics.memoryUsage.total}MB (${metrics.memoryUsage.percentage}%)`
-      : 'N/A'
+      : 'N/A',
   };
 }
 
 // Performance monitoring component
-export function PerformanceMonitor({ 
-  children, 
-  onMetricsUpdate 
-}: { 
+export function PerformanceMonitor({
+  children,
+  onMetricsUpdate,
+}: {
   children: React.ReactNode;
   onMetricsUpdate?: (metrics: PerformanceMetrics) => void;
 }) {

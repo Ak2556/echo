@@ -21,7 +21,6 @@ export default function PWAInit() {
     // Request persistent storage
     pwaManager.requestPersistentStorage().then((granted) => {
       if (granted) {
-
       }
     });
 
@@ -31,7 +30,6 @@ export default function PWAInit() {
       if (usage) {
         const usedMB = Math.round(usage.used / 1024 / 1024);
         const quotaMB = Math.round(usage.quota / 1024 / 1024);
-
       }
     };
 

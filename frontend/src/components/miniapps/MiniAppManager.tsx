@@ -32,7 +32,7 @@ function getAppTitle(appId: string): string {
   const titles: Record<string, string> = {
     calculator: '🧮 Calculator',
     timer: '⏱️ Timer',
-    stopwatch: '⏱️ Stopwatch', 
+    stopwatch: '⏱️ Stopwatch',
     pomodoro: '🍅 Pomodoro',
     weather: '🌤️ Weather',
     tasks: '✅ Task Manager',
@@ -68,14 +68,16 @@ function getAppTitle(appId: string): string {
     education: '🎓 Education',
     'design-system': '🎨 Design System',
     showcase: '🎨 Design System Showcase',
-    demo: '🎨 Mini Apps Demo'
+    demo: '🎨 Mini Apps Demo',
   };
-  
+
   return titles[appId] || '📱 Mini App';
 }
 
-export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerProps) {
-
+export default function MiniAppManager({
+  activeApp,
+  onClose,
+}: MiniAppManagerProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const { colorMode, toggleColorMode } = useTheme();
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -173,7 +175,9 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
       // 13. Translator - Language translation
       case 'translator':
       case 'translate':
-        return <LanguageTranslatorApp isVisible={true} onClose={handleAppClose} />;
+        return (
+          <LanguageTranslatorApp isVisible={true} onClose={handleAppClose} />
+        );
 
       // 14. Whiteboard - Drawing and sketching
       case 'whiteboard':
@@ -184,13 +188,17 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
       case 'dairyfarm':
       case 'farm':
       case 'dairy':
-        return <DairyFarmManagerApp isVisible={true} onClose={handleAppClose} />;
+        return (
+          <DairyFarmManagerApp isVisible={true} onClose={handleAppClose} />
+        );
 
       // Tuition Marketplace (Special - will be in navbar)
       case 'tuition':
       case 'tuitionmarketplace':
       case 'education':
-        return <TuitionMarketplaceApp isVisible={true} onClose={handleAppClose} />;
+        return (
+          <TuitionMarketplaceApp isVisible={true} onClose={handleAppClose} />
+        );
 
       // Design System Showcase
       case 'design-system':
@@ -216,8 +224,8 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
   return (
     <>
       {/* Backdrop */}
-      <div 
-        className="miniapp-backdrop" 
+      <div
+        className="miniapp-backdrop"
         onClick={onClose}
         style={{
           position: 'fixed',
@@ -228,10 +236,10 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
           background: 'rgba(0, 0, 0, 0.5)',
           backdropFilter: 'blur(4px)',
           zIndex: 9999,
-          animation: 'fadeIn 0.2s ease'
+          animation: 'fadeIn 0.2s ease',
         }}
       />
-      
+
       {/* Dropdown Container */}
       <div
         className={`miniapp-dropdown ${isFullscreen ? 'fullscreen' : ''}`}
@@ -251,25 +259,25 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
           overflow: 'hidden',
           willChange: 'auto',
           backfaceVisibility: 'hidden',
-          WebkitFontSmoothing: 'antialiased'
+          WebkitFontSmoothing: 'antialiased',
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div 
+        <div
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '1rem 1.5rem',
             borderBottom: '1px solid var(--border, #e0e0e0)',
-            background: 'var(--surface, #f8f9fa)'
+            background: 'var(--surface, #f8f9fa)',
           }}
         >
           <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600 }}>
             {getAppTitle(activeApp)}
           </h3>
-          
+
           {/* Control Buttons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {/* Theme Toggle */}
@@ -287,7 +295,7 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
                 transition: 'all 0.2s ease',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'var(--hover, #f0f0f0)';
@@ -300,11 +308,13 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
             >
               {colorMode === 'dark' ? '☀️' : '🌙'}
             </button>
-            
+
             {/* Fullscreen Toggle */}
             <button
               onClick={toggleFullscreen}
-              title={isFullscreen ? 'Exit fullscreen (Esc)' : 'Enter fullscreen'}
+              title={
+                isFullscreen ? 'Exit fullscreen (Esc)' : 'Enter fullscreen'
+              }
               style={{
                 background: 'none',
                 border: 'none',
@@ -316,7 +326,7 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
                 transition: 'all 0.2s ease',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'var(--hover, #f0f0f0)';
@@ -329,7 +339,7 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
             >
               {isFullscreen ? '⊖' : '⊞'}
             </button>
-            
+
             {/* Close Button */}
             <button
               onClick={onClose}
@@ -342,7 +352,7 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
                 padding: '0.25rem',
                 borderRadius: '4px',
                 color: 'var(--muted, #666)',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'var(--hover, #f0f0f0)';
@@ -357,31 +367,35 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
             </button>
           </div>
         </div>
-        
+
         {/* Content */}
-        <div 
+        <div
           ref={contentRef}
           className="miniapp-content-wrapper miniapp-force-static"
           style={{
             padding: '1.5rem',
-            maxHeight: isFullscreen ? 'calc(100vh - 80px)' : 'calc(100vh - 160px)',
+            maxHeight: isFullscreen
+              ? 'calc(100vh - 80px)'
+              : 'calc(100vh - 160px)',
             height: isFullscreen ? 'calc(100vh - 80px)' : 'auto',
             overflowY: 'auto',
-            position: 'relative'
+            position: 'relative',
           }}
         >
-          <div className="miniapp-content-container">
-            {activeAppComponent}
-          </div>
+          <div className="miniapp-content-container">{activeAppComponent}</div>
         </div>
       </div>
-      
+
       <style jsx>{`
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
-        
+
         @keyframes slideDown {
           from {
             opacity: 0;
@@ -392,7 +406,7 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
             transform: translateX(-50%) translateY(0) scale(1);
           }
         }
-        
+
         .miniapp-dropdown {
           --bg: #ffffff;
           --surface: #f8f9fa;
@@ -403,7 +417,7 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
           --accent: #007bff;
           --primary: #28a745;
         }
-        
+
         [data-theme='dark'] .miniapp-dropdown {
           --bg: #1a1a1a;
           --surface: #2a2a2a;
@@ -414,7 +428,7 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
           --accent: #007bff;
           --primary: #28a745;
         }
-        
+
         /* Ensure all mini apps inherit the CSS variables */
         .miniapp-content-wrapper {
           --bg: #ffffff;
@@ -426,7 +440,7 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
           --accent: #007bff;
           --primary: #28a745;
         }
-        
+
         [data-theme='dark'] .miniapp-content-wrapper {
           --bg: #1a1a1a;
           --surface: #2a2a2a;
@@ -437,7 +451,7 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
           --accent: #007bff;
           --primary: #28a745;
         }
-        
+
         /* Override individual app positioning for mini bar integration */
         .miniapp-content-wrapper :global(.miniapp-integration) {
           position: static !important;
@@ -454,7 +468,7 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
           box-shadow: none !important;
           transform: none !important;
         }
-        
+
         .miniapp-content-wrapper :global(.miniapp-overlay.miniapp-integration) {
           position: static !important;
           background: none !important;
@@ -462,8 +476,9 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
           z-index: auto !important;
           animation: none !important;
         }
-        
-        .miniapp-content-wrapper :global(.miniapp-container.miniapp-integration) {
+
+        .miniapp-content-wrapper
+          :global(.miniapp-container.miniapp-integration) {
           position: static !important;
           background: none !important;
           border: none !important;
@@ -476,12 +491,13 @@ export default function MiniAppManager({ activeApp, onClose }: MiniAppManagerPro
           animation: none !important;
           transform: none !important;
         }
-        
+
         .miniapp-content-wrapper :global(.miniapp-header.miniapp-integration) {
           display: none !important;
         }
-        
-        .miniapp-content-wrapper :global(.nothing-calculator.miniapp-integration) {
+
+        .miniapp-content-wrapper
+          :global(.nothing-calculator.miniapp-integration) {
           position: static !important;
           width: 100% !important;
           height: auto !important;

@@ -67,7 +67,10 @@ export function BottomNav() {
             cursor: 'pointer',
             transition: `all ${duration.fast} ${easing.easeOut}`,
             position: 'relative',
-            color: currentRoute === item.route ? 'var(--accent)' : 'var(--nothing-text-secondary)',
+            color:
+              currentRoute === item.route
+                ? 'var(--accent)'
+                : 'var(--nothing-text-secondary)',
           }}
         >
           {/* Icon */}
@@ -75,7 +78,8 @@ export function BottomNav() {
             style={{
               fontSize: '1.5rem',
               lineHeight: 1,
-              transform: currentRoute === item.route ? 'scale(1.1)' : 'scale(1)',
+              transform:
+                currentRoute === item.route ? 'scale(1.1)' : 'scale(1)',
               transition: `transform ${duration.fast} ${easing.easeOut}`,
             }}
           >
@@ -119,7 +123,8 @@ export function BottomNav() {
 
       <style jsx>{`
         @keyframes pulse {
-          0%, 100% {
+          0%,
+          100% {
             opacity: 1;
             transform: translateX(-50%) scale(1);
           }

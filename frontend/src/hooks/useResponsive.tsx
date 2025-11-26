@@ -34,7 +34,9 @@ interface BreakpointConfig {
 /**
  * Hook to detect current viewport size and breakpoints
  */
-export function useResponsive(customBreakpoints?: BreakpointConfig): ResponsiveState {
+export function useResponsive(
+  customBreakpoints?: BreakpointConfig
+): ResponsiveState {
   const [state, setState] = useState<ResponsiveState>(() => {
     // SSR-safe initial state
     if (typeof window === 'undefined') {
@@ -62,10 +64,13 @@ export function useResponsive(customBreakpoints?: BreakpointConfig): ResponsiveS
     const isTablet = width >= 768 && width < 1024;
     const isDesktop = width >= 1024 && width < 1280;
     const isLargeDesktop = width >= 1280;
-    const breakpoint: ResponsiveState['breakpoint'] =
-      isMobile ? 'sm' :
-      isTablet ? 'md' :
-      isLargeDesktop ? 'xl' : 'lg';
+    const breakpoint: ResponsiveState['breakpoint'] = isMobile
+      ? 'sm'
+      : isTablet
+        ? 'md'
+        : isLargeDesktop
+          ? 'xl'
+          : 'lg';
 
     return {
       isMobile,
@@ -77,7 +82,8 @@ export function useResponsive(customBreakpoints?: BreakpointConfig): ResponsiveS
       breakpoint,
       isPortrait: height > width,
       isLandscape: width >= height,
-      isTouchDevice: typeof navigator !== 'undefined' ? navigator.maxTouchPoints > 0 : false,
+      isTouchDevice:
+        typeof navigator !== 'undefined' ? navigator.maxTouchPoints > 0 : false,
       prefersReducedMotion: false,
       prefersHighContrast: false,
       prefersDarkMode: false,
@@ -100,8 +106,12 @@ export function useResponsive(customBreakpoints?: BreakpointConfig): ResponsiveS
     try {
       return {
         mobile: window.matchMedia(breakpoints.mobile || '(max-width: 767px)'),
-        tablet: window.matchMedia(breakpoints.tablet || '(min-width: 768px) and (max-width: 1023px)'),
-        desktop: window.matchMedia(breakpoints.desktop || '(min-width: 1024px)'),
+        tablet: window.matchMedia(
+          breakpoints.tablet || '(min-width: 768px) and (max-width: 1023px)'
+        ),
+        desktop: window.matchMedia(
+          breakpoints.desktop || '(min-width: 1024px)'
+        ),
         xl: window.matchMedia(breakpoints.xl || '(min-width: 1280px)'),
         portrait: window.matchMedia('(orientation: portrait)'),
         landscape: window.matchMedia('(orientation: landscape)'),
@@ -139,10 +149,13 @@ export function useResponsive(customBreakpoints?: BreakpointConfig): ResponsiveS
       isLargeDesktop = width >= 1280;
     }
 
-    const breakpoint: ResponsiveState['breakpoint'] =
-      isMobile ? 'sm' :
-      isTablet ? 'md' :
-      isLargeDesktop ? 'xl' : 'lg';
+    const breakpoint: ResponsiveState['breakpoint'] = isMobile
+      ? 'sm'
+      : isTablet
+        ? 'md'
+        : isLargeDesktop
+          ? 'xl'
+          : 'lg';
 
     setState({
       isMobile,
@@ -153,10 +166,17 @@ export function useResponsive(customBreakpoints?: BreakpointConfig): ResponsiveS
       height,
       breakpoint,
       isPortrait: mediaQueries ? mediaQueries.portrait.matches : height > width,
-      isLandscape: mediaQueries ? mediaQueries.landscape.matches : width >= height,
-      isTouchDevice: typeof navigator !== 'undefined' ? navigator.maxTouchPoints > 0 : false,
-      prefersReducedMotion: mediaQueries ? mediaQueries.reducedMotion.matches : false,
-      prefersHighContrast: mediaQueries ? mediaQueries.highContrast.matches : false,
+      isLandscape: mediaQueries
+        ? mediaQueries.landscape.matches
+        : width >= height,
+      isTouchDevice:
+        typeof navigator !== 'undefined' ? navigator.maxTouchPoints > 0 : false,
+      prefersReducedMotion: mediaQueries
+        ? mediaQueries.reducedMotion.matches
+        : false,
+      prefersHighContrast: mediaQueries
+        ? mediaQueries.highContrast.matches
+        : false,
       prefersDarkMode: mediaQueries ? mediaQueries.darkMode.matches : false,
     });
   }, [mediaQueries]);
@@ -172,7 +192,7 @@ export function useResponsive(customBreakpoints?: BreakpointConfig): ResponsiveS
         updateState();
         rafId = null;
       });
-    }
+    };
 
     // Initial call
     updateState();
@@ -180,7 +200,7 @@ export function useResponsive(customBreakpoints?: BreakpointConfig): ResponsiveS
     // Add event listeners
     if (mediaQueries) {
       const queries = Object.values(mediaQueries);
-      queries.forEach(query => {
+      queries.forEach((query) => {
         if (query && query.addEventListener) {
           // Use updateState directly for media query changes (they're already specific)
           query.addEventListener('change', updateState);
@@ -202,7 +222,7 @@ export function useResponsive(customBreakpoints?: BreakpointConfig): ResponsiveS
 
       if (mediaQueries) {
         const queries = Object.values(mediaQueries);
-        queries.forEach(query => {
+        queries.forEach((query) => {
           if (query && query.removeEventListener) {
             query.removeEventListener('change', updateState);
           }
@@ -230,7 +250,7 @@ export function useBreakpoint(breakpoint: string): boolean {
 
     function updateMatches() {
       const width = window.innerWidth;
-      
+
       // Handle both media query strings and breakpoint names
       if (breakpoint.includes('(')) {
         // It's a media query string
@@ -266,7 +286,7 @@ export function useBreakpoint(breakpoint: string): boolean {
     }
 
     updateMatches();
-    
+
     // Set up listeners
     if (breakpoint.includes('(') && window.matchMedia) {
       const mediaQuery = window.matchMedia(breakpoint);
@@ -328,7 +348,9 @@ export function useWindowSize() {
  * Hook for orientation detection
  */
 export function useOrientation() {
-  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(
+    'portrait'
+  );
 
   useEffect(() => {
     function handleOrientationChange() {

@@ -18,7 +18,7 @@ export default function VoiceMessage({
   audioUrl,
   duration = 0,
   onSend,
-  mode = 'playback'
+  mode = 'playback',
 }: VoiceMessageProps) {
   // Recording state
   const [isRecording, setIsRecording] = useState(false);
@@ -89,7 +89,7 @@ export default function VoiceMessage({
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
         setAudioBlob(blob);
         setRecordedUrl(URL.createObjectURL(blob));
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       };
 
       mediaRecorder.start();
@@ -98,7 +98,7 @@ export default function VoiceMessage({
 
       // Timer for recording duration
       timerRef.current = setInterval(() => {
-        setRecordingTime(prev => {
+        setRecordingTime((prev) => {
           if (prev >= MAX_DURATION) {
             stopRecording();
             return prev;
@@ -106,7 +106,6 @@ export default function VoiceMessage({
           return prev + 1;
         });
       }, 1000);
-
     } catch (error) {
       console.error('Error accessing microphone:', error);
       alert('Could not access microphone. Please check permissions.');
@@ -185,15 +184,19 @@ export default function VoiceMessage({
   // Recording mode UI
   if (mode === 'record') {
     return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.75rem',
-        padding: '0.75rem',
-        background: isRecording ? 'rgba(239, 68, 68, 0.1)' : 'rgba(102, 126, 234, 0.1)',
-        borderRadius: '12px',
-        transition: 'all 0.3s ease'
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          padding: '0.75rem',
+          background: isRecording
+            ? 'rgba(239, 68, 68, 0.1)'
+            : 'rgba(102, 126, 234, 0.1)',
+          borderRadius: '12px',
+          transition: 'all 0.3s ease',
+        }}
+      >
         {!recordedUrl ? (
           <>
             {/* Record/Stop Button */}
@@ -215,15 +218,27 @@ export default function VoiceMessage({
                 transition: 'all 0.3s ease',
                 boxShadow: isRecording
                   ? '0 4px 12px rgba(239, 68, 68, 0.4)'
-                  : '0 4px 12px rgba(102, 126, 234, 0.4)'
+                  : '0 4px 12px rgba(102, 126, 234, 0.4)',
               }}
             >
               {isRecording ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <rect x="6" y="6" width="12" height="12" rx="2" />
                 </svg>
               ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
                   <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
                   <line x1="12" y1="19" x2="12" y2="23" />
@@ -234,25 +249,38 @@ export default function VoiceMessage({
 
             {/* Recording indicator */}
             {isRecording && (
-              <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <div style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: '#ef4444',
-                  animation: 'pulse 1s ease-in-out infinite'
-                }} />
-                <span style={{
-                  fontSize: '0.9rem',
-                  fontWeight: '500',
-                  color: '#ef4444'
-                }}>
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                <div
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    background: '#ef4444',
+                    animation: 'pulse 1s ease-in-out infinite',
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                    color: '#ef4444',
+                  }}
+                >
                   {formatTime(recordingTime)}
                 </span>
-                <span style={{
-                  fontSize: '0.75rem',
-                  color: '#6b7280'
-                }}>
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    color: '#6b7280',
+                  }}
+                >
                   / {formatTime(MAX_DURATION)}
                 </span>
               </div>
@@ -281,27 +309,50 @@ export default function VoiceMessage({
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
               }}
             >
               {isPlaying ? (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <rect x="6" y="4" width="4" height="16" />
                   <rect x="14" y="4" width="4" height="16" />
                 </svg>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <polygon points="5 3 19 12 5 21 5 3" />
                 </svg>
               )}
             </button>
 
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '0.85rem', color: '#374151', marginBottom: '0.25rem' }}>
+              <div
+                style={{
+                  fontSize: '0.85rem',
+                  color: '#374151',
+                  marginBottom: '0.25rem',
+                }}
+              >
                 {formatTime(recordingTime)}
               </div>
               {/* Mini waveform */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1px', height: '20px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1px',
+                  height: '20px',
+                }}
+              >
                 {waveform.slice(0, 30).map((peak, i) => (
                   <div
                     key={i}
@@ -309,7 +360,7 @@ export default function VoiceMessage({
                       width: '2px',
                       height: `${peak * 20}px`,
                       background: '#667eea',
-                      borderRadius: '1px'
+                      borderRadius: '1px',
                     }}
                   />
                 ))}
@@ -324,10 +375,17 @@ export default function VoiceMessage({
                 border: 'none',
                 background: 'transparent',
                 color: '#6b7280',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
@@ -344,7 +402,7 @@ export default function VoiceMessage({
                 borderRadius: '8px',
                 cursor: 'pointer',
                 fontWeight: '500',
-                fontSize: '0.85rem'
+                fontSize: '0.85rem',
               }}
             >
               Send
@@ -354,8 +412,13 @@ export default function VoiceMessage({
 
         <style jsx>{`
           @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%,
+            100% {
+              opacity: 1;
+            }
+            50% {
+              opacity: 0.5;
+            }
           }
         `}</style>
       </div>
@@ -367,15 +430,18 @@ export default function VoiceMessage({
   const totalDuration = duration || recordingTime;
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.75rem',
-      padding: '0.75rem 1rem',
-      background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-      borderRadius: '16px',
-      maxWidth: '280px'
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.75rem',
+        padding: '0.75rem 1rem',
+        background:
+          'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+        borderRadius: '16px',
+        maxWidth: '280px',
+      }}
+    >
       <audio ref={audioRef} src={playbackUrl || ''} />
 
       {/* Play/Pause Button */}
@@ -393,7 +459,7 @@ export default function VoiceMessage({
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
-          boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)'
+          boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
         }}
       >
         {isPlaying ? (
@@ -418,11 +484,12 @@ export default function VoiceMessage({
             gap: '1px',
             height: '32px',
             cursor: 'pointer',
-            position: 'relative'
+            position: 'relative',
           }}
         >
           {waveform.map((peak, i) => {
-            const progress = totalDuration > 0 ? currentTime / totalDuration : 0;
+            const progress =
+              totalDuration > 0 ? currentTime / totalDuration : 0;
             const barProgress = i / waveform.length;
             const isActive = barProgress <= progress;
 
@@ -434,7 +501,7 @@ export default function VoiceMessage({
                   height: `${peak * 32}px`,
                   background: isActive ? '#667eea' : '#d1d5db',
                   borderRadius: '1.5px',
-                  transition: 'background 0.1s ease'
+                  transition: 'background 0.1s ease',
                 }}
               />
             );
@@ -442,13 +509,15 @@ export default function VoiceMessage({
         </div>
 
         {/* Time display */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          fontSize: '0.7rem',
-          color: '#6b7280',
-          marginTop: '0.25rem'
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            fontSize: '0.7rem',
+            color: '#6b7280',
+            marginTop: '0.25rem',
+          }}
+        >
           <span>{formatTime(currentTime)}</span>
           <span>{formatTime(totalDuration)}</span>
         </div>
@@ -466,7 +535,7 @@ export default function VoiceMessage({
           fontWeight: '600',
           color: '#667eea',
           cursor: 'pointer',
-          flexShrink: 0
+          flexShrink: 0,
         }}
       >
         {playbackSpeed}x

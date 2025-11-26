@@ -40,17 +40,23 @@ export default function AnalyticsInit() {
       // Track performance on load
       window.addEventListener('load', () => {
         setTimeout(() => {
-          const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+          const navigation = performance.getEntriesByType(
+            'navigation'
+          )[0] as PerformanceNavigationTiming;
 
           if (navigation) {
             analytics.track('page_load_performance', {
-              domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+              domContentLoaded:
+                navigation.domContentLoadedEventEnd -
+                navigation.domContentLoadedEventStart,
               loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
-              dnsLookup: navigation.domainLookupEnd - navigation.domainLookupStart,
+              dnsLookup:
+                navigation.domainLookupEnd - navigation.domainLookupStart,
               tcpConnect: navigation.connectEnd - navigation.connectStart,
               request: navigation.responseStart - navigation.requestStart,
               response: navigation.responseEnd - navigation.responseStart,
-              domProcessing: navigation.domComplete - navigation.domContentLoadedEventStart,
+              domProcessing:
+                navigation.domComplete - navigation.domContentLoadedEventStart,
               totalLoadTime: navigation.loadEventEnd - navigation.fetchStart,
             });
           }
@@ -65,7 +71,6 @@ export default function AnalyticsInit() {
           });
         }, 0);
       });
-
     }
   }, []);
 

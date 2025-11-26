@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
 export type BackgroundMode = 'minimal' | 'enhanced' | 'off';
 
@@ -9,7 +15,9 @@ interface BackgroundContextType {
   setMode: (mode: BackgroundMode) => void;
 }
 
-const BackgroundContext = createContext<BackgroundContextType | undefined>(undefined);
+const BackgroundContext = createContext<BackgroundContextType | undefined>(
+  undefined
+);
 
 export function BackgroundProvider({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<BackgroundMode>('minimal');

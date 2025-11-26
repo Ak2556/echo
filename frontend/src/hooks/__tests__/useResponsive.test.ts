@@ -4,7 +4,12 @@
  */
 
 import { renderHook, act } from '@testing-library/react';
-import { useResponsive, useBreakpoint, useWindowSize, useOrientation } from '@/hooks/useResponsive';
+import {
+  useResponsive,
+  useBreakpoint,
+  useWindowSize,
+  useOrientation,
+} from '@/hooks/useResponsive';
 
 // Mock window.matchMedia
 const mockMatchMedia = (matches: boolean) => ({
@@ -20,15 +25,17 @@ const mockMatchMedia = (matches: boolean) => ({
 
 describe('useResponsive', () => {
   let originalMatchMedia: any;
-  
+
   beforeEach(() => {
     // Store original matchMedia
     originalMatchMedia = window.matchMedia;
-    
+
     // Mock window.matchMedia
-    window.matchMedia = jest.fn().mockImplementation(() => mockMatchMedia(false));
+    window.matchMedia = jest
+      .fn()
+      .mockImplementation(() => mockMatchMedia(false));
   });
-  
+
   afterEach(() => {
     // Restore original matchMedia
     window.matchMedia = originalMatchMedia;
@@ -134,11 +141,12 @@ describe('useResponsive', () => {
       act(() => {
         mobileMatch = false;
         mockMediaQuery.matches = false;
-        
+
         // Trigger the change event
-        const changeHandler = mockMediaQuery.addEventListener.mock.calls
-          .find(call => call[0] === 'change')?.[1];
-        
+        const changeHandler = mockMediaQuery.addEventListener.mock.calls.find(
+          (call) => call[0] === 'change'
+        )?.[1];
+
         if (changeHandler) {
           changeHandler({ matches: false });
         }
@@ -192,7 +200,9 @@ describe('useResponsive', () => {
     it('handles invalid breakpoint configuration gracefully', () => {
       const invalidBreakpoints = null;
 
-      const { result } = renderHook(() => useResponsive(invalidBreakpoints as any));
+      const { result } = renderHook(() =>
+        useResponsive(invalidBreakpoints as any)
+      );
 
       // Should fall back to default behavior
       expect(result.current).toHaveProperty('isMobile');
@@ -333,10 +343,10 @@ describe('useResponsive', () => {
       const { result, rerender } = renderHook(() => useResponsive());
 
       const firstResult = result.current;
-      
+
       // Re-render without changing breakpoint
       rerender();
-      
+
       const secondResult = result.current;
 
       // Should return the same object reference
@@ -381,7 +391,10 @@ describe('useResponsive', () => {
 
   describe('useBreakpoint Hook', () => {
     it('matches sm breakpoint by name', () => {
-      Object.defineProperty(window, 'innerWidth', { writable: true, value: 500 });
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        value: 500,
+      });
 
       const { result } = renderHook(() => useBreakpoint('sm'));
 
@@ -389,7 +402,10 @@ describe('useResponsive', () => {
     });
 
     it('matches md breakpoint by name', () => {
-      Object.defineProperty(window, 'innerWidth', { writable: true, value: 800 });
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        value: 800,
+      });
 
       const { result } = renderHook(() => useBreakpoint('md'));
 
@@ -397,7 +413,10 @@ describe('useResponsive', () => {
     });
 
     it('matches lg breakpoint by name', () => {
-      Object.defineProperty(window, 'innerWidth', { writable: true, value: 1100 });
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        value: 1100,
+      });
 
       const { result } = renderHook(() => useBreakpoint('lg'));
 
@@ -405,7 +424,10 @@ describe('useResponsive', () => {
     });
 
     it('matches xl breakpoint by name', () => {
-      Object.defineProperty(window, 'innerWidth', { writable: true, value: 1400 });
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        value: 1400,
+      });
 
       const { result } = renderHook(() => useBreakpoint('xl'));
 
@@ -453,7 +475,9 @@ describe('useResponsive', () => {
         removeEventListener,
       }));
 
-      const { unmount } = renderHook(() => useBreakpoint('(min-width: 1024px)'));
+      const { unmount } = renderHook(() =>
+        useBreakpoint('(min-width: 1024px)')
+      );
 
       unmount();
 
@@ -472,7 +496,10 @@ describe('useResponsive', () => {
 
       unmount();
 
-      expect(removeEventListener).toHaveBeenCalledWith('resize', expect.any(Function));
+      expect(removeEventListener).toHaveBeenCalledWith(
+        'resize',
+        expect.any(Function)
+      );
 
       window.addEventListener = originalAddEventListener;
       window.removeEventListener = originalRemoveEventListener;

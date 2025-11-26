@@ -72,10 +72,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 error
                   ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
                   : success
-                  ? 'border-green-300 focus:border-green-500 focus:ring-green-500'
-                  : isFocused
-                  ? 'border-blue-500 ring-2 ring-blue-500'
-                  : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                    ? 'border-green-300 focus:border-green-500 focus:ring-green-500'
+                    : isFocused
+                      ? 'border-blue-500 ring-2 ring-blue-500'
+                      : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
               }
               ${className}
             `}

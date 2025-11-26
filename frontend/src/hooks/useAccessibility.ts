@@ -3,7 +3,11 @@
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { AccessibilityEnhancer, AccessibilityReport, ScreenReaderOptimizer } from '@/utils/accessibility';
+import {
+  AccessibilityEnhancer,
+  AccessibilityReport,
+  ScreenReaderOptimizer,
+} from '@/utils/accessibility';
 
 /**
  * Hook for managing accessibility enhancements
@@ -15,10 +19,10 @@ export function useAccessibility() {
   const analyzeAccessibility = useCallback(async () => {
     setIsAnalyzing(true);
     try {
-      const accessibilityReport = await AccessibilityEnhancer.analyzeAccessibility();
+      const accessibilityReport =
+        await AccessibilityEnhancer.analyzeAccessibility();
       setReport(accessibilityReport);
     } catch (error) {
-
     } finally {
       setIsAnalyzing(false);
     }
@@ -55,7 +59,9 @@ export function useFocusManagement() {
     );
 
     const firstElement = focusableElements[0] as HTMLElement;
-    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+    const lastElement = focusableElements[
+      focusableElements.length - 1
+    ] as HTMLElement;
 
     if (event.shiftKey && document.activeElement === firstElement) {
       event.preventDefault();
@@ -83,7 +89,9 @@ export function useFocusManagement() {
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
 
-    const lastFocusable = focusableElements[focusableElements.length - 1] as HTMLElement;
+    const lastFocusable = focusableElements[
+      focusableElements.length - 1
+    ] as HTMLElement;
     lastFocusable?.focus();
   }, []);
 
@@ -99,21 +107,33 @@ export function useFocusManagement() {
  * Hook for screen reader announcements
  */
 export function useScreenReader() {
-  const announce = useCallback((message: string, priority: 'polite' | 'assertive' = 'polite') => {
-    ScreenReaderOptimizer.announce(message, priority);
-  }, []);
+  const announce = useCallback(
+    (message: string, priority: 'polite' | 'assertive' = 'polite') => {
+      ScreenReaderOptimizer.announce(message, priority);
+    },
+    []
+  );
 
-  const announceNavigation = useCallback((pageName: string) => {
-    announce(`Navigated to ${pageName}`, 'polite');
-  }, [announce]);
+  const announceNavigation = useCallback(
+    (pageName: string) => {
+      announce(`Navigated to ${pageName}`, 'polite');
+    },
+    [announce]
+  );
 
-  const announceError = useCallback((error: string) => {
-    announce(`Error: ${error}`, 'assertive');
-  }, [announce]);
+  const announceError = useCallback(
+    (error: string) => {
+      announce(`Error: ${error}`, 'assertive');
+    },
+    [announce]
+  );
 
-  const announceSuccess = useCallback((message: string) => {
-    announce(`Success: ${message}`, 'polite');
-  }, [announce]);
+  const announceSuccess = useCallback(
+    (message: string) => {
+      announce(`Success: ${message}`, 'polite');
+    },
+    [announce]
+  );
 
   return {
     announce,
@@ -208,15 +228,18 @@ export function useLiveRegion() {
   const [message, setMessage] = useState('');
   const [priority, setPriority] = useState<'polite' | 'assertive'>('polite');
 
-  const announceToRegion = useCallback((newMessage: string, newPriority: 'polite' | 'assertive' = 'polite') => {
-    setMessage(newMessage);
-    setPriority(newPriority);
+  const announceToRegion = useCallback(
+    (newMessage: string, newPriority: 'polite' | 'assertive' = 'polite') => {
+      setMessage(newMessage);
+      setPriority(newPriority);
 
-    // Clear message after announcement
-    setTimeout(() => {
-      setMessage('');
-    }, 1000);
-  }, []);
+      // Clear message after announcement
+      setTimeout(() => {
+        setMessage('');
+      }, 1000);
+    },
+    []
+  );
 
   return {
     message,
@@ -249,10 +272,11 @@ export function useModal(isOpen: boolean) {
 
       // Add aria-hidden to body
       const bodyChildren = Array.from(document.body.children).filter(
-        child => child !== modalRef.current && !child.contains(modalRef.current!)
+        (child) =>
+          child !== modalRef.current && !child.contains(modalRef.current!)
       );
 
-      bodyChildren.forEach(child => {
+      bodyChildren.forEach((child) => {
         child.setAttribute('aria-hidden', 'true');
       });
     } else {
@@ -263,7 +287,7 @@ export function useModal(isOpen: boolean) {
       document.body.style.overflow = '';
 
       // Remove aria-hidden from body
-      document.querySelectorAll('[aria-hidden="true"]').forEach(element => {
+      document.querySelectorAll('[aria-hidden="true"]').forEach((element) => {
         element.removeAttribute('aria-hidden');
       });
     }
@@ -271,18 +295,21 @@ export function useModal(isOpen: boolean) {
     return () => {
       // Cleanup on unmount
       document.body.style.overflow = '';
-      document.querySelectorAll('[aria-hidden="true"]').forEach(element => {
+      document.querySelectorAll('[aria-hidden="true"]').forEach((element) => {
         element.removeAttribute('aria-hidden');
       });
     };
   }, [isOpen]);
 
-  const handleEscapeKey = useCallback((event: KeyboardEvent) => {
-    if (event.key === 'Escape' && isOpen) {
-      // Modal should handle its own close logic
-      event.stopPropagation();
-    }
-  }, [isOpen]);
+  const handleEscapeKey = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        // Modal should handle its own close logic
+        event.stopPropagation();
+      }
+    },
+    [isOpen]
+  );
 
   useEffect(() => {
     if (isOpen) {
@@ -303,48 +330,62 @@ export function useAccessibleForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { announceError } = useScreenReader();
 
-  const validateField = useCallback((name: string, value: any, rules: any) => {
-    // Simple validation logic
-    const fieldErrors: string[] = [];
+  const validateField = useCallback(
+    (name: string, value: any, rules: any) => {
+      // Simple validation logic
+      const fieldErrors: string[] = [];
 
-    if (rules.required && (!value || value.toString().trim() === '')) {
-      fieldErrors.push('This field is required');
-    }
+      if (rules.required && (!value || value.toString().trim() === '')) {
+        fieldErrors.push('This field is required');
+      }
 
-    if (rules.minLength && value && value.toString().length < rules.minLength) {
-      fieldErrors.push(`Minimum length is ${rules.minLength} characters`);
-    }
+      if (
+        rules.minLength &&
+        value &&
+        value.toString().length < rules.minLength
+      ) {
+        fieldErrors.push(`Minimum length is ${rules.minLength} characters`);
+      }
 
-    if (rules.maxLength && value && value.toString().length > rules.maxLength) {
-      fieldErrors.push(`Maximum length is ${rules.maxLength} characters`);
-    }
+      if (
+        rules.maxLength &&
+        value &&
+        value.toString().length > rules.maxLength
+      ) {
+        fieldErrors.push(`Maximum length is ${rules.maxLength} characters`);
+      }
 
-    if (rules.pattern && value && !rules.pattern.test(value)) {
-      fieldErrors.push('Invalid format');
-    }
+      if (rules.pattern && value && !rules.pattern.test(value)) {
+        fieldErrors.push('Invalid format');
+      }
 
-    const errorMessage = fieldErrors.join(', ');
+      const errorMessage = fieldErrors.join(', ');
 
-    setErrors(prev => ({
-      ...prev,
-      [name]: errorMessage,
-    }));
+      setErrors((prev) => ({
+        ...prev,
+        [name]: errorMessage,
+      }));
 
-    if (errorMessage) {
-      announceError(`${name}: ${errorMessage}`);
-    }
+      if (errorMessage) {
+        announceError(`${name}: ${errorMessage}`);
+      }
 
-    return errorMessage === '';
-  }, [announceError]);
+      return errorMessage === '';
+    },
+    [announceError]
+  );
 
   const clearErrors = useCallback(() => {
     setErrors({});
   }, []);
 
-  const getFieldProps = useCallback((name: string) => ({
-    'aria-invalid': errors[name] ? 'true' : 'false',
-    'aria-describedby': errors[name] ? `${name}-error` : undefined,
-  }), [errors]);
+  const getFieldProps = useCallback(
+    (name: string) => ({
+      'aria-invalid': errors[name] ? 'true' : 'false',
+      'aria-describedby': errors[name] ? `${name}-error` : undefined,
+    }),
+    [errors]
+  );
 
   return {
     errors,

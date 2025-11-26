@@ -20,37 +20,43 @@ describe('OTPInput', () => {
   describe('Component Rendering', () => {
     it('renders correct number of input fields', () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
       expect(inputs).toHaveLength(6);
     });
 
     it('renders with custom length', () => {
       render(<OTPInput length={4} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
       expect(inputs).toHaveLength(4);
     });
 
     it('renders with proper structure', () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
-      const container = screen.getAllByRole('textbox')[0].closest('.otp-input-container');
+
+      const container = screen
+        .getAllByRole('textbox')[0]
+        .closest('.otp-input-container');
       expect(container).toBeInTheDocument();
     });
 
     it('shows loading state', () => {
-      render(<OTPInput length={6} onComplete={mockOnComplete} loading={true} />);
-      
+      render(
+        <OTPInput length={6} onComplete={mockOnComplete} loading={true} />
+      );
+
       const inputs = screen.getAllByRole('textbox');
-      inputs.forEach(input => {
+      inputs.forEach((input) => {
         expect(input).toBeDisabled();
       });
     });
 
     it('shows error state', () => {
-      render(<OTPInput length={6} onComplete={mockOnComplete} error="Invalid OTP" />);
-      
+      render(
+        <OTPInput length={6} onComplete={mockOnComplete} error="Invalid OTP" />
+      );
+
       expect(screen.getByText('Invalid OTP')).toBeInTheDocument();
     });
   });
@@ -58,34 +64,34 @@ describe('OTPInput', () => {
   describe('Input Behavior', () => {
     it('accepts only numeric input', async () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const firstInput = screen.getAllByRole('textbox')[0];
-      
+
       await user.type(firstInput, 'a');
       expect(firstInput).toHaveValue('');
-      
+
       await user.type(firstInput, '1');
       expect(firstInput).toHaveValue('1');
     });
 
     it('moves to next input after entering digit', async () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
-      
+
       await user.type(inputs[0], '1');
       expect(inputs[1]).toHaveFocus();
     });
 
     it('moves to previous input on backspace', async () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
-      
+
       // Type in first input and move to second
       await user.type(inputs[0], '1');
       expect(inputs[1]).toHaveFocus();
-      
+
       // Backspace should move back to first input
       await user.keyboard('{Backspace}');
       expect(inputs[0]).toHaveFocus();
@@ -93,12 +99,12 @@ describe('OTPInput', () => {
 
     it('replaces existing digit when typing', async () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const firstInput = screen.getAllByRole('textbox')[0];
-      
+
       await user.type(firstInput, '1');
       expect(firstInput).toHaveValue('1');
-      
+
       // Clear and type new digit
       await user.clear(firstInput);
       await user.type(firstInput, '2');
@@ -182,18 +188,18 @@ describe('OTPInput', () => {
   describe('Paste Functionality', () => {
     it('handles paste of complete OTP', async () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const firstInput = screen.getAllByRole('textbox')[0];
       firstInput.focus();
-      
+
       // Simulate paste event
       const pasteEvent = new ClipboardEvent('paste', {
         clipboardData: new DataTransfer(),
       });
       pasteEvent.clipboardData?.setData('text/plain', '123456');
-      
+
       fireEvent.paste(firstInput, pasteEvent);
-      
+
       await waitFor(() => {
         expect(mockOnComplete).toHaveBeenCalledWith('123456');
       });
@@ -201,17 +207,17 @@ describe('OTPInput', () => {
 
     it('handles paste of partial OTP', async () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const firstInput = screen.getAllByRole('textbox')[0];
       firstInput.focus();
-      
+
       const pasteEvent = new ClipboardEvent('paste', {
         clipboardData: new DataTransfer(),
       });
       pasteEvent.clipboardData?.setData('text/plain', '123');
-      
+
       fireEvent.paste(firstInput, pasteEvent);
-      
+
       await waitFor(() => {
         const inputs = screen.getAllByRole('textbox');
         expect(inputs[0]).toHaveValue('1');
@@ -223,37 +229,37 @@ describe('OTPInput', () => {
 
     it('ignores non-numeric paste content', async () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const firstInput = screen.getAllByRole('textbox')[0];
       firstInput.focus();
-      
+
       const pasteEvent = new ClipboardEvent('paste', {
         clipboardData: new DataTransfer(),
       });
       pasteEvent.clipboardData?.setData('text/plain', 'abc123');
-      
+
       fireEvent.paste(firstInput, pasteEvent);
-      
+
       // Should not fill any inputs with invalid characters
       const inputs = screen.getAllByRole('textbox');
-      inputs.forEach(input => {
+      inputs.forEach((input) => {
         expect(input).toHaveValue('');
       });
     });
 
     it('handles paste longer than input length', async () => {
       render(<OTPInput length={4} onComplete={mockOnComplete} />);
-      
+
       const firstInput = screen.getAllByRole('textbox')[0];
       firstInput.focus();
-      
+
       const pasteEvent = new ClipboardEvent('paste', {
         clipboardData: new DataTransfer(),
       });
       pasteEvent.clipboardData?.setData('text/plain', '123456789');
-      
+
       fireEvent.paste(firstInput, pasteEvent);
-      
+
       await waitFor(() => {
         expect(mockOnComplete).toHaveBeenCalledWith('1234');
       });
@@ -263,38 +269,38 @@ describe('OTPInput', () => {
   describe('Completion Handling', () => {
     it('calls onComplete when all fields are filled', async () => {
       render(<OTPInput length={4} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
-      
+
       await user.type(inputs[0], '1');
       await user.type(inputs[1], '2');
       await user.type(inputs[2], '3');
       await user.type(inputs[3], '4');
-      
+
       expect(mockOnComplete).toHaveBeenCalledWith('1234');
     });
 
     it('updates internal state on input change', async () => {
       render(<OTPInput length={4} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
-      
+
       await user.type(inputs[0], '1');
       expect(inputs[0]).toHaveValue('1');
-      
+
       await user.type(inputs[1], '2');
       expect(inputs[1]).toHaveValue('2');
     });
 
     it('does not call onComplete for incomplete OTP', async () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
-      
+
       await user.type(inputs[0], '1');
       await user.type(inputs[1], '2');
       await user.type(inputs[2], '3');
-      
+
       expect(mockOnComplete).not.toHaveBeenCalled();
     });
   });
@@ -302,28 +308,30 @@ describe('OTPInput', () => {
   describe('Component State Management', () => {
     it('maintains internal state correctly', async () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
-      
+
       await user.type(inputs[0], '1');
       await user.type(inputs[1], '2');
       await user.type(inputs[2], '3');
-      
+
       expect(inputs[0]).toHaveValue('1');
       expect(inputs[1]).toHaveValue('2');
       expect(inputs[2]).toHaveValue('3');
     });
 
     it('resets state when component remounts', () => {
-      const { unmount } = render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+      const { unmount } = render(
+        <OTPInput length={6} onComplete={mockOnComplete} />
+      );
+
       unmount();
-      
+
       // Render a new instance
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
-      inputs.forEach(input => {
+      inputs.forEach((input) => {
         expect(input).toHaveValue('');
       });
     });
@@ -332,7 +340,7 @@ describe('OTPInput', () => {
   describe('Accessibility', () => {
     it('has proper ARIA attributes', () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
       inputs.forEach((input, index) => {
         expect(input).toHaveAttribute('aria-label', `Digit ${index + 1} of 6`);
@@ -342,15 +350,17 @@ describe('OTPInput', () => {
 
     it('supports screen readers with live region', () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const liveRegion = screen.getByRole('status');
       expect(liveRegion).toHaveAttribute('aria-live', 'polite');
       expect(liveRegion).toHaveAttribute('aria-atomic', 'true');
     });
 
     it('announces errors to screen readers', () => {
-      render(<OTPInput length={6} onComplete={mockOnComplete} error="Invalid OTP" />);
-      
+      render(
+        <OTPInput length={6} onComplete={mockOnComplete} error="Invalid OTP" />
+      );
+
       const errorElement = screen.getByText('Invalid OTP');
       expect(errorElement).toHaveAttribute('role', 'alert');
     });
@@ -359,9 +369,9 @@ describe('OTPInput', () => {
   describe('Security', () => {
     it('does not expose OTP in DOM attributes', () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
-      inputs.forEach(input => {
+      inputs.forEach((input) => {
         expect(input).not.toHaveAttribute('data-value');
         expect(input).not.toHaveAttribute('title');
       });
@@ -369,9 +379,9 @@ describe('OTPInput', () => {
 
     it('uses proper input mode for numeric input', () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
-      inputs.forEach(input => {
+      inputs.forEach((input) => {
         expect(input).toHaveAttribute('inputMode', 'numeric');
         expect(input).toHaveAttribute('maxLength', '1');
       });
@@ -381,12 +391,12 @@ describe('OTPInput', () => {
   describe('Edge Cases', () => {
     it('handles rapid typing', async () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
-      
+
       // Type rapidly in sequence
       await user.type(inputs[0], '123456');
-      
+
       await waitFor(() => {
         expect(mockOnComplete).toHaveBeenCalledWith('123456');
       });
@@ -394,32 +404,36 @@ describe('OTPInput', () => {
 
     it('handles focus events correctly', async () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
-      
+
       const inputs = screen.getAllByRole('textbox');
-      
+
       // Focus on middle input
       inputs[2].focus();
       expect(inputs[2]).toHaveFocus();
-      
+
       // Type should work from any focused input
       await user.type(inputs[2], '5');
       expect(inputs[2]).toHaveValue('5');
     });
 
     it('handles loading state correctly', () => {
-      render(<OTPInput length={6} onComplete={mockOnComplete} loading={true} />);
-      
+      render(
+        <OTPInput length={6} onComplete={mockOnComplete} loading={true} />
+      );
+
       const inputs = screen.getAllByRole('textbox');
-      inputs.forEach(input => {
+      inputs.forEach((input) => {
         expect(input).toBeDisabled();
       });
-      
+
       expect(screen.getByText('Verifying...')).toBeInTheDocument();
     });
 
     it('handles error state correctly', () => {
-      render(<OTPInput length={6} onComplete={mockOnComplete} error="Invalid code" />);
-      
+      render(
+        <OTPInput length={6} onComplete={mockOnComplete} error="Invalid code" />
+      );
+
       expect(screen.getByText('Invalid code')).toBeInTheDocument();
       expect(screen.getByRole('alert')).toBeInTheDocument();
     });
@@ -505,7 +519,9 @@ describe('OTPInput', () => {
 
     describe('Memory and Resource Management', () => {
       it('cleans up event listeners on unmount', () => {
-        const { unmount } = render(<OTPInput length={6} onComplete={mockOnComplete} />);
+        const { unmount } = render(
+          <OTPInput length={6} onComplete={mockOnComplete} />
+        );
 
         // Component should unmount without errors
         expect(() => unmount()).not.toThrow();
@@ -513,7 +529,9 @@ describe('OTPInput', () => {
 
       it('handles rapid component mount/unmount cycles', () => {
         for (let i = 0; i < 10; i++) {
-          const { unmount } = render(<OTPInput length={6} onComplete={mockOnComplete} />);
+          const { unmount } = render(
+            <OTPInput length={6} onComplete={mockOnComplete} />
+          );
           unmount();
         }
 
@@ -522,7 +540,9 @@ describe('OTPInput', () => {
       });
 
       it('handles extremely long OTP codes efficiently', () => {
-        const { container } = render(<OTPInput length={20} onComplete={mockOnComplete} />);
+        const { container } = render(
+          <OTPInput length={20} onComplete={mockOnComplete} />
+        );
 
         const inputs = screen.getAllByRole('textbox');
         expect(inputs).toHaveLength(20);
@@ -543,22 +563,28 @@ describe('OTPInput', () => {
         await user.type(inputs[2], '3');
 
         // Should handle gracefully - check that at least one input has a value
-        const hasValues = inputs.some(input => input.getAttribute('value') !== '');
+        const hasValues = inputs.some(
+          (input) => input.getAttribute('value') !== ''
+        );
         expect(hasValues).toBe(true);
       });
 
       it('handles onChange during loading state', async () => {
-        const { rerender } = render(<OTPInput length={6} onComplete={mockOnComplete} loading={false} />);
+        const { rerender } = render(
+          <OTPInput length={6} onComplete={mockOnComplete} loading={false} />
+        );
         const inputs = screen.getAllByRole('textbox');
 
         await user.type(inputs[0], '1');
 
         // Switch to loading mid-input
-        rerender(<OTPInput length={6} onComplete={mockOnComplete} loading={true} />);
+        rerender(
+          <OTPInput length={6} onComplete={mockOnComplete} loading={true} />
+        );
 
         // Inputs should be disabled
         const updatedInputs = screen.getAllByRole('textbox');
-        updatedInputs.forEach(input => {
+        updatedInputs.forEach((input) => {
           expect(input).toBeDisabled();
         });
       });
@@ -583,12 +609,22 @@ describe('OTPInput', () => {
       });
 
       it('handles rapid error state changes', async () => {
-        const { rerender } = render(<OTPInput length={6} onComplete={mockOnComplete} error="" />);
+        const { rerender } = render(
+          <OTPInput length={6} onComplete={mockOnComplete} error="" />
+        );
 
         for (let i = 0; i < 10; i++) {
-          rerender(<OTPInput length={6} onComplete={mockOnComplete} error={`Error ${i}`} />);
-          await new Promise(resolve => setTimeout(resolve, 10));
-          rerender(<OTPInput length={6} onComplete={mockOnComplete} error="" />);
+          rerender(
+            <OTPInput
+              length={6}
+              onComplete={mockOnComplete}
+              error={`Error ${i}`}
+            />
+          );
+          await new Promise((resolve) => setTimeout(resolve, 10));
+          rerender(
+            <OTPInput length={6} onComplete={mockOnComplete} error="" />
+          );
         }
 
         // Should handle rapid changes without crashing
@@ -622,7 +658,7 @@ describe('OTPInput', () => {
 
         // Should reject entire paste due to invalid characters
         const inputs = screen.getAllByRole('textbox');
-        inputs.forEach(input => {
+        inputs.forEach((input) => {
           expect(input).toHaveValue('');
         });
       });
@@ -658,7 +694,7 @@ describe('OTPInput', () => {
 
         // Should reject due to newline
         const inputs = screen.getAllByRole('textbox');
-        inputs.forEach(input => {
+        inputs.forEach((input) => {
           expect(input).toHaveValue('');
         });
       });
@@ -730,7 +766,10 @@ describe('OTPInput', () => {
           const pasteEvent = new ClipboardEvent('paste', {
             clipboardData: new DataTransfer(),
           });
-          pasteEvent.clipboardData?.setData('text/plain', `${100000 + i}`.slice(0, 6));
+          pasteEvent.clipboardData?.setData(
+            'text/plain',
+            `${100000 + i}`.slice(0, 6)
+          );
           fireEvent.paste(firstInput, pasteEvent);
         }
 
@@ -748,24 +787,39 @@ describe('OTPInput', () => {
         }
 
         // Should handle gracefully
-        expect(inputs.some(input => input === document.activeElement)).toBe(true);
+        expect(inputs.some((input) => input === document.activeElement)).toBe(
+          true
+        );
       });
     });
 
     describe('Accessibility Under Stress', () => {
       it('maintains ARIA attributes during rapid state changes', async () => {
-        const { rerender } = render(<OTPInput length={6} onComplete={mockOnComplete} />);
+        const { rerender } = render(
+          <OTPInput length={6} onComplete={mockOnComplete} />
+        );
 
         for (let i = 0; i < 10; i++) {
-          rerender(<OTPInput length={6} onComplete={mockOnComplete} error={`Error ${i}`} />);
+          rerender(
+            <OTPInput
+              length={6}
+              onComplete={mockOnComplete}
+              error={`Error ${i}`}
+            />
+          );
 
           const inputs = screen.getAllByRole('textbox');
           inputs.forEach((input, idx) => {
-            expect(input).toHaveAttribute('aria-label', `Digit ${idx + 1} of 6`);
+            expect(input).toHaveAttribute(
+              'aria-label',
+              `Digit ${idx + 1} of 6`
+            );
             expect(input).toHaveAttribute('aria-invalid', 'true');
           });
 
-          rerender(<OTPInput length={6} onComplete={mockOnComplete} error="" />);
+          rerender(
+            <OTPInput length={6} onComplete={mockOnComplete} error="" />
+          );
         }
       });
 
@@ -784,7 +838,9 @@ describe('OTPInput', () => {
 
     describe('Component Lifecycle Edge Cases', () => {
       it('handles length prop changing dynamically', () => {
-        const { rerender } = render(<OTPInput length={4} onComplete={mockOnComplete} />);
+        const { rerender } = render(
+          <OTPInput length={4} onComplete={mockOnComplete} />
+        );
         expect(screen.getAllByRole('textbox')).toHaveLength(4);
 
         // Changing length prop creates a new component instance
@@ -798,7 +854,9 @@ describe('OTPInput', () => {
         const callback1 = jest.fn();
         const callback2 = jest.fn();
 
-        const { rerender } = render(<OTPInput length={4} onComplete={callback1} />);
+        const { rerender } = render(
+          <OTPInput length={4} onComplete={callback1} />
+        );
         const inputs = screen.getAllByRole('textbox');
 
         await user.type(inputs[0], '1234');
@@ -838,7 +896,13 @@ describe('OTPInput', () => {
 
     describe('Error Recovery', () => {
       it('recovers from error state when user corrects input', async () => {
-        const { rerender } = render(<OTPInput length={6} onComplete={mockOnComplete} error="Invalid code" />);
+        const { rerender } = render(
+          <OTPInput
+            length={6}
+            onComplete={mockOnComplete}
+            error="Invalid code"
+          />
+        );
 
         expect(screen.getByText('Invalid code')).toBeInTheDocument();
 
@@ -848,7 +912,9 @@ describe('OTPInput', () => {
       });
 
       it('allows re-entry after error', async () => {
-        const { rerender } = render(<OTPInput length={6} onComplete={mockOnComplete} error="Try again" />);
+        const { rerender } = render(
+          <OTPInput length={6} onComplete={mockOnComplete} error="Try again" />
+        );
 
         rerender(<OTPInput length={6} onComplete={mockOnComplete} error="" />);
 
@@ -861,13 +927,17 @@ describe('OTPInput', () => {
       });
 
       it('clears input when error is shown', async () => {
-        const { rerender } = render(<OTPInput length={6} onComplete={mockOnComplete} />);
+        const { rerender } = render(
+          <OTPInput length={6} onComplete={mockOnComplete} />
+        );
         const inputs = screen.getAllByRole('textbox');
 
         await user.type(inputs[0], '123');
 
         // Show error - simulating failed verification
-        rerender(<OTPInput length={6} onComplete={mockOnComplete} error="Invalid" />);
+        rerender(
+          <OTPInput length={6} onComplete={mockOnComplete} error="Invalid" />
+        );
 
         // User should be able to clear and retry
         await user.clear(inputs[0]);

@@ -15,7 +15,11 @@ class SegmentTree {
   private operation: (a: number, b: number) => number;
   private identity: number;
 
-  constructor(arr: number[], op: (a: number, b: number) => number, identity: number) {
+  constructor(
+    arr: number[],
+    op: (a: number, b: number) => number,
+    identity: number
+  ) {
     this.n = arr.length;
     this.tree = new Array(4 * this.n);
     this.operation = op;
@@ -30,7 +34,10 @@ class SegmentTree {
       const mid = Math.floor((start + end) / 2);
       this.build(arr, 2 * node, start, mid);
       this.build(arr, 2 * node + 1, mid + 1, end);
-      this.tree[node] = this.operation(this.tree[2 * node], this.tree[2 * node + 1]);
+      this.tree[node] = this.operation(
+        this.tree[2 * node],
+        this.tree[2 * node + 1]
+      );
     }
   }
 
@@ -39,7 +46,13 @@ class SegmentTree {
     return this.queryHelper(1, 0, this.n - 1, l, r);
   }
 
-  private queryHelper(node: number, start: number, end: number, l: number, r: number): number {
+  private queryHelper(
+    node: number,
+    start: number,
+    end: number,
+    l: number,
+    r: number
+  ): number {
     if (r < start || end < l) return this.identity;
     if (l <= start && end <= r) return this.tree[node];
 
@@ -54,7 +67,13 @@ class SegmentTree {
     this.updateHelper(1, 0, this.n - 1, idx, val);
   }
 
-  private updateHelper(node: number, start: number, end: number, idx: number, val: number): void {
+  private updateHelper(
+    node: number,
+    start: number,
+    end: number,
+    idx: number,
+    val: number
+  ): void {
     if (start === end) {
       this.tree[node] = val;
     } else {
@@ -64,7 +83,10 @@ class SegmentTree {
       } else {
         this.updateHelper(2 * node + 1, mid + 1, end, idx, val);
       }
-      this.tree[node] = this.operation(this.tree[2 * node], this.tree[2 * node + 1]);
+      this.tree[node] = this.operation(
+        this.tree[2 * node],
+        this.tree[2 * node + 1]
+      );
     }
   }
 }
@@ -84,7 +106,7 @@ class FenwickTree {
 
   // O(log n) update
   update(idx: number, delta: number): void {
-    for (let i = idx + 1; i <= this.n; i += i & (-i)) {
+    for (let i = idx + 1; i <= this.n; i += i & -i) {
       this.tree[i] += delta;
     }
   }
@@ -92,7 +114,7 @@ class FenwickTree {
   // O(log n) prefix sum query
   query(idx: number): number {
     let sum = 0;
-    for (let i = idx + 1; i > 0; i -= i & (-i)) {
+    for (let i = idx + 1; i > 0; i -= i & -i) {
       sum += this.tree[i];
     }
     return sum;
@@ -258,7 +280,8 @@ class SuffixArray {
   }
 
   private lowerBound(pattern: string): number {
-    let left = 0, right = this.suffixArray.length;
+    let left = 0,
+      right = this.suffixArray.length;
     while (left < right) {
       const mid = Math.floor((left + right) / 2);
       const suffix = this.text.substring(this.suffixArray[mid]);
@@ -272,7 +295,8 @@ class SuffixArray {
   }
 
   private upperBound(pattern: string): number {
-    let left = 0, right = this.suffixArray.length;
+    let left = 0,
+      right = this.suffixArray.length;
     while (left < right) {
       const mid = Math.floor((left + right) / 2);
       const suffix = this.text.substring(this.suffixArray[mid]);
@@ -296,7 +320,9 @@ class SkipList<T> {
   private level: number;
   private compare: (a: T, b: T) => number;
 
-  constructor(compare: (a: T, b: T) => number = (a, b) => a < b ? -1 : a > b ? 1 : 0) {
+  constructor(
+    compare: (a: T, b: T) => number = (a, b) => (a < b ? -1 : a > b ? 1 : 0)
+  ) {
     this.maxLevel = 16;
     this.head = new SkipListNode<T>(null as any, this.maxLevel);
     this.level = 0;
@@ -308,7 +334,10 @@ class SkipList<T> {
     let current = this.head;
 
     for (let i = this.level; i >= 0; i--) {
-      while (current.forward[i] && this.compare(current.forward[i].value, value) < 0) {
+      while (
+        current.forward[i] &&
+        this.compare(current.forward[i].value, value) < 0
+      ) {
         current = current.forward[i];
       }
     }
@@ -323,7 +352,10 @@ class SkipList<T> {
     let current = this.head;
 
     for (let i = this.level; i >= 0; i--) {
-      while (current.forward[i] && this.compare(current.forward[i].value, value) < 0) {
+      while (
+        current.forward[i] &&
+        this.compare(current.forward[i].value, value) < 0
+      ) {
         current = current.forward[i];
       }
       update[i] = current;
@@ -350,7 +382,10 @@ class SkipList<T> {
     let current = this.head;
 
     for (let i = this.level; i >= 0; i--) {
-      while (current.forward[i] && this.compare(current.forward[i].value, value) < 0) {
+      while (
+        current.forward[i] &&
+        this.compare(current.forward[i].value, value) < 0
+      ) {
         current = current.forward[i];
       }
       update[i] = current;
@@ -407,24 +442,33 @@ class BloomFilter {
       throw new Error('Expected elements must be greater than 0');
     }
     if (falsePositiveRate <= 0 || falsePositiveRate >= 1) {
-      throw new Error('False positive rate must be between 0 and 1 (exclusive)');
+      throw new Error(
+        'False positive rate must be between 0 and 1 (exclusive)'
+      );
     }
 
     // Calculate optimal size and hash functions
-    this.size = Math.ceil(-expectedElements * Math.log(falsePositiveRate) / (Math.log(2) ** 2));
-    this.hashFunctions = Math.ceil(this.size * Math.log(2) / expectedElements);
-    
+    this.size = Math.ceil(
+      (-expectedElements * Math.log(falsePositiveRate)) / Math.log(2) ** 2
+    );
+    this.hashFunctions = Math.ceil(
+      (this.size * Math.log(2)) / expectedElements
+    );
+
     // Validate calculated size
     if (this.size <= 0 || !isFinite(this.size)) {
       throw new Error('Invalid calculated array size. Check input parameters.');
     }
-    
+
     // Limit maximum size to prevent memory issues
-    if (this.size > 10000000) { // 10M bits max
+    if (this.size > 10000000) {
+      // 10M bits max
       this.size = 10000000;
-      this.hashFunctions = Math.ceil(this.size * Math.log(2) / expectedElements);
+      this.hashFunctions = Math.ceil(
+        (this.size * Math.log(2)) / expectedElements
+      );
     }
-    
+
     this.bitArray = new Array(this.size).fill(false);
   }
 
@@ -457,11 +501,11 @@ class BloomFilter {
 
   // Get memory usage info
   getStats(): { size: number; setBits: number; utilization: number } {
-    const setBits = this.bitArray.filter(bit => bit).length;
+    const setBits = this.bitArray.filter((bit) => bit).length;
     return {
       size: this.size,
       setBits,
-      utilization: setBits / this.size
+      utilization: setBits / this.size,
     };
   }
 }
@@ -479,8 +523,12 @@ class CountMinSketch {
   constructor(epsilon: number = 0.01, delta: number = 0.01) {
     this.width = Math.ceil(Math.E / epsilon);
     this.depth = Math.ceil(Math.log(1 / delta));
-    this.table = Array.from({ length: this.depth }, () => new Array(this.width).fill(0));
-    this.hashSeeds = Array.from({ length: this.depth }, () => Math.floor(Math.random() * 1000000));
+    this.table = Array.from({ length: this.depth }, () =>
+      new Array(this.width).fill(0)
+    );
+    this.hashSeeds = Array.from({ length: this.depth }, () =>
+      Math.floor(Math.random() * 1000000)
+    );
   }
 
   // O(1) update frequency
@@ -529,7 +577,10 @@ class VEBTree {
       const summarySize = Math.ceil(universeSize / clusterSize);
 
       this.summary = new VEBTree(summarySize);
-      this.clusters = Array.from({ length: summarySize }, () => new VEBTree(clusterSize));
+      this.clusters = Array.from(
+        { length: summarySize },
+        () => new VEBTree(clusterSize)
+      );
     }
   }
 
@@ -603,7 +654,10 @@ class VEBTree {
  * Complexity Analysis and Monitoring
  */
 class ComplexityAnalyzer {
-  private static measurements = new Map<string, Array<{ input_size: number; time: number; memory: number }>>();
+  private static measurements = new Map<
+    string,
+    Array<{ input_size: number; time: number; memory: number }>
+  >();
 
   static measureComplexity<T>(
     operationName: string,
@@ -625,7 +679,9 @@ class ComplexityAnalyzer {
       this.measurements.set(operationName, []);
     }
 
-    this.measurements.get(operationName)!.push({ input_size: inputSize, time, memory });
+    this.measurements
+      .get(operationName)!
+      .push({ input_size: inputSize, time, memory });
 
     return { result, time, memory };
   }
@@ -639,17 +695,23 @@ class ComplexityAnalyzer {
     if (!data || data.length < 2) return null;
 
     // Analyze time complexity growth rate
-    const timeGrowth = this.analyzeGrowthRate(data.map(d => ({ x: d.input_size, y: d.time })));
-    const memoryGrowth = this.analyzeGrowthRate(data.map(d => ({ x: d.input_size, y: d.memory })));
+    const timeGrowth = this.analyzeGrowthRate(
+      data.map((d) => ({ x: d.input_size, y: d.time }))
+    );
+    const memoryGrowth = this.analyzeGrowthRate(
+      data.map((d) => ({ x: d.input_size, y: d.memory }))
+    );
 
     return {
       timeComplexity: this.classifyComplexity(timeGrowth),
       spaceComplexity: this.classifyComplexity(memoryGrowth),
-      measurements: [...data]
+      measurements: [...data],
     };
   }
 
-  private static analyzeGrowthRate(points: Array<{ x: number; y: number }>): number {
+  private static analyzeGrowthRate(
+    points: Array<{ x: number; y: number }>
+  ): number {
     if (points.length < 2) return 0;
 
     // Calculate average growth rate
@@ -719,7 +781,11 @@ class MemoryPool<T> {
   private reset: (obj: T) => void;
   private maxSize: number;
 
-  constructor(factory: () => T, reset: (obj: T) => void, maxSize: number = 1000) {
+  constructor(
+    factory: () => T,
+    reset: (obj: T) => void,
+    maxSize: number = 1000
+  ) {
     this.factory = factory;
     this.reset = reset;
     this.maxSize = maxSize;
@@ -746,7 +812,7 @@ class MemoryPool<T> {
     return {
       poolSize: this.pool.length,
       maxSize: this.maxSize,
-      utilization: this.pool.length / this.maxSize
+      utilization: this.pool.length / this.maxSize,
     };
   }
 }
@@ -796,5 +862,5 @@ export {
   VEBTree,
   ComplexityAnalyzer,
   MemoryPool,
-  Lazy
+  Lazy,
 };

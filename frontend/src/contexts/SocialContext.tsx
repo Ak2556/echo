@@ -1,6 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useCallback,
+} from 'react';
 
 interface SocialContextType {
   // Social actions
@@ -21,9 +28,15 @@ interface SocialContextType {
 
 const SocialContext = createContext<SocialContextType | undefined>(undefined);
 
-export const SocialProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [following, setFollowing] = useState<Set<string>>(new Set(['user_002', 'user_003', 'user_005']));
-  const [followers, setFollowers] = useState<Set<string>>(new Set(['user_002', 'user_004', 'user_006']));
+export const SocialProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [following, setFollowing] = useState<Set<string>>(
+    new Set(['user_002', 'user_003', 'user_005'])
+  );
+  const [followers, setFollowers] = useState<Set<string>>(
+    new Set(['user_002', 'user_004', 'user_006'])
+  );
   const [blocked, setBlocked] = useState<Set<string>>(new Set());
   const [muted, setMuted] = useState<Set<string>>(new Set());
 
@@ -36,25 +49,19 @@ export const SocialProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     if (savedFollowing) {
       try {
         setFollowing(new Set(JSON.parse(savedFollowing)));
-      } catch (error) {
-
-      }
+      } catch (error) {}
     }
 
     if (savedBlocked) {
       try {
         setBlocked(new Set(JSON.parse(savedBlocked)));
-      } catch (error) {
-
-      }
+      } catch (error) {}
     }
 
     if (savedMuted) {
       try {
         setMuted(new Set(JSON.parse(savedMuted)));
-      } catch (error) {
-
-      }
+      } catch (error) {}
     }
   }, []);
 
@@ -73,96 +80,92 @@ export const SocialProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   const followUser = useCallback(async (userId: string): Promise<boolean> => {
     try {
-      setFollowing(prev => new Set([...prev, userId]));
+      setFollowing((prev) => new Set([...prev, userId]));
       return true;
     } catch (error) {
-
       return false;
     }
   }, []);
 
   const unfollowUser = useCallback(async (userId: string): Promise<boolean> => {
     try {
-      setFollowing(prev => {
+      setFollowing((prev) => {
         const newSet = new Set(prev);
         newSet.delete(userId);
         return newSet;
       });
       return true;
     } catch (error) {
-
       return false;
     }
   }, []);
 
   const blockUser = useCallback(async (userId: string): Promise<boolean> => {
     try {
-      setBlocked(prev => new Set([...prev, userId]));
-      setFollowing(prev => {
+      setBlocked((prev) => new Set([...prev, userId]));
+      setFollowing((prev) => {
         const newSet = new Set(prev);
         newSet.delete(userId);
         return newSet;
       });
-      setFollowers(prev => {
+      setFollowers((prev) => {
         const newSet = new Set(prev);
         newSet.delete(userId);
         return newSet;
       });
       return true;
     } catch (error) {
-
       return false;
     }
   }, []);
 
   const unblockUser = useCallback(async (userId: string): Promise<boolean> => {
     try {
-      setBlocked(prev => {
+      setBlocked((prev) => {
         const newSet = new Set(prev);
         newSet.delete(userId);
         return newSet;
       });
       return true;
     } catch (error) {
-
       return false;
     }
   }, []);
 
   const muteUser = useCallback(async (userId: string): Promise<boolean> => {
     try {
-      setMuted(prev => new Set([...prev, userId]));
+      setMuted((prev) => new Set([...prev, userId]));
       return true;
     } catch (error) {
-
       return false;
     }
   }, []);
 
   const unmuteUser = useCallback(async (userId: string): Promise<boolean> => {
     try {
-      setMuted(prev => {
+      setMuted((prev) => {
         const newSet = new Set(prev);
         newSet.delete(userId);
         return newSet;
       });
       return true;
     } catch (error) {
-
       return false;
     }
   }, []);
 
-  const reportUser = useCallback(async (userId: string, reason: string): Promise<boolean> => {
-    try {
-      // In real app, send to moderation system
+  const reportUser = useCallback(
+    async (userId: string, reason: string): Promise<boolean> => {
+      try {
+        // In real app, send to moderation system
 
-      return true;
-    } catch (error) {
-
-      return false;
-    }
-  }, []);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    []
+  );
 
   const contextValue: SocialContextType = {
     followUser,
@@ -175,7 +178,7 @@ export const SocialProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     following,
     followers,
     blocked,
-    muted
+    muted,
   };
 
   return (

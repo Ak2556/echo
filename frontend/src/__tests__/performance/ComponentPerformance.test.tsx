@@ -5,14 +5,19 @@
 
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
-import { measurePerformance, measureMemory } from '@/__tests__/setup/test-utils';
+import {
+  measurePerformance,
+  measureMemory,
+} from '@/__tests__/setup/test-utils';
 import SocialMediaHub from '@/components/SocialMediaHub';
 
 // Mock framer-motion for performance testing
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+    button: ({ children, ...props }: any) => (
+      <button {...props}>{children}</button>
+    ),
   },
   AnimatePresence: ({ children }: any) => children,
 }));
@@ -20,7 +25,9 @@ jest.mock('framer-motion', () => ({
 // Mock Next.js Image for performance testing
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, ...props }: any) => <img src={src} alt={alt} {...props} />,
+  default: ({ src, alt, ...props }: any) => (
+    <img src={src} alt={alt} {...props} />
+  ),
 }));
 
 // Mock useResponsive hook
@@ -50,26 +57,27 @@ describe('Component Performance Tests', () => {
 
     it('renders without memory leaks', () => {
       const initialMemory = measureMemory();
-      
+
       const { unmount } = render(<SocialMediaHub />);
-      
+
       // Force garbage collection if available
       if (global.gc) {
         global.gc();
       }
-      
+
       unmount();
-      
+
       // Force garbage collection again
       if (global.gc) {
         global.gc();
       }
-      
+
       const finalMemory = measureMemory();
-      
+
       // Memory usage should not increase significantly
       if (initialMemory && finalMemory) {
-        const memoryIncrease = finalMemory.usedJSHeapSize - initialMemory.usedJSHeapSize;
+        const memoryIncrease =
+          finalMemory.usedJSHeapSize - initialMemory.usedJSHeapSize;
         expect(memoryIncrease).toBeLessThan(1024 * 1024); // Less than 1MB increase
       }
     });
@@ -95,26 +103,26 @@ describe('Component Performance Tests', () => {
   describe('Re-render Performance', () => {
     it('minimizes re-renders on prop changes', () => {
       let renderCount = 0;
-      
+
       const TestComponent = ({ data }: { data: any }) => {
         renderCount++;
         return <SocialMediaHub />;
       };
 
       const { rerender } = render(<TestComponent data={{ id: 1 }} />);
-      
+
       const initialRenderCount = renderCount;
-      
+
       // Re-render with same props
       rerender(<TestComponent data={{ id: 1 }} />);
-      
+
       // Should not cause unnecessary re-renders
       expect(renderCount).toBe(initialRenderCount + 1);
     });
 
     it('handles rapid state updates efficiently', async () => {
       const { rerender } = render(<SocialMediaHub />);
-      
+
       const updateTime = await measurePerformance(async () => {
         // Simulate rapid state updates
         for (let i = 0; i < 100; i++) {
@@ -130,7 +138,7 @@ describe('Component Performance Tests', () => {
 
     it('batches multiple state updates', async () => {
       const { rerender } = render(<SocialMediaHub />);
-      
+
       const batchTime = await measurePerformance(async () => {
         await act(async () => {
           // Multiple synchronous updates should be batched
@@ -181,7 +189,7 @@ describe('Component Performance Tests', () => {
   describe('Animation Performance', () => {
     it('handles animations without blocking main thread', async () => {
       render(<SocialMediaHub />);
-      
+
       // Simulate animation-heavy interactions
       const animationTime = await measurePerformance(async () => {
         // Trigger multiple animations
@@ -224,56 +232,59 @@ describe('Component Performance Tests', () => {
   describe('Memory Usage', () => {
     it('maintains stable memory usage over time', async () => {
       const measurements: number[] = [];
-      
+
       for (let i = 0; i < 10; i++) {
         const { unmount } = render(<SocialMediaHub />);
-        
+
         const memory = measureMemory();
         if (memory) {
           measurements.push(memory.usedJSHeapSize);
         }
-        
+
         unmount();
-        
+
         // Force garbage collection if available
         if (global.gc) {
           global.gc();
         }
-        
+
         // Wait a bit between measurements
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
       }
-      
+
       if (measurements.length > 1) {
         // Memory usage should not grow significantly over time
         const firstMeasurement = measurements[0];
         const lastMeasurement = measurements[measurements.length - 1];
         const growth = lastMeasurement - firstMeasurement;
-        
+
         expect(growth).toBeLessThan(1024 * 1024); // Less than 1MB growth
       }
     });
 
     it('handles large component trees efficiently', () => {
       const initialMemory = measureMemory();
-      
+
       // Render multiple instances
-      const instances = Array.from({ length: 5 }, () => render(<SocialMediaHub />));
-      
+      const instances = Array.from({ length: 5 }, () =>
+        render(<SocialMediaHub />)
+      );
+
       const peakMemory = measureMemory();
-      
+
       // Cleanup all instances
       instances.forEach(({ unmount }) => unmount());
-      
+
       if (global.gc) {
         global.gc();
       }
-      
+
       const finalMemory = measureMemory();
-      
+
       if (initialMemory && peakMemory && finalMemory) {
         // Memory should be released after cleanup
-        const memoryLeak = finalMemory.usedJSHeapSize - initialMemory.usedJSHeapSize;
+        const memoryLeak =
+          finalMemory.usedJSHeapSize - initialMemory.usedJSHeapSize;
         expect(memoryLeak).toBeLessThan(512 * 1024); // Less than 512KB leak
       }
     });
@@ -282,13 +293,14 @@ describe('Component Performance Tests', () => {
   describe('Event Handling Performance', () => {
     it('handles rapid user interactions efficiently', async () => {
       render(<SocialMediaHub />);
-      
+
       const interactionTime = await measurePerformance(async () => {
         const buttons = screen.getAllByRole('button');
-        
+
         // Simulate rapid clicking
         for (let i = 0; i < 50; i++) {
-          const randomButton = buttons[Math.floor(Math.random() * buttons.length)];
+          const randomButton =
+            buttons[Math.floor(Math.random() * buttons.length)];
           await act(async () => {
             randomButton.click();
           });
@@ -346,8 +358,9 @@ describe('Component Performance Tests', () => {
       Object.defineProperty(window, 'matchMedia', {
         writable: true,
         value: jest.fn().mockImplementation((query) => ({
-          matches: query.includes('prefers-reduced-motion') || 
-                  query.includes('prefers-contrast'),
+          matches:
+            query.includes('prefers-reduced-motion') ||
+            query.includes('prefers-contrast'),
           media: query,
           onchange: null,
           addListener: jest.fn(),
@@ -368,11 +381,11 @@ describe('Component Performance Tests', () => {
 
     it('handles screen reader interactions efficiently', async () => {
       render(<SocialMediaHub />);
-      
+
       const a11yTime = await measurePerformance(async () => {
         // Simulate screen reader navigation
         const focusableElements = screen.getAllByRole('button');
-        
+
         for (const element of focusableElements.slice(0, 10)) {
           await act(async () => {
             element.focus();
@@ -388,13 +401,18 @@ describe('Component Performance Tests', () => {
   describe('Network Performance', () => {
     it('handles slow network conditions gracefully', async () => {
       // Mock slow fetch
-      global.fetch = jest.fn().mockImplementation(() => 
-        new Promise(resolve => 
-          setTimeout(() => resolve({
-            ok: true,
-            json: () => Promise.resolve({ data: 'test' })
-          }), 1000)
-        )
+      global.fetch = jest.fn().mockImplementation(
+        () =>
+          new Promise((resolve) =>
+            setTimeout(
+              () =>
+                resolve({
+                  ok: true,
+                  json: () => Promise.resolve({ data: 'test' }),
+                }),
+              1000
+            )
+          )
       );
 
       const renderTime = await measurePerformance(() => {
@@ -409,9 +427,9 @@ describe('Component Performance Tests', () => {
       // Mock cache implementation
       const cacheHits = 0;
       const cacheMisses = 0;
-      
+
       render(<SocialMediaHub />);
-      
+
       // In a real implementation, you'd verify cache efficiency
       expect(true).toBe(true); // Placeholder for cache efficiency test
     });
@@ -420,15 +438,15 @@ describe('Component Performance Tests', () => {
   describe('Concurrent Features', () => {
     it('handles concurrent updates efficiently', async () => {
       const { rerender } = render(<SocialMediaHub />);
-      
+
       const concurrentTime = await measurePerformance(async () => {
         // Simulate concurrent updates
-        const promises = Array.from({ length: 10 }, (_, i) => 
+        const promises = Array.from({ length: 10 }, (_, i) =>
           act(async () => {
             rerender(<SocialMediaHub />);
           })
         );
-        
+
         await Promise.all(promises);
       });
 

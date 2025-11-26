@@ -33,11 +33,9 @@ class ErrorBoundary extends Component<Props, State> {
 
     // Check if this is a test error from monitoring dashboard
     const isTestError = error.message === 'Test error for monitoring system';
-    
+
     if (isTestError) {
-
     } else {
-
     }
 
     // Send to error reporting service
@@ -45,43 +43,51 @@ class ErrorBoundary extends Component<Props, State> {
       window.gtag('event', 'exception', {
         description: error.message,
         fatal: false,
-        custom_parameter_1: isTestError ? 'test_error' : 'production_error'
+        custom_parameter_1: isTestError ? 'test_error' : 'production_error',
       });
     }
   }
 
   render() {
     if (this.state.hasError) {
-      const isTestError = this.state.error?.message === 'Test error for monitoring system';
-      
-      return this.props.fallback || (
-        <motion.div 
-          className="error-boundary"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="error-content">
-            {isTestError ? (
-              <>
-                <h2>🧪 Test Error Caught!</h2>
-                <p>The monitoring system test error was successfully caught by the ErrorBoundary.</p>
-                <p style={{ fontSize: '0.9em', color: '#888' }}>Check the console for detailed logs.</p>
-              </>
-            ) : (
-              <>
-                <h2>Something went wrong</h2>
-                <p>We&apos;re sorry, but something unexpected happened.</p>
-              </>
-            )}
-            <button
-              onClick={() => this.setState({ hasError: false })}
-              className="retry-button"
-            >
-              {isTestError ? 'Close Test Result' : 'Try again'}
-            </button>
-          </div>
-        </motion.div>
+      const isTestError =
+        this.state.error?.message === 'Test error for monitoring system';
+
+      return (
+        this.props.fallback || (
+          <motion.div
+            className="error-boundary"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="error-content">
+              {isTestError ? (
+                <>
+                  <h2>🧪 Test Error Caught!</h2>
+                  <p>
+                    The monitoring system test error was successfully caught by
+                    the ErrorBoundary.
+                  </p>
+                  <p style={{ fontSize: '0.9em', color: '#888' }}>
+                    Check the console for detailed logs.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h2>Something went wrong</h2>
+                  <p>We&apos;re sorry, but something unexpected happened.</p>
+                </>
+              )}
+              <button
+                onClick={() => this.setState({ hasError: false })}
+                className="retry-button"
+              >
+                {isTestError ? 'Close Test Result' : 'Try again'}
+              </button>
+            </div>
+          </motion.div>
+        )
       );
     }
 

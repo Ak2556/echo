@@ -12,7 +12,7 @@ export function useTiltCards() {
     function enableTilt() {
       if (prefersReducedMotion()) return;
       const cards = document.querySelectorAll('.tilt-card');
-      cards.forEach(card => {
+      cards.forEach((card) => {
         const element = card as HTMLElement;
         if (element.dataset.tiltBound) return;
         element.dataset.tiltBound = 'true';
@@ -44,7 +44,7 @@ export function useTiltCards() {
 
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
 
     // Cleanup

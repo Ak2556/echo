@@ -8,7 +8,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { borderRadius, duration, easing, touchTarget } from '@/lib/design-system';
+import {
+  borderRadius,
+  duration,
+  easing,
+  touchTarget,
+} from '@/lib/design-system';
 import { useResponsive } from '@/hooks/useResponsive';
 
 export interface CarouselProps {
@@ -106,7 +111,7 @@ export function Carousel({
     '16/9': '56.25%',
     '4/3': '75%',
     '1/1': '100%',
-    'auto': 'auto',
+    auto: 'auto',
   };
 
   return (

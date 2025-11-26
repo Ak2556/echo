@@ -4,8 +4,19 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/contexts/ToastContext';
-import { formatCompactNumber, formatRelativeTime } from '@/utils/internationalization';
-import { Heart, MessageCircle, Repeat2, Bookmark, Share2, MoreHorizontal, MessageSquare } from 'lucide-react';
+import {
+  formatCompactNumber,
+  formatRelativeTime,
+} from '@/utils/internationalization';
+import {
+  Heart,
+  MessageCircle,
+  Repeat2,
+  Bookmark,
+  Share2,
+  MoreHorizontal,
+  MessageSquare,
+} from 'lucide-react';
 import QuoteRepostModal from './QuoteRepostModal';
 import ReportModal from './ReportModal';
 import CollectionsModal from './CollectionsModal';
@@ -48,11 +59,17 @@ const reactions = [
   { id: 'laugh', emoji: '😂', label: 'Laugh' },
   { id: 'wow', emoji: '😮', label: 'Wow' },
   { id: 'sad', emoji: '😢', label: 'Sad' },
-  { id: 'angry', emoji: '😠', label: 'Angry' }
+  { id: 'angry', emoji: '😠', label: 'Angry' },
 ];
 
-export default function PostCard({ post, showActions = true, onClick, isOwnPost = false }: PostCardProps) {
-  const { likePost, repostPost, bookmarkPost, pinPost, blockUser, reportPost } = useUser();
+export default function PostCard({
+  post,
+  showActions = true,
+  onClick,
+  isOwnPost = false,
+}: PostCardProps) {
+  const { likePost, repostPost, bookmarkPost, pinPost, blockUser, reportPost } =
+    useUser();
   const toast = useToast();
 
   const [liked, setLiked] = useState(post.isLiked || false);
@@ -76,7 +93,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
     const success = await likePost(post.id);
     if (success) {
       setLiked(!liked);
-      setLikes(prev => liked ? prev - 1 : prev + 1);
+      setLikes((prev) => (liked ? prev - 1 : prev + 1));
     }
   };
 
@@ -84,7 +101,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
     const success = await likePost(post.id);
     if (success) {
       setLiked(true);
-      setLikes(prev => prev + 1);
+      setLikes((prev) => prev + 1);
       toast.success(`Reacted with ${emoji}`);
     }
     setShowReactions(false);
@@ -95,7 +112,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
     const success = await repostPost(post.id);
     if (success) {
       setReposted(!reposted);
-      setReposts(prev => reposted ? prev - 1 : prev + 1);
+      setReposts((prev) => (reposted ? prev - 1 : prev + 1));
       toast.success(reposted ? 'Removed repost' : 'Post reposted!');
     }
     setShowRepostMenu(false);
@@ -106,7 +123,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
       // In real app, would call API to create quote repost
       const success = await repostPost(post.id); // Placeholder
       if (success) {
-        setReposts(prev => prev + 1);
+        setReposts((prev) => prev + 1);
         return true;
       }
       return false;
@@ -140,13 +157,13 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
 
   const handleBookmark = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     // If already bookmarked, remove from bookmarks
     if (bookmarked) {
       const success = await bookmarkPost(post.id);
       if (success) {
         setBookmarked(false);
-        setBookmarks(prev => prev - 1);
+        setBookmarks((prev) => prev - 1);
         toast.success('Removed from bookmarks');
       }
     } else {
@@ -160,7 +177,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
       const success = await bookmarkPost(post.id); // In real app, would call specific collection API
       if (success) {
         setBookmarked(true);
-        setBookmarks(prev => prev + 1);
+        setBookmarks((prev) => prev + 1);
         return true;
       }
       return false;
@@ -169,16 +186,20 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
     }
   };
 
-  const handleCreateCollection = async (name: string, description: string, privacy: 'public' | 'private' | 'followers') => {
+  const handleCreateCollection = async (
+    name: string,
+    description: string,
+    privacy: 'public' | 'private' | 'followers'
+  ) => {
     try {
       // In real app, would call API to create collection
       const collectionId = `col_${Date.now()}`;
-      
+
       // Add post to the new collection
       const success = await bookmarkPost(post.id);
       if (success) {
         setBookmarked(true);
-        setBookmarks(prev => prev + 1);
+        setBookmarks((prev) => prev + 1);
         return collectionId;
       }
       return null;
@@ -192,7 +213,9 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
     const success = await pinPost(post.id);
     if (success) {
       setPinned(!pinned);
-      toast.success(pinned ? 'Post unpinned from profile' : 'Post pinned to profile');
+      toast.success(
+        pinned ? 'Post unpinned from profile' : 'Post pinned to profile'
+      );
     }
     setShowMoreMenu(false);
   };
@@ -208,17 +231,26 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
         toast.error('Failed to copy link');
       }
     } else if (platform === 'twitter') {
-      window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post.content.substring(0, 200))}`, '_blank');
+      window.open(
+        `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post.content.substring(0, 200))}`,
+        '_blank'
+      );
     } else if (platform === 'facebook') {
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+      window.open(
+        `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+        '_blank'
+      );
     } else if (platform === 'whatsapp') {
-      window.open(`https://wa.me/?text=${encodeURIComponent(post.content + ' ' + shareUrl)}`, '_blank');
+      window.open(
+        `https://wa.me/?text=${encodeURIComponent(post.content + ' ' + shareUrl)}`,
+        '_blank'
+      );
     } else if (navigator.share) {
       try {
         await navigator.share({
           title: `${post.author.displayName} on Echo`,
           text: post.content,
-          url: shareUrl
+          url: shareUrl,
         });
       } catch {
         // User cancelled or error
@@ -234,7 +266,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
       style={{
         cursor: onClick ? 'pointer' : 'default',
         transition: 'transform 0.2s, box-shadow 0.2s',
-        position: 'relative'
+        position: 'relative',
       }}
       onMouseEnter={(e) => {
         if (onClick) {
@@ -251,27 +283,36 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
     >
       {/* Pin Indicator */}
       {pinned && (
-        <div style={{
-          position: 'absolute',
-          top: '1rem',
-          right: '1rem',
-          background: 'var(--accent)',
-          color: 'white',
-          padding: '0.25rem 0.5rem',
-          borderRadius: '12px',
-          fontSize: '0.75rem',
-          fontWeight: 600,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.25rem',
-          zIndex: 1
-        }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: '1rem',
+            right: '1rem',
+            background: 'var(--accent)',
+            color: 'white',
+            padding: '0.25rem 0.5rem',
+            borderRadius: '12px',
+            fontSize: '0.75rem',
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.25rem',
+            zIndex: 1,
+          }}
+        >
           📌 Pinned
         </div>
       )}
 
       {/* Author Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          marginBottom: '1rem',
+        }}
+      >
         <Image
           src={post.author.avatar}
           alt={post.author.displayName}
@@ -281,12 +322,24 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
         />
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{post.author.displayName}</span>
+            <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>
+              {post.author.displayName}
+            </span>
             {post.author.verified && (
-              <span style={{ color: 'var(--accent)', fontSize: '1rem' }}>✓</span>
+              <span style={{ color: 'var(--accent)', fontSize: '1rem' }}>
+                ✓
+              </span>
             )}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', opacity: 0.7 }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontSize: '0.85rem',
+              opacity: 0.7,
+            }}
+          >
             <span>@{post.author.username}</span>
             <span>·</span>
             <span>{formatRelativeTime(post.timestamp)}</span>
@@ -309,7 +362,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                transition: 'background 0.2s'
+                transition: 'background 0.2s',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
@@ -333,7 +386,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                   borderRadius: '8px',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                   zIndex: 10,
-                  minWidth: '180px'
+                  minWidth: '180px',
                 }}
               >
                 {isOwnPost && (
@@ -348,7 +401,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                       cursor: 'pointer',
                       fontSize: '0.9rem',
                       transition: 'background 0.2s',
-                      color: pinned ? 'var(--accent)' : 'var(--fg)'
+                      color: pinned ? 'var(--accent)' : 'var(--fg)',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
@@ -375,7 +428,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                       textAlign: 'left',
                       cursor: 'pointer',
                       fontSize: '0.9rem',
-                      transition: 'background 0.2s'
+                      transition: 'background 0.2s',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
@@ -401,7 +454,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                     textAlign: 'left',
                     cursor: 'pointer',
                     fontSize: '0.9rem',
-                    transition: 'background 0.2s'
+                    transition: 'background 0.2s',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
@@ -424,7 +477,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                       cursor: 'pointer',
                       fontSize: '0.9rem',
                       color: '#ef4444',
-                      transition: 'background 0.2s'
+                      transition: 'background 0.2s',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.background = 'rgba(239,68,68,0.1)';
@@ -451,7 +504,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                     cursor: 'pointer',
                     fontSize: '0.9rem',
                     color: '#ef4444',
-                    transition: 'background 0.2s'
+                    transition: 'background 0.2s',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgba(239,68,68,0.1)';
@@ -486,7 +539,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
             maxHeight: '400px',
             objectFit: 'cover',
             borderRadius: '12px',
-            marginBottom: '1rem'
+            marginBottom: '1rem',
           }}
         />
       )}
@@ -499,7 +552,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
             alignItems: 'center',
             justifyContent: 'space-between',
             paddingTop: '0.75rem',
-            borderTop: '1px solid var(--border)'
+            borderTop: '1px solid var(--border)',
           }}
         >
           {/* Like with Reactions */}
@@ -508,7 +561,8 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
               onClick={handleLike}
               onMouseEnter={(e) => {
                 setShowReactions(true);
-                if (!liked) e.currentTarget.style.background = 'rgba(239,68,68,0.1)';
+                if (!liked)
+                  e.currentTarget.style.background = 'rgba(239,68,68,0.1)';
               }}
               onMouseLeave={(e) => {
                 setShowReactions(false);
@@ -525,11 +579,13 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                 borderRadius: '8px',
                 transition: 'all 0.2s',
                 color: liked ? '#ef4444' : 'var(--fg)',
-                fontWeight: liked ? 600 : 400
+                fontWeight: liked ? 600 : 400,
               }}
             >
               <Heart size={18} fill={liked ? '#ef4444' : 'none'} />
-              <span style={{ fontSize: '0.9rem' }}>{formatCompactNumber(likes)}</span>
+              <span style={{ fontSize: '0.9rem' }}>
+                {formatCompactNumber(likes)}
+              </span>
             </button>
 
             {showReactions && (
@@ -548,7 +604,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                   borderRadius: '24px',
                   padding: '0.5rem',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                  zIndex: 10
+                  zIndex: 10,
                 }}
               >
                 {reactions.map((reaction) => (
@@ -567,7 +623,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                       cursor: 'pointer',
                       fontSize: '1.5rem',
                       borderRadius: '50%',
-                      transition: 'transform 0.2s'
+                      transition: 'transform 0.2s',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'scale(1.3)';
@@ -599,7 +655,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
               cursor: 'pointer',
               borderRadius: '8px',
               transition: 'background 0.2s',
-              color: 'var(--fg)'
+              color: 'var(--fg)',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'rgba(59,130,246,0.1)';
@@ -609,7 +665,9 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
             }}
           >
             <MessageCircle size={18} />
-            <span style={{ fontSize: '0.9rem' }}>{formatCompactNumber(post.stats.comments)}</span>
+            <span style={{ fontSize: '0.9rem' }}>
+              {formatCompactNumber(post.stats.comments)}
+            </span>
           </button>
 
           {/* Repost */}
@@ -630,17 +688,20 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                 borderRadius: '8px',
                 transition: 'all 0.2s',
                 color: reposted ? '#10b981' : 'var(--fg)',
-                fontWeight: reposted ? 600 : 400
+                fontWeight: reposted ? 600 : 400,
               }}
               onMouseEnter={(e) => {
-                if (!reposted) e.currentTarget.style.background = 'rgba(16,185,129,0.1)';
+                if (!reposted)
+                  e.currentTarget.style.background = 'rgba(16,185,129,0.1)';
               }}
               onMouseLeave={(e) => {
                 if (!reposted) e.currentTarget.style.background = 'transparent';
               }}
             >
               <Repeat2 size={18} />
-              <span style={{ fontSize: '0.9rem' }}>{formatCompactNumber(reposts)}</span>
+              <span style={{ fontSize: '0.9rem' }}>
+                {formatCompactNumber(reposts)}
+              </span>
             </button>
 
             {showRepostMenu && (
@@ -655,7 +716,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                   borderRadius: '8px',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                   zIndex: 10,
-                  minWidth: '160px'
+                  minWidth: '160px',
                 }}
               >
                 <button
@@ -671,7 +732,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                     transition: 'background 0.2s',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.5rem'
+                    gap: '0.5rem',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
@@ -700,7 +761,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                     transition: 'background 0.2s',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.5rem'
+                    gap: '0.5rem',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
@@ -730,17 +791,22 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
               borderRadius: '8px',
               transition: 'all 0.2s',
               color: bookmarked ? '#f59e0b' : 'var(--fg)',
-              fontWeight: bookmarked ? 600 : 400
+              fontWeight: bookmarked ? 600 : 400,
             }}
             onMouseEnter={(e) => {
-              if (!bookmarked) e.currentTarget.style.background = 'rgba(245,158,11,0.1)';
+              if (!bookmarked)
+                e.currentTarget.style.background = 'rgba(245,158,11,0.1)';
             }}
             onMouseLeave={(e) => {
               if (!bookmarked) e.currentTarget.style.background = 'transparent';
             }}
           >
             <Bookmark size={18} fill={bookmarked ? '#f59e0b' : 'none'} />
-            {bookmarks > 0 && <span style={{ fontSize: '0.9rem' }}>{formatCompactNumber(bookmarks)}</span>}
+            {bookmarks > 0 && (
+              <span style={{ fontSize: '0.9rem' }}>
+                {formatCompactNumber(bookmarks)}
+              </span>
+            )}
           </button>
 
           {/* Share */}
@@ -760,7 +826,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                 cursor: 'pointer',
                 borderRadius: '8px',
                 transition: 'background 0.2s',
-                color: 'var(--fg)'
+                color: 'var(--fg)',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
@@ -784,7 +850,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                   borderRadius: '8px',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                   zIndex: 10,
-                  minWidth: '160px'
+                  minWidth: '160px',
                 }}
               >
                 <button
@@ -800,7 +866,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                     textAlign: 'left',
                     cursor: 'pointer',
                     fontSize: '0.9rem',
-                    transition: 'background 0.2s'
+                    transition: 'background 0.2s',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
@@ -824,7 +890,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                     textAlign: 'left',
                     cursor: 'pointer',
                     fontSize: '0.9rem',
-                    transition: 'background 0.2s'
+                    transition: 'background 0.2s',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
@@ -848,7 +914,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                     textAlign: 'left',
                     cursor: 'pointer',
                     fontSize: '0.9rem',
-                    transition: 'background 0.2s'
+                    transition: 'background 0.2s',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
@@ -872,7 +938,7 @@ export default function PostCard({ post, showActions = true, onClick, isOwnPost 
                     textAlign: 'left',
                     cursor: 'pointer',
                     fontSize: '0.9rem',
-                    transition: 'background 0.2s'
+                    transition: 'background 0.2s',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgba(0,0,0,0.05)';

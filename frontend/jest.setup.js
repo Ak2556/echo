@@ -5,14 +5,13 @@ const originalError = console.error;
 beforeAll(() => {
   console.error = (...args) => {
     if (
-      typeof args[0] === 'string' && (
-        args[0].includes('Warning: ReactDOM.render is no longer supported') ||
+      typeof args[0] === 'string' &&
+      (args[0].includes('Warning: ReactDOM.render is no longer supported') ||
         args[0].includes('Warning: An invalid form control') ||
         args[0].includes('Warning: React.jsx: type is invalid') ||
         args[0].includes('Warning: An update to') ||
         args[0].includes('was not wrapped in act') ||
-        args[0].includes('The above error occurred')
-      )
+        args[0].includes('The above error occurred'))
     ) {
       return;
     }
@@ -26,10 +25,21 @@ afterAll(() => {
 
 // Mock framer-motion globally
 jest.mock('framer-motion', () => {
-  const createMotionComponent = (tag) => ({ children, ...props }) => {
-    const { animate, initial, transition, whileHover, whileTap, whileInView, variants, ...restProps } = props;
-    return React.createElement(tag, restProps, children);
-  };
+  const createMotionComponent =
+    (tag) =>
+    ({ children, ...props }) => {
+      const {
+        animate,
+        initial,
+        transition,
+        whileHover,
+        whileTap,
+        whileInView,
+        variants,
+        ...restProps
+      } = props;
+      return React.createElement(tag, restProps, children);
+    };
 
   return {
     motion: {
@@ -87,11 +97,11 @@ global.DataTransfer = class DataTransfer {
   constructor() {
     this.data = {};
   }
-  
+
   getData(format) {
     return this.data[format] || '';
   }
-  
+
   setData(format, data) {
     this.data[format] = data;
   }
@@ -116,7 +126,7 @@ global.ResizeObserver = class ResizeObserver {
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -154,7 +164,7 @@ jest.mock('@/contexts/ThemeContext', () => ({
     accessibilityPrefs: {
       reducedMotion: false,
       highContrast: false,
-      forcedColors: false
+      forcedColors: false,
     },
     themeSchedule: { type: 'off' },
     isTransitioning: false,
@@ -166,11 +176,16 @@ jest.mock('@/contexts/ThemeContext', () => ({
     setThemeSchedule: jest.fn(),
     toggleColorMode: jest.fn(),
     previewTheme: jest.fn(),
-    getColors: () => ({ primary: '#FFFFFF', secondary: '#F2F2F7', accent: '#E5E5EA' }),
+    getColors: () => ({
+      primary: '#FFFFFF',
+      secondary: '#F2F2F7',
+      accent: '#E5E5EA',
+    }),
     getSystemPreference: () => 'light',
-    getSunriseSunset: () => Promise.resolve({ sunrise: '06:00', sunset: '18:00' })
+    getSunriseSunset: () =>
+      Promise.resolve({ sunrise: '06:00', sunset: '18:00' }),
   }),
-  ThemeProvider: ({ children }) => children
+  ThemeProvider: ({ children }) => children,
 }));
 
 jest.mock('@/contexts/LanguageContext', () => ({
@@ -182,8 +197,8 @@ jest.mock('@/contexts/LanguageContext', () => ({
     supportedLanguages: {
       en: { name: 'English', nativeName: 'English' },
       es: { name: 'Spanish', nativeName: 'Español' },
-      fr: { name: 'French', nativeName: 'Français' }
-    }
+      fr: { name: 'French', nativeName: 'Français' },
+    },
   }),
-  LanguageProvider: ({ children }) => children
+  LanguageProvider: ({ children }) => children,
 }));

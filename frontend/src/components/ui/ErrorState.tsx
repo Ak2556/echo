@@ -58,7 +58,8 @@ const errorConfig = {
     iconColor: 'text-red-500',
     title: 'Server error',
     message: 'Our servers are experiencing issues.',
-    suggestion: 'Our team has been notified. Please try again in a few moments.',
+    suggestion:
+      'Our team has been notified. Please try again in a few moments.',
   },
   'not-found': {
     icon: FileX,
@@ -137,10 +138,7 @@ const ErrorState = memo(function ErrorState({
             config.iconColor
           )}
         >
-          <Icon
-            className="w-12 h-12"
-            aria-hidden="true"
-          />
+          <Icon className="w-12 h-12" aria-hidden="true" />
         </motion.div>
       )}
 
@@ -239,9 +237,11 @@ export const NotFoundError = memo((props: Omit<ErrorStateProps, 'type'>) => (
   <ErrorState type="not-found" {...props} />
 ));
 
-export const UnauthorizedError = memo((props: Omit<ErrorStateProps, 'type'>) => (
-  <ErrorState type="unauthorized" {...props} />
-));
+export const UnauthorizedError = memo(
+  (props: Omit<ErrorStateProps, 'type'>) => (
+    <ErrorState type="unauthorized" {...props} />
+  )
+);
 
 export const ForbiddenError = memo((props: Omit<ErrorStateProps, 'type'>) => (
   <ErrorState type="forbidden" {...props} />

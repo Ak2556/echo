@@ -30,12 +30,14 @@ This project and everyone participating in it is governed by our Code of Conduct
 ### Development Setup
 
 1. **Fork and Clone**
+
    ```bash
    git clone https://github.com/yourusername/echo.git
    cd echo
    ```
 
 2. **Install Dependencies**
+
    ```bash
    # Frontend
    cd frontend
@@ -48,12 +50,14 @@ This project and everyone participating in it is governed by our Code of Conduct
    ```
 
 3. **Environment Setup**
+
    ```bash
    cp .env.example .env
    # Edit .env with your configuration
    ```
 
 4. **Start Development Servers**
+
    ```bash
    # Using Docker Compose
    docker-compose up -d
@@ -95,6 +99,7 @@ We welcome various types of contributions:
    - Wait for feedback before starting work
 
 2. **Create a Branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    # or
@@ -107,6 +112,7 @@ We welcome various types of contributions:
    - Update documentation as needed
 
 4. **Commit Changes**
+
    ```bash
    git add .
    git commit -m "feat: add amazing feature"
@@ -276,20 +282,25 @@ npx playwright test       # Run E2E tests
    - [ ] PR description is clear and complete
 
 3. **PR Template**
+
    ```markdown
    ## Description
+
    Brief description of changes
 
    ## Type of Change
+
    - [ ] Bug fix
    - [ ] New feature
    - [ ] Breaking change
    - [ ] Documentation update
 
    ## Testing
+
    Describe tests added/updated
 
    ## Screenshots (if applicable)
+
    Add screenshots for UI changes
    ```
 
@@ -320,6 +331,7 @@ A clear description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce:
+
 1. Go to '...'
 2. Click on '...'
 3. See error
@@ -331,6 +343,7 @@ What you expected to happen.
 If applicable, add screenshots.
 
 **Environment:**
+
 - OS: [e.g., macOS 13.0]
 - Browser: [e.g., Chrome 120]
 - Version: [e.g., 1.0.0]
@@ -396,6 +409,7 @@ alembic downgrade -1
 ## Recognition
 
 Contributors will be:
+
 - Listed in CONTRIBUTORS.md
 - Mentioned in release notes
 - Given credit in commit history

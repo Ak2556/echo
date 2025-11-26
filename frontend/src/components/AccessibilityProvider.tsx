@@ -5,9 +5,23 @@
 
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { AccessibilityReport, AccessibilityEnhancer } from '@/utils/accessibility';
-import { useAccessibility, useScreenReader, useReducedMotion, useHighContrast } from '@/hooks/useAccessibility';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react';
+import {
+  AccessibilityReport,
+  AccessibilityEnhancer,
+} from '@/utils/accessibility';
+import {
+  useAccessibility,
+  useScreenReader,
+  useReducedMotion,
+  useHighContrast,
+} from '@/hooks/useAccessibility';
 
 interface AccessibilityContextType {
   report: AccessibilityReport | null;
@@ -31,12 +45,16 @@ interface AccessibilitySettings {
   contrastLevel: 'normal' | 'high' | 'maximum';
 }
 
-const AccessibilityContext = createContext<AccessibilityContextType | undefined>(undefined);
+const AccessibilityContext = createContext<
+  AccessibilityContextType | undefined
+>(undefined);
 
 export function useAccessibilityContext() {
   const context = useContext(AccessibilityContext);
   if (context === undefined) {
-    throw new Error('useAccessibilityContext must be used within an AccessibilityProvider');
+    throw new Error(
+      'useAccessibilityContext must be used within an AccessibilityProvider'
+    );
   }
   return context;
 }
@@ -45,8 +63,11 @@ interface AccessibilityProviderProps {
   children: ReactNode;
 }
 
-export function AccessibilityProvider({ children }: AccessibilityProviderProps) {
-  const { report, isAnalyzing, analyzeAccessibility, enhanceAccessibility } = useAccessibility();
+export function AccessibilityProvider({
+  children,
+}: AccessibilityProviderProps) {
+  const { report, isAnalyzing, analyzeAccessibility, enhanceAccessibility } =
+    useAccessibility();
   const { announce } = useScreenReader();
   const prefersReducedMotion = useReducedMotion();
   const prefersHighContrast = useHighContrast();
@@ -65,21 +86,26 @@ export function AccessibilityProvider({ children }: AccessibilityProviderProps) 
     }
 
     const saved = localStorage.getItem('echo_accessibility_settings');
-    return saved ? JSON.parse(saved) : {
-      enableHighContrast: false,
-      enableReducedMotion: false,
-      enableLargeText: false,
-      enableScreenReaderOptimizations: true,
-      enableKeyboardNavigation: true,
-      fontSize: 'medium',
-      contrastLevel: 'normal',
-    };
+    return saved
+      ? JSON.parse(saved)
+      : {
+          enableHighContrast: false,
+          enableReducedMotion: false,
+          enableLargeText: false,
+          enableScreenReaderOptimizations: true,
+          enableKeyboardNavigation: true,
+          fontSize: 'medium',
+          contrastLevel: 'normal',
+        };
   });
 
   const updateSettings = (newSettings: Partial<AccessibilitySettings>) => {
-    setSettings(prev => {
+    setSettings((prev) => {
       const updated = { ...prev, ...newSettings };
-      localStorage.setItem('echo_accessibility_settings', JSON.stringify(updated));
+      localStorage.setItem(
+        'echo_accessibility_settings',
+        JSON.stringify(updated)
+      );
       return updated;
     });
   };

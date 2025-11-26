@@ -3,6 +3,7 @@
 This guide covers deploying the Echo application to various environments.
 
 ## Table of Contents
+
 - [Prerequisites](#prerequisites)
 - [Docker Deployment](#docker-deployment)
 - [Kubernetes Deployment](#kubernetes-deployment)
@@ -293,12 +294,12 @@ spec:
   minReplicas: 2
   maxReplicas: 10
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
 ```
 
 ### Database Scaling
@@ -425,6 +426,7 @@ docker-compose exec -T postgres psql -U user echo_db < backup.sql
 ## Support
 
 For issues and questions:
+
 - GitHub Issues: https://github.com/yourusername/echo/issues
 - Documentation: https://docs.echo.com
 - Email: support@echo.com

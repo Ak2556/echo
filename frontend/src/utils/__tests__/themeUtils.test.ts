@@ -45,7 +45,7 @@ const mockMatchMedia = (matches: boolean) => ({
 describe('themeUtils', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Reset matchMedia mock
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
@@ -57,8 +57,8 @@ describe('themeUtils', () => {
     it('exports valid theme presets', () => {
       expect(THEME_PRESETS).toBeInstanceOf(Array);
       expect(THEME_PRESETS.length).toBeGreaterThan(0);
-      
-      THEME_PRESETS.forEach(preset => {
+
+      THEME_PRESETS.forEach((preset) => {
         expect(preset).toHaveProperty('id');
         expect(preset).toHaveProperty('name');
         expect(preset).toHaveProperty('description');
@@ -66,15 +66,15 @@ describe('themeUtils', () => {
         expect(preset).toHaveProperty('palette');
         expect(preset).toHaveProperty('accentColor');
         expect(preset).toHaveProperty('preview');
-        
+
         expect(['light', 'dark', 'auto']).toContain(preset.colorMode);
         expect(preset.accentColor).toMatch(/^#[0-9A-F]{6}$/i);
       });
     });
 
     it('includes essential theme presets', () => {
-      const presetIds = THEME_PRESETS.map(p => p.id);
-      
+      const presetIds = THEME_PRESETS.map((p) => p.id);
+
       expect(presetIds).toContain('auto');
       expect(presetIds).toContain('light');
       expect(presetIds).toContain('dark');
@@ -84,14 +84,14 @@ describe('themeUtils', () => {
   describe('Accessibility Presets', () => {
     it('exports valid accessibility presets', () => {
       expect(ACCESSIBILITY_PRESETS).toBeInstanceOf(Object);
-      
-      Object.values(ACCESSIBILITY_PRESETS).forEach(preset => {
+
+      Object.values(ACCESSIBILITY_PRESETS).forEach((preset) => {
         expect(preset).toHaveProperty('reducedMotion');
         expect(preset).toHaveProperty('highContrast');
         expect(preset).toHaveProperty('forcedColors');
         expect(preset).toHaveProperty('fontSize');
         expect(preset).toHaveProperty('focusIndicators');
-        
+
         expect(typeof preset.reducedMotion).toBe('boolean');
         expect(typeof preset.highContrast).toBe('boolean');
         expect(typeof preset.forcedColors).toBe('boolean');
@@ -117,7 +117,7 @@ describe('themeUtils', () => {
       });
 
       const preferences = detectSystemPreferences();
-      
+
       expect(preferences.colorScheme).toBe('dark');
     });
 
@@ -130,7 +130,7 @@ describe('themeUtils', () => {
       });
 
       const preferences = detectSystemPreferences();
-      
+
       expect(preferences.colorScheme).toBe('light');
     });
 
@@ -143,7 +143,7 @@ describe('themeUtils', () => {
       });
 
       const preferences = detectSystemPreferences();
-      
+
       expect(preferences.reducedMotion).toBe(true);
     });
 
@@ -156,7 +156,7 @@ describe('themeUtils', () => {
       });
 
       const preferences = detectSystemPreferences();
-      
+
       expect(preferences.highContrast).toBe(true);
     });
 
@@ -169,7 +169,7 @@ describe('themeUtils', () => {
       });
 
       const preferences = detectSystemPreferences();
-      
+
       expect(preferences.forcedColors).toBe(true);
     });
 
@@ -178,7 +178,7 @@ describe('themeUtils', () => {
       delete (global as any).window;
 
       const preferences = detectSystemPreferences();
-      
+
       expect(preferences).toEqual({
         colorScheme: 'light',
         reducedMotion: false,
@@ -205,8 +205,8 @@ describe('themeUtils', () => {
         json: () => Promise.resolve(mockResponse),
       });
 
-      const result = await getSunriseSunset(40.7128, -74.0060);
-      
+      const result = await getSunriseSunset(40.7128, -74.006);
+
       expect(result).toEqual({
         sunrise: new Date('2024-01-01T06:30:00Z'),
         sunset: new Date('2024-01-01T18:30:00Z'),
@@ -214,10 +214,12 @@ describe('themeUtils', () => {
     });
 
     it('handles API errors gracefully', async () => {
-      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      (global.fetch as jest.Mock).mockRejectedValueOnce(
+        new Error('Network error')
+      );
 
-      const result = await getSunriseSunset(40.7128, -74.0060);
-      
+      const result = await getSunriseSunset(40.7128, -74.006);
+
       expect(result).toBeNull();
     });
 
@@ -231,27 +233,28 @@ describe('themeUtils', () => {
         json: () => Promise.resolve(mockResponse),
       });
 
-      const result = await getSunriseSunset(40.7128, -74.0060);
-      
+      const result = await getSunriseSunset(40.7128, -74.006);
+
       expect(result).toBeNull();
     });
 
     it('uses custom date when provided', async () => {
       const customDate = new Date('2024-06-15');
-      
+
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({
-          status: 'OK',
-          results: {
-            sunrise: '2024-06-15T05:30:00Z',
-            sunset: '2024-06-15T19:30:00Z',
-          },
-        }),
+        json: () =>
+          Promise.resolve({
+            status: 'OK',
+            results: {
+              sunrise: '2024-06-15T05:30:00Z',
+              sunset: '2024-06-15T19:30:00Z',
+            },
+          }),
       });
 
-      await getSunriseSunset(40.7128, -74.0060, customDate);
-      
+      await getSunriseSunset(40.7128, -74.006, customDate);
+
       expect(global.fetch).toHaveBeenCalledWith(
         expect.stringContaining('date=2024-06-15')
       );
@@ -263,7 +266,7 @@ describe('themeUtils', () => {
       const mockPosition = {
         coords: {
           latitude: 40.7128,
-          longitude: -74.0060,
+          longitude: -74.006,
         },
       };
 
@@ -286,7 +289,7 @@ describe('themeUtils', () => {
 
       expect(result).toEqual({
         lat: 40.7128,
-        lng: -74.0060,
+        lng: -74.006,
         name: 'New York',
       });
     });
@@ -301,7 +304,9 @@ describe('themeUtils', () => {
         value: undefined,
       });
 
-      await expect(getCurrentLocation()).rejects.toThrow('Geolocation is not supported');
+      await expect(getCurrentLocation()).rejects.toThrow(
+        'Geolocation is not supported'
+      );
 
       // Restore geolocation
       Object.defineProperty(navigator, 'geolocation', {
@@ -314,7 +319,7 @@ describe('themeUtils', () => {
       const mockPosition = {
         coords: {
           latitude: 40.7128,
-          longitude: -74.0060,
+          longitude: -74.006,
         },
       };
 
@@ -331,7 +336,7 @@ describe('themeUtils', () => {
 
       expect(result).toEqual({
         lat: 40.7128,
-        lng: -74.0060,
+        lng: -74.006,
       });
     });
 
@@ -347,9 +352,11 @@ describe('themeUtils', () => {
     });
 
     it('handles geolocation permission denied', async () => {
-      mockGeolocation.getCurrentPosition.mockImplementationOnce((success, error) => {
-        error(new Error('Permission denied'));
-      });
+      mockGeolocation.getCurrentPosition.mockImplementationOnce(
+        (success, error) => {
+          error(new Error('Permission denied'));
+        }
+      );
 
       await expect(getCurrentLocation()).rejects.toThrow('Permission denied');
     });
@@ -358,7 +365,7 @@ describe('themeUtils', () => {
       const mockPosition = {
         coords: {
           latitude: 40.7128,
-          longitude: -74.0060,
+          longitude: -74.006,
         },
       };
 
@@ -366,13 +373,15 @@ describe('themeUtils', () => {
         success(mockPosition);
       });
 
-      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Geocoding failed'));
+      (global.fetch as jest.Mock).mockRejectedValueOnce(
+        new Error('Geocoding failed')
+      );
 
       const result = await getCurrentLocation();
-      
+
       expect(result).toEqual({
         lat: 40.7128,
-        lng: -74.0060,
+        lng: -74.006,
       });
     });
   });
@@ -387,7 +396,7 @@ describe('themeUtils', () => {
       };
 
       const result = shouldUseDarkModeBySchedule(schedule);
-      
+
       expect(result).toBe(false);
     });
 
@@ -400,7 +409,7 @@ describe('themeUtils', () => {
       };
 
       const result = shouldUseDarkModeBySchedule(schedule);
-      
+
       expect(result).toBe(false);
     });
 
@@ -430,7 +439,9 @@ describe('themeUtils', () => {
 
       // Test another dark period case
       const veryEarlyMorning = new Date('2024-01-01T05:30:00');
-      expect(shouldUseDarkModeBySchedule(schedule, veryEarlyMorning)).toBe(true);
+      expect(shouldUseDarkModeBySchedule(schedule, veryEarlyMorning)).toBe(
+        true
+      );
     });
 
     it('calculates dark mode correctly for overnight schedule', () => {
@@ -438,7 +449,7 @@ describe('themeUtils', () => {
         type: 'time' as const,
         enabled: true,
         lightTime: '06:00', // Light starts at 06:00
-        darkTime: '22:00',  // Dark starts at 22:00
+        darkTime: '22:00', // Dark starts at 22:00
       };
 
       // Test during dark period (should be dark) - late night
@@ -452,14 +463,16 @@ describe('themeUtils', () => {
       // Test during light period (should be light) - afternoon
       const afternoon = new Date('2024-01-01T15:00:00');
       expect(shouldUseDarkModeBySchedule(schedule, afternoon)).toBe(false);
-      
+
       // Test at dark transition (should be dark)
       const darkTransition = new Date('2024-01-01T22:00:00');
       expect(shouldUseDarkModeBySchedule(schedule, darkTransition)).toBe(true);
-      
+
       // Test at light transition (should be light)
       const lightTransition = new Date('2024-01-01T06:00:00');
-      expect(shouldUseDarkModeBySchedule(schedule, lightTransition)).toBe(false);
+      expect(shouldUseDarkModeBySchedule(schedule, lightTransition)).toBe(
+        false
+      );
     });
 
     it('handles edge cases at exact transition times', () => {
@@ -513,8 +526,8 @@ describe('themeUtils', () => {
       const schedule = {
         type: 'time' as const,
         enabled: true,
-        lightTime: '08:00',  // Light starts at 08:00
-        darkTime: '20:00',   // Dark starts at 20:00
+        lightTime: '08:00', // Light starts at 08:00
+        darkTime: '20:00', // Dark starts at 20:00
       };
 
       // Test at 22:00 (should be dark)
@@ -765,18 +778,26 @@ describe('themeUtils', () => {
   describe('meetsAccessibilityStandards', () => {
     it('validates AA compliance correctly', () => {
       // Black on white meets AA
-      expect(meetsAccessibilityStandards('#000000', '#ffffff', 'AA')).toBe(true);
+      expect(meetsAccessibilityStandards('#000000', '#ffffff', 'AA')).toBe(
+        true
+      );
 
       // Low contrast fails AA
-      expect(meetsAccessibilityStandards('#cccccc', '#ffffff', 'AA')).toBe(false);
+      expect(meetsAccessibilityStandards('#cccccc', '#ffffff', 'AA')).toBe(
+        false
+      );
     });
 
     it('validates AAA compliance correctly', () => {
       // Black on white meets AAA
-      expect(meetsAccessibilityStandards('#000000', '#ffffff', 'AAA')).toBe(true);
+      expect(meetsAccessibilityStandards('#000000', '#ffffff', 'AAA')).toBe(
+        true
+      );
 
       // Medium contrast might meet AA but not AAA
-      expect(meetsAccessibilityStandards('#666666', '#ffffff', 'AAA')).toBe(false);
+      expect(meetsAccessibilityStandards('#666666', '#ffffff', 'AAA')).toBe(
+        false
+      );
     });
 
     it('defaults to AA level when not specified', () => {
@@ -788,7 +809,9 @@ describe('themeUtils', () => {
   describe('Edge Cases and Error Handling', () => {
     it('handles invalid hex colors gracefully', () => {
       expect(() => getContrastRatio('invalid', '#ffffff')).not.toThrow();
-      expect(() => meetsAccessibilityStandards('invalid', '#ffffff')).not.toThrow();
+      expect(() =>
+        meetsAccessibilityStandards('invalid', '#ffffff')
+      ).not.toThrow();
     });
 
     it('handles empty strings', () => {
@@ -831,12 +854,12 @@ describe('themeUtils', () => {
       const color2 = '#ffffff';
 
       const startTime = performance.now();
-      
+
       // Calculate multiple times
       for (let i = 0; i < 100; i++) {
         getContrastRatio(color1, color2);
       }
-      
+
       const endTime = performance.now();
 
       expect(endTime - startTime).toBeLessThan(50); // Should be fast due to memoization

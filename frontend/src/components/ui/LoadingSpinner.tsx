@@ -14,31 +14,33 @@ const sizeClasses = {
   sm: 'w-4 h-4',
   md: 'w-6 h-6',
   lg: 'w-8 h-8',
-  xl: 'w-12 h-12'
+  xl: 'w-12 h-12',
 };
 
 const colorClasses = {
   primary: 'text-blue-600',
   secondary: 'text-gray-600',
   accent: 'text-purple-600',
-  white: 'text-white'
+  white: 'text-white',
 };
 
-export default function LoadingSpinner({ 
-  size = 'md', 
-  color = 'primary', 
+export default function LoadingSpinner({
+  size = 'md',
+  color = 'primary',
   text,
-  className = '' 
+  className = '',
 }: LoadingSpinnerProps) {
   return (
-    <div className={`flex flex-col items-center justify-center space-y-2 ${className}`}>
+    <div
+      className={`flex flex-col items-center justify-center space-y-2 ${className}`}
+    >
       <motion.div
         className={`${sizeClasses[size]} ${colorClasses[color]}`}
         animate={{ rotate: 360 }}
         transition={{
           duration: 1,
           repeat: Infinity,
-          ease: "linear"
+          ease: 'linear',
         }}
       >
         <svg
@@ -62,7 +64,7 @@ export default function LoadingSpinner({
           />
         </svg>
       </motion.div>
-      
+
       {text && (
         <motion.p
           className="text-sm text-gray-600 dark:text-gray-400"
@@ -78,10 +80,10 @@ export default function LoadingSpinner({
 }
 
 // Skeleton loader component
-export function SkeletonLoader({ 
+export function SkeletonLoader({
   className = '',
   lines = 3,
-  height = 'h-4'
+  height = 'h-4',
 }: {
   className?: string;
   lines?: number;
@@ -116,7 +118,7 @@ export function PageLoader() {
               className="h-full bg-blue-600 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: '100%' }}
-              transition={{ duration: 2, ease: "easeInOut" }}
+              transition={{ duration: 2, ease: 'easeInOut' }}
             />
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400">

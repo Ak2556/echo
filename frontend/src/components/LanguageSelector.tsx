@@ -9,15 +9,23 @@ interface LanguageSelectorProps {
   style?: React.CSSProperties;
 }
 
-export default function LanguageSelector({ className = '', style = {} }: LanguageSelectorProps) {
+export default function LanguageSelector({
+  className = '',
+  style = {},
+}: LanguageSelectorProps) {
   const { i18n, t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState(getLanguage(i18n.language) || languages[0]);
+  const [currentLanguage, setCurrentLanguage] = useState(
+    getLanguage(i18n.language) || languages[0]
+  );
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -41,7 +49,10 @@ export default function LanguageSelector({ className = '', style = {} }: Languag
     document.documentElement.lang = languageCode;
 
     // Update CSS custom property for RTL support
-    document.documentElement.style.setProperty('--reading-direction', isRtl ? 'rtl' : 'ltr');
+    document.documentElement.style.setProperty(
+      '--reading-direction',
+      isRtl ? 'rtl' : 'ltr'
+    );
   };
 
   return (
@@ -66,11 +77,12 @@ export default function LanguageSelector({ className = '', style = {} }: Languag
           fontSize: '0.9rem',
           transition: 'all 0.2s ease',
           minWidth: '120px',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.borderColor = 'var(--accent)';
-          e.currentTarget.style.boxShadow = '0 2px 8px rgba(var(--accent-rgb), 0.2)';
+          e.currentTarget.style.boxShadow =
+            '0 2px 8px rgba(var(--accent-rgb), 0.2)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.borderColor = 'var(--border)';
@@ -81,7 +93,9 @@ export default function LanguageSelector({ className = '', style = {} }: Languag
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span style={{ fontSize: '1.2rem' }}>{currentLanguage.flag}</span>
-          <span style={{ fontWeight: 500 }}>{currentLanguage.code.toUpperCase()}</span>
+          <span style={{ fontWeight: 500 }}>
+            {currentLanguage.code.toUpperCase()}
+          </span>
         </div>
         <svg
           width="16"
@@ -92,7 +106,7 @@ export default function LanguageSelector({ className = '', style = {} }: Languag
           strokeWidth="2"
           style={{
             transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: 'transform 0.2s ease'
+            transition: 'transform 0.2s ease',
           }}
         >
           <polyline points="6,9 12,15 18,9" />
@@ -115,7 +129,7 @@ export default function LanguageSelector({ className = '', style = {} }: Languag
             zIndex: 1000,
             maxHeight: '300px',
             overflowY: 'auto',
-            animation: 'fadeIn 0.2s ease'
+            animation: 'fadeIn 0.2s ease',
           }}
         >
           <div style={{ padding: '0.5rem 0' }}>
@@ -130,17 +144,21 @@ export default function LanguageSelector({ className = '', style = {} }: Languag
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.75rem',
-                  background: currentLanguage.code === language.code ? 'rgba(var(--accent-rgb), 0.1)' : 'transparent',
+                  background:
+                    currentLanguage.code === language.code
+                      ? 'rgba(var(--accent-rgb), 0.1)'
+                      : 'transparent',
                   border: 'none',
                   color: 'var(--fg)',
                   cursor: 'pointer',
                   fontSize: '0.9rem',
                   textAlign: 'left',
-                  transition: 'background 0.2s ease'
+                  transition: 'background 0.2s ease',
                 }}
                 onMouseEnter={(e) => {
                   if (currentLanguage.code !== language.code) {
-                    e.currentTarget.style.background = 'rgba(var(--accent-rgb), 0.05)';
+                    e.currentTarget.style.background =
+                      'rgba(var(--accent-rgb), 0.05)';
                   }
                 }}
                 onMouseLeave={(e) => {
@@ -149,12 +167,20 @@ export default function LanguageSelector({ className = '', style = {} }: Languag
                   }
                 }}
               >
-                <span style={{ fontSize: '1.2rem', minWidth: '20px' }}>{language.flag}</span>
+                <span style={{ fontSize: '1.2rem', minWidth: '20px' }}>
+                  {language.flag}
+                </span>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 500, fontSize: '0.9rem' }}>
                     {language.nativeName}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.1rem' }}>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      color: 'var(--muted)',
+                      marginTop: '0.1rem',
+                    }}
+                  >
                     {language.name}
                   </div>
                 </div>
