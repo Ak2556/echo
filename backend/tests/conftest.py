@@ -4,12 +4,23 @@ Pytest configuration and fixtures for the Echo backend tests.
 
 import asyncio
 import os
+import warnings
 import pytest
 import pytest_asyncio
 from typing import AsyncGenerator, Generator
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.pool import NullPool
+
+# Suppress Pydantic V2 deprecation warnings from unittest.mock
+# These warnings occur when Mock(spec=PydanticModel) introspects the model
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="unittest.mock")
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="pydantic._internal._model_construction")
+try:
+    from pydantic.warnings import PydanticDeprecatedSince20
+    warnings.filterwarnings("ignore", category=PydanticDeprecatedSince20)
+except ImportError:
+    pass
 
 # Test database URL - using temporary file-based SQLite for tests
 # Set this BEFORE importing app to ensure it uses the test database
