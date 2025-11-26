@@ -129,6 +129,7 @@ const PostCard = memo(function PostCard({
   onOptions: () => void;
   index: number;
 }) {
+  const colors = useThemeColors();
   const { ref, isInView, hasBeenInView } = useInView({ threshold: 0.1 });
   const haptic = useHaptic();
   const { createRipple: likeRipple, rippleElements: likeRippleElements } =
@@ -342,7 +343,7 @@ const PostCard = memo(function PostCard({
           display: 'flex',
           gap: '0.75rem',
           paddingTop: '1rem',
-          borderTop: `1px solid ${colors.border.subtle}`,
+          borderTop: `1px solid ${colors.border}`,
         }}
       >
         <button
@@ -353,12 +354,12 @@ const PostCard = memo(function PostCard({
             padding: '0.75rem',
             borderRadius: 'var(--radius-md)',
             background: post.liked
-              ? colors.statusBg.error
-              : colors.bg.secondary,
+              ? colors.bgSecondary
+              : colors.bgSecondary,
             border: post.liked
-              ? '2px solid colors.status.error'
+              ? `2px solid ${colors.status.error}`
               : '2px solid transparent',
-            color: post.liked ? 'colors.status.error' : 'var(--fg)',
+            color: post.liked ? colors.status.error : 'var(--fg)',
             fontWeight: 600,
             position: 'relative',
             overflow: 'hidden',
@@ -1489,7 +1490,7 @@ export default function FeedPage() {
                   cursor: 'pointer',
                   fontSize: '1.25rem',
                   color: colors.text.white,
-                  boxShadow: colors.shadow.lg,
+                  boxShadow: colors.shadowLg,
                 }}
               >
                 +
@@ -1669,7 +1670,7 @@ export default function FeedPage() {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    background: `linear-gradient(transparent, ${colors.overlay.heavy})`,
+                    background: `linear-gradient(transparent, rgba(0,0,0,0.8))`,
                     padding: '1.5rem 0.5rem 0.5rem',
                     color: colors.text.white,
                   }}
@@ -1693,7 +1694,7 @@ export default function FeedPage() {
                     position: 'absolute',
                     top: '0.4rem',
                     right: '0.4rem',
-                    background: colors.overlay.medium,
+                    background: 'rgba(0,0,0,0.6)',
                     color: colors.text.white,
                     padding: '0.15rem 0.3rem',
                     borderRadius: '4px',
