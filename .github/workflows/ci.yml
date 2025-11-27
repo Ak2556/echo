@@ -204,6 +204,7 @@ jobs:
       - name: Wait for services
         run: |
           timeout 30 bash -c 'until pg_isready -h localhost -p 5432; do sleep 1; done'
+          sudo apt-get update && sudo apt-get install -y redis-tools
           timeout 30 bash -c 'until redis-cli -h localhost -p 6379 ping; do sleep 1; done'
 
       - name: Run tests with coverage
