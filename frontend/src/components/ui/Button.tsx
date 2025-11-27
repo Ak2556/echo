@@ -1,123 +1,111 @@
 'use client';
 
-import React, { forwardRef, ButtonHTMLAttributes } from 'react';
-import { motion, MotionProps } from 'framer-motion';
-import { Loader2 } from 'lucide-react';
+import React, { forwardRef, ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?:
-    | 'primary'
-    | 'secondary'
-    | 'outline'
-    | 'ghost'
-    | 'destructive'
-    | 'success';
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
+  icon?: ReactNode;
+  iconPosition?: 'left' | 'right';
   fullWidth?: boolean;
-  rounded?: boolean;
-  gradient?: boolean;
-  motionProps?: MotionProps;
+  children: ReactNode;
 }
-
-const buttonVariants = {
-  primary: 'bg-blue-600 hover:bg-blue-700 text-white border-transparent',
-  secondary: 'bg-gray-600 hover:bg-gray-700 text-white border-transparent',
-  outline:
-    'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800',
-  ghost:
-    'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 border-transparent',
-  destructive: 'bg-red-600 hover:bg-red-700 text-white border-transparent',
-  success: 'bg-green-600 hover:bg-green-700 text-white border-transparent',
-};
-
-const gradientVariants = {
-  primary:
-    'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700',
-  secondary:
-    'bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800',
-  outline: 'bg-gradient-to-r from-transparent to-transparent border-gradient',
-  ghost: 'bg-gradient-to-r from-transparent to-transparent',
-  destructive:
-    'bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700',
-  success:
-    'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700',
-};
-
-const sizeVariants = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-sm',
-  lg: 'px-6 py-3 text-base',
-  xl: 'px-8 py-4 text-lg',
-};
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
-      className,
       variant = 'primary',
       size = 'md',
       loading = false,
-      leftIcon,
-      rightIcon,
+      icon,
+      iconPosition = 'left',
       fullWidth = false,
-      rounded = false,
-      gradient = false,
-      motionProps,
-      children,
       disabled,
+      className = '',
+      children,
+      onClick,
       ...props
     },
     ref
   ) => {
-    const baseClasses = [
-      'inline-flex items-center justify-center font-medium transition-all duration-200',
-      'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500',
-      'disabled:opacity-50 disabled:cursor-not-allowed',
-      'border',
-      rounded ? 'rounded-full' : 'rounded-lg',
-      fullWidth ? 'w-full' : '',
-      sizeVariants[size],
-      gradient ? gradientVariants[variant] : buttonVariants[variant],
-    ]
-      .filter(Boolean)
-      .join(' ');
-
-    const buttonContent = (
-      <>
-        {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-        {!loading && leftIcon && <span className="mr-2">{leftIcon}</span>}
-        {children}
-        {!loading && rightIcon && <span className="ml-2">{rightIcon}</span>}
-      </>
+    const baseClasses = cn(
+      // Base styles
+      'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
+      
+      // Size variants
+      {
+        'h-10 py-2 px-4 text-sm': size === 'md',
+        'h-9 px-3 text-sm': size === 'sm',
+        'h-11 px-8 text-base': size === 'lg',
+      },
+      
+      // Variant styles
+      {
+        'bg-primary text-primary-foreground hover:bg-primary/90': variant === 'primary',
+        'border border-input hover:bg-accent hover:text-accent-foreground': variant === 'outline',
+        'bg-secondary text-secondary-foreground hover:bg-secondary/80': variant === 'secondary',
+        'hover:bg-accent hover:text-accent-foreground': variant === 'ghost',
+      },
+      
+      // Full width
+      fullWidth && 'w-full',
+      
+      className
     );
 
-    if (motionProps) {
-      const { onAnimationStart, onAnimationComplete, ...otherProps } = props as any;
-      return (
-        <motion.button
-          ref={ref}
-          className={cn(baseClasses, className)}
-          disabled={disabled || loading}
-          {...motionProps}
-          {...otherProps}
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (loading || disabled) return;
+      onClick?.(e);
+    };
+
+    const iconElement = icon && (
+      <span className={cn('flex items-center', loading && 'opacity-0')}>
+        {icon}
+      </span>
+    );
+
+    const loadingSpinner = loading && (
+      <span className="absolute inset-0 flex items-center justify-center">
+        <svg
+          className="animate-spin h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
         >
-          {buttonContent}
-        </motion.button>
-      );
-    }
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          />
+        </svg>
+      </span>
+    );
 
     return (
       <button
         ref={ref}
-        className={cn(baseClasses, className)}
+        className={baseClasses}
         disabled={disabled || loading}
+        onClick={handleClick}
+        aria-disabled={disabled || loading}
         {...props}
       >
-        {buttonContent}
+        {iconPosition === 'left' && iconElement}
+        <span className={cn('flex items-center gap-2', loading && 'opacity-0')}>
+          {children}
+        </span>
+        {iconPosition === 'right' && iconElement}
+        {loadingSpinner}
       </button>
     );
   }
@@ -126,69 +114,3 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = 'Button';
 
 export default Button;
-
-// Specialized button variants
-export const IconButton = forwardRef<
-  HTMLButtonElement,
-  ButtonProps & { icon: React.ReactNode; 'aria-label': string }
->(
-  (
-    { icon, className, size = 'md', 'aria-label': ariaLabel, ...props },
-    ref
-  ) => {
-    // Development warning for missing aria-label
-    if (!ariaLabel && process.env.NODE_ENV === 'development') {
-    }
-
-    const iconSizes = {
-      sm: 'w-10 h-10', // Increased to meet WCAG 44px minimum for mobile
-      md: 'w-11 h-11', // 44px
-      lg: 'w-12 h-12', // 48px
-      xl: 'w-14 h-14', // 56px
-    };
-
-    return (
-      <Button
-        ref={ref}
-        className={cn(iconSizes[size], 'p-0', className)}
-        size={size}
-        rounded
-        aria-label={ariaLabel}
-        {...props}
-      >
-        {icon}
-      </Button>
-    );
-  }
-);
-
-IconButton.displayName = 'IconButton';
-
-export const FloatingActionButton = forwardRef<
-  HTMLButtonElement,
-  ButtonProps & { 'aria-label': string }
->(({ className, 'aria-label': ariaLabel, ...props }, ref) => {
-  if (!ariaLabel && process.env.NODE_ENV === 'development') {
-  }
-
-  return (
-    <Button
-      ref={ref}
-      className={cn(
-        'fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg hover:shadow-xl',
-        'z-50 transition-all duration-300',
-        'min-w-[56px] min-h-[56px]', // WCAG touch target for primary actions
-        className
-      )}
-      aria-label={ariaLabel}
-      motionProps={{
-        initial: { scale: 0 },
-        animate: { scale: 1 },
-        transition: { type: 'spring', stiffness: 260, damping: 20 },
-      }}
-      {...props}
-    />
-  );
-});
-
-FloatingActionButton.displayName = 'FloatingActionButton';

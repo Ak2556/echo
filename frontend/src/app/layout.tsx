@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import '@/styles/echo-brand.css';
 import '@/styles/enhanced-dark-mode.css';
 import '@/styles/social-media-hub.css';
+import '@/styles/design-system.css';
 import Background3D from '@/components/Background3D';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { EnhancedThemeProvider } from '@/contexts/EnhancedThemeContext';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { UserProvider } from '@/contexts/UserContext';
@@ -94,9 +97,10 @@ export default function RootLayout({
       <body>
         <AccessibilityProvider>
           <QueryProvider>
-            <ThemeProvider>
-              <ThemeWrapper>
-                <BackgroundProvider>
+            <EnhancedThemeProvider>
+              <ThemeProvider>
+                <ThemeWrapper>
+                  <BackgroundProvider>
                   <SettingsProvider>
                     <ToastProvider>
                       <UserProvider>
@@ -136,9 +140,10 @@ export default function RootLayout({
                       </UserProvider>
                     </ToastProvider>
                   </SettingsProvider>
-                </BackgroundProvider>
-              </ThemeWrapper>
-            </ThemeProvider>
+                  </BackgroundProvider>
+                </ThemeWrapper>
+              </ThemeProvider>
+            </EnhancedThemeProvider>
           </QueryProvider>
         </AccessibilityProvider>
       </body>
