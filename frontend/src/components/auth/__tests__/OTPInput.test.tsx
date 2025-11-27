@@ -731,7 +731,7 @@ describe('OTPInput', () => {
         // Component should handle missing select method gracefully
         // This tests defensive programming for older browsers
         expect(inputs[0]).toBeInTheDocument();
-        expect(typeof inputs[0].select).toBe('function');
+        expect(typeof (inputs[0] as HTMLInputElement).select).toBe('function');
       });
 
       it('handles focus on null refs gracefully', () => {

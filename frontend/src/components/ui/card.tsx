@@ -77,12 +77,13 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       .join(' ');
 
     if (motionProps) {
+      const { onAnimationStart, onAnimationComplete, ...otherProps } = props as any;
       return (
         <motion.div
-          ref={ref}
+          ref={ref as any}
           className={cn(baseClasses, className)}
           {...motionProps}
-          {...props}
+          {...otherProps}
         >
           {children}
         </motion.div>

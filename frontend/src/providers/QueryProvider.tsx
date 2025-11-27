@@ -40,7 +40,7 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
               Math.min(1000 * 2 ** attemptIndex, 30000),
 
             // UX: Show stale data while refetching in background
-            placeholderData: (previousData) => previousData,
+            placeholderData: (previousData: any) => previousData,
           },
           mutations: {
             // PERFORMANCE: Retry mutations with exponential backoff
@@ -59,7 +59,6 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
       {process.env.NODE_ENV === 'development' && (
         <ReactQueryDevtools
           initialIsOpen={false}
-          position="bottom-right"
           buttonPosition="bottom-right"
         />
       )}

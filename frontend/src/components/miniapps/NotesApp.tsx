@@ -39,6 +39,8 @@ interface WritingStats {
   mostUsedCategory: string;
 }
 
+const NOTE_COLORS = ['#FFD700', '#87CEEB', '#98FB98', '#FFB6C1', '#DDA0DD', '#F0E68C'];
+
 export default function NotesApp({ isVisible, onClose }: NotesAppProps) {
   const colors = useThemeColors();
   const [notes, setNotes] = useState<Note[]>([]);
@@ -1226,7 +1228,7 @@ export default function NotesApp({ isVisible, onClose }: NotesAppProps) {
                 Color
               </label>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {colors.map((color) => (
+                {NOTE_COLORS.map((color: string) => (
                   <button
                     key={color}
                     onClick={() => setFormColor(color)}

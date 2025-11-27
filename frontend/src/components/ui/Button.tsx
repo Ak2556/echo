@@ -96,13 +96,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     );
 
     if (motionProps) {
+      const { onAnimationStart, onAnimationComplete, ...otherProps } = props as any;
       return (
         <motion.button
           ref={ref}
           className={cn(baseClasses, className)}
           disabled={disabled || loading}
           {...motionProps}
-          {...props}
+          {...otherProps}
         >
           {buttonContent}
         </motion.button>

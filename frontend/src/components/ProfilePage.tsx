@@ -725,7 +725,7 @@ export default function ProfilePage() {
                         borderRadius: '50%',
                         background: isOnline
                           ? 'linear-gradient(135deg, #10b981 0%, #34d399 100%)'
-                          : colors.text.tertiary,
+                          : colors.textMuted,
                         border: '4px solid white',
                         boxShadow: isOnline
                           ? '0 0 0 4px rgba(16, 185, 129, 0.2), 0 4px 8px rgba(0, 0, 0, 0.2)'
@@ -760,7 +760,6 @@ export default function ProfilePage() {
                       boxShadow:
                         '0 6px 16px rgba(102, 126, 234, 0.5), 0 3px 8px rgba(0, 0, 0, 0.25)',
                       zIndex: 11,
-                      position: 'relative' as 'relative',
                       overflow: 'hidden',
                     }}
                   >
@@ -822,7 +821,6 @@ export default function ProfilePage() {
                         boxShadow:
                           '0 6px 16px rgba(102, 126, 234, 0.5), 0 3px 8px rgba(0, 0, 0, 0.25)',
                         zIndex: 11,
-                        position: 'relative' as 'relative',
                         overflow: 'hidden',
                       }}
                     >
@@ -1095,7 +1093,7 @@ export default function ProfilePage() {
                       background: isOnline
                         ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(52, 211, 153, 0.15) 100%)'
                         : 'rgba(107, 114, 128, 0.1)',
-                      color: isOnline ? '#059669' : colors.text.tertiary,
+                      color: isOnline ? '#059669' : colors.textMuted,
                       padding: '0.4rem 0.9rem',
                       borderRadius: '20px',
                       fontSize: '0.85rem',
@@ -1115,7 +1113,7 @@ export default function ProfilePage() {
                         borderRadius: '50%',
                         background: isOnline
                           ? colors.status.success
-                          : colors.text.tertiary,
+                          : colors.textMuted,
                         boxShadow: isOnline
                           ? '0 0 6px rgba(16, 185, 129, 0.6)'
                           : 'none',
@@ -1688,7 +1686,7 @@ export default function ProfilePage() {
                     background: isActive
                       ? `linear-gradient(135deg, ${color}15 0%, ${color}08 100%)`
                       : 'white',
-                    color: isActive ? color : colors.text.tertiary,
+                    color: isActive ? color : colors.textMuted,
                     fontWeight: isActive ? '600' : '500',
                     fontSize: '0.95rem',
                     cursor: 'pointer',
@@ -1812,7 +1810,7 @@ export default function ProfilePage() {
                           cursor: 'pointer',
                           color: likedPosts.includes(post.id)
                             ? '#fa709a'
-                            : colors.text.tertiary,
+                            : colors.textMuted,
                           fontWeight: '500',
                           display: 'flex',
                           alignItems: 'center',
@@ -1961,7 +1959,7 @@ export default function ProfilePage() {
               >
                 {achievements.map((achievement) => {
                   const rarityColors = {
-                    common: colors.text.tertiary,
+                    common: colors.textMuted,
                     rare: '#3b82f6',
                     epic: '#8b5cf6',
                     legendary: '#f59e0b',
