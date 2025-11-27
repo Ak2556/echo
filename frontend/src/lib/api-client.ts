@@ -202,6 +202,10 @@ class APIClient {
   async verify2FASetup(data: { code: string }): Promise<any> {
     return this.post('/api/auth/totp/verify-setup', data, { requiresAuth: true });
   }
+
+  async getSessions(): Promise<any> {
+    return this.get('/api/auth/sessions', { requiresAuth: true });
+  }
 }
 
 export const apiClient = new APIClient();
