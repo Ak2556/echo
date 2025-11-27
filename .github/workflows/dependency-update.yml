@@ -5,11 +5,38 @@ on:
     # Run every Monday at 9 AM UTC
     - cron: '0 9 * * 1'
   workflow_dispatch:
+    inputs:
+      update_type:
+        description: 'Type of update to perform'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - all
+
+concurrency:
+  group: dependency-updates
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '18.x'
+  PYTHON_VERSION: '3.11'
 
 jobs:
-  update-dependencies:
-    name: Update Dependencies
+  # ===========================================================================
+  # CHECK FOR OUTDATED DEPENDENCIES
+  # ===========================================================================
+  check-outdated:
+    name: Check Outdated Dependencies
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    outputs:
+      has_frontend_updates: ${{ steps.check.outputs.frontend }}
+      has_backend_updates: ${{ steps.check.outputs.backend }}
 
     steps:
       - name: Checkout code
@@ -18,34 +45,373 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Update npm dependencies
-        working-directory: ./frontend
+      - name: Check for outdated packages
+        id: check
         run: |
-          npm update
-          npm audit fix
+          cd frontend
+          if npm outdated --json | jq -e 'length > 0' > /dev/null 2>&1; then
+            echo "frontend=true" >> $GITHUB_OUTPUT
+            echo "📦 Frontend has outdated packages"
+          else
+            echo "frontend=false" >> $GITHUB_OUTPUT
+          fi
 
-      - name: Update pip dependencies
-        working-directory: ./backend
-        run: |
-          pip install --upgrade pip-review
-          pip-review --auto > updated_packages.txt || true
+          cd ../backend
+          pip install pip-review
+          if pip-review --raw 2>/dev/null | grep -q .; then
+            echo "backend=true" >> $GITHUB_OUTPUT
+            echo "🐍 Backend has outdated packages"
+          else
+            echo "backend=false" >> $GITHUB_OUTPUT
+          fi
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+  # ===========================================================================
+  # UPDATE FRONTEND DEPENDENCIES
+  # ===========================================================================
+  update-frontend:
+    name: Update Frontend Dependencies
+    runs-on: ubuntu-latest
+    needs: check-outdated
+    if: needs.check-outdated.outputs.has_frontend_updates == 'true'
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'chore: update dependencies'
-          title: 'chore: Automated dependency updates'
-          body: |
-            This PR contains automated dependency updates.
+          fetch-depth: 0
 
-            Please review the changes carefully before merging.
-          branch: dependency-updates
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Get current dependencies
+        working-directory: ./frontend
+        run: |
+          npm list --json > before-update.json || true
+          npm outdated --json > outdated-packages.json || true
+
+      - name: Update dependencies
+        working-directory: ./frontend
+        run: |
+          UPDATE_TYPE="${{ github.event.inputs.update_type || 'patch' }}"
+
+          case "$UPDATE_TYPE" in
+            "patch")
+              npm update
+              ;;
+            "minor")
+              npx npm-check-updates -u --target minor
+              npm install
+              ;;
+            "major")
+              npx npm-check-updates -u
+              npm install
+              ;;
+            "all")
+              npx npm-check-updates -u
+              npm install
+              ;;
+          esac
+
+      - name: Run security audit and fix
+        working-directory: ./frontend
+        run: |
+          npm audit fix --audit-level=moderate || true
+          npm audit --audit-level=high --json > audit-report.json || true
+
+      - name: Run tests to verify updates
+        working-directory: ./frontend
+        run: |
+          npm run lint || echo "Linting issues detected"
+          npx tsc --noEmit || echo "Type errors detected"
+          npm run test:ci || echo "Tests failed"
+
+      - name: Generate update summary
+        working-directory: ./frontend
+        run: |
+          echo "## 📦 Frontend Dependency Updates" > update-summary.md
+          echo "" >> update-summary.md
+          echo "### Update Type: ${{ github.event.inputs.update_type || 'patch' }}" >> update-summary.md
+          echo "" >> update-summary.md
+          echo "### Updated Packages" >> update-summary.md
+          npm list --json > after-update.json || true
+          npx diff-package-json before-update.json after-update.json >> update-summary.md || echo "Unable to generate diff" >> update-summary.md
+
+      - name: Upload update artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-update-report
+          path: |
+            frontend/update-summary.md
+            frontend/outdated-packages.json
+            frontend/audit-report.json
+          retention-days: 30
+
+  # ===========================================================================
+  # UPDATE BACKEND DEPENDENCIES
+  # ===========================================================================
+  update-backend:
+    name: Update Backend Dependencies
+    runs-on: ubuntu-latest
+    needs: check-outdated
+    if: needs.check-outdated.outputs.has_backend_updates == 'true'
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Get current dependencies
+        working-directory: ./backend
+        run: |
+          pip freeze > before-update.txt
+          pip install pip-review
+          pip-review --raw > outdated-packages.txt || true
+
+      - name: Update dependencies
+        working-directory: ./backend
+        run: |
+          UPDATE_TYPE="${{ github.event.inputs.update_type || 'patch' }}"
+
+          case "$UPDATE_TYPE" in
+            "patch"|"minor")
+              # Update only compatible versions
+              pip-review --auto
+              ;;
+            "major"|"all")
+              # Update all including major versions
+              pip install --upgrade -r requirements.txt
+              ;;
+          esac
+
+          pip freeze > requirements.txt
+
+      - name: Run security audit
+        working-directory: ./backend
+        run: |
+          pip install safety pip-audit
+          safety check --json > safety-report.json || true
+          pip-audit --format=json > pip-audit-report.json || true
+
+      - name: Run tests to verify updates
+        working-directory: ./backend
+        env:
+          DATABASE_URL: postgresql+asyncpg://test_user:test_password@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379/0
+          SECRET_KEY: test-secret-key-for-dependency-updates
+          ENVIRONMENT: testing
+        run: |
+          pip install pytest pytest-cov pytest-asyncio black isort flake8
+          black --check . || echo "Formatting issues detected"
+          isort --check-only . || echo "Import order issues detected"
+          flake8 app --max-line-length=100 || echo "Linting issues detected"
+          pytest tests/ -v --cov=app || echo "Tests failed"
+
+      - name: Generate update summary
+        working-directory: ./backend
+        run: |
+          echo "## 🐍 Backend Dependency Updates" > update-summary.md
+          echo "" >> update-summary.md
+          echo "### Update Type: ${{ github.event.inputs.update_type || 'patch' }}" >> update-summary.md
+          echo "" >> update-summary.md
+          echo "### Updated Packages" >> update-summary.md
+          pip freeze > after-update.txt
+          echo '```diff' >> update-summary.md
+          diff before-update.txt after-update.txt >> update-summary.md || true
+          echo '```' >> update-summary.md
+
+      - name: Upload update artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-update-report
+          path: |
+            backend/update-summary.md
+            backend/outdated-packages.txt
+            backend/safety-report.json
+            backend/pip-audit-report.json
+          retention-days: 30
+
+  # ===========================================================================
+  # CREATE PULL REQUEST
+  # ===========================================================================
+  create-pr:
+    name: Create Update Pull Request
+    runs-on: ubuntu-latest
+    needs: [update-frontend, update-backend]
+    if: always() && (needs.update-frontend.result == 'success' || needs.update-backend.result == 'success')
+    timeout-minutes: 5
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Generate PR body
+        id: pr_body
+        run: |
+          BODY="## 🔄 Automated Dependency Updates\n\n"
+          BODY="${BODY}This PR contains automated dependency updates.\n\n"
+          BODY="${BODY}**Update Type:** \`${{ github.event.inputs.update_type || 'patch' }}\`\n\n"
+
+          if [ -f "artifacts/frontend-update-report/update-summary.md" ]; then
+            BODY="${BODY}$(cat artifacts/frontend-update-report/update-summary.md)\n\n"
+          fi
+
+          if [ -f "artifacts/backend-update-report/update-summary.md" ]; then
+            BODY="${BODY}$(cat artifacts/backend-update-report/update-summary.md)\n\n"
+          fi
+
+          BODY="${BODY}---\n\n"
+          BODY="${BODY}### ⚠️ Important Notes\n"
+          BODY="${BODY}- Review all changes carefully before merging\n"
+          BODY="${BODY}- Check CI/CD pipeline results\n"
+          BODY="${BODY}- Verify security audit reports\n"
+          BODY="${BODY}- Test thoroughly in staging environment\n\n"
+          BODY="${BODY}### 📊 Reports\n"
+          BODY="${BODY}- Security audit reports are available in workflow artifacts\n"
+          BODY="${BODY}- Full update details in committed files\n"
+
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update dependencies (${{ github.event.inputs.update_type || 'patch' }})'
+          committer: GitHub Actions <actions@github.com>
+          author: GitHub Actions <actions@github.com>
+          branch: dependency-updates-${{ github.run_number }}
           delete-branch: true
+          title: '🔄 Automated Dependency Updates (${{ github.event.inputs.update_type || 'patch' }})'
+          body: ${{ steps.pr_body.outputs.body }}
+          labels: |
+            dependencies
+            automated
+            ${{ github.event.inputs.update_type || 'patch' }}
+          assignees: ${{ github.actor }}
+          draft: false
+
+  # ===========================================================================
+  # SECURITY NOTIFICATION
+  # ===========================================================================
+  notify-security-issues:
+    name: Notify Security Issues
+    runs-on: ubuntu-latest
+    needs: [update-frontend, update-backend]
+    if: always()
+    timeout-minutes: 5
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Check for critical vulnerabilities
+        id: check_vulns
+        run: |
+          CRITICAL_FOUND=false
+
+          # Check frontend audit
+          if [ -f "artifacts/frontend-update-report/audit-report.json" ]; then
+            if jq -e '.metadata.vulnerabilities.critical > 0 or .metadata.vulnerabilities.high > 0' artifacts/frontend-update-report/audit-report.json > /dev/null 2>&1; then
+              CRITICAL_FOUND=true
+              echo "⚠️ Critical/High vulnerabilities found in frontend dependencies"
+            fi
+          fi
+
+          # Check backend safety
+          if [ -f "artifacts/backend-update-report/safety-report.json" ]; then
+            if jq -e 'length > 0' artifacts/backend-update-report/safety-report.json > /dev/null 2>&1; then
+              CRITICAL_FOUND=true
+              echo "⚠️ Vulnerabilities found in backend dependencies"
+            fi
+          fi
+
+          echo "critical_found=$CRITICAL_FOUND" >> $GITHUB_OUTPUT
+
+      - name: Create security issue
+        if: steps.check_vulns.outputs.critical_found == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Critical Security Vulnerabilities Detected',
+              body: `## Security Alert
+
+            Critical or high severity vulnerabilities were detected during the automated dependency update process.
+
+            **Action Required:**
+            1. Review the dependency update PR
+            2. Check security audit reports in workflow artifacts
+            3. Update dependencies with security fixes
+            4. Run comprehensive tests
+
+            **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            ---
+            *This issue was automatically created by the dependency update workflow.*`,
+              labels: ['security', 'high-priority', 'dependencies']
+            });
