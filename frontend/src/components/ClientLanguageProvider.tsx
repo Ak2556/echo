@@ -9,25 +9,41 @@ interface ClientLanguageProviderProps {
 
 export default function ClientLanguageProvider({ children }: ClientLanguageProviderProps) {
   const [isClient, setIsClient] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+    
     // Initialize i18n on client side
     const initI18n = async () => {
       try {
         await import('@/i18n/index');
-        setIsClient(true);
+        setIsInitialized(true);
       } catch (error) {
         console.error('Failed to initialize i18n:', error);
-        setIsClient(true); // Still render children even if i18n fails
+        setIsInitialized(true); // Still render children even if i18n fails
       }
     };
 
     initI18n();
   }, []);
 
-  // Don't render until client-side hydration is complete
+  // Render children immediately on client, but provide fallback context until i18n is ready
   if (!isClient) {
-    return <div style={{ display: 'none' }}>{children}</div>;
+    return (
+      <div suppressHydrationWarning>
+        {children}
+      </div>
+    );
+  }
+
+  if (!isInitialized) {
+    // Render children with fallback context while i18n initializes
+    return (
+      <div suppressHydrationWarning>
+        {children}
+      </div>
+    );
   }
 
   return <LanguageProvider>{children}</LanguageProvider>;
