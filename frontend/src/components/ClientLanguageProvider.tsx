@@ -28,23 +28,6 @@ export default function ClientLanguageProvider({ children }: ClientLanguageProvi
     initI18n();
   }, []);
 
-  // Render children immediately on client, but provide fallback context until i18n is ready
-  if (!isClient) {
-    return (
-      <div suppressHydrationWarning>
-        {children}
-      </div>
-    );
-  }
-
-  if (!isInitialized) {
-    // Render children with fallback context while i18n initializes
-    return (
-      <div suppressHydrationWarning>
-        {children}
-      </div>
-    );
-  }
-
+  // Always wrap with LanguageProvider, but it will use fallback context until i18n is ready
   return <LanguageProvider>{children}</LanguageProvider>;
 }
