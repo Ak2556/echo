@@ -538,7 +538,7 @@ jobs:
             ## Changes in this Release
             ${{ github.event.head_commit.message }}
 
-            **Full Changelog**: https://github.com/${{ github.repository }}/compare/v${{ github.run_number - 1 }}...v${{ github.run_number }}
+            **Commit**: ${{ github.sha }}
           draft: false
           prerelease: false
           generateReleaseNotes: true
