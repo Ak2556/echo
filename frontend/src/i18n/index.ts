@@ -60,6 +60,16 @@ i18n
     interpolation: {
       escapeValue: false,
     },
+    
+    react: {
+      useSuspense: false,
+    },
+  })
+  .then(() => {
+    console.log('i18n initialized successfully');
+  })
+  .catch((error) => {
+    console.error('i18n initialization failed:', error);
   });
 
 export default i18n;
