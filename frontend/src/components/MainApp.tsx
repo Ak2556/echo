@@ -26,11 +26,6 @@ import { FeedSkeleton, PageSkeleton } from './ui/Skeleton';
 import { NavigationRail } from './navigation/NavigationRail';
 
 // Dynamic imports for better performance
-const SimpleHeader = dynamic(() => import('./SimpleHeader'), {
-  loading: () => (
-    <div className="h-16 bg-gray-100 dark:bg-gray-900 animate-pulse" />
-  ),
-});
 const SocialMediaHub = dynamic(() => import('./SocialMediaHub'), {
   loading: () => (
     <div className="flex items-center justify-center h-96">
@@ -128,67 +123,61 @@ function MainAppContent({ onOpenMiniApp }: MainAppProps) {
     );
   };
 
-  // Mobile-responsive header
-  const enhancedHeader =
-    isMobile || isTablet ? (
-      <header
+  // Mobile-only header
+  const mobileHeader = (
+    <header
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+        background: 'var(--bg)',
+        borderBottom: '1px solid var(--border)',
+        padding: '0.75rem 1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backdropFilter: 'blur(10px)',
+        backgroundColor: 'rgba(var(--bg-rgb), 0.9)',
+      }}
+    >
+      <MobileNav onOpenMiniApp={onOpenMiniApp} />
+      <h1
         style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 1000,
-          background: 'var(--bg)',
-          borderBottom: '1px solid var(--border)',
-          padding: '0.75rem 1rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          backdropFilter: 'blur(10px)',
-          backgroundColor: 'rgba(var(--bg-rgb), 0.9)',
+          margin: 0,
+          fontSize: '1.5rem',
+          fontWeight: 700,
+          background: 'linear-gradient(135deg, var(--accent), #9c44ff)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
         }}
       >
-        <MobileNav onOpenMiniApp={onOpenMiniApp} />
-        <h1
-          style={{
-            margin: 0,
-            fontSize: '1.5rem',
-            fontWeight: 700,
-            background: 'linear-gradient(135deg, var(--accent), #9c44ff)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          📱 Echo Social
-        </h1>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <NotificationBell />
-          <GlobalSearch />
-        </div>
-      </header>
-    ) : (
-      <SimpleHeader
-        currentRoute={currentRoute}
-        setCurrentRoute={navigate}
-        onOpenMiniApp={onOpenMiniApp}
-      />
-    );
+        📱 Echo Social
+      </h1>
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <NotificationBell />
+        <GlobalSearch />
+      </div>
+    </header>
+  );
 
   return (
     <div className="flex h-screen overflow-hidden bg-[var(--echo-bg-primary)]">
-      {/* Desktop Navigation Rail - Hidden on Mobile */}
+      {/* Desktop Navigation Rail - Hidden on Mobile/Tablet */}
       {!isMobile && !isTablet && (
         <div className="flex-shrink-0">
           <NavigationRail
             activeRoute={currentRoute}
             onNavigate={navigate}
             unreadMessages={0}
+            onOpenMiniApp={onOpenMiniApp}
           />
         </div>
       )}
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        {enhancedHeader}
+        {/* Header - Only show on mobile/tablet */}
+        {(isMobile || isTablet) && mobileHeader}
 
         {/* Page Content with Wave Animation */}
         <main className="flex-1 overflow-y-auto">
