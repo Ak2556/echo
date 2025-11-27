@@ -324,19 +324,19 @@ export function AdvancedThemeProvider({
   });
   const [colorMode, setColorModeState] = useState<ColorMode>(() => {
     return persistSettings
-      ? storage.get('echo-color-mode', 'system')
+      ? (storage.get('echo-color-mode', 'system') as ColorMode)
       : 'system';
   });
   const [reducedMotion, setReducedMotionState] = useState<ReducedMotion>(() => {
     return persistSettings
-      ? storage.get('echo-reduced-motion', 'no-preference')
+      ? (storage.get('echo-reduced-motion', 'no-preference') as ReducedMotion)
       : 'no-preference';
   });
   const [fontSize, setFontSizeState] = useState<FontSize>(() => {
-    return persistSettings ? storage.get('echo-font-size', 'medium') : 'medium';
+    return persistSettings ? (storage.get('echo-font-size', 'medium') as FontSize) : 'medium';
   });
   const [contrast, setContrastState] = useState<Contrast>(() => {
-    return persistSettings ? storage.get('echo-contrast', 'normal') : 'normal';
+    return persistSettings ? (storage.get('echo-contrast', 'normal') as Contrast) : 'normal';
   });
 
   const currentTheme = themes.find((t) => t.id === currentThemeId) || themes[0];
@@ -452,7 +452,7 @@ export function AdvancedThemeProvider({
 
   // Persist settings
   useEffect(() => {
-    if (persistSettings) {
+    if (persistSettings && currentThemeId) {
       storage.set('echo-theme-id', currentThemeId);
       storage.set('echo-color-mode', colorMode);
       storage.set('echo-font-size', fontSize);

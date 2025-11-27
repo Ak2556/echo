@@ -52,7 +52,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
 
           {/* Input Field */}
-          <motion.input
+          <input
             ref={ref}
             type={inputType}
             disabled={disabled}

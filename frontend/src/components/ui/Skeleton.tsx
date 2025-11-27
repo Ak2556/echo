@@ -15,6 +15,7 @@ interface SkeletonProps {
   borderRadius?: string;
   className?: string;
   variant?: 'text' | 'circular' | 'rectangular';
+  style?: React.CSSProperties;
 }
 
 /**
@@ -26,6 +27,7 @@ export function Skeleton({
   borderRadius: radius = borderRadius.md,
   className = '',
   variant = 'rectangular',
+  style = {},
 }: SkeletonProps) {
   const variantStyles = {
     text: { height: '1rem', borderRadius: borderRadius.sm },
@@ -44,6 +46,7 @@ export function Skeleton({
           'linear-gradient(90deg, var(--nothing-surface) 25%, var(--bg-secondary) 50%, var(--nothing-surface) 75%)',
         backgroundSize: '200% 100%',
         animation: 'shimmer 1.5s infinite',
+        ...style,
       }}
       aria-hidden="true"
     >

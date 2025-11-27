@@ -10,8 +10,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   borderRadius,
   touchTarget,
-  duration,
-  easing,
+  duration as designDuration,
+  easing as designEasing,
 } from '@/lib/design-system';
 
 export interface VideoQuality {
@@ -182,7 +182,7 @@ export function VideoPlayer({
     }
   };
 
-  const handleError = (event?: Event) => {
+  const handleError = () => {
     const video = videoRef.current;
     let errorMsg = 'Failed to load video. Please try again later.';
 
@@ -685,7 +685,7 @@ export function VideoPlayer({
             color: '#000',
             fontSize: '2rem',
             cursor: 'pointer',
-            transition: `all ${duration.fast} ${easing.easeOut}`,
+            transition: `all ${designDuration.fast} ${designEasing.easeOut}`,
             zIndex: 2,
           }}
           onMouseEnter={(e) => {
@@ -711,7 +711,7 @@ export function VideoPlayer({
             padding: '1rem',
             background: 'linear-gradient(transparent, rgba(0, 0, 0, 0.8))',
             opacity: showControls ? 1 : 0,
-            transition: `opacity ${duration.fast} ${easing.easeOut}`,
+            transition: `opacity ${designDuration.fast} ${designEasing.easeOut}`,
             zIndex: 3,
           }}
         >

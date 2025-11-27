@@ -67,10 +67,14 @@ class APIClient {
   ): Promise<T> {
     const { requiresAuth = false, headers = {}, ...restOptions } = options;
 
+    const headersObj = headers instanceof Headers
+      ? Object.fromEntries(headers.entries())
+      : headers || {};
+
     const requestHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...headers,
-    };
+      ...headersObj,
+    } as Record<string, string>;
 
     // SECURITY: Add CSRF token for state-changing requests
     const method = (options.method || 'GET').toUpperCase();

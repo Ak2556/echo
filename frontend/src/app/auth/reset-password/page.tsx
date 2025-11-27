@@ -43,7 +43,7 @@ export default function ResetPasswordPage() {
     },
   });
 
-  const newPassword = watch('new_password', '');
+  const newPassword = watch('password', '');
 
   // Verify token on mount
   useEffect(() => {
@@ -77,7 +77,7 @@ export default function ResetPasswordPage() {
     try {
       await apiClient.resetPassword({
         token: data.token,
-        password: data.new_password,
+        password: data.password,
       });
       setState('success');
 
@@ -156,23 +156,23 @@ export default function ResetPasswordPage() {
                   {/* New Password */}
                   <div>
                     <label
-                      htmlFor="new_password"
+                      htmlFor="password"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
                       New Password
                     </label>
                     <input
-                      id="new_password"
+                      id="password"
                       type="password"
-                      {...register('new_password')}
+                      {...register('password')}
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       placeholder="••••••••"
                       autoComplete="new-password"
                       autoFocus
                     />
-                    {errors.new_password && (
+                    {errors.password && (
                       <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                        {errors.new_password.message}
+                        {errors.password.message}
                       </p>
                     )}
                     <PasswordStrength password={newPassword} className="mt-3" />
@@ -181,22 +181,22 @@ export default function ResetPasswordPage() {
                   {/* Confirm Password */}
                   <div>
                     <label
-                      htmlFor="confirm_password"
+                      htmlFor="confirmPassword"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
                       Confirm New Password
                     </label>
                     <input
-                      id="confirm_password"
+                      id="confirmPassword"
                       type="password"
-                      {...register('confirm_password')}
+                      {...register('confirmPassword')}
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       placeholder="••••••••"
                       autoComplete="new-password"
                     />
-                    {errors.confirm_password && (
+                    {errors.confirmPassword && (
                       <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                        {errors.confirm_password.message}
+                        {errors.confirmPassword.message}
                       </p>
                     )}
                   </div>

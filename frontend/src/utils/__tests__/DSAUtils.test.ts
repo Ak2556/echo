@@ -593,7 +593,7 @@ describe('DSAUtils', () => {
 
   describe('PriorityQueue Legacy Methods', () => {
     test('should support legacy insert method', () => {
-      const pq = new PriorityQueue<{ item: string; priority: number }>();
+      const pq = new PriorityQueue<string>();
 
       pq.insert('low', -1);
       pq.insert('high', -10);
@@ -604,7 +604,7 @@ describe('DSAUtils', () => {
     });
 
     test('should support legacy extractMax method', () => {
-      const pq = new PriorityQueue<{ item: string; priority: number }>();
+      const pq = new PriorityQueue<string>();
 
       pq.insert('first', -1);
       pq.insert('second', -2);

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import NotificationBell from './NotificationBell';
 import Link from 'next/link';
+import { LanguageCode } from '@/lib/i18n';
 
 interface SimpleHeaderProps {
   currentRoute: string;
@@ -839,7 +840,7 @@ export default function SimpleHeader({
               <button
                 key={lang.code}
                 onClick={() => {
-                  setLanguage(lang.code);
+                  setLanguage(lang.code as LanguageCode);
                   setIsLangMenuOpen(false);
                 }}
                 style={{

@@ -7,20 +7,12 @@ export default function PWAInit() {
   useEffect(() => {
     // Initialize PWA manager (already happens automatically in constructor)
     // Cache important pages for offline access
-    const importantUrls = [
-      '/',
-      '/ai',
-      '/apps',
-      '/dsa',
-      '/settings',
-      '/offline',
-    ];
-
-    pwaManager.cacheImportantUrls(importantUrls);
+    pwaManager.cacheImportantUrls();
 
     // Request persistent storage
-    pwaManager.requestPersistentStorage().then((granted) => {
+    pwaManager.requestPersistentStorage().then((granted: boolean) => {
       if (granted) {
+        console.log('Persistent storage granted');
       }
     });
 
