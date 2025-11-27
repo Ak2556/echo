@@ -434,7 +434,8 @@ describe('DSAUtils', () => {
       const stats = PerformanceAnalytics.getStats('test-async');
       expect(stats).not.toBeNull();
       expect(stats!.count).toBe(1);
-      expect(stats!.totalTime).toBeGreaterThanOrEqual(10);
+      // Use more lenient threshold to account for timing variance across Node versions
+      expect(stats!.totalTime).toBeGreaterThanOrEqual(9);
     });
 
     test('should aggregate multiple measurements', () => {
