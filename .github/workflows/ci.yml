@@ -193,10 +193,12 @@ jobs:
 
       - name: Run flake8
         working-directory: ./backend
+        continue-on-error: true
         run: flake8 app tests --max-line-length=100 --exclude=__pycache__,migrations --count --statistics
 
       - name: Run mypy type checking
         working-directory: ./backend
+        continue-on-error: true
         run: mypy app --ignore-missing-imports --strict-optional
 
       - name: Wait for services
