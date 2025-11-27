@@ -409,7 +409,7 @@ jobs:
             3. Update dependencies with security fixes
             4. Run comprehensive tests
 
-            **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            **Workflow Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}
 
             ---
             *This issue was automatically created by the dependency update workflow.*`,
