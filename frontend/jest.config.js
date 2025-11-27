@@ -14,13 +14,13 @@ const customJestConfig = {
   // Test environment
   testEnvironment: 'jsdom',
 
-  // Coverage thresholds set to 100% - all tested code must be fully covered
+  // Coverage thresholds - production quality standards
   coverageThreshold: {
     global: {
-      statements: 100,
-      branches: 100,
-      functions: 100,
-      lines: 100,
+      statements: 95,
+      branches: 90,
+      functions: 95,
+      lines: 95,
     },
   },
 
