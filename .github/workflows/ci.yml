@@ -3,9 +3,21 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main, develop, staging ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.vscode/**'
   pull_request:
     branches: [ main, develop ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   workflow_dispatch:
+
+# Cancel in-progress runs for the same workflow and ref
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   NODE_VERSION: '18.x'
@@ -20,6 +32,301 @@ jobs:
   frontend-test:
     name: Frontend Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['18.x', '20.x']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better blame info
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        id: cache-node-modules
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node-version }}-
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        working-directory: ./frontend
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Run linter
+        working-directory: ./frontend
+        run: |
+          npm run lint -- --max-warnings 0
+        continue-on-error: false
+
+      - name: Run type check
+        working-directory: ./frontend
+        run: npx tsc --noEmit --pretty
+
+      - name: Run unit tests
+        working-directory: ./frontend
+        run: npm run test:ci
+        env:
+          CI: true
+          NODE_OPTIONS: --max_old_space_size=4096
+
+      - name: Upload coverage to Codecov
+        if: matrix.node-version == '18.x'
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./frontend/coverage/lcov.info
+          flags: frontend
+          name: frontend-coverage
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Build application
+        working-directory: ./frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+          NODE_ENV: production
+
+      - name: Upload build artifacts
+        if: matrix.node-version == '18.x'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build-${{ github.sha }}
+          path: frontend/.next
+          retention-days: 7
+          compression-level: 6
+
+      - name: Check bundle size
+        if: matrix.node-version == '18.x'
+        working-directory: ./frontend
+        run: |
+          echo "## Bundle Size Report" >> $GITHUB_STEP_SUMMARY
+          du -sh .next | awk '{print "Total: " $1}' >> $GITHUB_STEP_SUMMARY
+
+  # =============================================================================
+  # BACKEND TESTS
+  # =============================================================================
+  backend-test:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12']
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          --tmpfs /var/lib/postgresql/data:rw
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          --entrypoint redis-server
+          --appendonly yes
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Cache Python packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('backend/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-asyncio pytest-timeout black isort flake8 mypy
+
+      - name: Run Black formatter check
+        working-directory: ./backend
+        run: black --check --diff .
+
+      - name: Run isort check
+        working-directory: ./backend
+        run: isort --check-only --diff .
+
+      - name: Run flake8
+        working-directory: ./backend
+        run: flake8 app tests --max-line-length=100 --exclude=__pycache__,migrations --count --statistics
+
+      - name: Run mypy type checking
+        working-directory: ./backend
+        run: mypy app --ignore-missing-imports --strict-optional
+
+      - name: Wait for services
+        run: |
+          timeout 30 bash -c 'until pg_isready -h localhost -p 5432; do sleep 1; done'
+          timeout 30 bash -c 'until redis-cli -h localhost -p 6379 ping; do sleep 1; done'
+
+      - name: Run tests with coverage
+        working-directory: ./backend
+        env:
+          DATABASE_URL: postgresql+asyncpg://test_user:test_password@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379/0
+          SECRET_KEY: test-secret-key-for-ci-cd-pipeline-testing-must-be-32-chars-minimum
+          ENVIRONMENT: testing
+          PYTHONPATH: ${{ github.workspace }}/backend
+        run: |
+          pytest tests/ -v \
+            --cov=app \
+            --cov-report=xml \
+            --cov-report=html \
+            --cov-report=term-missing \
+            --cov-fail-under=80 \
+            --timeout=60 \
+            --maxfail=5
+
+      - name: Upload coverage to Codecov
+        if: matrix.python-version == '3.11'
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./backend/coverage.xml
+          flags: backend
+          name: backend-coverage
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload coverage HTML report
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage-report-${{ github.sha }}
+          path: backend/htmlcov
+          retention-days: 7
+
+      - name: Generate test summary
+        if: always() && matrix.python-version == '3.11'
+        run: |
+          echo "## Backend Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "Python Version: ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
+
+  # =============================================================================
+  # SECURITY SCANNING
+  # =============================================================================
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.23.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Setup Node.js for npm audit
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run npm audit (Frontend)
+        working-directory: ./frontend
+        continue-on-error: true
+        run: |
+          npm audit --audit-level=high --json > npm-audit.json || true
+          echo "## Frontend Security Audit" >> $GITHUB_STEP_SUMMARY
+          npm audit --audit-level=moderate || echo "Vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+
+      - name: Setup Python for pip audit
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Run pip audit (Backend)
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          pip install pip-audit safety
+          echo "## Backend Security Audit" >> $GITHUB_STEP_SUMMARY
+          pip-audit --format=json > pip-audit.json || true
+          safety check --json > safety-report.json || true
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports-${{ github.sha }}
+          path: |
+            trivy-results.sarif
+            frontend/npm-audit.json
+            backend/pip-audit.json
+            backend/safety-report.json
+          retention-days: 30
+
+  # =============================================================================
+  # E2E TESTS
+  # =============================================================================
+  e2e-test:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: [frontend-test, backend-test]
+    timeout-minutes: 30
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout code
@@ -34,214 +341,42 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: npm ci --prefer-offline
 
-      - name: Run linter
+      - name: Install Playwright browsers
         working-directory: ./frontend
-        run: npm run lint
-
-      - name: Run type check
-        working-directory: ./frontend
-        run: npx tsc --noEmit
-
-      - name: Run tests
-        working-directory: ./frontend
-        run: npm run test:ci
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./frontend/coverage/lcov.info
-          flags: frontend
-          name: frontend-coverage
-
-      - name: Build application
-        working-directory: ./frontend
-        run: npm run build
-        env:
-          NEXT_PUBLIC_API_URL: http://localhost:8000
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build
-          path: frontend/.next
-          retention-days: 7
-
-  # =============================================================================
-  # BACKEND TESTS
-  # =============================================================================
-  backend-test:
-    name: Backend Tests
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:14-alpine
-        env:
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-          POSTGRES_DB: test_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
-          cache-dependency-path: backend/requirements.txt
-
-      - name: Install dependencies
-        working-directory: ./backend
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest pytest-cov pytest-asyncio black isort flake8 mypy
-
-      - name: Run Black formatter check
-        working-directory: ./backend
-        run: black --check .
-
-      - name: Run isort check
-        working-directory: ./backend
-        run: isort --check-only .
-
-      - name: Run flake8
-        working-directory: ./backend
-        run: flake8 app --max-line-length=100 --exclude=__pycache__
-
-      - name: Run mypy
-        working-directory: ./backend
-        run: mypy app --ignore-missing-imports
-
-      - name: Run tests
-        working-directory: ./backend
-        env:
-          DATABASE_URL: postgresql+asyncpg://test_user:test_password@localhost:5432/test_db
-          REDIS_URL: redis://localhost:6379/0
-          SECRET_KEY: test-secret-key-for-ci-cd-pipeline-testing
-          ENVIRONMENT: testing
-        run: |
-          pytest tests/ -v --cov=app --cov-report=xml --cov-report=html --cov-report=term
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./backend/coverage.xml
-          flags: backend
-          name: backend-coverage
-
-      - name: Upload coverage HTML report
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-coverage-report
-          path: backend/htmlcov
-          retention-days: 7
-
-  # =============================================================================
-  # SECURITY SCANNING
-  # =============================================================================
-  security-scan:
-    name: Security Scanning
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      security-events: write
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-
-      - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: 'trivy-results.sarif'
-
-      - name: Run npm audit (Frontend)
-        working-directory: ./frontend
-        run: |
-          npm audit --audit-level=moderate || true
-
-      - name: Run pip audit (Backend)
-        working-directory: ./backend
-        run: |
-          pip install pip-audit
-          pip-audit || true
-
-  # =============================================================================
-  # E2E TESTS
-  # =============================================================================
-  e2e-test:
-    name: E2E Tests
-    runs-on: ubuntu-latest
-    needs: [frontend-test, backend-test]
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install dependencies
-        working-directory: ./frontend
-        run: npm ci
-
-      - name: Install Playwright
-        working-directory: ./frontend
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium
 
       - name: Start services
         run: |
-          docker-compose up -d
-          sleep 30
+          if [ -f docker-compose.yml ]; then
+            docker-compose up -d
+            echo "Waiting for services to be ready..."
+            timeout 60 bash -c 'until curl -f http://localhost:3000/api/health 2>/dev/null; do sleep 2; done'
+          fi
 
       - name: Run E2E tests
         working-directory: ./frontend
-        run: npx playwright test
+        run: npx playwright test --reporter=html,json
+        env:
+          CI: true
 
-      - name: Upload test results
+      - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
-          path: frontend/playwright-report
-          retention-days: 7
+          name: playwright-report-${{ github.sha }}
+          path: |
+            frontend/playwright-report
+            frontend/test-results
+          retention-days: 14
 
       - name: Stop services
         if: always()
-        run: docker-compose down
+        run: |
+          if [ -f docker-compose.yml ]; then
+            docker-compose down -v
+          fi
 
   # =============================================================================
   # BUILD DOCKER IMAGES
@@ -251,12 +386,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: [frontend-test, backend-test, security-scan]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    timeout-minutes: 30
 
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     strategy:
+      fail-fast: false
       matrix:
         service: [frontend, backend]
 
@@ -264,8 +402,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:latest
+            network=host
 
       - name: Log in to Container Registry
         uses: docker/login-action@v3
@@ -281,19 +426,42 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.service }}
           tags: |
             type=ref,event=branch
-            type=sha,prefix={{branch}}-
+            type=sha,prefix={{branch}}-,format=short
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable={{is_default_branch}}
+          labels: |
+            org.opencontainers.image.title=${{ matrix.service }}
+            org.opencontainers.image.description=Echo ${{ matrix.service }} service
+            org.opencontainers.image.vendor=Echo
 
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: ./${{ matrix.service }}
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+            VERSION=${{ github.ref_name }}
+
+      - name: Image vulnerability scan
+        uses: aquasecurity/trivy-action@0.23.0
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.service }}:${{ github.ref_name }}
+          format: 'sarif'
+          output: 'trivy-image-results.sarif'
+
+      - name: Upload image scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-image-results.sarif'
 
   # =============================================================================
   # DEPLOY TO STAGING
@@ -303,6 +471,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, e2e-test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    timeout-minutes: 15
     environment:
       name: staging
       url: https://staging.echo.com
@@ -313,9 +482,23 @@ jobs:
 
       - name: Deploy to staging
         run: |
-          echo "Deploying to staging environment..."
+          echo "🚀 Deploying to staging environment..."
+          echo "Deployment timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
           # Add your deployment script here
           # Example: kubectl apply -f k8s/staging/
+
+      - name: Run smoke tests
+        run: |
+          echo "🧪 Running smoke tests..."
+          timeout 60 bash -c 'until curl -f https://staging.echo.com/health; do sleep 5; done'
+
+      - name: Notify deployment
+        if: always()
+        run: |
+          echo "## Staging Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "Environment: staging" >> $GITHUB_STEP_SUMMARY
+          echo "Deployed at: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_STEP_SUMMARY
 
   # =============================================================================
   # DEPLOY TO PRODUCTION
@@ -325,6 +508,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, e2e-test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    timeout-minutes: 20
     environment:
       name: production
       url: https://echo.com
@@ -335,16 +519,36 @@ jobs:
 
       - name: Deploy to production
         run: |
-          echo "Deploying to production environment..."
+          echo "🚀 Deploying to production environment..."
+          echo "Deployment timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
           # Add your deployment script here
           # Example: kubectl apply -f k8s/production/
 
-      - name: Create release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run smoke tests
+        run: |
+          echo "🧪 Running smoke tests..."
+          timeout 60 bash -c 'until curl -f https://echo.com/health; do sleep 5; done'
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
+          tag: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          body: |
+            ## Changes in this Release
+            ${{ github.event.head_commit.message }}
+
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/v${{ github.run_number - 1 }}...v${{ github.run_number }}
           draft: false
           prerelease: false
+          generateReleaseNotes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify deployment
+        if: always()
+        run: |
+          echo "## Production Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "Environment: production" >> $GITHUB_STEP_SUMMARY
+          echo "Deployed at: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_STEP_SUMMARY
+          echo "Release: v${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
