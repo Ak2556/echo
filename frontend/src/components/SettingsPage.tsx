@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useSettings } from '@/contexts/SettingsContext';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { SettingsGrid } from './settings/SettingsGrid';
 
 type SettingsSection =
   | 'appearance'
@@ -544,6 +545,12 @@ export default function SettingsPage() {
           />
         </div>
 
+        {/* Modern Settings Grid */}
+        <div style={{ marginBottom: '3rem' }}>
+          <SettingsGrid onSectionClick={(section) => setActiveSection(section as SettingsSection)} />
+        </div>
+
+        {/* Detailed Settings Panel */}
         <div
           style={{
             display: 'grid',

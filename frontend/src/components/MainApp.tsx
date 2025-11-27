@@ -23,6 +23,7 @@ import { useTiltCards } from '@/hooks/useTiltCards';
 import { useResponsive } from '@/hooks/useResponsive';
 import { MobileNav } from './navigation/MobileNav';
 import { FeedSkeleton, PageSkeleton } from './ui/Skeleton';
+import { NavigationRail } from './navigation/NavigationRail';
 
 // Dynamic imports for better performance
 const SimpleHeader = dynamic(() => import('./SimpleHeader'), {
@@ -171,53 +172,41 @@ function MainAppContent({ onOpenMiniApp }: MainAppProps) {
       />
     );
 
-  // Sidebar content (can be customized)
-  const sidebar = (
-    <div className="p-4">
-      <h3 className="text-lg font-semibold mb-4">Quick Access</h3>
-      <nav className="space-y-2">
-        {[
-          { route: 'feed', label: 'Social Feed', icon: '🏠' },
-          { route: 'discover', label: 'Discover', icon: '🔍' },
-          { route: 'messages', label: 'Messages', icon: '💬' },
-          { route: 'profile', label: 'Profile', icon: '👤' },
-        ].map((item) => (
-          <button
-            key={item.route}
-            onClick={() =>
-              window.dispatchEvent(
-                new CustomEvent('navigate', { detail: item.route })
-              )
-            }
-            className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
-              currentRoute === item.route
-                ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+  return (
+    <div className="flex h-screen overflow-hidden bg-[var(--echo-bg-primary)]">
+      {/* Desktop Navigation Rail - Hidden on Mobile */}
+      {!isMobile && !isTablet && (
+        <div className="flex-shrink-0">
+          <NavigationRail
+            activeRoute={currentRoute}
+            onNavigate={navigate}
+            unreadMessages={0}
+          />
+        </div>
+      )}
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        {enhancedHeader}
+
+        {/* Page Content with Wave Animation */}
+        <main className="flex-1 overflow-y-auto">
+          <div
+            className={`echo-animate-wave-in ${
+              currentRoute === 'feed' || currentRoute === 'messages' ? '' : 'p-6'
             }`}
           >
-            <span className="text-lg">{item.icon}</span>
-            <span className="font-medium">{item.label}</span>
-          </button>
-        ))}
-      </nav>
-    </div>
-  );
-
-  return (
-    <ResponsiveLayout header={enhancedHeader} className="min-h-screen">
-      <div
-        className={
-          currentRoute === 'feed' || currentRoute === 'messages' ? '' : 'p-6'
-        }
-      >
-        {renderContent()}
+            {renderContent()}
+          </div>
+        </main>
       </div>
 
       {/* AI Chat - Floating */}
       <Suspense fallback={null}>
         <AiChat />
       </Suspense>
-    </ResponsiveLayout>
+    </div>
   );
 }
 
