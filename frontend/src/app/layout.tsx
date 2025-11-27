@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import '@/i18n/index'; // Initialize i18n
 import '@/styles/echo-brand.css';
 import '@/styles/enhanced-dark-mode.css';
 import '@/styles/social-media-hub.css';
@@ -9,7 +8,7 @@ import Background3D from '@/components/Background3D';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { EnhancedThemeProvider } from '@/contexts/EnhancedThemeContext';
 import { SettingsProvider } from '@/contexts/SettingsContext';
-import { LanguageProvider } from '@/contexts/LanguageContext';
+import ClientLanguageProvider from '@/components/ClientLanguageProvider';
 import { UserProvider } from '@/contexts/UserContext';
 import { ToastProvider } from '@/contexts/ToastContext';
 import { BackgroundProvider } from '@/contexts/BackgroundContext';
@@ -19,7 +18,6 @@ import { QueryProvider } from '@/providers/QueryProvider';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import PWAUpdateNotification from '@/components/PWAUpdateNotification';
 import PWAInit from '@/app/pwa-init';
-import I18nInit from '@/app/i18n-init';
 import MonitoringDashboard from '@/components/MonitoringDashboard';
 import AnalyticsInit from '@/app/analytics-init';
 import AccessibilityToggle from '@/components/AccessibilityToggle';
@@ -106,7 +104,7 @@ export default function RootLayout({
                   <SettingsProvider>
                     <ToastProvider>
                       <UserProvider>
-                        <LanguageProvider>
+                        <ClientLanguageProvider>
                           <div
                             id="bg3d"
                             className="background-3d"
@@ -130,7 +128,6 @@ export default function RootLayout({
                           </a>
                           {children}
                           <ToastContainer />
-                          <I18nInit />
                           <AnalyticsInit />
                           <PWAInit />
                           <PWAInstallPrompt />
@@ -139,7 +136,7 @@ export default function RootLayout({
                             <MonitoringDashboard />
                           </ErrorBoundary>
                           <AccessibilityToggle />
-                        </LanguageProvider>
+                        </ClientLanguageProvider>
                       </UserProvider>
                     </ToastProvider>
                   </SettingsProvider>
