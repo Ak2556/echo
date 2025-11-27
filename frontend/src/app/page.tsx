@@ -28,10 +28,8 @@ const Background3D = dynamic(
 );
 const Footer = dynamic(
   () =>
-    import('@/components/Footer').catch(() => ({
-      default: () => (
-        <div className="h-16 bg-gray-100 dark:bg-gray-900 animate-pulse" />
-      ),
+    import('@/components/footer/ImprovedFooter').then((mod) => ({
+      default: mod.ImprovedFooter,
     })),
   {
     loading: () => (
