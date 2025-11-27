@@ -31,192 +31,69 @@ export default function SettingsPage() {
 
   return (
     <section id="settings" className="echo-section">
-      <div className="echo-container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem' }}>
-        {/* Header with Search */}
-        <div className="mb-8 echo-animate-wave-in">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-[var(--echo-primary)] to-[var(--echo-accent)] bg-clip-text text-transparent mb-2">
-            Settings
-          </h1>
-          <p className="text-[var(--echo-text-secondary)] mb-6">
-            Manage your account preferences and customize your Echo experience
-          </p>
+      <div className="echo-settings-container">
+        {/* Header */}
+        <div className="echo-settings-header echo-animate-wave-in">
+          <div className="echo-settings-title-group">
+            <div>
+              <h1 className="echo-settings-title">Settings</h1>
+              <p className="echo-settings-description">
+                Manage your account preferences and customize your Echo experience
+              </p>
+            </div>
+          </div>
 
           {/* Search Bar */}
-          <input
-            type="text"
-            placeholder="🔍 Search settings..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              width: '100%',
-              maxWidth: '500px',
-              padding: '12px 20px',
-              fontSize: '0.95rem',
-              border: `2px solid ${colorMode === 'dark' ? '#333' : '#ddd'}`,
-              borderRadius: '12px',
-              background: colorMode === 'dark' ? '#1a1a1a' : '#fff',
-              color: 'var(--fg)',
-              outline: 'none',
-              transition: 'all 0.3s ease',
-            }}
-            onFocus={(e) => {
-              e.currentTarget.style.borderColor = 'var(--echo-primary)';
-              e.currentTarget.style.boxShadow = '0 0 0 4px rgba(0, 102, 255, 0.1)';
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderColor = colorMode === 'dark' ? '#333' : '#ddd';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          />
+          <div className="echo-settings-search">
+            <input
+              type="text"
+              placeholder="Search settings..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="echo-settings-search-input"
+            />
+            <kbd className="echo-settings-search-kbd">⌘K</kbd>
+          </div>
         </div>
 
-        {/* Modern Settings Grid - Main Settings Interface */}
-        <div style={{ marginBottom: '4rem' }}>
-          <SettingsGrid onSectionClick={handleSectionClick} />
-        </div>
+        {/* Settings Grid */}
+        <SettingsGrid onSectionClick={handleSectionClick} />
 
-        {/* Info Section */}
-        <div
-          style={{
-            textAlign: 'center',
-            marginTop: '4rem',
-            padding: '3rem 2rem',
-            background: 'var(--echo-bg-secondary)',
-            borderRadius: '16px',
-            border: '1px solid var(--echo-border-light)',
-          }}
-        >
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚙️</div>
-          <h3
-            style={{
-              fontSize: '1.5rem',
-              fontWeight: 600,
-              marginBottom: '0.5rem',
-              background: 'linear-gradient(135deg, var(--echo-primary), var(--echo-accent))',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            Modern Settings Experience
-          </h3>
-          <p
-            style={{
-              color: 'var(--echo-text-secondary)',
-              marginBottom: '2rem',
-              maxWidth: '600px',
-              margin: '0 auto 2rem',
-              lineHeight: '1.6',
-            }}
-          >
+        {/* Info Panel */}
+        <div className="echo-settings-info-panel">
+          <div className="echo-settings-info-icon">⚙️</div>
+          <h3 className="echo-settings-info-title">Modern Settings Experience</h3>
+          <p className="echo-settings-info-description">
             Click any category card above to access detailed settings for that section.
             Each category provides comprehensive controls tailored to your needs.
           </p>
 
-          {/* Quick Stats */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-              gap: '1.5rem',
-              maxWidth: '600px',
-              margin: '2rem auto 0',
-            }}
-          >
-            <div
-              style={{
-                padding: '1.5rem',
-                background: 'var(--echo-bg-primary)',
-                borderRadius: '12px',
-                border: '1px solid var(--echo-border-light)',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '2rem',
-                  fontWeight: 'bold',
-                  background: 'linear-gradient(135deg, var(--echo-primary), var(--echo-accent))',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                12
-              </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--echo-text-secondary)' }}>
-                Categories
-              </div>
+          {/* Stats Grid */}
+          <div className="echo-settings-stats">
+            <div className="echo-settings-stat">
+              <div className="echo-settings-stat-value">12</div>
+              <div className="echo-settings-stat-label">Categories</div>
             </div>
 
-            <div
-              style={{
-                padding: '1.5rem',
-                background: 'var(--echo-bg-primary)',
-                borderRadius: '12px',
-                border: '1px solid var(--echo-border-light)',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '2rem',
-                  fontWeight: 'bold',
-                  background: 'linear-gradient(135deg, var(--echo-primary), var(--echo-accent))',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                100+
-              </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--echo-text-secondary)' }}>
-                Settings
-              </div>
+            <div className="echo-settings-stat">
+              <div className="echo-settings-stat-value">100+</div>
+              <div className="echo-settings-stat-label">Settings</div>
             </div>
 
-            <div
-              style={{
-                padding: '1.5rem',
-                background: 'var(--echo-bg-primary)',
-                borderRadius: '12px',
-                border: '1px solid var(--echo-border-light)',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '2rem',
-                  fontWeight: 'bold',
-                  background: 'linear-gradient(135deg, var(--echo-primary), var(--echo-accent))',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                24/7
-              </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--echo-text-secondary)' }}>
-                Customization
-              </div>
+            <div className="echo-settings-stat">
+              <div className="echo-settings-stat-value">24/7</div>
+              <div className="echo-settings-stat-label">Customization</div>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div
-          style={{
-            textAlign: 'center',
-            marginTop: '3rem',
-            padding: '2rem',
-            opacity: 0.7,
-          }}
-        >
-          <div style={{ fontSize: '0.9rem', marginBottom: '0.5rem', color: 'var(--echo-text-secondary)' }}>
+        <div className="echo-settings-footer">
+          <div className="echo-settings-version">
             Echo v2.1.0 • Last updated: {new Date().toLocaleDateString()}
           </div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--echo-text-tertiary)' }}>
-            Made with ❤️ • Premium Settings Experience
+          <div className="echo-settings-credit">
+            Premium Settings Experience
           </div>
         </div>
       </div>

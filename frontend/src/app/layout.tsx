@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import '@/styles/echo-brand.css';
+import '@/styles/echo-settings.css';
 import '@/styles/enhanced-dark-mode.css';
 import '@/styles/social-media-hub.css';
 import '@/styles/design-system.css';

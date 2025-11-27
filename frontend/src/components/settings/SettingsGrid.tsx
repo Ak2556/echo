@@ -98,27 +98,16 @@ export function SettingsGrid({ onSectionClick }: SettingsGridProps) {
   ];
 
   return (
-    <div className="echo-container echo-section">
-      <div className="mb-8 echo-animate-wave-in">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-[var(--echo-primary)] to-[var(--echo-accent)] bg-clip-text text-transparent mb-2">
-          Settings
-        </h1>
-        <p className="text-[var(--echo-text-secondary)]">
-          Manage your account preferences and customize your Echo experience
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 echo-stagger-children">
-        {settingsSections.map((section) => (
-          <SettingsCard
-            key={section.id}
-            icon={section.icon}
-            title={section.title}
-            description={section.description}
-            onClick={() => onSectionClick(section.id)}
-          />
-        ))}
-      </div>
+    <div className="echo-settings-grid-v2">
+      {settingsSections.map((section) => (
+        <SettingsCard
+          key={section.id}
+          icon={section.icon}
+          title={section.title}
+          description={section.description}
+          onClick={() => onSectionClick(section.id)}
+        />
+      ))}
     </div>
   );
 }
