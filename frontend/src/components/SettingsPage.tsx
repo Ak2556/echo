@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { SettingsGrid } from './settings/SettingsGrid';
+import { AppearanceSettings } from './settings/AppearanceSettings';
 
 type SettingsSection =
+  | 'main'
   | 'appearance'
   | 'notifications'
   | 'privacy'
@@ -20,14 +22,53 @@ type SettingsSection =
 
 export default function SettingsPage() {
   const { colorMode } = useTheme();
-  const [activeSection, setActiveSection] = useState<SettingsSection>('appearance');
+  const [activeSection, setActiveSection] = useState<SettingsSection>('main');
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSectionClick = (section: string) => {
-    console.log(`Navigate to ${section} settings`);
     setActiveSection(section as SettingsSection);
-    // TODO: Navigate to dedicated settings page for this section
   };
+
+  const handleBack = () => {
+    setActiveSection('main');
+  };
+
+  // Render sub-page if a section is active
+  if (activeSection === 'appearance') {
+    return <AppearanceSettings onBack={handleBack} />;
+  }
+
+  // If other sections are clicked, show placeholder for now
+  if (activeSection !== 'main') {
+    return (
+      <div className="echo-settings-container">
+        <div className="echo-settings-header">
+          <button
+            onClick={handleBack}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '8px',
+              fontSize: 'var(--settings-text-sm)',
+              color: 'var(--echo-primary)',
+            }}
+          >
+            ← Back to Settings
+          </button>
+          <h1 className="echo-settings-title" style={{ textTransform: 'capitalize' }}>
+            {activeSection}
+          </h1>
+          <p className="echo-settings-description">
+            This settings page is coming soon.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <section id="settings" className="echo-section">
