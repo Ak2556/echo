@@ -6,8 +6,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiClient } from '@/lib/api-client';
-import type { APIError } from '@/lib/api-client';
+import { apiClient, APIError } from '@/lib/api-client';
 import type { User, LoginForm, RegisterForm } from '@/lib/auth-schemas';
 
 interface AuthState {
