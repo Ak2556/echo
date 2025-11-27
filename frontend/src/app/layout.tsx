@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import '@/i18n/index'; // Initialize i18n
 import '@/styles/echo-brand.css';
 import '@/styles/enhanced-dark-mode.css';
 import '@/styles/social-media-hub.css';
@@ -18,6 +19,7 @@ import { QueryProvider } from '@/providers/QueryProvider';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import PWAUpdateNotification from '@/components/PWAUpdateNotification';
 import PWAInit from '@/app/pwa-init';
+import I18nInit from '@/app/i18n-init';
 import MonitoringDashboard from '@/components/MonitoringDashboard';
 import AnalyticsInit from '@/app/analytics-init';
 import AccessibilityToggle from '@/components/AccessibilityToggle';
@@ -128,6 +130,7 @@ export default function RootLayout({
                           </a>
                           {children}
                           <ToastContainer />
+                          <I18nInit />
                           <AnalyticsInit />
                           <PWAInit />
                           <PWAInstallPrompt />
