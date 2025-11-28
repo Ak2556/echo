@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { SettingsGrid } from './settings/SettingsGrid';
 import { AppearanceSettings } from './settings/AppearanceSettings';
-import { NotificationsSettings } from './settings/NotificationsSettings';
+import { FunctionalNotificationsSettings } from './settings/FunctionalNotificationsSettings';
 import { PrivacySettings } from './settings/PrivacySettings';
 import { AccessibilitySettings } from './settings/AccessibilitySettings';
 import { CommunicationSettings } from './settings/CommunicationSettings';
@@ -48,7 +48,7 @@ export default function SettingsPage() {
     case 'appearance':
       return <AppearanceSettings onBack={handleBack} />;
     case 'notifications':
-      return <NotificationsSettings onBack={handleBack} />;
+      return <FunctionalNotificationsSettings onBack={handleBack} />;
     case 'privacy':
       return <PrivacySettings onBack={handleBack} />;
     case 'accessibility':
