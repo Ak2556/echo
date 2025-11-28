@@ -4,6 +4,16 @@ import { useState } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { SettingsGrid } from './settings/SettingsGrid';
 import { AppearanceSettings } from './settings/AppearanceSettings';
+import { NotificationsSettings } from './settings/NotificationsSettings';
+import { PrivacySettings } from './settings/PrivacySettings';
+import { AccessibilitySettings } from './settings/AccessibilitySettings';
+import { CommunicationSettings } from './settings/CommunicationSettings';
+import { FeedSettings } from './settings/FeedSettings';
+import { ShoppingSettings } from './settings/ShoppingSettings';
+import { LiveSettings } from './settings/LiveSettings';
+import { LearningSettings } from './settings/LearningSettings';
+import { BackupSettings } from './settings/BackupSettings';
+import { DeveloperSettings } from './settings/DeveloperSettings';
 
 type SettingsSection =
   | 'main'
@@ -33,41 +43,32 @@ export default function SettingsPage() {
     setActiveSection('main');
   };
 
-  // Render sub-page if a section is active
-  if (activeSection === 'appearance') {
-    return <AppearanceSettings onBack={handleBack} />;
-  }
-
-  // If other sections are clicked, show placeholder for now
-  if (activeSection !== 'main') {
-    return (
-      <div className="echo-settings-container">
-        <div className="echo-settings-header">
-          <button
-            onClick={handleBack}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '8px',
-              fontSize: 'var(--settings-text-sm)',
-              color: 'var(--echo-primary)',
-            }}
-          >
-            ← Back to Settings
-          </button>
-          <h1 className="echo-settings-title" style={{ textTransform: 'capitalize' }}>
-            {activeSection}
-          </h1>
-          <p className="echo-settings-description">
-            This settings page is coming soon.
-          </p>
-        </div>
-      </div>
-    );
+  // Render sub-page based on active section
+  switch (activeSection) {
+    case 'appearance':
+      return <AppearanceSettings onBack={handleBack} />;
+    case 'notifications':
+      return <NotificationsSettings onBack={handleBack} />;
+    case 'privacy':
+      return <PrivacySettings onBack={handleBack} />;
+    case 'accessibility':
+      return <AccessibilitySettings onBack={handleBack} />;
+    case 'communication':
+      return <CommunicationSettings onBack={handleBack} />;
+    case 'feed':
+      return <FeedSettings onBack={handleBack} />;
+    case 'shopping':
+      return <ShoppingSettings onBack={handleBack} />;
+    case 'live':
+      return <LiveSettings onBack={handleBack} />;
+    case 'learning':
+      return <LearningSettings onBack={handleBack} />;
+    case 'backup':
+      return <BackupSettings onBack={handleBack} />;
+    case 'developer':
+      return <DeveloperSettings onBack={handleBack} />;
+    default:
+      break;
   }
 
   return (
