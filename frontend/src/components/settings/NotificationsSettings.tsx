@@ -2,78 +2,118 @@
 
 import React, { useState } from 'react';
 import { SettingsSubPage, SettingsSection } from './SettingsSubPage';
-import { Bell, BellOff, Volume2, VolumeX, Smartphone, Mail } from 'lucide-react';
+import {
+  Bell,
+  BellOff,
+  Volume2,
+  VolumeX,
+  Mail,
+  AtSign,
+  MessageCircle,
+  Heart,
+  UserPlus,
+  Send,
+  Sparkles,
+  Hash
+} from 'lucide-react';
 
 interface ToggleSwitchProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   label: string;
   description?: string;
+  icon?: React.ReactNode;
 }
 
-function ToggleSwitch({ checked, onChange, label, description }: ToggleSwitchProps) {
+function ToggleSwitch({ checked, onChange, label, description, icon }: ToggleSwitchProps) {
   return (
     <div
       style={{
         display: 'flex',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'space-between',
-        padding: 'var(--settings-space-4)',
-        borderRadius: 'var(--settings-radius-md)',
-        border: '1px solid var(--echo-border-light)',
-        background: 'var(--echo-bg-primary)',
+        padding: 'var(--settings-space-5)',
+        borderRadius: 'var(--settings-radius-lg)',
+        border: checked ? '1.5px solid var(--echo-primary)' : '1px solid var(--echo-border-light)',
+        background: checked ? 'rgba(0, 102, 255, 0.03)' : 'var(--echo-bg-primary)',
         marginBottom: 'var(--settings-space-3)',
+        transition: 'all 0.2s ease',
+        cursor: 'pointer',
       }}
+      onClick={() => onChange(!checked)}
     >
-      <div style={{ flex: 1 }}>
-        <div
-          style={{
-            fontSize: 'var(--settings-text-base)',
-            fontWeight: 'var(--settings-weight-medium)',
-            color: 'var(--echo-text-primary)',
-            marginBottom: description ? 'var(--settings-space-1)' : 0,
-          }}
-        >
-          {label}
-        </div>
-        {description && (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--settings-space-4)', flex: 1 }}>
+        {icon && (
           <div
             style={{
-              fontSize: 'var(--settings-text-sm)',
-              color: 'var(--echo-text-secondary)',
-              lineHeight: 'var(--settings-leading-relaxed)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px',
+              borderRadius: 'var(--settings-radius-md)',
+              background: checked ? 'rgba(0, 102, 255, 0.1)' : 'var(--echo-bg-secondary)',
+              color: checked ? 'var(--echo-primary)' : 'var(--echo-text-secondary)',
+              transition: 'all 0.2s ease',
             }}
           >
-            {description}
+            {icon}
           </div>
         )}
+        <div style={{ flex: 1 }}>
+          <div
+            style={{
+              fontSize: 'var(--settings-text-base)',
+              fontWeight: 'var(--settings-weight-semibold)',
+              color: 'var(--echo-text-primary)',
+              marginBottom: description ? '4px' : 0,
+            }}
+          >
+            {label}
+          </div>
+          {description && (
+            <div
+              style={{
+                fontSize: 'var(--settings-text-sm)',
+                color: 'var(--echo-text-secondary)',
+                lineHeight: '1.5',
+              }}
+            >
+              {description}
+            </div>
+          )}
+        </div>
       </div>
       <button
-        onClick={() => onChange(!checked)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onChange(!checked);
+        }}
         style={{
-          width: '44px',
-          height: '24px',
-          borderRadius: '12px',
+          width: '48px',
+          height: '28px',
+          borderRadius: '14px',
           background: checked ? 'var(--echo-primary)' : 'var(--echo-border-medium)',
           border: 'none',
           cursor: 'pointer',
           position: 'relative',
-          transition: 'var(--settings-transition-normal)',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           flexShrink: 0,
           marginLeft: 'var(--settings-space-4)',
+          boxShadow: checked ? '0 2px 8px rgba(0, 102, 255, 0.3)' : 'inset 0 1px 3px rgba(0,0,0,0.1)',
         }}
       >
         <div
           style={{
-            width: '20px',
-            height: '20px',
-            borderRadius: '10px',
+            width: '22px',
+            height: '22px',
+            borderRadius: '11px',
             background: 'white',
             position: 'absolute',
-            top: '2px',
-            left: checked ? '22px' : '2px',
-            transition: 'var(--settings-transition-normal)',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            top: '3px',
+            left: checked ? '23px' : '3px',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
           }}
         />
       </button>
@@ -109,28 +149,68 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: 'var(--settings-space-4)',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: 'var(--settings-space-5)',
           }}
         >
           <button
             onClick={() => setPushEnabled(!pushEnabled)}
             style={{
               padding: 'var(--settings-space-6)',
-              borderRadius: 'var(--settings-radius-md)',
+              borderRadius: 'var(--settings-radius-lg)',
               border: pushEnabled ? '2px solid var(--echo-primary)' : '1px solid var(--echo-border-light)',
-              background: pushEnabled ? 'rgba(0, 102, 255, 0.05)' : 'var(--echo-bg-primary)',
+              background: pushEnabled
+                ? 'linear-gradient(135deg, rgba(0, 102, 255, 0.08), rgba(0, 102, 255, 0.03))'
+                : 'var(--echo-bg-primary)',
               cursor: 'pointer',
-              transition: 'var(--settings-transition-normal)',
+              transition: 'all 0.3s ease',
               textAlign: 'left',
+              position: 'relative' as const,
+              overflow: 'hidden',
+            }}
+            onMouseEnter={(e) => {
+              if (!pushEnabled) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            {pushEnabled ? <Bell size={24} color="var(--echo-primary)" /> : <BellOff size={24} color="var(--echo-text-secondary)" />}
-            <div style={{ marginTop: 'var(--settings-space-3)', fontSize: 'var(--settings-text-base)', fontWeight: 'var(--settings-weight-semibold)' }}>
+            <div
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: 'var(--settings-radius-md)',
+                background: pushEnabled ? 'rgba(0, 102, 255, 0.12)' : 'var(--echo-bg-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 'var(--settings-space-4)',
+              }}
+            >
+              {pushEnabled ? <Bell size={24} color="var(--echo-primary)" /> : <BellOff size={24} color="var(--echo-text-secondary)" />}
+            </div>
+            <div
+              style={{
+                fontSize: 'var(--settings-text-base)',
+                fontWeight: 'var(--settings-weight-semibold)',
+                color: 'var(--echo-text-primary)',
+                marginBottom: 'var(--settings-space-2)',
+              }}
+            >
               Push Notifications
             </div>
-            <div style={{ fontSize: 'var(--settings-text-sm)', color: 'var(--echo-text-secondary)', marginTop: 'var(--settings-space-1)' }}>
-              {pushEnabled ? 'Enabled' : 'Disabled'}
+            <div
+              style={{
+                fontSize: 'var(--settings-text-sm)',
+                color: pushEnabled ? 'var(--echo-primary)' : 'var(--echo-text-secondary)',
+                fontWeight: 'var(--settings-weight-medium)',
+              }}
+            >
+              {pushEnabled ? '✓ Enabled' : 'Disabled'}
             </div>
           </button>
 
@@ -138,20 +218,60 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
             onClick={() => setEmailEnabled(!emailEnabled)}
             style={{
               padding: 'var(--settings-space-6)',
-              borderRadius: 'var(--settings-radius-md)',
+              borderRadius: 'var(--settings-radius-lg)',
               border: emailEnabled ? '2px solid var(--echo-primary)' : '1px solid var(--echo-border-light)',
-              background: emailEnabled ? 'rgba(0, 102, 255, 0.05)' : 'var(--echo-bg-primary)',
+              background: emailEnabled
+                ? 'linear-gradient(135deg, rgba(0, 102, 255, 0.08), rgba(0, 102, 255, 0.03))'
+                : 'var(--echo-bg-primary)',
               cursor: 'pointer',
-              transition: 'var(--settings-transition-normal)',
+              transition: 'all 0.3s ease',
               textAlign: 'left',
+              position: 'relative' as const,
+              overflow: 'hidden',
+            }}
+            onMouseEnter={(e) => {
+              if (!emailEnabled) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            <Mail size={24} color={emailEnabled ? 'var(--echo-primary)' : 'var(--echo-text-secondary)'} />
-            <div style={{ marginTop: 'var(--settings-space-3)', fontSize: 'var(--settings-text-base)', fontWeight: 'var(--settings-weight-semibold)' }}>
+            <div
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: 'var(--settings-radius-md)',
+                background: emailEnabled ? 'rgba(0, 102, 255, 0.12)' : 'var(--echo-bg-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 'var(--settings-space-4)',
+              }}
+            >
+              <Mail size={24} color={emailEnabled ? 'var(--echo-primary)' : 'var(--echo-text-secondary)'} />
+            </div>
+            <div
+              style={{
+                fontSize: 'var(--settings-text-base)',
+                fontWeight: 'var(--settings-weight-semibold)',
+                color: 'var(--echo-text-primary)',
+                marginBottom: 'var(--settings-space-2)',
+              }}
+            >
               Email Notifications
             </div>
-            <div style={{ fontSize: 'var(--settings-text-sm)', color: 'var(--echo-text-secondary)', marginTop: 'var(--settings-space-1)' }}>
-              {emailEnabled ? 'Enabled' : 'Disabled'}
+            <div
+              style={{
+                fontSize: 'var(--settings-text-sm)',
+                color: emailEnabled ? 'var(--echo-primary)' : 'var(--echo-text-secondary)',
+                fontWeight: 'var(--settings-weight-medium)',
+              }}
+            >
+              {emailEnabled ? '✓ Enabled' : 'Disabled'}
             </div>
           </button>
 
@@ -159,20 +279,60 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
             onClick={() => setSoundEnabled(!soundEnabled)}
             style={{
               padding: 'var(--settings-space-6)',
-              borderRadius: 'var(--settings-radius-md)',
+              borderRadius: 'var(--settings-radius-lg)',
               border: soundEnabled ? '2px solid var(--echo-primary)' : '1px solid var(--echo-border-light)',
-              background: soundEnabled ? 'rgba(0, 102, 255, 0.05)' : 'var(--echo-bg-primary)',
+              background: soundEnabled
+                ? 'linear-gradient(135deg, rgba(0, 102, 255, 0.08), rgba(0, 102, 255, 0.03))'
+                : 'var(--echo-bg-primary)',
               cursor: 'pointer',
-              transition: 'var(--settings-transition-normal)',
+              transition: 'all 0.3s ease',
               textAlign: 'left',
+              position: 'relative' as const,
+              overflow: 'hidden',
+            }}
+            onMouseEnter={(e) => {
+              if (!soundEnabled) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            {soundEnabled ? <Volume2 size={24} color="var(--echo-primary)" /> : <VolumeX size={24} color="var(--echo-text-secondary)" />}
-            <div style={{ marginTop: 'var(--settings-space-3)', fontSize: 'var(--settings-text-base)', fontWeight: 'var(--settings-weight-semibold)' }}>
-              Sounds
+            <div
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: 'var(--settings-radius-md)',
+                background: soundEnabled ? 'rgba(0, 102, 255, 0.12)' : 'var(--echo-bg-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 'var(--settings-space-4)',
+              }}
+            >
+              {soundEnabled ? <Volume2 size={24} color="var(--echo-primary)" /> : <VolumeX size={24} color="var(--echo-text-secondary)" />}
             </div>
-            <div style={{ fontSize: 'var(--settings-text-sm)', color: 'var(--echo-text-secondary)', marginTop: 'var(--settings-space-1)' }}>
-              {soundEnabled ? 'Enabled' : 'Disabled'}
+            <div
+              style={{
+                fontSize: 'var(--settings-text-base)',
+                fontWeight: 'var(--settings-weight-semibold)',
+                color: 'var(--echo-text-primary)',
+                marginBottom: 'var(--settings-space-2)',
+              }}
+            >
+              Notification Sounds
+            </div>
+            <div
+              style={{
+                fontSize: 'var(--settings-text-sm)',
+                color: soundEnabled ? 'var(--echo-primary)' : 'var(--echo-text-secondary)',
+                fontWeight: 'var(--settings-weight-medium)',
+              }}
+            >
+              {soundEnabled ? '✓ Enabled' : 'Disabled'}
             </div>
           </button>
         </div>
@@ -188,36 +348,42 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
           onChange={setMentions}
           label="Mentions"
           description="When someone mentions you in a post or comment"
+          icon={<AtSign size={20} />}
         />
         <ToggleSwitch
           checked={comments}
           onChange={setComments}
           label="Comments"
           description="When someone comments on your posts"
+          icon={<MessageCircle size={20} />}
         />
         <ToggleSwitch
           checked={likes}
           onChange={setLikes}
           label="Likes"
           description="When someone likes your posts or comments"
+          icon={<Heart size={20} />}
         />
         <ToggleSwitch
           checked={follows}
           onChange={setFollows}
           label="New Followers"
           description="When someone follows you"
+          icon={<UserPlus size={20} />}
         />
         <ToggleSwitch
           checked={messages}
           onChange={setMessages}
           label="Direct Messages"
           description="When you receive a new message"
+          icon={<Send size={20} />}
         />
         <ToggleSwitch
           checked={updates}
           onChange={setUpdates}
           label="Product Updates"
           description="News about new features and improvements"
+          icon={<Sparkles size={20} />}
         />
       </SettingsSection>
 
@@ -231,6 +397,7 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
           onChange={setBadges}
           label="Badge Count"
           description="Show unread count on app icon"
+          icon={<Hash size={20} />}
         />
       </SettingsSection>
 
@@ -241,19 +408,28 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
           gap: 'var(--settings-space-4)',
           paddingTop: 'var(--settings-space-8)',
           borderTop: '1px solid var(--echo-border-light)',
+          marginTop: 'var(--settings-space-6)',
         }}
       >
         <button
           style={{
-            padding: '12px 24px',
+            padding: '14px 28px',
             fontSize: 'var(--settings-text-base)',
             fontWeight: 'var(--settings-weight-medium)',
-            borderRadius: 'var(--settings-radius-md)',
-            border: '1px solid var(--echo-border-light)',
-            background: 'transparent',
+            borderRadius: 'var(--settings-radius-lg)',
+            border: '1.5px solid var(--echo-border-medium)',
+            background: 'var(--echo-bg-primary)',
             color: 'var(--echo-text-primary)',
             cursor: 'pointer',
-            transition: 'var(--settings-transition-normal)',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = 'var(--echo-primary)';
+            e.currentTarget.style.background = 'rgba(0, 102, 255, 0.05)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'var(--echo-border-medium)';
+            e.currentTarget.style.background = 'var(--echo-bg-primary)';
           }}
         >
           Reset to Defaults
@@ -261,16 +437,25 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
 
         <button
           style={{
-            padding: '12px 32px',
+            padding: '14px 36px',
             fontSize: 'var(--settings-text-base)',
             fontWeight: 'var(--settings-weight-semibold)',
-            borderRadius: 'var(--settings-radius-md)',
+            borderRadius: 'var(--settings-radius-lg)',
             border: 'none',
             background: 'linear-gradient(135deg, var(--echo-primary), var(--echo-accent))',
             color: 'white',
             cursor: 'pointer',
-            transition: 'var(--settings-transition-normal)',
+            transition: 'all 0.2s ease',
             marginLeft: 'auto',
+            boxShadow: '0 4px 12px rgba(0, 102, 255, 0.25)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 102, 255, 0.35)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 102, 255, 0.25)';
           }}
         >
           Save Changes
