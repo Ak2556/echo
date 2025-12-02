@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SettingsSubPage, SettingsSection } from './SettingsSubPage';
+import { useSettings } from '@/contexts/SettingsContext';
 import {
   Bell,
   BellOff,
@@ -14,7 +15,9 @@ import {
   UserPlus,
   Send,
   Sparkles,
-  Hash
+  Hash,
+  Check,
+  X,
 } from 'lucide-react';
 
 interface ToggleSwitchProps {
@@ -122,18 +125,31 @@ function ToggleSwitch({ checked, onChange, label, description, icon }: ToggleSwi
 }
 
 export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
-  const [pushEnabled, setPushEnabled] = useState(true);
-  const [emailEnabled, setEmailEnabled] = useState(true);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [badges, setBadges] = useState(true);
+  const { settings, updateSetting, resetSettings } = useSettings();
+  const [showToast, setShowToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
 
-  // Notification types
-  const [mentions, setMentions] = useState(true);
-  const [comments, setComments] = useState(true);
-  const [likes, setLikes] = useState(false);
-  const [follows, setFollows] = useState(true);
-  const [messages, setMessages] = useState(true);
-  const [updates, setUpdates] = useState(false);
+  // Track if settings have changed
+  useEffect(() => {
+    setHasChanges(true);
+  }, [settings.pushNotifications, settings.emailNotifications, settings.soundEffects]);
+
+  const handleReset = () => {
+    if (confirm('Are you sure you want to reset all notification settings to defaults?')) {
+      // Reset only notification-related settings
+      updateSetting('pushNotifications', false);
+      updateSetting('emailNotifications', true);
+      updateSetting('soundEffects', true);
+      setShowToast({ message: 'Settings reset to defaults', type: 'success' });
+      setHasChanges(false);
+    }
+  };
+
+  const handleSave = () => {
+    // Settings are auto-saved via context, just show confirmation
+    setShowToast({ message: 'Settings saved successfully!', type: 'success' });
+    setHasChanges(false);
+  };
 
   return (
     <SettingsSubPage
@@ -154,12 +170,12 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
           }}
         >
           <button
-            onClick={() => setPushEnabled(!pushEnabled)}
+            onClick={() => updateSetting('pushNotifications', !settings.pushNotifications)}
             style={{
               padding: 'var(--settings-space-6)',
               borderRadius: 'var(--settings-radius-lg)',
-              border: pushEnabled ? '2px solid var(--echo-primary)' : '1px solid var(--echo-border-light)',
-              background: pushEnabled
+              border: settings.pushNotifications ? '2px solid var(--echo-primary)' : '1px solid var(--echo-border-light)',
+              background: settings.pushNotifications
                 ? 'linear-gradient(135deg, rgba(0, 102, 255, 0.08), rgba(0, 102, 255, 0.03))'
                 : 'var(--echo-bg-primary)',
               cursor: 'pointer',
@@ -169,7 +185,7 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
               overflow: 'hidden',
             }}
             onMouseEnter={(e) => {
-              if (!pushEnabled) {
+              if (!settings.pushNotifications) {
                 e.currentTarget.style.transform = 'translateY(-2px)';
                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
               }
@@ -184,14 +200,14 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
                 width: '48px',
                 height: '48px',
                 borderRadius: 'var(--settings-radius-md)',
-                background: pushEnabled ? 'rgba(0, 102, 255, 0.12)' : 'var(--echo-bg-secondary)',
+                background: settings.pushNotifications ? 'rgba(0, 102, 255, 0.12)' : 'var(--echo-bg-secondary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: 'var(--settings-space-4)',
               }}
             >
-              {pushEnabled ? <Bell size={24} color="var(--echo-primary)" /> : <BellOff size={24} color="var(--echo-text-secondary)" />}
+              {settings.pushNotifications ? <Bell size={24} color="var(--echo-primary)" /> : <BellOff size={24} color="var(--echo-text-secondary)" />}
             </div>
             <div
               style={{
@@ -206,11 +222,11 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
             <div
               style={{
                 fontSize: 'var(--settings-text-sm)',
-                color: pushEnabled ? 'var(--echo-primary)' : 'var(--echo-text-secondary)',
+                color: settings.pushNotifications ? 'var(--echo-primary)' : 'var(--echo-text-secondary)',
                 fontWeight: 'var(--settings-weight-medium)',
               }}
             >
-              {pushEnabled ? '✓ Enabled' : 'Disabled'}
+              {settings.pushNotifications ? '✓ Enabled' : 'Disabled'}
             </div>
           </button>
 
