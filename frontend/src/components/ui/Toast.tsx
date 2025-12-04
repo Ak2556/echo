@@ -164,10 +164,43 @@ const ToastItem = memo(function ToastItem({
   onRemove,
   position,
 }: ToastItemProps) {
+  const [progress, setProgress] = React.useState(100);
+  const [isPaused, setIsPaused] = React.useState(false);
+  const timerRef = React.useRef<NodeJS.Timeout>();
+  const startTimeRef = React.useRef<number>(Date.now());
+  const remainingTimeRef = React.useRef<number>(toast.duration || 5000);
+
   const isRight = position.includes('right');
   const isLeft = position.includes('left');
 
   const slideDirection = isRight ? 100 : isLeft ? -100 : 0;
+
+  // Progress bar animation
+  React.useEffect(() => {
+    if (toast.duration === 0) return;
+
+    const duration = toast.duration || 5000;
+    const interval = 50;
+
+    const tick = () => {
+      if (!isPaused) {
+        const elapsed = Date.now() - startTimeRef.current;
+        const newProgress = Math.max(0, 100 - (elapsed / duration) * 100);
+        setProgress(newProgress);
+
+        if (newProgress > 0) {
+          timerRef.current = setTimeout(tick, interval);
+        }
+      }
+    };
+
+    startTimeRef.current = Date.now();
+    tick();
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [toast.duration, isPaused]);
 
   const typeStyles = {
     success: {
@@ -201,18 +234,45 @@ const ToastItem = memo(function ToastItem({
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: slideDirection, scale: 0.95 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: slideDirection, scale: 0.95 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
+      initial={{ opacity: 0, x: slideDirection, scale: 0.95, y: -20 }}
+      animate={{ opacity: 1, x: 0, scale: 1, y: 0 }}
+      exit={{ opacity: 0, x: slideDirection, scale: 0.9, y: -10 }}
+      transition={{
+        duration: 0.4,
+        ease: [0.22, 1, 0.36, 1] // Apple easing
+      }}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
       className={cn(
-        'relative max-w-sm w-full rounded-lg border p-4 shadow-lg',
+        'relative max-w-sm w-full rounded-lg border p-4 shadow-lg backdrop-blur-sm',
         style.bg,
         style.border
       )}
     >
-      <div className="flex items-start space-x-3">
-        <Icon className={cn('w-5 h-5 mt-0.5 flex-shrink-0', style.iconColor)} />
+      {/* Progress bar */}
+      {toast.duration !== 0 && (
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700 rounded-t-lg overflow-hidden">
+          <motion.div
+            className={cn('h-full', style.iconColor.replace('text-', 'bg-'))}
+            initial={{ width: '100%' }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.1, ease: 'linear' }}
+          />
+        </div>
+      )}
+
+      <div className="flex items-start space-x-3 mt-1">
+        <motion.div
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{
+            delay: 0.1,
+            duration: 0.3,
+            ease: [0.22, 1, 0.36, 1]
+          }}
+        >
+          <Icon className={cn('w-5 h-5 mt-0.5 flex-shrink-0', style.iconColor)} />
+        </motion.div>
 
         <div className="flex-1 min-w-0">
           {toast.title && (

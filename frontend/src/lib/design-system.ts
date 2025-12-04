@@ -37,16 +37,31 @@ export const breakpoints = {
 };
 
 export const duration = {
+  instant: '100ms',
   fast: '150ms',
-  normal: '250ms',
-  slow: '350ms',
+  normal: '200ms',
+  slow: '300ms',
+  slower: '400ms',
 };
 
 export const easing = {
+  // Premium easing curves inspired by Apple, Nothing, and Linear
+  apple: 'cubic-bezier(0.22, 1, 0.36, 1)',
+  nothing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  linear: 'cubic-bezier(0.16, 1, 0.3, 1)',
+  standard: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  // Legacy easing for backwards compatibility
   ease: 'ease',
   easeIn: 'ease-in',
   easeOut: 'ease-out',
   easeInOut: 'ease-in-out',
+};
+
+export const interaction = {
+  hoverScale: 1.02,
+  hoverY: -2,
+  tapScale: 0.98,
+  springConfig: { tension: 300, friction: 30 },
 };
 
 export const zIndex = {

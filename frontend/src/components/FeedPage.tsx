@@ -12,6 +12,8 @@ import { useRipple, useHaptic, useInView } from '@/hooks/useInteractions';
 import PollCard from './PollCard';
 import CommentDropdown from './CommentDropdown';
 import { useThemeColors } from '@/hooks/useThemeColors';
+import { useGSAP, gsap } from '@/hooks/useGSAP';
+import { ANIMATION } from '@/lib/animation-constants';
 
 // Stories data for Feed
 const feedStories = [
@@ -789,6 +791,63 @@ export default function FeedPage() {
   // Interaction hooks
   const haptic = useHaptic();
 
+  // GSAP scroll-reveal animation for posts
+  useGSAP(() => {
+    const postElements = document.querySelectorAll('.feed-post');
+
+    postElements.forEach((post) => {
+      gsap.fromTo(
+        post,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: ANIMATION.easing.apple,
+          scrollTrigger: {
+            trigger: post as gsap.DOMTarget,
+            start: 'top 90%',
+            once: true,
+          },
+        }
+      );
+    });
+  }, [posts]); // Re-run when posts change
+
+  // GSAP hover animation for story avatars
+  useGSAP(() => {
+    const storyElements = document.querySelectorAll('.story-item');
+
+    storyElements.forEach((story) => {
+      const element = story as HTMLElement;
+
+      const handleMouseEnter = () => {
+        gsap.to(element, {
+          scale: 1.1,
+          duration: ANIMATION.hover.duration,
+          ease: ANIMATION.easing.apple,
+        });
+      };
+
+      const handleMouseLeave = () => {
+        gsap.to(element, {
+          scale: 1,
+          duration: 0.2,
+          ease: ANIMATION.easing.apple,
+        });
+      };
+
+      element.addEventListener('mouseenter', handleMouseEnter);
+      element.addEventListener('mouseleave', handleMouseLeave);
+
+      // Cleanup
+      return () => {
+        element.removeEventListener('mouseenter', handleMouseEnter);
+        element.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    });
+  }, []); // Run once on mount
+
   const removeMedia = (index: number) => {
     setUploadedMedia((prev) => prev.filter((_, i) => i !== index));
   };
@@ -1503,6 +1562,7 @@ export default function FeedPage() {
             {feedStories.map((story) => (
               <div
                 key={story.id}
+                className="story-item"
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -1510,6 +1570,7 @@ export default function FeedPage() {
                   gap: '0.4rem',
                   flexShrink: 0,
                   cursor: 'pointer',
+                  transition: 'transform 150ms cubic-bezier(0.22, 1, 0.36, 1)',
                 }}
               >
                 <div

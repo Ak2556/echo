@@ -1,13 +1,19 @@
 import type { Metadata } from 'next';
+import '@/styles/global-typography.css';
+import '@/styles/global-readability.css';
+import '@/styles/global-hover-fix.css';
 import './globals.css';
+import '@/styles/minimal-design-system.css';
 import '@/styles/echo-brand.css';
 import '@/styles/echo-settings.css';
 import '@/styles/enhanced-dark-mode.css';
 import '@/styles/social-media-hub.css';
 import '@/styles/design-system.css';
+import '@/styles/global-ui-upgrade.css';
+import '@/styles/global-accessibility.css';
+import '@/styles/global-theme-colors.css';
 import Background3D from '@/components/Background3D';
-import { ThemeProvider } from '@/contexts/ThemeContext';
-import { EnhancedThemeProvider } from '@/contexts/EnhancedThemeContext';
+import { ModernThemeProvider } from '@/contexts/ModernThemeContext';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import ClientLanguageProvider from '@/components/ClientLanguageProvider';
 import { UserProvider } from '@/contexts/UserContext';
@@ -23,7 +29,6 @@ import MonitoringDashboard from '@/components/MonitoringDashboard';
 import AnalyticsInit from '@/app/analytics-init';
 import AccessibilityToggle from '@/components/AccessibilityToggle';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import ThemeWrapper from '@/components/ThemeWrapper';
 import { Suspense } from 'react';
 
 // Force dynamic rendering for all pages to prevent SSR/static generation errors with context providers
@@ -96,57 +101,53 @@ export default function RootLayout({
         <title>Echo</title>
       </head>
       <body>
-        <AccessibilityProvider>
-          <QueryProvider>
-            <EnhancedThemeProvider>
-              <ThemeProvider>
-                <ThemeWrapper>
-                  <BackgroundProvider>
-                  <SettingsProvider>
-                    <ToastProvider>
-                      <UserProvider>
-                        <ClientLanguageProvider>
-                          <div
-                            id="bg3d"
-                            className="background-3d"
-                            aria-hidden="true"
-                          >
-                            <Background3D />
-                          </div>
-                          <a
-                            href="#main"
-                            className="skip-link"
-                            style={{
-                              position: 'absolute',
-                              left: '-9999px',
-                              top: 'auto',
-                              width: '1px',
-                              height: '1px',
-                              overflow: 'hidden',
-                            }}
-                          >
-                            Skip to content
-                          </a>
-                          {children}
-                          <ToastContainer />
-                          <AnalyticsInit />
-                          <PWAInit />
-                          <PWAInstallPrompt />
-                          <PWAUpdateNotification />
-                          <ErrorBoundary>
-                            <MonitoringDashboard />
-                          </ErrorBoundary>
-                          <AccessibilityToggle />
-                        </ClientLanguageProvider>
-                      </UserProvider>
-                    </ToastProvider>
-                  </SettingsProvider>
-                  </BackgroundProvider>
-                </ThemeWrapper>
-              </ThemeProvider>
-            </EnhancedThemeProvider>
-          </QueryProvider>
-        </AccessibilityProvider>
+        <ModernThemeProvider>
+          <AccessibilityProvider>
+            <QueryProvider>
+              <BackgroundProvider>
+                <SettingsProvider>
+                  <ToastProvider>
+                    <UserProvider>
+                      <ClientLanguageProvider>
+                        <div
+                          id="bg3d"
+                          className="background-3d"
+                          aria-hidden="true"
+                        >
+                          <Background3D />
+                        </div>
+                        <a
+                          href="#main"
+                          className="skip-link"
+                          style={{
+                            position: 'absolute',
+                            left: '-9999px',
+                            top: 'auto',
+                            width: '1px',
+                            height: '1px',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          Skip to content
+                        </a>
+                        {children}
+                        <ToastContainer />
+                        <AnalyticsInit />
+                        <PWAInit />
+                        <PWAInstallPrompt />
+                        <PWAUpdateNotification />
+                        <ErrorBoundary>
+                          <MonitoringDashboard />
+                        </ErrorBoundary>
+                        <AccessibilityToggle />
+                      </ClientLanguageProvider>
+                    </UserProvider>
+                  </ToastProvider>
+                </SettingsProvider>
+              </BackgroundProvider>
+            </QueryProvider>
+          </AccessibilityProvider>
+        </ModernThemeProvider>
       </body>
     </html>
   );

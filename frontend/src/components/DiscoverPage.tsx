@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useThemeColors } from '@/hooks/useThemeColors';
+import { useGSAP, gsap } from '@/hooks/useGSAP';
+import { ANIMATION } from '@/lib/animation-constants';
 
 const categories = [
   { id: 'all', name: 'All', icon: '🌟' },
@@ -507,6 +509,77 @@ export default function DiscoverPage() {
   const storyTimerRef = useRef<NodeJS.Timeout | null>(null);
   const echoTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Animation refs
+  const headerRef = useRef<HTMLDivElement>(null);
+  const storiesRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  // GSAP animations for page entrance
+  useGSAP(() => {
+    const tl = gsap.timeline();
+
+    // Header animation
+    if (headerRef.current) {
+      tl.fromTo(
+        headerRef.current,
+        { opacity: 0, y: -20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: ANIMATION.easing.apple,
+        }
+      );
+    }
+
+    // Stories animation
+    if (storiesRef.current) {
+      tl.fromTo(
+        storiesRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: ANIMATION.easing.apple,
+        },
+        '-=0.3'
+      );
+    }
+
+    // Search bar animation
+    if (searchRef.current) {
+      tl.fromTo(
+        searchRef.current,
+        { opacity: 0, scale: 0.95 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.4,
+          ease: ANIMATION.easing.apple,
+        },
+        '-=0.2'
+      );
+    }
+
+    // Animate creator cards with stagger
+    const creatorCards = document.querySelectorAll('.creator-card');
+    if (creatorCards.length > 0) {
+      gsap.fromTo(
+        creatorCards,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          stagger: 0.05,
+          ease: ANIMATION.easing.apple,
+          delay: 0.3,
+        }
+      );
+    }
+  }, []);
+
   // Story progress effect
   useEffect(() => {
     if (viewingStory !== null && !isPaused) {
@@ -671,35 +744,41 @@ export default function DiscoverPage() {
       style={{
         minHeight: '100vh',
         background: colorMode === 'dark' ? '#000' : '#f8f9fa',
-        padding: '2rem 1rem',
+        padding: '2rem 1.5rem',
+        paddingBottom: '5rem',
       }}
     >
       <div
         className="container"
-        style={{ maxWidth: '1400px', margin: '0 auto' }}
+        style={{ maxWidth: '1200px', margin: '0 auto', width: '100%' }}
       >
         {/* Header */}
-        <div style={{ marginBottom: '2rem' }}>
+        <div ref={headerRef} style={{ marginBottom: '2rem' }}>
           <h1
             style={{
               fontSize: '2.5rem',
               fontWeight: 700,
               marginBottom: '0.5rem',
               background:
-                'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)',
+                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
             }}
           >
             Discover Amazing Creators
           </h1>
-          <p style={{ color: 'var(--muted)', fontSize: '1.1rem' }}>
+          <p style={{
+            color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+            fontSize: '1.1rem'
+          }}>
             Find and follow talented creators from around the world
           </p>
         </div>
 
         {/* Stories Carousel */}
         <div
+          ref={storiesRef}
           style={{
             background:
               colorMode === 'dark'
@@ -737,7 +816,7 @@ export default function DiscoverPage() {
                   height: '68px',
                   borderRadius: '50%',
                   background:
-                    'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)',
+                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -749,7 +828,10 @@ export default function DiscoverPage() {
               >
                 +
               </div>
-              <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
+              <span style={{
+                fontSize: '0.75rem',
+                color: colorMode === 'dark' ? '#9ca3af' : '#6b7280'
+              }}>
                 Add Story
               </span>
             </div>
@@ -774,9 +856,9 @@ export default function DiscoverPage() {
                     borderRadius: '50%',
                     padding: '3px',
                     background: story.isLive
-                      ? 'linear-gradient(135deg, colors.status.error 0%, colors.brand.secondary 100%)'
+                      ? 'linear-gradient(135deg, #ef4444 0%, #f97316 100%)'
                       : story.hasNew
-                        ? 'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)'
+                        ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
                         : colorMode === 'dark'
                           ? '#333'
                           : '#e0e0e0',
@@ -802,7 +884,7 @@ export default function DiscoverPage() {
                         left: '50%',
                         transform: 'translateX(-50%)',
                         background:
-                          'linear-gradient(135deg, colors.status.error 0%, colors.brand.secondary 100%)',
+                          'linear-gradient(135deg, #ef4444 0%, #f97316 100%)',
                         color: 'white',
                         fontSize: '0.6rem',
                         fontWeight: 700,
@@ -818,7 +900,9 @@ export default function DiscoverPage() {
                 <span
                   style={{
                     fontSize: '0.75rem',
-                    color: story.hasNew ? 'var(--fg)' : 'var(--muted)',
+                    color: story.hasNew
+                      ? (colorMode === 'dark' ? '#fff' : '#000')
+                      : (colorMode === 'dark' ? '#9ca3af' : '#6b7280'),
                     maxWidth: '68px',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -834,6 +918,7 @@ export default function DiscoverPage() {
 
         {/* Search and Filter */}
         <div
+          ref={searchRef}
           style={{
             background: colorMode === 'dark' ? '#1a1a1a' : '#fff',
             padding: '1.5rem',
@@ -891,17 +976,19 @@ export default function DiscoverPage() {
                 padding: '0.75rem 1.5rem',
                 background:
                   activeTab === tab.id
-                    ? 'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)'
+                    ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
                     : colorMode === 'dark'
                       ? 'rgba(26, 26, 26, 0.8)'
                       : 'rgba(255, 255, 255, 0.9)',
                 border: `2px solid ${activeTab === tab.id ? 'transparent' : colorMode === 'dark' ? '#333' : '#e0e0e0'}`,
                 borderRadius: '999px',
-                color: activeTab === tab.id ? 'white' : 'var(--fg)',
+                color: activeTab === tab.id
+                  ? 'white'
+                  : (colorMode === 'dark' ? '#e5e7eb' : '#374151'),
                 fontSize: '0.95rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                transition: 'all 0.3s',
+                transition: 'all 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
                 whiteSpace: 'nowrap',
                 boxShadow:
                   activeTab === tab.id
@@ -934,12 +1021,13 @@ export default function DiscoverPage() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem',
+                    color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                   }}
                 >
                   <span
                     style={{
                       background:
-                        'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)',
+                        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                     }}
@@ -952,7 +1040,7 @@ export default function DiscoverPage() {
                   style={{
                     background: 'transparent',
                     border: 'none',
-                    color: 'var(--accent)',
+                    color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
                     fontWeight: 600,
                     cursor: 'pointer',
                     fontSize: '0.9rem',
@@ -978,7 +1066,7 @@ export default function DiscoverPage() {
                     height: '280px',
                     borderRadius: '16px',
                     background:
-                      'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)',
+                      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -1126,6 +1214,7 @@ export default function DiscoverPage() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
+                  color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                 }}
               >
                 ✨ Recommended For You
@@ -1180,7 +1269,7 @@ export default function DiscoverPage() {
                           <div
                             style={{
                               fontSize: '0.85rem',
-                              color: 'var(--muted)',
+                              color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
                             }}
                           >
                             {item.username}
@@ -1188,7 +1277,7 @@ export default function DiscoverPage() {
                           <div
                             style={{
                               fontSize: '0.75rem',
-                              color: 'var(--accent)',
+                              color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
                               marginTop: '0.25rem',
                             }}
                           >
@@ -1198,7 +1287,7 @@ export default function DiscoverPage() {
                         <button
                           style={{
                             background:
-                              'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)',
+                              'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                             border: 'none',
                             color: 'white',
                             padding: '0.5rem 1rem',
@@ -1241,7 +1330,7 @@ export default function DiscoverPage() {
                           <div
                             style={{
                               fontSize: '0.85rem',
-                              color: 'var(--muted)',
+                              color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
                             }}
                           >
                             {item.posts} posts
@@ -1252,7 +1341,7 @@ export default function DiscoverPage() {
                             background:
                               colorMode === 'dark' ? '#333' : '#f0f0f0',
                             border: 'none',
-                            color: 'var(--fg)',
+                            color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                             padding: '0.5rem 1rem',
                             borderRadius: '8px',
                             fontWeight: 600,
@@ -1267,7 +1356,7 @@ export default function DiscoverPage() {
                     <div
                       style={{
                         fontSize: '0.75rem',
-                        color: 'var(--accent)',
+                        color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
                         marginTop: '0.75rem',
                         paddingTop: '0.75rem',
                         borderTop: `1px solid ${colorMode === 'dark' ? '#333' : '#e0e0e0'}`,
@@ -1297,6 +1386,7 @@ export default function DiscoverPage() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem',
+                    color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                   }}
                 >
                   📅 Upcoming Events
@@ -1305,7 +1395,7 @@ export default function DiscoverPage() {
                   style={{
                     background: 'transparent',
                     border: 'none',
-                    color: 'var(--accent)',
+                    color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
                     fontWeight: 600,
                     cursor: 'pointer',
                     fontSize: '0.9rem',
@@ -1376,6 +1466,7 @@ export default function DiscoverPage() {
                           fontSize: '1.1rem',
                           fontWeight: 700,
                           marginBottom: '0.5rem',
+                          color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                         }}
                       >
                         {event.title}
@@ -1383,7 +1474,7 @@ export default function DiscoverPage() {
                       <div
                         style={{
                           fontSize: '0.85rem',
-                          color: 'var(--muted)',
+                          color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
                           marginBottom: '0.75rem',
                         }}
                       >
@@ -1398,14 +1489,14 @@ export default function DiscoverPage() {
                       >
                         <div style={{ fontSize: '0.85rem' }}>
                           <span
-                            style={{ color: 'var(--accent)', fontWeight: 600 }}
+                            style={{ color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed', fontWeight: 600 }}
                           >
                             {event.date}
                           </span>{' '}
                           • {event.time}
                         </div>
                         <div
-                          style={{ fontSize: '0.8rem', color: 'var(--muted)' }}
+                          style={{ fontSize: '0.8rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}
                         >
                           {event.attendees.toLocaleString()} interested
                         </div>
@@ -1431,6 +1522,7 @@ export default function DiscoverPage() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
+                  color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                 }}
               >
                 <span
@@ -1483,7 +1575,7 @@ export default function DiscoverPage() {
                         right: 0,
                         height: '4px',
                         background:
-                          'linear-gradient(90deg, colors.status.error 0%, colors.brand.secondary 100%)',
+                          'linear-gradient(90deg, #ef4444 0%, #f97316 100%)',
                       }}
                     ></div>
                     <div
@@ -1528,7 +1620,7 @@ export default function DiscoverPage() {
                           {creator.name}
                         </div>
                         <div
-                          style={{ fontSize: '0.85rem', color: 'var(--muted)' }}
+                          style={{ fontSize: '0.85rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}
                         >
                           {creator.username}
                         </div>
@@ -1555,6 +1647,7 @@ export default function DiscoverPage() {
                         fontWeight: 600,
                         marginBottom: '0.75rem',
                         lineHeight: 1.4,
+                        color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                       }}
                     >
                       {creator.title}
@@ -1581,7 +1674,7 @@ export default function DiscoverPage() {
                       <button
                         style={{
                           background:
-                            'linear-gradient(135deg, colors.status.error 0%, colors.brand.secondary 100%)',
+                            'linear-gradient(135deg, #ef4444 0%, #f97316 100%)',
                           border: 'none',
                           color: 'white',
                           padding: '0.6rem 1.25rem',
@@ -1610,6 +1703,7 @@ export default function DiscoverPage() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
+                  color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                 }}
               >
                 📅 Coming Up Next
@@ -1656,12 +1750,13 @@ export default function DiscoverPage() {
                             fontSize: '1rem',
                             fontWeight: 700,
                             marginBottom: '0.25rem',
+                            color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                           }}
                         >
                           {event.title}
                         </h3>
                         <div
-                          style={{ fontSize: '0.85rem', color: 'var(--muted)' }}
+                          style={{ fontSize: '0.85rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}
                         >
                           by {event.host}
                         </div>
@@ -1669,7 +1764,7 @@ export default function DiscoverPage() {
                       <span
                         style={{
                           background:
-                            'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)',
+                            'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                           color: 'white',
                           padding: '0.35rem 0.75rem',
                           borderRadius: '8px',
@@ -1695,7 +1790,7 @@ export default function DiscoverPage() {
                         style={{
                           background: colorMode === 'dark' ? '#333' : '#f0f0f0',
                           border: 'none',
-                          color: 'var(--fg)',
+                          color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                           padding: '0.5rem 1rem',
                           borderRadius: '8px',
                           fontWeight: 600,
@@ -1732,7 +1827,7 @@ export default function DiscoverPage() {
                     padding: '0.5rem 1.25rem',
                     background:
                       selectedCategory === cat.id
-                        ? 'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)'
+                        ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
                         : colorMode === 'dark'
                           ? '#1a1a1a'
                           : '#fff',
@@ -1780,13 +1875,14 @@ export default function DiscoverPage() {
               {filteredCreators.map((creator) => (
                 <div
                   key={creator.id}
+                  className="creator-card"
                   style={{
                     background: colorMode === 'dark' ? '#1a1a1a' : '#fff',
                     border: `1px solid ${colorMode === 'dark' ? '#333' : '#e0e0e0'}`,
                     borderRadius: '16px',
                     padding: '1.5rem',
                     textAlign: 'center',
-                    transition: 'all 0.3s',
+                    transition: 'all 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
                     cursor: 'pointer',
                   }}
                   onMouseEnter={(e) => {
@@ -1808,7 +1904,7 @@ export default function DiscoverPage() {
                       borderRadius: '50%',
                       objectFit: 'cover',
                       margin: '0 auto 1rem',
-                      border: '4px solid var(--accent)',
+                      border: `4px solid ${colorMode === 'dark' ? '#a78bfa' : '#7c3aed'}`,
                     }}
                   />
                   <h3
@@ -1820,12 +1916,13 @@ export default function DiscoverPage() {
                       gap: '0.5rem',
                       fontSize: '1.25rem',
                       fontWeight: 700,
+                      color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                     }}
                   >
                     {creator.name}
                     {creator.verified && (
                       <span
-                        style={{ color: 'var(--accent)', fontSize: '1.1rem' }}
+                        style={{ color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed', fontSize: '1.1rem' }}
                       >
                         ✓
                       </span>
@@ -1833,7 +1930,7 @@ export default function DiscoverPage() {
                   </h3>
                   <p
                     style={{
-                      color: 'var(--muted)',
+                      color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
                       margin: '0 0 0.75rem',
                       fontSize: '0.9rem',
                     }}
@@ -1842,7 +1939,7 @@ export default function DiscoverPage() {
                   </p>
                   <p
                     style={{
-                      color: 'var(--muted)',
+                      color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
                       margin: '0 0 0.5rem',
                       fontSize: '0.85rem',
                     }}
@@ -1865,13 +1962,13 @@ export default function DiscoverPage() {
                         style={{
                           fontSize: '1.25rem',
                           fontWeight: 700,
-                          color: 'var(--accent)',
+                          color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
                         }}
                       >
                         {creator.followers}
                       </div>
                       <div
-                        style={{ fontSize: '0.75rem', color: 'var(--muted)' }}
+                        style={{ fontSize: '0.75rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}
                       >
                         Followers
                       </div>
@@ -1881,13 +1978,13 @@ export default function DiscoverPage() {
                         style={{
                           fontSize: '1.25rem',
                           fontWeight: 700,
-                          color: 'var(--accent)',
+                          color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
                         }}
                       >
                         {creator.posts}
                       </div>
                       <div
-                        style={{ fontSize: '0.75rem', color: 'var(--muted)' }}
+                        style={{ fontSize: '0.75rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}
                       >
                         Posts
                       </div>
@@ -1913,15 +2010,15 @@ export default function DiscoverPage() {
                       width: '100%',
                       padding: '0.75rem 1.5rem',
                       background: followedCreators.includes(creator.id)
-                        ? 'var(--muted)'
-                        : 'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)',
+                        ? (colorMode === 'dark' ? '#374151' : '#9ca3af')
+                        : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                       color: 'white',
                       border: 'none',
                       borderRadius: '12px',
                       cursor: 'pointer',
                       fontWeight: 600,
                       fontSize: '1rem',
-                      transition: 'all 0.2s',
+                      transition: 'all 0.2s cubic-bezier(0.22, 1, 0.36, 1)',
                     }}
                     onMouseEnter={(e) => {
                       if (!followedCreators.includes(creator.id)) {
@@ -1978,7 +2075,7 @@ export default function DiscoverPage() {
                   style={{
                     fontSize: '2rem',
                     fontWeight: 700,
-                    color: 'var(--accent)',
+                    color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
                     marginBottom: '0.75rem',
                   }}
                 >
@@ -1996,7 +2093,7 @@ export default function DiscoverPage() {
                     <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>
                       {hashtag.posts}
                     </div>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>
+                    <div style={{ fontSize: '0.85rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}>
                       Posts
                     </div>
                   </div>
@@ -2018,7 +2115,7 @@ export default function DiscoverPage() {
                     width: '100%',
                     padding: '0.75rem',
                     background: 'transparent',
-                    color: 'var(--accent)',
+                    color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
                     border: '2px solid var(--accent)',
                     borderRadius: '12px',
                     cursor: 'pointer',
@@ -2026,12 +2123,12 @@ export default function DiscoverPage() {
                     transition: 'all 0.2s',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'var(--accent)';
+                    e.currentTarget.style.background = colorMode === 'dark' ? '#a78bfa' : '#7c3aed';
                     e.currentTarget.style.color = '#fff';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = 'var(--accent)';
+                    e.currentTarget.style.color = colorMode === 'dark' ? '#a78bfa' : '#7c3aed';
                   }}
                 >
                   Explore Posts
@@ -2470,7 +2567,7 @@ export default function DiscoverPage() {
                   fontSize: '1.5rem',
                   fontWeight: 700,
                   background:
-                    'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)',
+                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}
@@ -2488,7 +2585,7 @@ export default function DiscoverPage() {
                   border: 'none',
                   fontSize: '1.5rem',
                   cursor: 'pointer',
-                  color: 'var(--muted)',
+                  color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
                 }}
               >
                 x
@@ -2539,10 +2636,10 @@ export default function DiscoverPage() {
                   }}
                 >
                   <span style={{ fontSize: '2.5rem' }}>🖼️</span>
-                  <span style={{ fontWeight: 600, color: 'var(--fg)' }}>
+                  <span style={{ fontWeight: 600, color: colorMode === 'dark' ? '#f3f4f6' : '#111827' }}>
                     Choose from Gallery
                   </span>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>
+                  <span style={{ fontSize: '0.8rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}>
                     Select photo or video
                   </span>
                 </button>
@@ -2582,10 +2679,10 @@ export default function DiscoverPage() {
                   }}
                 >
                   <span style={{ fontSize: '2.5rem' }}>📸</span>
-                  <span style={{ fontWeight: 600, color: 'var(--fg)' }}>
+                  <span style={{ fontWeight: 600, color: colorMode === 'dark' ? '#f3f4f6' : '#111827' }}>
                     Take Photo
                   </span>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>
+                  <span style={{ fontSize: '0.8rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}>
                     Use camera
                   </span>
                 </button>
@@ -2644,7 +2741,7 @@ export default function DiscoverPage() {
                       colorMode === 'dark'
                         ? 'rgba(30, 20, 50, 0.8)'
                         : 'rgba(255, 255, 255, 0.9)',
-                    color: 'var(--fg)',
+                    color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                     resize: 'none',
                     height: '80px',
                     fontSize: '0.9rem',
@@ -2661,7 +2758,7 @@ export default function DiscoverPage() {
                       borderRadius: '12px',
                       border: `1px solid ${colorMode === 'dark' ? 'rgba(167, 139, 250, 0.3)' : 'rgba(139, 92, 246, 0.2)'}`,
                       background: 'transparent',
-                      color: 'var(--fg)',
+                      color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                       fontWeight: 600,
                       cursor: 'pointer',
                     }}
@@ -2682,7 +2779,7 @@ export default function DiscoverPage() {
                       borderRadius: '12px',
                       border: 'none',
                       background:
-                        'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)',
+                        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                       color: 'white',
                       fontWeight: 600,
                       cursor: 'pointer',
@@ -2737,7 +2834,7 @@ export default function DiscoverPage() {
                   fontSize: '1.5rem',
                   fontWeight: 700,
                   background:
-                    'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)',
+                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}
@@ -2755,7 +2852,7 @@ export default function DiscoverPage() {
                   border: 'none',
                   fontSize: '1.5rem',
                   cursor: 'pointer',
-                  color: 'var(--muted)',
+                  color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
                 }}
               >
                 x
@@ -2804,10 +2901,10 @@ export default function DiscoverPage() {
                   }}
                 >
                   <span style={{ fontSize: '2.5rem' }}>🎬</span>
-                  <span style={{ fontWeight: 600, color: 'var(--fg)' }}>
+                  <span style={{ fontWeight: 600, color: colorMode === 'dark' ? '#f3f4f6' : '#111827' }}>
                     Choose Video
                   </span>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>
+                  <span style={{ fontSize: '0.8rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}>
                     Select from gallery
                   </span>
                 </button>
@@ -2846,10 +2943,10 @@ export default function DiscoverPage() {
                   }}
                 >
                   <span style={{ fontSize: '2.5rem' }}>🎥</span>
-                  <span style={{ fontWeight: 600, color: 'var(--fg)' }}>
+                  <span style={{ fontWeight: 600, color: colorMode === 'dark' ? '#f3f4f6' : '#111827' }}>
                     Record Video
                   </span>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>
+                  <span style={{ fontSize: '0.8rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}>
                     Use camera
                   </span>
                 </button>
@@ -2869,11 +2966,11 @@ export default function DiscoverPage() {
                   <p
                     style={{
                       fontSize: '0.8rem',
-                      color: 'var(--muted)',
+                      color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
                       margin: 0,
                     }}
                   >
-                    <strong style={{ color: 'var(--accent)' }}>Tips:</strong>{' '}
+                    <strong style={{ color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed' }}>Tips:</strong>{' '}
                     Best echoes are 15-60 seconds. Vertical videos work best!
                   </p>
                 </div>
@@ -2920,7 +3017,7 @@ export default function DiscoverPage() {
                       colorMode === 'dark'
                         ? 'rgba(30, 20, 50, 0.8)'
                         : 'rgba(255, 255, 255, 0.9)',
-                    color: 'var(--fg)',
+                    color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                     resize: 'none',
                     height: '80px',
                     fontSize: '0.9rem',
@@ -2943,7 +3040,7 @@ export default function DiscoverPage() {
                           colorMode === 'dark'
                             ? 'rgba(167, 139, 250, 0.2)'
                             : 'rgba(139, 92, 246, 0.1)',
-                        color: 'var(--accent)',
+                        color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
                         fontSize: '0.75rem',
                         cursor: 'pointer',
                       }}
@@ -2963,7 +3060,7 @@ export default function DiscoverPage() {
                       borderRadius: '12px',
                       border: `1px solid ${colorMode === 'dark' ? 'rgba(167, 139, 250, 0.3)' : 'rgba(139, 92, 246, 0.2)'}`,
                       background: 'transparent',
-                      color: 'var(--fg)',
+                      color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
                       fontWeight: 600,
                       cursor: 'pointer',
                     }}
@@ -2983,7 +3080,7 @@ export default function DiscoverPage() {
                       borderRadius: '12px',
                       border: 'none',
                       background:
-                        'linear-gradient(135deg, colors.brand.primary 0%, colors.brand.tertiary 100%)',
+                        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                       color: 'white',
                       fontWeight: 600,
                       cursor: 'pointer',

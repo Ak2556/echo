@@ -1,0 +1,482 @@
+/**
+ * Premium Layout System
+ *
+ * Consistent grid-based layout system with responsive breakpoints
+ * and generous spacing following Apple, Nothing, and Linear standards.
+ */
+
+/* ============================================
+   CONTAINER SYSTEM
+   ============================================ */
+
+.layout-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .layout-container {
+    padding-left: var(--space-8);
+    padding-right: var(--space-8);
+  }
+}
+
+@media (min-width: 1024px) {
+  .layout-container {
+    padding-left: var(--space-12);
+    padding-right: var(--space-12);
+  }
+}
+
+/* Container Variants */
+.layout-container-narrow {
+  max-width: 768px;
+}
+
+.layout-container-wide {
+  max-width: 1536px;
+}
+
+.layout-container-full {
+  max-width: 100%;
+}
+
+/* ============================================
+   GRID SYSTEM
+   ============================================ */
+
+.grid-premium {
+  display: grid;
+  gap: var(--space-6);
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .grid-premium {
+    gap: var(--space-8);
+  }
+}
+
+/* Grid Columns */
+.grid-1 {
+  grid-template-columns: 1fr;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.grid-5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.grid-6 {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+/* Responsive Grid - Mobile First */
+@media (max-width: 767px) {
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .grid-5,
+  .grid-6 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .grid-3,
+  .grid-4,
+  .grid-5,
+  .grid-6 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .grid-4,
+  .grid-5,
+  .grid-6 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Grid Gap Variants */
+.grid-gap-sm {
+  gap: var(--space-4);
+}
+
+.grid-gap-md {
+  gap: var(--space-6);
+}
+
+.grid-gap-lg {
+  gap: var(--space-8);
+}
+
+.grid-gap-xl {
+  gap: var(--space-12);
+}
+
+/* ============================================
+   FLEX LAYOUTS
+   ============================================ */
+
+.flex-premium {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-start {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.flex-end {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+/* ============================================
+   SECTION SPACING
+   ============================================ */
+
+.section-premium {
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-16);
+}
+
+@media (max-width: 767px) {
+  .section-premium {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-12);
+  }
+}
+
+@media (min-width: 1280px) {
+  .section-premium {
+    padding-top: var(--space-20);
+    padding-bottom: var(--space-20);
+  }
+}
+
+/* Section Variants */
+.section-compact {
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-8);
+}
+
+.section-spacious {
+  padding-top: var(--space-24);
+  padding-bottom: var(--space-24);
+}
+
+@media (max-width: 767px) {
+  .section-spacious {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-16);
+  }
+}
+
+/* ============================================
+   STACK LAYOUTS
+   ============================================ */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.stack-sm {
+  gap: var(--space-2);
+}
+
+.stack-md {
+  gap: var(--space-4);
+}
+
+.stack-lg {
+  gap: var(--space-6);
+}
+
+.stack-xl {
+  gap: var(--space-8);
+}
+
+/* ============================================
+   ASPECT RATIOS
+   ============================================ */
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-portrait {
+  aspect-ratio: 3 / 4;
+}
+
+.aspect-landscape {
+  aspect-ratio: 4 / 3;
+}
+
+/* ============================================
+   CONTENT WIDTH CONSTRAINTS
+   ============================================ */
+
+.prose-premium {
+  max-width: 65ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.prose-premium > * + * {
+  margin-top: 1.5em;
+}
+
+.prose-premium h1,
+.prose-premium h2,
+.prose-premium h3 {
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+  line-height: 1.25;
+}
+
+.prose-premium p {
+  line-height: 1.75;
+}
+
+/* ============================================
+   RESPONSIVE UTILITIES
+   ============================================ */
+
+/* Show/Hide by Breakpoint */
+.hide-mobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hide-mobile {
+    display: block;
+  }
+
+  .show-mobile {
+    display: none;
+  }
+}
+
+.hide-tablet {
+  display: block;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hide-tablet {
+    display: none;
+  }
+}
+
+.hide-desktop {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .hide-desktop {
+    display: none;
+  }
+}
+
+/* ============================================
+   VERTICAL RHYTHM
+   ============================================ */
+
+.rhythm > * + * {
+  margin-top: var(--space-6);
+}
+
+.rhythm-sm > * + * {
+  margin-top: var(--space-4);
+}
+
+.rhythm-lg > * + * {
+  margin-top: var(--space-8);
+}
+
+.rhythm-xl > * + * {
+  margin-top: var(--space-12);
+}
+
+/* ============================================
+   CENTERED CONTENT
+   ============================================ */
+
+.center-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.center-content-horizontal {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================
+   SCROLL CONTAINERS
+   ============================================ */
+
+.scroll-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-300) transparent;
+}
+
+.scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background: var(--color-gray-300);
+  border-radius: 4px;
+}
+
+[data-theme='dark'] .scroll-container::-webkit-scrollbar-thumb {
+  background: var(--color-gray-700);
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-400);
+}
+
+[data-theme='dark'] .scroll-container::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-600);
+}
+
+/* Hide scrollbar but keep functionality */
+.scroll-container-hidden {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.scroll-container-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* ============================================
+   MASONRY LAYOUT
+   ============================================ */
+
+.masonry {
+  column-count: 1;
+  column-gap: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .masonry {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .masonry {
+    column-count: 3;
+  }
+}
+
+@media (min-width: 1280px) {
+  .masonry {
+    column-count: 4;
+  }
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: var(--space-6);
+}
+
+/* ============================================
+   STICKY POSITIONING
+   ============================================ */
+
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.sticky-bottom {
+  position: sticky;
+  bottom: 0;
+  z-index: var(--z-sticky);
+}
+
+/* ============================================
+   SAFE AREAS (for mobile notches)
+   ============================================ */
+
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+.safe-all {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}

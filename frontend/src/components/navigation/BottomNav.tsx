@@ -1,19 +1,22 @@
 /**
  * @fileoverview Bottom Navigation Component
- * @description Mobile bottom navigation bar with primary routes
- * @version 1.0.0
+ * @description Mobile bottom navigation bar with primary routes and premium animations
+ * @version 2.0.0
  */
 
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { useNavigation } from './NavigationProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { touchTarget, zIndex, duration, easing } from '@/lib/design-system';
+import { useGSAP, gsap } from '@/hooks/useGSAP';
+import { ANIMATION } from '@/lib/animation-constants';
 
 export function BottomNav() {
   const { currentRoute, navigate } = useNavigation();
   const { t } = useLanguage();
+  const navRef = useRef<HTMLElement>(null);
 
   const primaryRoutes = [
     { route: 'feed', label: t('nav.feed'), icon: '📰' },
@@ -23,25 +26,60 @@ export function BottomNav() {
     { route: 'profile', label: t('nav.profile'), icon: '👤' },
   ];
 
+  // GSAP hover animations for nav items
+  useGSAP(() => {
+    const items = document.querySelectorAll('.bottom-nav-item');
+
+    items.forEach((item) => {
+      const handleMouseEnter = () => {
+        gsap.to(item, {
+          scale: 1.1,
+          duration: ANIMATION.hover.duration,
+          ease: ANIMATION.easing.apple,
+        });
+      };
+
+      const handleMouseLeave = () => {
+        gsap.to(item, {
+          scale: 1,
+          duration: 0.2,
+          ease: 'power2.out',
+        });
+      };
+
+      item.addEventListener('mouseenter', handleMouseEnter);
+      item.addEventListener('mouseleave', handleMouseLeave);
+    });
+
+    return () => {
+      items.forEach((item) => {
+        item.removeEventListener('mouseenter', handleMouseEnter);
+        item.removeEventListener('mouseleave', handleMouseLeave);
+      });
+    };
+  }, []);
+
   return (
     <nav
+      ref={navRef}
       aria-label="Bottom navigation"
       style={{
         position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: '64px',
-        background: 'var(--bg)',
-        borderTop: '1px solid var(--border)',
-        boxShadow: '0 -2px 12px rgba(0, 0, 0, 0.08)',
+        bottom: '8px', // Floating effect - 8px from bottom
+        left: '8px',
+        right: '8px',
+        height: '68px', // Slightly taller
+        background: 'var(--bg-primary)',
+        border: '1px solid var(--border-color)',
+        borderRadius: '24px', // More rounded for floating effect
+        boxShadow: 'var(--shadow-premium)', // Premium shadow
         zIndex: zIndex.sticky,
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'center',
-        padding: '0 8px',
-        backdropFilter: 'blur(10px)',
-        backgroundColor: 'var(--bg-secondary)',
+        padding: '0 12px',
+        backdropFilter: 'blur(20px)', // Stronger blur
+        backgroundColor: 'rgba(var(--bg-primary-rgb), 0.85)', // More transparency
       }}
     >
       {primaryRoutes.map((item) => (

@@ -25,6 +25,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useModernTheme } from '@/contexts/ModernThemeContext';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import Input from '@/components/ui/Input';
@@ -55,6 +56,7 @@ type ProfileForm = z.infer<typeof profileSchema>;
 export default function ProfilePage() {
   const router = useRouter();
   const { user, loading: authLoading, logout } = useAuth();
+  const { colors, variant } = useModernTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -152,10 +154,10 @@ export default function ProfilePage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: colors.background }}>
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-600 dark:text-gray-400">
+          <div className="w-12 h-12 border-4 rounded-full animate-spin" style={{ borderColor: colors.primary, borderTopColor: 'transparent' }} />
+          <p style={{ color: colors.textSecondary }}>
             Loading your profile...
           </p>
         </div>
@@ -174,29 +176,31 @@ export default function ProfilePage() {
         toastOptions={{
           duration: 3000,
           style: {
-            background: '#363636',
-            color: '#fff',
+            background: colors.surface,
+            color: colors.text,
             fontSize: '14px',
-            borderRadius: '10px',
+            borderRadius: '12px',
             padding: '12px 20px',
+            border: `1px solid ${colors.border}`,
+            boxShadow: colors.shadowLarge,
           },
           success: {
             iconTheme: {
-              primary: '#10b981',
-              secondary: '#fff',
+              primary: colors.success,
+              secondary: colors.surface,
             },
           },
           error: {
             duration: 4000,
             iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
+              primary: colors.error,
+              secondary: colors.surface,
             },
           },
         }}
       />
 
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 p-4 py-12">
+      <div className="min-h-screen p-4 py-12" style={{ background: colors.background }}>
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <motion.div
@@ -206,7 +210,10 @@ export default function ProfilePage() {
           >
             <Link
               href="/"
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+              className="flex items-center gap-2 transition-all duration-200 hover:gap-3"
+              style={{ color: colors.textSecondary }}
+              onMouseEnter={(e) => e.currentTarget.style.color = colors.text}
+              onMouseLeave={(e) => e.currentTarget.style.color = colors.textSecondary}
             >
               <ArrowLeft size={20} />
               <span>Back to Home</span>
@@ -218,13 +225,18 @@ export default function ProfilePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden"
+            className="backdrop-blur-xl rounded-3xl overflow-hidden"
+            style={{
+              background: `${colors.surface}cc`,
+              boxShadow: colors.shadowLarge,
+              border: `1px solid ${colors.border}80`
+            }}
           >
             {/* Header Section with Avatar */}
-            <div className="relative h-32 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600">
+            <div className="relative h-32 bg-gradient-to-r" style={{ backgroundImage: `linear-gradient(to right, ${colors.primary}, ${colors.secondary}, ${colors.accent})` }}>
               <div className="absolute -bottom-16 left-8">
                 <div className="relative">
-                  <div className="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-gray-700 shadow-xl overflow-hidden">
+                  <div className="w-32 h-32 rounded-full border-4 shadow-xl overflow-hidden" style={{ borderColor: colors.surface, background: colors.surfaceElevated }}>
                     {avatarPreview ? (
                       <img
                         src={avatarPreview}
@@ -232,7 +244,7 @@ export default function ProfilePage() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br" style={{ backgroundImage: `linear-gradient(to bottom right, ${colors.primary}, ${colors.accent})` }}>
                         <User size={48} className="text-white" />
                       </div>
                     )}
@@ -242,7 +254,8 @@ export default function ProfilePage() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       onClick={() => fileInputRef.current?.click()}
-                      className="absolute bottom-0 right-0 w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-colors"
+                      className="absolute bottom-0 right-0 w-10 h-10 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
+                      style={{ background: colors.primary }}
                     >
                       <Camera size={18} />
                     </motion.button>
@@ -262,10 +275,10 @@ export default function ProfilePage() {
             <div className="pt-20 px-8 pb-8">
               <div className="flex items-start justify-between mb-8">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                  <h1 className="text-3xl font-bold mb-2" style={{ color: colors.text }}>
                     {user.full_name || 'Your Profile'}
                   </h1>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p style={{ color: colors.textSecondary }}>
                     {user.email}
                   </p>
                 </div>
@@ -350,7 +363,7 @@ export default function ProfilePage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                      <label className="block text-sm font-medium mb-1.5" style={{ color: colors.textSecondary }}>
                         Bio
                       </label>
                       <textarea
@@ -358,14 +371,20 @@ export default function ProfilePage() {
                         rows={4}
                         placeholder="Tell us about yourself..."
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+                        className="w-full px-4 py-3 rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+                        style={{
+                          borderColor: colors.border,
+                          background: colors.surface,
+                          color: colors.text,
+                          ...(isSubmitting ? {} : { ':focus': { borderColor: colors.primary, boxShadow: `0 0 0 3px ${colors.primary}20` } })
+                        }}
                       />
                       {errors.bio && (
-                        <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
+                        <p className="mt-1.5 text-sm" style={{ color: colors.error }}>
                           {errors.bio.message}
                         </p>
                       )}
-                      <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+                      <p className="mt-1.5 text-xs" style={{ color: colors.textTertiary }}>
                         {watchedFields.bio?.length || 0}/200 characters
                       </p>
                     </div>
@@ -380,28 +399,28 @@ export default function ProfilePage() {
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        <label className="text-sm font-medium" style={{ color: colors.textTertiary }}>
                           Full Name
                         </label>
-                        <p className="text-lg text-gray-900 dark:text-white">
+                        <p className="text-lg" style={{ color: colors.text }}>
                           {user.full_name || 'Not set'}
                         </p>
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        <label className="text-sm font-medium" style={{ color: colors.textTertiary }}>
                           Email
                         </label>
-                        <p className="text-lg text-gray-900 dark:text-white">
+                        <p className="text-lg" style={{ color: colors.text }}>
                           {user.email}
                         </p>
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        <label className="text-sm font-medium" style={{ color: colors.textTertiary }}>
                           Username
                         </label>
-                        <p className="text-lg text-gray-900 dark:text-white">
+                        <p className="text-lg" style={{ color: colors.text }}>
                           {user.username || 'Not set'}
                         </p>
                       </div>
@@ -409,10 +428,10 @@ export default function ProfilePage() {
 
                     {user.bio && (
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        <label className="text-sm font-medium" style={{ color: colors.textTertiary }}>
                           Bio
                         </label>
-                        <p className="text-gray-900 dark:text-white leading-relaxed">
+                        <p className="leading-relaxed" style={{ color: colors.text }}>
                           {user.bio}
                         </p>
                       </div>
@@ -422,26 +441,27 @@ export default function ProfilePage() {
               </AnimatePresence>
 
               {/* Quick Actions */}
-              <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <div className="mt-8 pt-8" style={{ borderTop: `1px solid ${colors.border}` }}>
+                <h3 className="text-lg font-semibold mb-4" style={{ color: colors.text }}>
                   Quick Actions
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Link
                     href="/settings"
-                    className="flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group"
+                    className="flex items-center gap-3 p-4 rounded-xl border-2 transition-all group hover:scale-[1.02]"
+                    style={{ borderColor: colors.border, background: colors.surfaceElevated }}
                   >
-                    <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: `${colors.primary}20` }}>
                       <Shield
                         size={20}
-                        className="text-blue-600 dark:text-blue-400"
+                        style={{ color: colors.primary }}
                       />
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900 dark:text-white">
+                      <h4 className="font-medium" style={{ color: colors.text }}>
                         Account Settings
                       </h4>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm" style={{ color: colors.textSecondary }}>
                         Manage security and preferences
                       </p>
                     </div>
@@ -449,19 +469,20 @@ export default function ProfilePage() {
 
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-3 p-4 rounded-xl border-2 border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group"
+                    className="flex items-center gap-3 p-4 rounded-xl border-2 transition-all group hover:scale-[1.02]"
+                    style={{ borderColor: `${colors.error}40`, background: `${colors.error}10` }}
                   >
-                    <div className="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: `${colors.error}20` }}>
                       <LogOut
                         size={20}
-                        className="text-red-600 dark:text-red-400"
+                        style={{ color: colors.error }}
                       />
                     </div>
                     <div className="text-left">
-                      <h4 className="font-medium text-gray-900 dark:text-white">
+                      <h4 className="font-medium" style={{ color: colors.text }}>
                         Logout
                       </h4>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm" style={{ color: colors.textSecondary }}>
                         Sign out of your account
                       </p>
                     </div>
@@ -476,7 +497,8 @@ export default function ProfilePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400"
+            className="mt-6 text-center text-sm"
+            style={{ color: colors.textTertiary }}
           >
             Account created on{' '}
             {new Date(user.created_at || Date.now()).toLocaleDateString(

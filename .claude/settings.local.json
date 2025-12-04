@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(pip install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git remote add:*)",
+      "Bash(git fetch:*)",
+      "Bash(npm install:*)",
+      "Bash(npm audit fix:*)",
+      "Bash(pip show:*)",
+      "Bash(findstr:*)",
+      "Bash(ren app app.backup)",
+      "Bash(powershell -Command:*)",
+      "Bash(copy AiChat.tsx AiChat.backup.tsx)",
+      "Bash(copy /Y AiChat.upgraded.tsx AiChat.tsx)",
+      "Bash(npm run build:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

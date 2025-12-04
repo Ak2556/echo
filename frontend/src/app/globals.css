@@ -1,10 +1,63 @@
 /* Import Google Fonts for Indian languages - must come before Tailwind */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Gurmukhi:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Noto+Sans+Malayalam:wght@400;500;600;700&family=Noto+Sans+Oriya:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap');
+/* Note: Inter, Poppins, and JetBrains Mono are loaded in global-typography.css */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Gurmukhi:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Noto+Sans+Malayalam:wght@400;500;600;700&family=Noto+Sans+Oriya:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap');
+
+/* Import premium minimal component styles */
+@import '../styles/minimal-components.css';
+
+/* Import premium layout system */
+@import '../styles/layout-system.css';
 
 /* Tailwind CSS v3 directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ===================================
+   GLOBAL THEME VARIABLES - Apply Theme Colors Everywhere
+   =================================== */
+:root {
+  /* Map theme variables to standard CSS variables */
+  --bg-primary: var(--theme-background, #ffffff);
+  --bg-secondary: var(--theme-backgroundSecondary, #f8f9fa);
+  --bg-tertiary: var(--theme-backgroundTertiary, #f1f3f5);
+
+  --fg-primary: var(--theme-text, #000000);
+  --fg-secondary: var(--theme-textSecondary, #666666);
+  --fg-tertiary: var(--theme-textTertiary, #999999);
+
+  --color-primary: var(--theme-primary, #3b82f6);
+  --color-secondary: var(--theme-secondary, #8b5cf6);
+  --color-accent: var(--theme-accent, #ec4899);
+
+  --color-success: var(--theme-success, #10b981);
+  --color-warning: var(--theme-warning, #f59e0b);
+  --color-error: var(--theme-error, #ef4444);
+  --color-info: var(--theme-info, #3b82f6);
+
+  --surface: var(--theme-surface, #ffffff);
+  --surface-elevated: var(--theme-surfaceElevated, #f8f9fa);
+  --surface-hover: var(--theme-surfaceHover, #f1f3f5);
+
+  --border-color: var(--theme-border, #e5e7eb);
+  --border-light: var(--theme-borderLight, #f3f4f6);
+  --border-heavy: var(--theme-borderHeavy, #d1d5db);
+
+  --shadow: var(--theme-shadow, 0 1px 3px rgba(0,0,0,0.1));
+  --shadow-large: var(--theme-shadowLarge, 0 10px 25px rgba(0,0,0,0.15));
+}
+
+/* Apply theme colors to all elements globally */
+* {
+  transition: background-color 0.3s ease,
+              color 0.3s ease,
+              border-color 0.3s ease;
+}
+
+/* Respect reduced motion */
+[data-reduced-motion="true"] * {
+  transition: none !important;
+}
 
 /* ===================================
    ACCESSIBILITY: RESPECT USER MOTION PREFERENCES
@@ -31,24 +84,7 @@
   transform: none;
 }
 
-/* High-quality font rendering */
-html {
-  -webkit-font-smoothing: auto;
-  -moz-osx-font-smoothing: auto;
-  text-rendering: optimizeLegibility;
-  font-feature-settings:
-    'kern' 1,
-    'liga' 1;
-  font-kerning: normal;
-}
-
-/* Only use subpixel antialiasing on high-DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  html {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-}
+/* Font rendering is now handled in global-typography.css */
 
 /* Reset & base styles */
 *,
@@ -64,97 +100,24 @@ body {
   min-height: 100vh;
 }
 body {
-  font-family:
-    'Inter',
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  font-family: var(--font-sans); /* Uses typography system */
   background: var(--bg-primary);
   color: var(--fg-primary);
-  line-height: 1.65;
   position: relative;
   overflow-x: hidden;
+  /* Font size, weight, letter-spacing, and line-height are handled in global-typography.css */
 }
 
 /* Clean minimal body styling - background effects handled by ResonanceBackground component */
 
-/* Improved typography scale */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-
-h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-}
-h2 {
-  font-size: 2rem;
-  font-weight: 700;
-}
-h3 {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-h4 {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-h5 {
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-h6 {
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-/* Better paragraph spacing */
-p {
-  margin: 0 0 1em;
-  line-height: 1.65;
-  font-weight: 400; /* Reduced from 500 for better readability */
-}
-
-/* Ensure text is readable in both modes */
-[data-theme='light'] body,
-[data-theme='light'] {
-  font-weight: 500;
-}
-
-[data-theme='light'] h1,
-[data-theme='light'] h2,
-[data-theme='light'] h3 {
-  font-weight: 800;
-}
-
-[data-theme='light'] h4,
-[data-theme='light'] h5,
-[data-theme='light'] h6 {
-  font-weight: 700;
-}
+/* Typography scale and styles are now handled in global-typography.css */
 
 /* WCAG AA compliant contrast colors */
 [data-theme='light'] {
-  /* Use proper colors instead of increasing font weight */
   color: #1f2937; /* gray-800: 12:1 contrast on white */
 }
 
 [data-theme='dark'] {
-  /* High contrast colors for dark mode */
   color: #f9fafb; /* gray-50: 15:1 contrast on dark bg */
 }
 
@@ -215,22 +178,19 @@ body.sound-effects-enabled::after {
   border: 1px solid var(--border);
 }
 a {
-  color: inherit;
-  text-decoration: none;
+  /* Link styles are handled in global-typography.css */
 }
 button {
-  font-family: inherit;
+  /* Button typography is handled in global-typography.css */
   cursor: pointer;
   border: none;
   background: none;
   color: inherit;
   padding: 0;
-  font-weight: 500;
 }
 input,
 textarea {
-  font-family: inherit;
-  font-weight: 500;
+  /* Form element typography is handled in global-typography.css */
 }
 ul {
   margin: 0;
@@ -3281,7 +3241,7 @@ footer {
   font-size: 3rem;
   font-weight: bold;
   margin: 1rem 0;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-mono);
 }
 
 .timer-controls {
@@ -3714,7 +3674,7 @@ footer {
   font-size: 3rem;
   font-weight: bold;
   margin: 1rem 0;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-mono);
 }
 
 .lap-times {
@@ -3740,7 +3700,7 @@ footer {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg);
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-mono);
   margin: 1rem 0;
   word-break: break-all;
 }
@@ -4125,7 +4085,7 @@ footer {
   border-radius: var(--radius);
   background: var(--bg);
   color: var(--text);
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-mono);
   font-size: 0.9rem;
   resize: vertical;
   margin-bottom: 1rem;

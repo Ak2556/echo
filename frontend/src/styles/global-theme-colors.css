@@ -1,0 +1,388 @@
+/* ===================================
+   GLOBAL THEME COLOR APPLICATION
+   Apply theme variant colors to all components
+   =================================== */
+
+/* Background Colors */
+.bg-white,
+.bg-gray-50,
+.dark\:bg-gray-900,
+.dark\:bg-gray-800 {
+  background-color: var(--theme-surface) !important;
+}
+
+.bg-gray-100,
+.bg-gray-200,
+.dark\:bg-gray-700 {
+  background-color: var(--theme-surfaceElevated) !important;
+}
+
+/* Primary Colors */
+.bg-blue-500,
+.bg-blue-600,
+.bg-blue-700,
+.text-blue-500,
+.text-blue-600,
+.border-blue-500,
+.border-blue-600 {
+  --tw-bg-opacity: 1;
+  background-color: var(--theme-primary) !important;
+  color: var(--theme-primary) !important;
+  border-color: var(--theme-primary) !important;
+}
+
+/* Secondary Colors */
+.bg-purple-500,
+.bg-purple-600,
+.text-purple-500,
+.text-purple-600 {
+  background-color: var(--theme-secondary) !important;
+  color: var(--theme-secondary) !important;
+  border-color: var(--theme-secondary) !important;
+}
+
+/* Accent Colors */
+.bg-pink-500,
+.bg-pink-600,
+.text-pink-500 {
+  background-color: var(--theme-accent) !important;
+  color: var(--theme-accent) !important;
+}
+
+/* Text Colors */
+.text-gray-900,
+.dark\:text-white {
+  color: var(--theme-text) !important;
+}
+
+.text-gray-600,
+.text-gray-700,
+.dark\:text-gray-300,
+.dark\:text-gray-400 {
+  color: var(--theme-textSecondary) !important;
+}
+
+.text-gray-500,
+.dark\:text-gray-500 {
+  color: var(--theme-textTertiary) !important;
+}
+
+/* Border Colors */
+.border-gray-200,
+.border-gray-300,
+.dark\:border-gray-700,
+.dark\:border-gray-600 {
+  border-color: var(--theme-border) !important;
+}
+
+/* Hover States */
+.hover\:bg-gray-100:hover,
+.hover\:bg-gray-50:hover,
+.dark\:hover\:bg-gray-700:hover {
+  background-color: var(--theme-hover) !important;
+}
+
+.hover\:bg-blue-600:hover,
+.hover\:bg-blue-700:hover {
+  background-color: var(--theme-primaryDark) !important;
+}
+
+.hover\:text-blue-600:hover,
+.hover\:text-blue-700:hover {
+  color: var(--theme-primaryDark) !important;
+}
+
+/* Focus States */
+.focus\:ring-blue-500:focus,
+.focus\:border-blue-500:focus {
+  --tw-ring-color: var(--theme-primary) !important;
+  border-color: var(--theme-primary) !important;
+}
+
+/* Gradient Backgrounds */
+.bg-gradient-to-r,
+.bg-gradient-to-br {
+  background-image: linear-gradient(
+    to right,
+    var(--theme-primary),
+    var(--theme-secondary),
+    var(--theme-accent)
+  ) !important;
+}
+
+.from-blue-500,
+.from-blue-600 {
+  --tw-gradient-from: var(--theme-primary) !important;
+}
+
+.to-purple-500,
+.to-purple-600 {
+  --tw-gradient-to: var(--theme-secondary) !important;
+}
+
+.via-indigo-500 {
+  --tw-gradient-via: var(--theme-secondary) !important;
+}
+
+/* Button Styles */
+button:not(.no-theme),
+.btn {
+  transition: all 0.2s ease;
+}
+
+button:not(.no-theme):hover {
+  filter: brightness(1.1);
+}
+
+/* Links */
+a:not(.no-theme) {
+  color: var(--theme-primary);
+  transition: color 0.2s ease;
+}
+
+a:not(.no-theme):hover {
+  color: var(--theme-primaryDark);
+}
+
+/* Form Elements */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+  background-color: var(--theme-surface);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--theme-primary);
+  outline-color: var(--theme-primary);
+}
+
+/* Cards */
+.card,
+[class*="card"] {
+  background-color: var(--theme-surface);
+  border-color: var(--theme-border);
+}
+
+/* Modals & Overlays */
+.modal,
+.overlay,
+[role="dialog"] {
+  background-color: var(--theme-surface);
+  color: var(--theme-text);
+}
+
+/* Shadows with Theme Colors */
+.shadow-blue-500 {
+  --tw-shadow-color: var(--theme-primary);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+/* Status Colors - Keep independent */
+.bg-green-500,
+.text-green-500 {
+  background-color: var(--theme-success) !important;
+  color: var(--theme-success) !important;
+}
+
+.bg-red-500,
+.bg-red-600,
+.text-red-500,
+.text-red-600 {
+  background-color: var(--theme-error) !important;
+  color: var(--theme-error) !important;
+}
+
+.bg-yellow-500,
+.text-yellow-500 {
+  background-color: var(--theme-warning) !important;
+  color: var(--theme-warning) !important;
+}
+
+/* Navigation & Sidebar */
+nav,
+.navigation,
+.sidebar {
+  background-color: var(--theme-surface);
+  border-color: var(--theme-border);
+}
+
+/* Header & Footer */
+header,
+footer {
+  background-color: var(--theme-surface);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+/* Scrollbar Theming */
+::-webkit-scrollbar-track {
+  background: var(--theme-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--theme-border);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-primary);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--theme-primary);
+  color: var(--theme-textInverse);
+}
+
+/* Code Blocks */
+pre,
+code {
+  background-color: var(--theme-surfaceElevated);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+/* Tables */
+table {
+  border-color: var(--theme-border);
+}
+
+th {
+  background-color: var(--theme-surfaceElevated);
+  color: var(--theme-text);
+}
+
+td {
+  border-color: var(--theme-borderLight);
+}
+
+tr:hover {
+  background-color: var(--theme-hover);
+}
+
+/* Badges & Pills */
+.badge,
+.pill,
+.tag {
+  background-color: var(--theme-surfaceElevated);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+.badge-primary {
+  background-color: var(--theme-primary);
+  color: var(--theme-textInverse);
+}
+
+/* Tooltips */
+.tooltip,
+[role="tooltip"] {
+  background-color: var(--theme-text);
+  color: var(--theme-textInverse);
+}
+
+/* Dividers */
+hr,
+.divider {
+  border-color: var(--theme-border);
+}
+
+/* Alert/Notification Variants */
+.alert-primary {
+  background-color: var(--theme-primary);
+  color: var(--theme-textInverse);
+}
+
+.alert-success {
+  background-color: var(--theme-success);
+  color: white;
+}
+
+.alert-error {
+  background-color: var(--theme-error);
+  color: white;
+}
+
+.alert-warning {
+  background-color: var(--theme-warning);
+  color: white;
+}
+
+/* Dropdown Menus */
+.dropdown,
+.menu {
+  background-color: var(--theme-surface);
+  border-color: var(--theme-border);
+  box-shadow: var(--theme-shadowLarge);
+}
+
+.dropdown-item:hover,
+.menu-item:hover {
+  background-color: var(--theme-hover);
+}
+
+/* Progress Bars */
+.progress-bar {
+  background-color: var(--theme-surfaceElevated);
+}
+
+.progress-fill {
+  background-color: var(--theme-primary);
+}
+
+/* Tabs */
+.tab {
+  color: var(--theme-textSecondary);
+  border-color: transparent;
+}
+
+.tab-active,
+.tab:hover {
+  color: var(--theme-primary);
+  border-color: var(--theme-primary);
+}
+
+/* Switch/Toggle */
+.switch {
+  background-color: var(--theme-border);
+}
+
+.switch-checked {
+  background-color: var(--theme-primary);
+}
+
+/* Skeleton Loaders */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--theme-surfaceElevated) 25%,
+    var(--theme-hover) 50%,
+    var(--theme-surfaceElevated) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Ensure smooth theme transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+[data-reduced-motion="true"] * {
+  transition-duration: 0.01ms !important;
+}

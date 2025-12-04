@@ -1,8 +1,10 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useRef, useEffect } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useGSAP, gsap } from '@/hooks/useGSAP';
+import { ANIMATION } from '@/lib/animation-constants';
 
 interface SettingsSubPageProps {
   title: string;
@@ -17,6 +19,27 @@ export function SettingsSubPage({
   children,
   onBack,
 }: SettingsSubPageProps) {
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // GSAP stagger animation for sections
+  useGSAP(() => {
+    if (!contentRef.current) return;
+
+    const sections = contentRef.current.querySelectorAll('.settings-section');
+
+    gsap.fromTo(
+      sections,
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        stagger: ANIMATION.scrollReveal.stagger,
+        ease: ANIMATION.easing.apple,
+      }
+    );
+  }, []);
+
   return (
     <div className="echo-settings-container">
       {/* Header with Breadcrumb */}
@@ -55,7 +78,7 @@ export function SettingsSubPage({
       </div>
 
       {/* Content */}
-      <div style={{ maxWidth: '800px' }}>
+      <div ref={contentRef} style={{ maxWidth: '800px' }}>
         {children}
       </div>
     </div>
@@ -74,7 +97,7 @@ export function SettingsSection({
   children,
 }: SettingsSectionProps) {
   return (
-    <div style={{ marginBottom: 'var(--settings-space-12)' }}>
+    <div className="settings-section" style={{ marginBottom: 'var(--settings-space-12)' }}>
       <div style={{ marginBottom: 'var(--settings-space-4)' }}>
         <h2
           style={{

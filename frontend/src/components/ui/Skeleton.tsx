@@ -6,8 +6,10 @@
 
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { borderRadius, spacing } from '@/lib/design-system';
+import { useGSAP, gsap } from '@/hooks/useGSAP';
+import { ANIMATION } from '@/lib/animation-constants';
 
 interface SkeletonProps {
   width?: string;
@@ -63,6 +65,7 @@ export function Skeleton({
         .skeleton {
           position: relative;
           overflow: hidden;
+          animation: shimmer 2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
         }
       `}</style>
     </div>
@@ -73,8 +76,26 @@ export function Skeleton({
  * Post Card Skeleton
  */
 export function PostCardSkeleton() {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!cardRef.current) return;
+
+    gsap.fromTo(
+      cardRef.current,
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.4,
+        ease: ANIMATION.easing.apple,
+      }
+    );
+  }, []);
+
   return (
     <div
+      ref={cardRef}
       className="post-card-skeleton"
       style={{
         background: 'var(--bg)',

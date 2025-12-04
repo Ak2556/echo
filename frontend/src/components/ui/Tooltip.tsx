@@ -183,19 +183,34 @@ const Tooltip = memo(function Tooltip({
     }
   };
 
+  const getInitialOffset = () => {
+    switch (position) {
+      case 'top':
+        return { y: 4 };
+      case 'bottom':
+        return { y: -4 };
+      case 'left':
+        return { x: 4 };
+      case 'right':
+        return { x: -4 };
+      default:
+        return { y: 4 };
+    }
+  };
+
   const tooltipContent = isVisible && typeof window !== 'undefined' && (
     <AnimatePresence>
       <motion.div
         ref={tooltipRef}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.15, ease: 'easeOut' }}
+        initial={{ opacity: 0, scale: 0.96, ...getInitialOffset() }}
+        animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, ...getInitialOffset() }}
+        transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
         role="tooltip"
         className={cn(
           'fixed z-[1600] pointer-events-none',
           'bg-gray-800 dark:bg-gray-900 text-white',
-          'rounded-lg shadow-lg',
+          'rounded-lg',
           'whitespace-normal break-words',
           sizeClasses[size],
           className
@@ -205,6 +220,7 @@ const Tooltip = memo(function Tooltip({
             top: tooltipPosition.top,
             left: tooltipPosition.left,
             '--tooltip-bg': '#1f2937',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.10)',
           } as React.CSSProperties
         }
       >

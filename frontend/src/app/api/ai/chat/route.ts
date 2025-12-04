@@ -32,15 +32,53 @@ export async function POST(request: NextRequest) {
 
     // Get and validate API key (server-side only)
     const apiKey = process.env.OPENROUTER_API_KEY;
+    const isDemoMode = !apiKey;
     console.log(
       '🔑 API Key status:',
-      apiKey ? `Present (${apiKey.substring(0, 10)}...)` : 'Missing'
+      apiKey ? `Present (${apiKey.substring(0, 10)}...)` : 'Missing - Running in DEMO mode'
     );
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: 'Service temporarily unavailable' },
-        { status: 503 }
-      );
+
+    // If no API key, run in demo mode with mock responses
+    if (isDemoMode) {
+      const body = await request.json();
+      const { message } = body;
+
+      // Demo mode responses
+      const demoResponses = [
+        "Hello! I'm Echo AI running in demo mode. To enable full AI capabilities, please add your OPENROUTER_API_KEY to the .env file. How can I help you today?",
+        "I'm currently in demo mode. This is a sample response to show how Echo AI works. For real AI responses, configure your API key!",
+        "Demo mode active! Echo AI is designed to help you with questions, suggestions, and conversations. Add an API key to unlock full functionality.",
+        "Thanks for trying Echo AI! I'm running in demo mode right now. To get intelligent AI responses, set up your OPENROUTER_API_KEY environment variable.",
+      ];
+
+      // Simple response based on message keywords
+      let response = demoResponses[Math.floor(Math.random() * demoResponses.length)];
+
+      const lowerMessage = message.toLowerCase();
+      if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
+        response = "👋 Hello! I'm Echo AI in demo mode. I can see you're greeting me! To enable intelligent conversations, please add your OPENROUTER_API_KEY to the environment configuration.";
+      } else if (lowerMessage.includes('help')) {
+        response = "I'm here to help! Currently running in demo mode. To enable full AI assistance with real-time intelligent responses, you'll need to configure an OPENROUTER_API_KEY in your .env file.";
+      } else if (lowerMessage.includes('weather')) {
+        response = "☀️ I'd love to help with weather information! In demo mode, I can't access real-time data. Configure your API key for live weather updates and more!";
+      } else if (lowerMessage.includes('how') || lowerMessage.includes('what')) {
+        response = `Great question! I'm Echo AI in demo mode. To get detailed, intelligent answers to questions like "${message.substring(0, 50)}...", please add your OPENROUTER_API_KEY to enable full AI capabilities.`;
+      }
+
+      return NextResponse.json({
+        response: response,
+        type: 'text',
+        model: 'demo-mode',
+        usage: { demo: true },
+        isDemo: true,
+      }, {
+        headers: {
+          'X-Content-Type-Options': 'nosniff',
+          'X-Frame-Options': 'DENY',
+          'X-XSS-Protection': '1; mode=block',
+          'X-RateLimit-Remaining': remaining.toString(),
+        },
+      });
     }
 
     // Parse and validate request body

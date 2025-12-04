@@ -1,0 +1,281 @@
+/* ===================================
+   GLOBAL READABILITY IMPROVEMENTS
+   Enhanced font weights and sizes for better text legibility
+   =================================== */
+
+/* Ensure all text has minimum readable weight */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Override thin/light fonts globally */
+body * {
+  font-weight: 500 !important;
+  min-font-weight: 500;
+}
+
+/* Headings should be bold */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-weight: 700 !important;
+}
+
+h1, .h1 { font-weight: 800 !important; }
+h2, .h2 { font-weight: 700 !important; }
+
+/* Buttons and interactive elements */
+button,
+.btn,
+[role="button"],
+a[role="button"] {
+  font-weight: 600 !important;
+  min-height: 36px;
+}
+
+/* Form labels */
+label,
+.label {
+  font-weight: 600 !important;
+  color: var(--theme-text);
+}
+
+/* Navigation items */
+nav a,
+nav button,
+nav span,
+.nav-item,
+.menu-item {
+  font-weight: 600 !important;
+}
+
+/* Card titles and important text */
+.card-title,
+.title,
+.heading,
+.subtitle {
+  font-weight: 600 !important;
+}
+
+/* Descriptions and secondary text */
+.description,
+.subtitle,
+.caption,
+.help-text {
+  font-weight: 500 !important;
+  opacity: 0.9;
+}
+
+/* Small text must be readable */
+small,
+.text-xs,
+.text-sm,
+.small {
+  font-weight: 600 !important; /* Heavier weight for small text */
+  font-size: max(12px, 0.875em) !important; /* Never smaller than 12px */
+}
+
+/* Extra small text */
+.text-xs {
+  font-weight: 700 !important; /* Bold for extra small text */
+  font-size: max(11px, 0.75em) !important;
+}
+
+/* Badge and tag text */
+.badge,
+.tag,
+.pill,
+.chip {
+  font-weight: 600 !important;
+  font-size: max(12px, 0.875em) !important;
+}
+
+/* Table text */
+th {
+  font-weight: 700 !important;
+}
+
+td {
+  font-weight: 500 !important;
+}
+
+/* List items */
+li {
+  font-weight: 500 !important;
+}
+
+/* Input and textarea */
+input,
+textarea,
+select {
+  font-weight: 500 !important;
+  font-size: max(14px, 1em) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  font-weight: 500 !important;
+  opacity: 0.7;
+}
+
+/* Links */
+a {
+  font-weight: 600 !important;
+}
+
+/* Code and monospace */
+code,
+pre,
+.code {
+  font-weight: 500 !important;
+}
+
+/* Quotes */
+blockquote {
+  font-weight: 500 !important;
+  font-style: italic;
+}
+
+/* Settings page specific */
+.settings-title,
+.settings-label,
+.settings-description {
+  font-weight: 600 !important;
+}
+
+.settings-value,
+.settings-text {
+  font-weight: 500 !important;
+}
+
+/* Modal and dialog text */
+.modal-title,
+.dialog-title {
+  font-weight: 700 !important;
+}
+
+.modal-body,
+.dialog-body {
+  font-weight: 500 !important;
+}
+
+/* Toast and notification text */
+.toast,
+.notification,
+.alert {
+  font-weight: 600 !important;
+}
+
+/* Dropdown and menu text */
+.dropdown-item,
+.menu-item,
+.select-option {
+  font-weight: 500 !important;
+}
+
+/* Tab text */
+.tab,
+.tab-label {
+  font-weight: 600 !important;
+}
+
+/* Avatar and profile text */
+.profile-name,
+.user-name {
+  font-weight: 600 !important;
+}
+
+.profile-email,
+.user-email {
+  font-weight: 500 !important;
+}
+
+/* Status text */
+.status,
+.state,
+.indicator-text {
+  font-weight: 600 !important;
+  font-size: max(12px, 0.875em) !important;
+}
+
+/* Icon labels */
+.icon-label,
+.icon-text {
+  font-weight: 600 !important;
+}
+
+/* Price and number displays */
+.price,
+.amount,
+.number,
+.count {
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ensure contrast in dark mode */
+[data-theme="dark"] *,
+.dark * {
+  font-weight: 500 !important;
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+  font-weight: 800 !important;
+}
+
+[data-theme="dark"] button,
+[data-theme="dark"] a,
+[data-theme="dark"] label {
+  font-weight: 600 !important;
+}
+
+/* Minimum sizes for touch targets */
+button,
+a,
+[role="button"],
+.clickable {
+  min-width: 36px;
+  min-height: 36px;
+}
+
+/* Override any font-weight: 300 or 400 */
+[style*="font-weight: 300"],
+[style*="font-weight: 400"] {
+  font-weight: 500 !important;
+}
+
+.font-light,
+.font-normal,
+.font-regular {
+  font-weight: 500 !important;
+}
+
+/* Ensure text is never too light */
+.text-light {
+  font-weight: 500 !important;
+}
+
+/* Print styles */
+@media print {
+  * {
+    font-weight: 500 !important;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700 !important;
+  }
+}
+
+/* High resolution displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
