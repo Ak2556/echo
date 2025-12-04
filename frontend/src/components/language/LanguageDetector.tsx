@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useEnhancedLanguage } from '@/contexts/EnhancedLanguageContext';
-import { TranslateIcon, XIcon, CheckIcon, GlobeIcon } from 'lucide-react';
+import { Languages, XIcon, CheckIcon, GlobeIcon } from 'lucide-react';
 
 interface LanguageDetectorProps {
   text: string;
@@ -162,7 +162,7 @@ export default function LanguageDetector({
           {showTranslation && translatedText && (
             <div className="mb-3 p-3 bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-700 rounded-md">
               <div className="flex items-center gap-2 mb-2">
-                <TranslateIcon className="w-4 h-4 text-green-600 dark:text-green-400" />
+                <Languages className="w-4 h-4 text-green-600 dark:text-green-400" />
                 <span className="text-xs font-medium text-green-700 dark:text-green-300">
                   {t('common.translated_to', { language: getLanguageDisplayName(currentLanguage) })}
                 </span>
@@ -196,7 +196,7 @@ export default function LanguageDetector({
                 </>
               ) : (
                 <>
-                  <TranslateIcon className="w-4 h-4" />
+                  <Languages className="w-4 h-4" />
                   {t('common.translate')}
                 </>
               )}

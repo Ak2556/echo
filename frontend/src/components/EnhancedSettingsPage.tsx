@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useEnhancedTheme } from '@/contexts/EnhancedThemeContext';
-import Card from '@/components/ui/EnhancedCard';
+import { Card } from '@/components/ui/EnhancedCard';
 import Button from '@/components/ui/EnhancedButton';
 import Input from '@/components/ui/EnhancedInput';
 

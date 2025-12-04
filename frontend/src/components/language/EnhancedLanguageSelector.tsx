@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useEnhancedLanguage } from '@/contexts/EnhancedLanguageContext';
-import { ChevronDownIcon, CheckIcon, GlobeIcon, TranslateIcon } from 'lucide-react';
+import { ChevronDownIcon, CheckIcon, GlobeIcon, Languages } from 'lucide-react';
 
 interface EnhancedLanguageSelectorProps {
   variant?: 'dropdown' | 'modal' | 'inline';
@@ -270,7 +270,7 @@ export default function EnhancedLanguageSelector({
           {showSearch && (
             <div className="p-3 border-b border-gray-200 dark:border-gray-700">
               <div className="relative">
-                <TranslateIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Languages className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   ref={searchInputRef}
                   type="text"
