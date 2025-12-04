@@ -31,6 +31,9 @@ import {
   Key,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useModernTheme } from '@/contexts/ModernThemeContext';
+import { useSettings } from '@/hooks/useSettings';
+import { changePassword, enable2FA, verify2FA, deleteAccount } from '@/lib/api/settings';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import Input from '@/components/ui/Input';
@@ -52,11 +55,14 @@ type PasswordForm = z.infer<typeof passwordSchema>;
 export default function SettingsPage() {
   const router = useRouter();
   const { user, loading: authLoading, logout } = useAuth();
+  const { colors, colorMode, setColorMode, variant, setVariant, THEME_VARIANTS } = useModernTheme() as any;
+  const { settings, updateNotifications, updateSecurity } = useSettings();
   const [activeSection, setActiveSection] = useState('account');
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [pushNotifications, setPushNotifications] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [show2FADialog, setShow2FADialog] = useState(false);
+  const [twoFactorQR, setTwoFactorQR] = useState<string>('');
+  const [twoFactorSecret, setTwoFactorSecret] = useState<string>('');
+  const [verificationCode, setVerificationCode] = useState('');
 
   const {
     register,
@@ -83,8 +89,10 @@ export default function SettingsPage() {
     const toastId = toast.loading('Updating password...');
 
     try {
-      // TODO: Replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      });
 
       toast.success('Password updated successfully!', {
         id: toastId,
@@ -102,25 +110,47 @@ export default function SettingsPage() {
   const handleEnable2FA = async () => {
     const toastId = toast.loading('Setting up 2FA...');
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success('2FA setup initiated! Check your email.', {
+      const response = await enable2FA();
+      setTwoFactorQR(response.qrCode);
+      setTwoFactorSecret(response.secret);
+      setShow2FADialog(true);
+      toast.success('Scan the QR code with your authenticator app', {
         id: toastId,
         icon: '🔐',
       });
-    } catch (error) {
-      toast.error('Failed to setup 2FA', { id: toastId });
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to setup 2FA', { id: toastId });
     }
   };
 
-  const handleDeleteAccount = async () => {
+  const handleVerify2FA = async () => {
+    if (!verificationCode || verificationCode.length !== 6) {
+      toast.error('Please enter a valid 6-digit code');
+      return;
+    }
+
+    const toastId = toast.loading('Verifying code...');
+    try {
+      await verify2FA(verificationCode);
+      updateSecurity({ twoFactorEnabled: true });
+      setShow2FADialog(false);
+      setVerificationCode('');
+      toast.success('2FA enabled successfully!', { id: toastId });
+    } catch (error: any) {
+      toast.error(error.message || 'Invalid verification code', { id: toastId });
+    }
+  };
+
+  const handleDeleteAccount = async (password: string) => {
     const toastId = toast.loading('Deleting account...');
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await deleteAccount(password);
       await logout();
+      localStorage.clear(); // Clear all stored data
       toast.success('Account deleted successfully', { id: toastId });
       router.push('/');
-    } catch (error) {
-      toast.error('Failed to delete account', { id: toastId });
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to delete account', { id: toastId });
     }
   };
 
@@ -134,10 +164,10 @@ export default function SettingsPage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: colors.background }}>
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-gray-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-600 dark:text-gray-400">
+          <div className="w-12 h-12 border-4 rounded-full animate-spin" style={{ borderColor: colors.primary, borderTopColor: 'transparent' }} />
+          <p style={{ color: colors.textSecondary }}>
             Loading settings...
           </p>
         </div>
@@ -156,29 +186,31 @@ export default function SettingsPage() {
         toastOptions={{
           duration: 3000,
           style: {
-            background: '#363636',
-            color: '#fff',
+            background: colors.surface,
+            color: colors.text,
             fontSize: '14px',
-            borderRadius: '10px',
+            borderRadius: '12px',
             padding: '12px 20px',
+            border: `1px solid ${colors.border}`,
+            boxShadow: colors.shadowLarge,
           },
           success: {
             iconTheme: {
-              primary: '#10b981',
-              secondary: '#fff',
+              primary: colors.success,
+              secondary: colors.surface,
             },
           },
           error: {
             duration: 4000,
             iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
+              primary: colors.error,
+              secondary: colors.surface,
             },
           },
         }}
       />
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 p-4 py-12">
+      <div className="min-h-screen p-4 py-12" style={{ background: colors.background }}>
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <motion.div
@@ -189,7 +221,10 @@ export default function SettingsPage() {
             <div className="flex items-center gap-4">
               <Link
                 href="/profile"
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+                className="flex items-center gap-2 transition-all duration-200 hover:gap-3"
+                style={{ color: colors.textSecondary }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.text}
+                onMouseLeave={(e) => e.currentTarget.style.color = colors.textSecondary}
               >
                 <ArrowLeft size={20} />
                 <span>Back to Profile</span>
@@ -205,8 +240,8 @@ export default function SettingsPage() {
           >
             {/* Sidebar Navigation */}
             <div className="lg:col-span-1">
-              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 p-4">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 px-2">
+              <div className="backdrop-blur-xl rounded-2xl p-4" style={{ background: `${colors.surface}cc`, boxShadow: colors.shadowLarge, border: `1px solid ${colors.border}80` }}>
+                <h2 className="text-xl font-bold mb-4 px-2" style={{ color: colors.text }}>
                   Settings
                 </h2>
                 <nav className="space-y-1">
@@ -217,7 +252,12 @@ export default function SettingsPage() {
                       <button
                         key={section.id}
                         onClick={() => setActiveSection(section.id)}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50'} ${section.id === 'danger' && !isActive ? 'text-red-600 dark:text-red-400' : ''}`}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:scale-[1.02]"
+                        style={{
+                          background: isActive ? colors.primary : 'transparent',
+                          color: isActive ? colors.textInverse : section.id === 'danger' && !isActive ? colors.error : colors.textSecondary,
+                          boxShadow: isActive ? colors.shadow : 'none'
+                        }}
                       >
                         <Icon size={18} />
                         <span className="font-medium">{section.label}</span>
@@ -230,7 +270,7 @@ export default function SettingsPage() {
 
             {/* Content Area */}
             <div className="lg:col-span-3">
-              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 p-8">
+              <div className="backdrop-blur-xl rounded-2xl p-8" style={{ background: `${colors.surface}cc`, boxShadow: colors.shadowLarge, border: `1px solid ${colors.border}80` }}>
                 <AnimatePresence mode="wait">
                   {/* Account Section */}
                   {activeSection === 'account' && (
@@ -242,16 +282,16 @@ export default function SettingsPage() {
                       className="space-y-6"
                     >
                       <div>
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        <h3 className="text-2xl font-bold mb-2" style={{ color: colors.text }}>
                           Account Settings
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-400">
+                        <p style={{ color: colors.textSecondary }}>
                           Manage your account credentials and password
                         </p>
                       </div>
 
-                      <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                        <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                      <div className="pt-6" style={{ borderTop: `1px solid ${colors.border}` }}>
+                        <h4 className="text-lg font-semibold mb-4" style={{ color: colors.text }}>
                           Change Password
                         </h4>
                         <form
@@ -317,68 +357,84 @@ export default function SettingsPage() {
                       className="space-y-6"
                     >
                       <div>
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        <h3 className="text-2xl font-bold mb-2" style={{ color: colors.text }}>
                           Security Settings
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-400">
+                        <p style={{ color: colors.textSecondary }}>
                           Enhance your account security with additional
                           protections
                         </p>
                       </div>
 
-                      <div className="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-6">
+                      <div className="pt-6 space-y-6" style={{ borderTop: `1px solid ${colors.border}` }}>
                         {/* 2FA */}
-                        <div className="flex items-start justify-between p-5 bg-gray-50 dark:bg-gray-700/30 rounded-xl">
+                        <div className="flex items-start justify-between p-5 rounded-xl" style={{ background: colors.surfaceElevated }}>
                           <div className="flex gap-4">
-                            <div className="w-12 h-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ background: `${colors.success}20` }}>
                               <Smartphone
                                 size={24}
-                                className="text-green-600 dark:text-green-400"
+                                style={{ color: colors.success }}
                               />
                             </div>
                             <div>
-                              <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                              <h4 className="font-semibold mb-1" style={{ color: colors.text }}>
                                 Two-Factor Authentication
                               </h4>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                              <p className="text-sm" style={{ color: colors.textSecondary }}>
                                 Add an extra layer of security to your account
                               </p>
-                              <span className="inline-block mt-2 text-xs font-medium px-2 py-1 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded">
-                                Not enabled
+                              <span className="inline-block mt-2 text-xs font-medium px-2 py-1 rounded" style={{
+                                background: settings.security.twoFactorEnabled ? `${colors.success}20` : colors.border,
+                                color: settings.security.twoFactorEnabled ? colors.success : colors.textSecondary
+                              }}>
+                                {settings.security.twoFactorEnabled ? 'Enabled' : 'Not enabled'}
                               </span>
                             </div>
                           </div>
-                          <Button
-                            onClick={handleEnable2FA}
-                            variant="outline"
-                            size="sm"
-                          >
-                            Enable
-                          </Button>
+                          {!settings.security.twoFactorEnabled ? (
+                            <Button
+                              onClick={handleEnable2FA}
+                              variant="primary"
+                              size="sm"
+                            >
+                              Enable
+                            </Button>
+                          ) : (
+                            <Button
+                              onClick={() => {
+                                updateSecurity({ twoFactorEnabled: false });
+                                toast.success('2FA disabled');
+                              }}
+                              variant="outline"
+                              size="sm"
+                            >
+                              Disable
+                            </Button>
+                          )}
                         </div>
 
                         {/* Active Sessions */}
                         <div>
-                          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                          <h4 className="text-lg font-semibold mb-4" style={{ color: colors.text }}>
                             Active Sessions
                           </h4>
                           <div className="space-y-3">
-                            <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                            <div className="flex items-center justify-between p-4 rounded-lg" style={{ border: `1px solid ${colors.border}` }}>
                               <div className="flex items-center gap-3">
                                 <Monitor
                                   size={20}
-                                  className="text-gray-600 dark:text-gray-400"
+                                  style={{ color: colors.textSecondary }}
                                 />
                                 <div>
-                                  <p className="font-medium text-gray-900 dark:text-white">
+                                  <p className="font-medium" style={{ color: colors.text }}>
                                     Current Session
                                   </p>
-                                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  <p className="text-sm" style={{ color: colors.textTertiary }}>
                                     macOS • Chrome • Active now
                                   </p>
                                 </div>
                               </div>
-                              <span className="text-xs font-medium px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded">
+                              <span className="text-xs font-medium px-2 py-1 rounded" style={{ background: `${colors.success}20`, color: colors.success }}>
                                 Active
                               </span>
                             </div>
@@ -398,115 +454,151 @@ export default function SettingsPage() {
                       className="space-y-6"
                     >
                       <div>
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        <h3 className="text-2xl font-bold mb-2" style={{ color: colors.text }}>
                           Preferences
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-400">
+                        <p style={{ color: colors.textSecondary }}>
                           Customize your Echo experience
                         </p>
                       </div>
 
-                      <div className="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-6">
-                        {/* Theme */}
+                      <div className="pt-6 space-y-6" style={{ borderTop: `1px solid ${colors.border}` }}>
+                        {/* Color Mode */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            {theme === 'light' ? (
-                              <Sun
-                                size={20}
-                                className="text-gray-600 dark:text-gray-400"
-                              />
+                            {colorMode === 'light' ? (
+                              <Sun size={20} style={{ color: colors.textSecondary }} />
+                            ) : colorMode === 'dark' ? (
+                              <Moon size={20} style={{ color: colors.textSecondary }} />
                             ) : (
-                              <Moon
-                                size={20}
-                                className="text-gray-600 dark:text-gray-400"
-                              />
+                              <Globe size={20} style={{ color: colors.textSecondary }} />
                             )}
                             <div>
-                              <h4 className="font-semibold text-gray-900 dark:text-white">
-                                Theme
+                              <h4 className="font-semibold" style={{ color: colors.text }}>
+                                Color Mode
                               </h4>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">
-                                Choose your preferred theme
+                              <p className="text-sm" style={{ color: colors.textSecondary }}>
+                                Choose light, dark, or auto mode
                               </p>
                             </div>
                           </div>
                           <select
-                            value={theme}
+                            value={colorMode}
                             onChange={(e) => {
-                              setTheme(e.target.value as 'light' | 'dark');
-                              toast.success(
-                                `Theme changed to ${e.target.value}`
-                              );
+                              setColorMode(e.target.value as any);
+                              toast.success(`Color mode changed to ${e.target.value}`);
                             }}
-                            className="px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="px-4 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all"
+                            style={{
+                              borderColor: colors.border,
+                              background: colors.surface,
+                              color: colors.text
+                            }}
                           >
                             <option value="light">Light</option>
                             <option value="dark">Dark</option>
+                            <option value="auto">Auto</option>
+                          </select>
+                        </div>
+
+                        {/* Theme Variant */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-semibold" style={{ color: colors.text }}>
+                              Theme Variant
+                            </h4>
+                            <p className="text-sm" style={{ color: colors.textSecondary }}>
+                              Choose your color palette
+                            </p>
+                          </div>
+                          <select
+                            value={variant}
+                            onChange={(e) => {
+                              setVariant(e.target.value as any);
+                              toast.success(`Theme changed to ${e.target.value}`);
+                            }}
+                            className="px-4 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all capitalize"
+                            style={{
+                              borderColor: colors.border,
+                              background: colors.surface,
+                              color: colors.text
+                            }}
+                          >
+                            <option value="default">Default</option>
+                            <option value="ocean">Ocean</option>
+                            <option value="sunset">Sunset</option>
+                            <option value="forest">Forest</option>
+                            <option value="lavender">Lavender</option>
+                            <option value="rose">Rose</option>
                           </select>
                         </div>
 
                         {/* Notifications */}
                         <div className="space-y-4">
-                          <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          <h4 className="text-lg font-semibold" style={{ color: colors.text }}>
                             Notifications
                           </h4>
 
-                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                          <div className="flex items-center justify-between p-4 rounded-lg" style={{ background: colors.surfaceElevated }}>
                             <div className="flex items-center gap-3">
                               <Bell
                                 size={20}
-                                className="text-gray-600 dark:text-gray-400"
+                                style={{ color: colors.textSecondary }}
                               />
                               <div>
-                                <h5 className="font-medium text-gray-900 dark:text-white">
+                                <h5 className="font-medium" style={{ color: colors.text }}>
                                   Email Notifications
                                 </h5>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                <p className="text-sm" style={{ color: colors.textSecondary }}>
                                   Receive updates via email
                                 </p>
                               </div>
                             </div>
                             <button
                               onClick={() => {
-                                setEmailNotifications(!emailNotifications);
+                                const newValue = !settings.notifications.email;
+                                updateNotifications({ email: newValue });
                                 toast.success(
-                                  `Email notifications ${!emailNotifications ? 'enabled' : 'disabled'}`
+                                  `Email notifications ${newValue ? 'enabled' : 'disabled'}`
                                 );
                               }}
-                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${emailNotifications ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                              className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+                              style={{ background: settings.notifications.email ? colors.primary : colors.border }}
                             >
                               <span
-                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${emailNotifications ? 'translate-x-6' : 'translate-x-1'}`}
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.notifications.email ? 'translate-x-6' : 'translate-x-1'}`}
                               />
                             </button>
                           </div>
 
-                          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                          <div className="flex items-center justify-between p-4 rounded-lg" style={{ background: colors.surfaceElevated }}>
                             <div className="flex items-center gap-3">
                               <Smartphone
                                 size={20}
-                                className="text-gray-600 dark:text-gray-400"
+                                style={{ color: colors.textSecondary }}
                               />
                               <div>
-                                <h5 className="font-medium text-gray-900 dark:text-white">
+                                <h5 className="font-medium" style={{ color: colors.text }}>
                                   Push Notifications
                                 </h5>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                <p className="text-sm" style={{ color: colors.textSecondary }}>
                                   Get notifications on your device
                                 </p>
                               </div>
                             </div>
                             <button
                               onClick={() => {
-                                setPushNotifications(!pushNotifications);
+                                const newValue = !settings.notifications.push;
+                                updateNotifications({ push: newValue });
                                 toast.success(
-                                  `Push notifications ${!pushNotifications ? 'enabled' : 'disabled'}`
+                                  `Push notifications ${newValue ? 'enabled' : 'disabled'}`
                                 );
                               }}
-                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${pushNotifications ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                              className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+                              style={{ background: settings.notifications.push ? colors.primary : colors.border }}
                             >
                               <span
-                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${pushNotifications ? 'translate-x-6' : 'translate-x-1'}`}
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.notifications.push ? 'translate-x-6' : 'translate-x-1'}`}
                               />
                             </button>
                           </div>
@@ -525,27 +617,28 @@ export default function SettingsPage() {
                       className="space-y-6"
                     >
                       <div>
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        <h3 className="text-2xl font-bold mb-2" style={{ color: colors.text }}>
                           Privacy Settings
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-400">
+                        <p style={{ color: colors.textSecondary }}>
                           Control who can see your information
                         </p>
                       </div>
 
-                      <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                      <div className="pt-6" style={{ borderTop: `1px solid ${colors.border}` }}>
                         <div className="space-y-4">
-                          <div className="p-5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+                          <div className="p-5 rounded-xl" style={{ background: `${colors.info}10`, border: `1px solid ${colors.info}40` }}>
                             <div className="flex gap-3">
                               <Eye
                                 size={20}
-                                className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1"
+                                className="flex-shrink-0 mt-1"
+                                style={{ color: colors.info }}
                               />
                               <div>
-                                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                                <h4 className="font-semibold mb-2" style={{ color: colors.text }}>
                                   Profile Visibility
                                 </h4>
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                                <p className="text-sm mb-4" style={{ color: colors.textSecondary }}>
                                   Your profile is currently visible to all Echo
                                   users. You can change this in your privacy
                                   settings.
@@ -557,29 +650,29 @@ export default function SettingsPage() {
                             </div>
                           </div>
 
-                          <div className="p-5 bg-gray-50 dark:bg-gray-700/30 rounded-xl">
-                            <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                          <div className="p-5 rounded-xl" style={{ background: colors.surfaceElevated }}>
+                            <h4 className="font-semibold mb-3" style={{ color: colors.text }}>
                               Data & Privacy
                             </h4>
-                            <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                            <ul className="space-y-2 text-sm" style={{ color: colors.textSecondary }}>
                               <li className="flex items-center gap-2">
                                 <CheckCircle
                                   size={16}
-                                  className="text-green-500"
+                                  style={{ color: colors.success }}
                                 />
                                 Your data is encrypted at rest and in transit
                               </li>
                               <li className="flex items-center gap-2">
                                 <CheckCircle
                                   size={16}
-                                  className="text-green-500"
+                                  style={{ color: colors.success }}
                                 />
                                 We never sell your personal information
                               </li>
                               <li className="flex items-center gap-2">
                                 <CheckCircle
                                   size={16}
-                                  className="text-green-500"
+                                  style={{ color: colors.success }}
                                 />
                                 You can download your data anytime
                               </li>
@@ -600,35 +693,35 @@ export default function SettingsPage() {
                       className="space-y-6"
                     >
                       <div>
-                        <h3 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
+                        <h3 className="text-2xl font-bold mb-2" style={{ color: colors.error }}>
                           Danger Zone
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-400">
+                        <p style={{ color: colors.textSecondary }}>
                           Irreversible and destructive actions
                         </p>
                       </div>
 
-                      <div className="border-t border-red-200 dark:border-red-900 pt-6">
-                        <div className="p-6 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl">
+                      <div className="pt-6" style={{ borderTop: `1px solid ${colors.error}40` }}>
+                        <div className="p-6 border-2 rounded-xl" style={{ background: `${colors.error}10`, borderColor: `${colors.error}40` }}>
                           <div className="flex items-start gap-4">
-                            <div className="w-12 h-12 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
+                            <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${colors.error}20` }}>
                               <Trash2
                                 size={24}
-                                className="text-red-600 dark:text-red-400"
+                                style={{ color: colors.error }}
                               />
                             </div>
                             <div className="flex-1">
-                              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                              <h4 className="text-lg font-semibold mb-2" style={{ color: colors.text }}>
                                 Delete Account
                               </h4>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                              <p className="text-sm mb-4" style={{ color: colors.textSecondary }}>
                                 Once you delete your account, there is no going
                                 back. All your data will be permanently removed.
                                 This action cannot be undone.
                               </p>
                               <Button
                                 onClick={() => setShowDeleteDialog(true)}
-                                variant="destructive"
+                                variant="error"
                                 size="md"
                                 leftIcon={<Trash2 size={18} />}
                               >
@@ -654,7 +747,8 @@ export default function SettingsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            style={{ background: 'rgba(0,0,0,0.5)' }}
             onClick={() => setShowDeleteDialog(false)}
           >
             <motion.div
@@ -662,20 +756,21 @@ export default function SettingsPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full"
+              className="rounded-2xl p-6 max-w-md w-full"
+              style={{ background: colors.surface, boxShadow: colors.shadowLarge }}
             >
               <div className="flex items-start gap-4 mb-6">
-                <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${colors.error}20` }}>
                   <AlertTriangle
                     size={24}
-                    className="text-red-600 dark:text-red-400"
+                    style={{ color: colors.error }}
                   />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                  <h3 className="text-xl font-bold mb-2" style={{ color: colors.text }}>
                     Delete Account?
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm" style={{ color: colors.textSecondary }}>
                     Are you absolutely sure? This action cannot be undone. All
                     your data will be permanently deleted.
                   </p>
@@ -692,13 +787,110 @@ export default function SettingsPage() {
                   Cancel
                 </Button>
                 <Button
-                  onClick={handleDeleteAccount}
-                  variant="destructive"
+                  onClick={async () => {
+                    // For demo purposes - in production, add password input field
+                    const password = prompt('Enter your password to confirm:');
+                    if (password) {
+                      await handleDeleteAccount(password);
+                    }
+                  }}
+                  variant="error"
                   size="md"
                   fullWidth
                   leftIcon={<Trash2 size={18} />}
                 >
                   Yes, Delete
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 2FA Setup Dialog */}
+      <AnimatePresence>
+        {show2FADialog && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            style={{ background: 'rgba(0,0,0,0.5)' }}
+            onClick={() => setShow2FADialog(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="rounded-2xl p-6 max-w-md w-full"
+              style={{ background: colors.surface, boxShadow: colors.shadowLarge }}
+            >
+              <div className="mb-6">
+                <h3 className="text-xl font-bold mb-2" style={{ color: colors.text }}>
+                  Setup Two-Factor Authentication
+                </h3>
+                <p className="text-sm" style={{ color: colors.textSecondary }}>
+                  Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
+                </p>
+              </div>
+
+              {/* QR Code Display */}
+              <div className="flex flex-col items-center gap-4 mb-6">
+                {twoFactorQR && (
+                  <div className="p-4 rounded-lg" style={{ background: colors.surfaceElevated }}>
+                    <img src={twoFactorQR} alt="2FA QR Code" className="w-48 h-48" />
+                  </div>
+                )}
+
+                {twoFactorSecret && (
+                  <div className="w-full">
+                    <p className="text-xs mb-2" style={{ color: colors.textTertiary }}>
+                      Manual entry code:
+                    </p>
+                    <code className="block p-3 rounded text-sm break-all" style={{
+                      background: colors.surfaceElevated,
+                      color: colors.text,
+                      fontFamily: 'monospace'
+                    }}>
+                      {twoFactorSecret}
+                    </code>
+                  </div>
+                )}
+              </div>
+
+              {/* Verification Input */}
+              <div className="mb-6">
+                <Input
+                  type="text"
+                  label="Enter 6-digit code"
+                  placeholder="000000"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  maxLength={6}
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => {
+                    setShow2FADialog(false);
+                    setVerificationCode('');
+                  }}
+                  variant="outline"
+                  size="md"
+                  fullWidth
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleVerify2FA}
+                  variant="primary"
+                  size="md"
+                  fullWidth
+                  disabled={verificationCode.length !== 6}
+                >
+                  Verify & Enable
                 </Button>
               </div>
             </motion.div>

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 interface FooterColumnProps {
   title: string;
@@ -9,6 +10,24 @@ interface FooterColumnProps {
 }
 
 export function FooterColumn({ title, links }: FooterColumnProps) {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, link: { label: string; href: string }) => {
+    // If it's a placeholder link (starts with #), show a toast and prevent navigation
+    if (link.href.startsWith('#')) {
+      e.preventDefault();
+      toast.info(`${link.label} - Coming soon!`, {
+        icon: '🚧',
+        duration: 3000,
+      });
+    }
+    // Otherwise, show feedback for navigation
+    else {
+      toast.success(`Navigating to ${link.label}...`, {
+        icon: '→',
+        duration: 2000,
+      });
+    }
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-semibold text-[var(--echo-text-primary)] uppercase tracking-wider">
@@ -19,7 +38,8 @@ export function FooterColumn({ title, links }: FooterColumnProps) {
           <li key={link.href}>
             <Link
               href={link.href}
-              className="text-sm text-[var(--echo-text-secondary)] hover:text-[var(--echo-primary)] transition-colors"
+              onClick={(e) => handleClick(e, link)}
+              className="text-sm text-[var(--echo-text-secondary)] hover:text-[var(--echo-primary)] transition-colors hover:underline cursor-pointer inline-block"
             >
               {link.label}
             </Link>

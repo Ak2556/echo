@@ -1,0 +1,193 @@
+/* ===================================
+   GLOBAL HOVER FIX
+   Smooth, flicker-free hover states using CSS
+   =================================== */
+
+/* Optimize all interactive elements for smooth hover */
+button,
+a,
+[role="button"],
+.clickable,
+.nav-item,
+.menu-item {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.15s ease,
+              box-shadow 0.15s ease,
+              opacity 0.15s ease;
+}
+
+/* Remove scale on hover to prevent flickering */
+button:hover,
+a:hover,
+[role="button"]:hover,
+.clickable:hover {
+  transform: translateZ(0); /* Keep z-index trick but remove scale */
+}
+
+/* Navigation hover states */
+nav button,
+nav a,
+.navigation button,
+.navigation a {
+  position: relative;
+  overflow: hidden;
+}
+
+nav button::before,
+nav a::before,
+.navigation button::before,
+.navigation a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--theme-hover, rgba(0, 0, 0, 0.05));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+nav button:hover::before,
+nav a:hover::before,
+.navigation button:hover::before,
+.navigation a:hover::before {
+  opacity: 1;
+}
+
+/* Disable problematic hover transforms */
+.hover\:scale-105:hover {
+  transform: none !important;
+}
+
+.hover\:scale-110:hover {
+  transform: none !important;
+}
+
+/* Smooth hover backgrounds using pseudo-elements */
+.nav-hover-item {
+  position: relative;
+  isolation: isolate;
+}
+
+.nav-hover-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--theme-hover);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.nav-hover-item:hover::before {
+  opacity: 1;
+}
+
+/* Input focus fix */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--theme-primary)33;
+  border-color: var(--theme-primary);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+/* Remove scale transforms globally for better performance */
+[class*="hover:scale"] {
+  will-change: auto !important;
+}
+
+/* Optimize dropdown animations */
+.animate-fade-in-down {
+  animation: fadeInDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Prevent transform flickering */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fix shadow flickering */
+[class*="hover:shadow"] {
+  transition: box-shadow 0.2s ease;
+}
+
+[class*="hover:shadow"]:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Group hover optimization */
+.group {
+  isolation: isolate;
+}
+
+.group:hover .group-hover\:scale-110 {
+  transform: none !important;
+}
+
+.group:hover .group-hover\:scale-105 {
+  transform: none !important;
+}
+
+/* Smooth button states */
+button:active {
+  transform: translateZ(0) scale(0.98);
+  transition-duration: 0.05s;
+}
+
+/* Prevent layout shifts */
+button,
+a,
+[role="button"] {
+  contain: layout style;
+}
+
+/* Hardware acceleration for smooth rendering */
+@supports (backdrop-filter: blur(10px)) {
+  button,
+  a,
+  [role="button"] {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  button,
+  a,
+  [role="button"],
+  nav button,
+  nav a {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  button::before,
+  a::before,
+  nav button::before,
+  nav a::before {
+    transition: none !important;
+  }
+}

@@ -14,6 +14,7 @@ interface ModalProps {
   description?: string;
   children: ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  variant?: 'default' | 'modern' | 'glass';
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
   showCloseButton?: boolean;
@@ -38,6 +39,7 @@ const Modal = memo(function Modal({
   description,
   children,
   size = 'md',
+  variant = 'modern',
   closeOnOverlayClick = true,
   closeOnEscape = true,
   showCloseButton = true,
@@ -121,31 +123,42 @@ const Modal = memo(function Modal({
           transition={{ duration: 0.2 }}
           onClick={handleOverlayClick}
         >
-          {/* Backdrop */}
+          {/* Premium Enhanced Backdrop with Stronger Blur */}
           <motion.div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className={cn(
+              'absolute inset-0 backdrop-blur-xl',
+              variant === 'glass' ? 'bg-black/20' : 'bg-black/50'
+            )}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
           />
 
           {/* Modal Content */}
           <motion.div
             ref={modalRef}
             className={cn(
-              'relative w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl',
-              'max-h-[90vh] overflow-hidden',
+              'relative w-full max-h-[90vh] overflow-hidden',
+
+              // Variant styles
+              {
+                'bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700': variant === 'default',
+
+                'bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-2xl border-2 border-gray-200 dark:border-gray-700': variant === 'modern',
+
+                'backdrop-blur-2xl bg-white/80 dark:bg-gray-900/80 rounded-2xl shadow-2xl border-2 border-white/50 dark:border-gray-700/50': variant === 'glass',
+              },
+
               sizeVariants[size],
               className
             )}
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.96, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            exit={{ opacity: 0, scale: 0.96, y: 20 }}
             transition={{
-              duration: 0.2,
-              type: 'spring',
-              stiffness: 300,
-              damping: 30,
+              duration: 0.25,
+              ease: [0.22, 1, 0.36, 1], // Apple easing curve
             }}
             tabIndex={-1}
             role="dialog"
@@ -153,14 +166,14 @@ const Modal = memo(function Modal({
             aria-labelledby={title ? 'modal-title' : undefined}
             aria-describedby={description ? 'modal-description' : undefined}
           >
-            {/* Header */}
+            {/* Modern Header */}
             {(title || showCloseButton) && (
-              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between p-6 border-b-2 border-gray-100 dark:border-gray-800 bg-gradient-to-r from-gray-50/50 to-transparent dark:from-gray-800/50">
                 <div className="flex-1">
                   {title && (
                     <h2
                       id="modal-title"
-                      className="text-lg font-semibold text-gray-900 dark:text-white"
+                      className="text-2xl font-bold text-gray-900 dark:text-white bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
                     >
                       {title}
                     </h2>
@@ -168,7 +181,7 @@ const Modal = memo(function Modal({
                   {description && (
                     <p
                       id="modal-description"
-                      className="mt-1 text-sm text-gray-600 dark:text-gray-400"
+                      className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed"
                     >
                       {description}
                     </p>
@@ -179,7 +192,7 @@ const Modal = memo(function Modal({
                     variant="ghost"
                     size="sm"
                     onClick={onClose}
-                    className="ml-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    className="ml-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 !rounded-full"
                     aria-label="Close modal"
                   >
                     <X className="w-5 h-5" />
@@ -188,8 +201,8 @@ const Modal = memo(function Modal({
               </div>
             )}
 
-            {/* Content */}
-            <div className={cn('p-6 overflow-y-auto', contentClassName)}>
+            {/* Modern Content */}
+            <div className={cn('p-6 overflow-y-auto text-gray-700 dark:text-gray-300', contentClassName)}>
               {children}
             </div>
           </motion.div>
@@ -202,7 +215,7 @@ const Modal = memo(function Modal({
 
 export default Modal;
 
-// Confirmation Modal
+// Modern Confirmation Modal
 export function ConfirmModal({
   isOpen,
   onClose,
@@ -211,7 +224,7 @@ export function ConfirmModal({
   message = 'Are you sure you want to proceed?',
   confirmText = 'Confirm',
   cancelText = 'Cancel',
-  variant = 'destructive',
+  variant = 'error',
   loading = false,
 }: {
   isOpen: boolean;
@@ -221,19 +234,19 @@ export function ConfirmModal({
   message?: string;
   confirmText?: string;
   cancelText?: string;
-  variant?: 'primary' | 'destructive';
+  variant?: 'primary' | 'error' | 'success';
   loading?: boolean;
 }) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm">
-      <div className="space-y-4">
-        <p className="text-gray-600 dark:text-gray-400">{message}</p>
+    <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm" variant="modern">
+      <div className="space-y-6">
+        <p className="text-gray-700 dark:text-gray-300 text-base leading-relaxed">{message}</p>
 
-        <div className="flex space-x-3 justify-end">
-          <Button variant="outline" onClick={onClose} disabled={loading}>
+        <div className="flex gap-3 justify-end">
+          <Button variant="outline" onClick={onClose} disabled={loading} size="md">
             {cancelText}
           </Button>
-          <Button variant={variant} onClick={onConfirm} loading={loading}>
+          <Button variant={variant} onClick={onConfirm} loading={loading} size="md">
             {confirmText}
           </Button>
         </div>

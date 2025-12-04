@@ -5,11 +5,12 @@
 import { redirect } from 'next/navigation';
 
 type Props = {
-  searchParams: { email?: string };
+  searchParams: Promise<{ email?: string }> | { email?: string };
 };
 
-export default function LoginPage({ searchParams }: Props) {
+export default async function LoginPage({ searchParams }: Props) {
   // Server-side redirect to enhanced experience
-  const emailParam = searchParams.email;
+  const params = await Promise.resolve(searchParams);
+  const emailParam = params.email;
   redirect(`/auth/login-experience${emailParam ? `?email=${emailParam}` : ''}`);
 }

@@ -8,7 +8,7 @@ import React, {
   useEffect,
 } from 'react';
 import dynamic from 'next/dynamic';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useTheme } from '@/hooks/useTheme';
 import { CartProvider } from '@/contexts/CartContext';
 import { WishlistProvider } from '@/contexts/WishlistContext';
 // Import MainApp with error handling

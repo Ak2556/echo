@@ -1,27 +1,98 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SettingsSubPage, SettingsSection } from './SettingsSubPage';
-import { useTheme } from '@/contexts/ThemeContext';
-import { Sun, Moon, Monitor } from 'lucide-react';
+import { useModernTheme } from '@/contexts/ModernThemeContext';
+import { Sun, Moon, Globe } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useGSAP, gsap } from '@/hooks/useGSAP';
+import { ANIMATION } from '@/lib/animation-constants';
 
 export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
-  const { colorMode, toggleColorMode, colorPalette, setColorPalette } = useTheme();
-  const [textSize, setTextSize] = useState(14);
+  const { colors, colorMode, setColorMode, variant, setVariant, accessibility, setAccessibility } = useModernTheme();
+  const [textSize, setTextSize] = useState(accessibility?.fontSize || 16);
+  const [reducedMotion, setReducedMotion] = useState(accessibility?.reducedMotion || false);
+  const [highContrast, setHighContrast] = useState(accessibility?.highContrast || false);
 
-  const themes = [
+  const reducedMotionToggleRef = useRef<HTMLButtonElement>(null);
+  const highContrastToggleRef = useRef<HTMLButtonElement>(null);
+  const saveButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Load settings from accessibility
+  useEffect(() => {
+    if (accessibility) {
+      setTextSize(accessibility.fontSize || 16);
+      setReducedMotion(accessibility.reducedMotion || false);
+      setHighContrast(accessibility.highContrast || false);
+    }
+  }, [accessibility]);
+
+  // Apply text size globally whenever it changes
+  useEffect(() => {
+    document.documentElement.style.setProperty('--global-font-size', `${textSize}px`);
+    setAccessibility({ ...accessibility, fontSize: textSize });
+  }, [textSize]);
+
+  // Apply reduced motion globally
+  useEffect(() => {
+    if (reducedMotion) {
+      document.documentElement.style.setProperty('--animation-duration', '0.01ms');
+      document.documentElement.style.setProperty('--transition-duration', '0.01ms');
+    } else {
+      document.documentElement.style.setProperty('--animation-duration', '300ms');
+      document.documentElement.style.setProperty('--transition-duration', '200ms');
+    }
+    setAccessibility({ ...accessibility, reducedMotion });
+  }, [reducedMotion]);
+
+  // Apply high contrast globally
+  useEffect(() => {
+    if (highContrast) {
+      document.documentElement.setAttribute('data-high-contrast', 'true');
+    } else {
+      document.documentElement.removeAttribute('data-high-contrast');
+    }
+    setAccessibility({ ...accessibility, highContrast });
+  }, [highContrast]);
+
+  // GSAP animations for toggle switches
+  useGSAP(() => {
+    if (reducedMotionToggleRef.current) {
+      gsap.to(reducedMotionToggleRef.current, {
+        scale: 1.05,
+        duration: 0.1,
+        yoyo: true,
+        repeat: 1,
+        ease: ANIMATION.easing.apple,
+      });
+    }
+  }, [reducedMotion]);
+
+  useGSAP(() => {
+    if (highContrastToggleRef.current) {
+      gsap.to(highContrastToggleRef.current, {
+        scale: 1.05,
+        duration: 0.1,
+        yoyo: true,
+        repeat: 1,
+        ease: ANIMATION.easing.apple,
+      });
+    }
+  }, [highContrast]);
+
+  const colorModes = [
     { id: 'light', name: 'Light', icon: Sun, description: 'Clean and bright' },
     { id: 'dark', name: 'Dark', icon: Moon, description: 'Easy on the eyes' },
-    { id: 'system', name: 'System', icon: Monitor, description: 'Match your device' },
+    { id: 'auto', name: 'Auto', icon: Globe, description: 'Match your system' },
   ];
 
-  const palettes = [
-    { id: 'blue', name: 'Ocean Blue', primary: '#0066FF', accent: '#00D9FF' },
-    { id: 'purple', name: 'Royal Purple', primary: '#7C3AED', accent: '#A78BFA' },
-    { id: 'green', name: 'Forest Green', primary: '#059669', accent: '#34D399' },
-    { id: 'red', name: 'Crimson Red', primary: '#DC2626', accent: '#F87171' },
-    { id: 'orange', name: 'Sunset Orange', primary: '#EA580C', accent: '#FB923C' },
-    { id: 'pink', name: 'Blossom Pink', primary: '#DB2777', accent: '#F472B6' },
+  const themeVariants = [
+    { id: 'default', name: 'Default Blue', primary: '#3b82f6', secondary: '#8b5cf6' },
+    { id: 'ocean', name: 'Ocean Teal', primary: '#14b8a6', secondary: '#06b6d4' },
+    { id: 'sunset', name: 'Sunset Orange', primary: '#f97316', secondary: '#ec4899' },
+    { id: 'forest', name: 'Forest Green', primary: '#10b981', secondary: '#84cc16' },
+    { id: 'lavender', name: 'Lavender Purple', primary: '#a855f7', secondary: '#ec4899' },
+    { id: 'rose', name: 'Rose Pink', primary: '#f43f5e', secondary: '#fb923c' },
   ];
 
   return (
@@ -30,10 +101,10 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
       description="Customize colors, themes, and visual preferences"
       onBack={onBack}
     >
-      {/* Theme Section */}
+      {/* Color Mode Section */}
       <SettingsSection
-        title="Theme"
-        description="Choose your preferred color scheme"
+        title="Color Mode"
+        description="Choose between light, dark, or auto mode"
       >
         <div
           style={{
@@ -42,48 +113,47 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
             gap: 'var(--settings-space-4)',
           }}
         >
-          {themes.map((theme) => {
-            const Icon = theme.icon;
-            const isActive = colorMode === theme.id;
+          {colorModes.map((mode) => {
+            const Icon = mode.icon;
+            const isActive = colorMode === mode.id;
 
             return (
               <button
-                key={theme.id}
+                key={mode.id}
                 onClick={() => {
-                  if (theme.id === 'light' || theme.id === 'dark') {
-                    if (colorMode !== theme.id) {
-                      toggleColorMode();
-                    }
-                  }
+                  setColorMode(mode.id as 'light' | 'dark' | 'auto');
+                  toast.success(`Color mode changed to ${mode.name}`);
                 }}
                 style={{
                   padding: 'var(--settings-space-6)',
                   borderRadius: 'var(--settings-radius-md)',
                   border: isActive
-                    ? '2px solid var(--echo-primary)'
-                    : '1px solid var(--echo-border-light)',
+                    ? `2px solid ${colors.primary}`
+                    : `1px solid ${colors.border}`,
                   background: isActive
-                    ? 'rgba(0, 102, 255, 0.05)'
-                    : 'var(--echo-bg-primary)',
+                    ? `${colors.primary}10`
+                    : colors.surface,
                   cursor: 'pointer',
-                  transition: 'var(--settings-transition-normal)',
+                  transition: 'all 0.2s ease',
                   textAlign: 'left',
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.borderColor = 'var(--echo-border-medium)';
+                    e.currentTarget.style.transform = 'scale(1.02)';
+                    e.currentTarget.style.borderColor = colors.primary;
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.borderColor = 'var(--echo-border-light)';
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.borderColor = colors.border;
                   }
                 }}
               >
                 <Icon
                   size={24}
                   style={{
-                    color: isActive ? 'var(--echo-primary)' : 'var(--echo-text-secondary)',
+                    color: isActive ? colors.primary : colors.textSecondary,
                     marginBottom: 'var(--settings-space-3)',
                   }}
                 />
@@ -91,19 +161,19 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
                   style={{
                     fontSize: 'var(--settings-text-base)',
                     fontWeight: 'var(--settings-weight-semibold)',
-                    color: 'var(--echo-text-primary)',
+                    color: colors.text,
                     marginBottom: 'var(--settings-space-1)',
                   }}
                 >
-                  {theme.name}
+                  {mode.name}
                 </div>
                 <div
                   style={{
                     fontSize: 'var(--settings-text-sm)',
-                    color: 'var(--echo-text-secondary)',
+                    color: colors.textSecondary,
                   }}
                 >
-                  {theme.description}
+                  {mode.description}
                 </div>
               </button>
             );
@@ -111,10 +181,10 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
         </div>
       </SettingsSection>
 
-      {/* Color Palette Section */}
+      {/* Theme Variant Section */}
       <SettingsSection
-        title="Color Palette"
-        description="Select your preferred color scheme"
+        title="Theme Variant"
+        description="Select your preferred color palette"
       >
         <div
           style={{
@@ -123,23 +193,38 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
             gap: 'var(--settings-space-4)',
           }}
         >
-          {palettes.map((palette) => {
-            const isActive = colorPalette === palette.id;
+          {themeVariants.map((themeVariant) => {
+            const isActive = variant === themeVariant.id;
 
             return (
               <button
-                key={palette.id}
-                onClick={() => setColorPalette(palette.id as any)}
+                key={themeVariant.id}
+                onClick={() => {
+                  setVariant(themeVariant.id as any);
+                  toast.success(`Theme changed to ${themeVariant.name}`);
+                }}
                 style={{
                   padding: 'var(--settings-space-4)',
                   borderRadius: 'var(--settings-radius-md)',
                   border: isActive
-                    ? '2px solid var(--echo-primary)'
-                    : '1px solid var(--echo-border-light)',
-                  background: 'var(--echo-bg-primary)',
+                    ? `2px solid ${colors.primary}`
+                    : `1px solid ${colors.border}`,
+                  background: colors.surface,
                   cursor: 'pointer',
-                  transition: 'var(--settings-transition-normal)',
+                  transition: 'all 0.2s ease',
                   textAlign: 'left',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.transform = 'scale(1.02)';
+                    e.currentTarget.style.borderColor = colors.primary;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.borderColor = colors.border;
+                  }
                 }}
               >
                 <div
@@ -154,7 +239,8 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
                       width: '32px',
                       height: '32px',
                       borderRadius: 'var(--settings-radius-sm)',
-                      background: palette.primary,
+                      background: themeVariant.primary,
+                      border: `1px solid ${colors.border}`,
                     }}
                   />
                   <div
@@ -162,7 +248,8 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
                       width: '32px',
                       height: '32px',
                       borderRadius: 'var(--settings-radius-sm)',
-                      background: palette.accent,
+                      background: themeVariant.secondary,
+                      border: `1px solid ${colors.border}`,
                     }}
                   />
                 </div>
@@ -170,11 +257,20 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
                   style={{
                     fontSize: 'var(--settings-text-sm)',
                     fontWeight: 'var(--settings-weight-medium)',
-                    color: 'var(--echo-text-primary)',
+                    color: colors.text,
                   }}
                 >
-                  {palette.name}
+                  {themeVariant.name}
                 </div>
+                {isActive && (
+                  <div style={{
+                    fontSize: 'var(--settings-text-xs)',
+                    color: colors.primary,
+                    marginTop: '4px',
+                  }}>
+                    ✓ Active
+                  </div>
+                )}
               </button>
             );
           })}
@@ -195,27 +291,27 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
               marginBottom: 'var(--settings-space-4)',
             }}
           >
-            <span style={{ fontSize: 'var(--settings-text-sm)', color: 'var(--echo-text-secondary)' }}>
-              Small (12px)
+            <span style={{ fontSize: 'var(--settings-text-sm)', color: colors.textSecondary }}>
+              Small (14px)
             </span>
             <span
               style={{
                 fontSize: `${textSize}px`,
                 fontWeight: 'var(--settings-weight-semibold)',
-                color: 'var(--echo-text-primary)',
+                color: colors.text,
               }}
             >
               Aa
             </span>
-            <span style={{ fontSize: 'var(--settings-text-sm)', color: 'var(--echo-text-secondary)' }}>
-              Large (18px)
+            <span style={{ fontSize: 'var(--settings-text-sm)', color: colors.textSecondary }}>
+              Large (20px)
             </span>
           </div>
 
           <input
             type="range"
-            min="12"
-            max="18"
+            min="14"
+            max="20"
             step="1"
             value={textSize}
             onChange={(e) => setTextSize(parseInt(e.target.value))}
@@ -223,9 +319,10 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
               width: '100%',
               height: '6px',
               borderRadius: '3px',
-              background: 'var(--echo-border-light)',
+              background: colors.border,
               outline: 'none',
               cursor: 'pointer',
+              accentColor: colors.primary,
             }}
           />
 
@@ -233,51 +330,154 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
             style={{
               marginTop: 'var(--settings-space-6)',
               padding: 'var(--settings-space-6)',
-              background: 'var(--echo-bg-secondary)',
+              background: colors.surfaceElevated,
               borderRadius: 'var(--settings-radius-md)',
-              border: '1px solid var(--echo-border-light)',
+              border: `1px solid ${colors.border}`,
             }}
           >
-            <p style={{ fontSize: `${textSize}px`, lineHeight: '1.6' }}>
+            <p style={{ fontSize: `${textSize}px`, lineHeight: '1.6', color: colors.text }}>
               The quick brown fox jumps over the lazy dog. This is a preview of how text will appear at your selected size.
             </p>
           </div>
         </div>
       </SettingsSection>
 
-      {/* Save Button */}
+      {/* Accessibility Options */}
+      <SettingsSection
+        title="Accessibility"
+        description="Additional accessibility preferences"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--settings-space-4)' }}>
+          {/* Reduced Motion Toggle */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: 'var(--settings-space-4)',
+            background: colors.surface,
+            borderRadius: 'var(--settings-radius-md)',
+            border: `1px solid ${colors.border}`,
+          }}>
+            <div>
+              <div style={{ fontSize: 'var(--settings-text-base)', fontWeight: 'var(--settings-weight-medium)', color: colors.text, marginBottom: '4px' }}>
+                Reduced Motion
+              </div>
+              <div style={{ fontSize: 'var(--settings-text-sm)', color: colors.textSecondary }}>
+                Minimize animations and transitions
+              </div>
+            </div>
+            <button
+              ref={reducedMotionToggleRef}
+              onClick={() => setReducedMotion(!reducedMotion)}
+              className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+              style={{ background: reducedMotion ? colors.primary : colors.border }}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${reducedMotion ? 'translate-x-6' : 'translate-x-1'}`}
+              />
+            </button>
+          </div>
+
+          {/* High Contrast Toggle */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: 'var(--settings-space-4)',
+            background: colors.surface,
+            borderRadius: 'var(--settings-radius-md)',
+            border: `1px solid ${colors.border}`,
+          }}>
+            <div>
+              <div style={{ fontSize: 'var(--settings-text-base)', fontWeight: 'var(--settings-weight-medium)', color: colors.text, marginBottom: '4px' }}>
+                High Contrast
+              </div>
+              <div style={{ fontSize: 'var(--settings-text-sm)', color: colors.textSecondary }}>
+                Increase contrast for better readability
+              </div>
+            </div>
+            <button
+              ref={highContrastToggleRef}
+              onClick={() => setHighContrast(!highContrast)}
+              className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+              style={{ background: highContrast ? colors.primary : colors.border }}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${highContrast ? 'translate-x-6' : 'translate-x-1'}`}
+              />
+            </button>
+          </div>
+        </div>
+      </SettingsSection>
+
+      {/* Action Buttons */}
       <div
         style={{
           display: 'flex',
           gap: 'var(--settings-space-4)',
           paddingTop: 'var(--settings-space-8)',
-          borderTop: '1px solid var(--echo-border-light)',
+          borderTop: `1px solid ${colors.border}`,
         }}
       >
         <button
           onClick={() => {
             // Reset to defaults
-            setTextSize(14);
+            setTextSize(16);
+            setReducedMotion(false);
+            setHighContrast(false);
+            setAccessibility({
+              fontSize: 16,
+              reducedMotion: false,
+              highContrast: false,
+            });
+            toast.success('Reset to default settings');
           }}
           style={{
             padding: '12px 24px',
             fontSize: 'var(--settings-text-base)',
             fontWeight: 'var(--settings-weight-medium)',
             borderRadius: 'var(--settings-radius-md)',
-            border: '1px solid var(--echo-border-light)',
-            background: 'transparent',
-            color: 'var(--echo-text-primary)',
+            border: `1px solid ${colors.border}`,
+            background: colors.surface,
+            color: colors.text,
             cursor: 'pointer',
-            transition: 'var(--settings-transition-normal)',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = colors.hover;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = colors.surface;
           }}
         >
           Reset to Defaults
         </button>
 
         <button
+          ref={saveButtonRef}
           onClick={() => {
-            // Save changes
-            console.log('Saved appearance settings');
+            // Success animation
+            if (saveButtonRef.current) {
+              gsap.to(saveButtonRef.current, {
+                scale: 0.95,
+                duration: 0.1,
+                yoyo: true,
+                repeat: 1,
+                ease: ANIMATION.easing.apple,
+                onComplete: () => {
+                  gsap.to(saveButtonRef.current, {
+                    rotateZ: 5,
+                    duration: 0.05,
+                    yoyo: true,
+                    repeat: 3,
+                  });
+                },
+              });
+            }
+            toast.success('✓ All changes are automatically saved!', {
+              icon: '💾',
+              duration: 2000,
+            });
           }}
           style={{
             padding: '12px 32px',
@@ -285,14 +485,23 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
             fontWeight: 'var(--settings-weight-semibold)',
             borderRadius: 'var(--settings-radius-md)',
             border: 'none',
-            background: 'linear-gradient(135deg, var(--echo-primary), var(--echo-accent))',
+            background: `linear-gradient(135deg, ${colors.success}, ${colors.primary})`,
             color: 'white',
             cursor: 'pointer',
-            transition: 'var(--settings-transition-normal)',
+            transition: 'all 0.2s ease',
             marginLeft: 'auto',
+            boxShadow: `0 4px 12px ${colors.success}40`,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = `0 6px 16px ${colors.success}60`;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = `0 4px 12px ${colors.success}40`;
           }}
         >
-          Save Changes
+          ✓ Auto-Saved
         </button>
       </div>
     </SettingsSubPage>

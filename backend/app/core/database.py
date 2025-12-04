@@ -34,28 +34,30 @@ class Base(DeclarativeBase):
 
 def create_database_engine() -> AsyncEngine:
     """Create database engine with production-grade configuration."""
-    
+
     # Connection pool configuration for high concurrency
+    # Note: For async engines, don't use QueuePool - use NullPool or omit poolclass
     pool_config = {
-        "poolclass": QueuePool,
         "pool_size": settings.database_pool_size,
         "max_overflow": settings.database_max_overflow,
         "pool_timeout": settings.database_pool_timeout,
         "pool_recycle": settings.database_pool_recycle,
         "pool_pre_ping": True,  # Validate connections before use
-        "pool_reset_on_return": "commit",  # Reset connections on return
     }
-    
+
+    # For SQLite with async, use NullPool (no connection pooling)
+    if "sqlite" in settings.database_url:
+        pool_config = {"poolclass": pool.NullPool}
+
     # Engine configuration
     engine_config = {
         "url": settings.database_url,
         "echo": settings.database_echo,
         "echo_pool": settings.debug,
         "future": True,
-        "pool_timeout": settings.database_pool_timeout,
         **pool_config,
     }
-    
+
     # Create engine
     db_engine = create_async_engine(**engine_config)
     

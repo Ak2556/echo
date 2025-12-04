@@ -1,15 +1,5 @@
 /* Design Tokens - Production-Ready Design System */
 
-/* Disable all transitions and animations */
-* {
-  transition: none !important;
-  animation: none !important;
-}
-
-*:hover {
-  transform: none !important;
-}
-
 :root {
   /* Color System - Premium Palette */
   --color-primary: #7c3aed;
@@ -50,13 +40,14 @@
   --gradient-purple: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
   --gradient-dark: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
 
-  /* Shadows - Premium Depth */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.03);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.06);
+  /* Shadows - Apple-Style Premium Depth */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.10), 0 4px 10px rgba(0, 0, 0, 0.06);
   --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.08);
-  --shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.15), 0 12px 24px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.15), 0 12px 24px rgba(0, 0, 0, 0.10);
+  --shadow-premium: 0 20px 40px rgba(0, 0, 0, 0.12);
   --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
 
   /* Glow Effects */
@@ -77,18 +68,23 @@
   --radius-3xl: 24px;
   --radius-full: 9999px;
 
-  /* Spacing Scale */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
-  --space-20: 5rem;
+  /* Spacing Scale - 4px Base Rhythm */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-14: 3.5rem;   /* 56px */
+  --space-16: 4rem;     /* 64px */
+  --space-18: 4.5rem;   /* 72px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+  --space-28: 7rem;     /* 112px */
+  --space-32: 8rem;     /* 128px */
 
   /* Typography */
   --font-sans:
@@ -134,6 +130,17 @@
   --blur-md: blur(8px);
   --blur-lg: blur(16px);
   --blur-xl: blur(24px);
+}
+
+/* Dark Mode Shadow Adjustments */
+[data-theme='dark'] {
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.7), 0 8px 16px rgba(0, 0, 0, 0.6);
+  --shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.8), 0 12px 24px rgba(0, 0, 0, 0.7);
+  --shadow-premium: 0 20px 40px rgba(0, 0, 0, 0.6);
 }
 
 /* Theme-specific overrides are defined in globals.css */

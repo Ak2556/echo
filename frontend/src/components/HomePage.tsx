@@ -1,24 +1,100 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useRef } from 'react';
 import Image from 'next/image';
+import { useGSAP, gsap } from '@/hooks/useGSAP';
+import { ANIMATION } from '@/lib/animation-constants';
 
 export default function HomePage() {
-  useEffect(() => {
-    // Add show class to feature cards on mount for animation
-    setTimeout(() => {
-      document.querySelectorAll('.feature-card').forEach((card) => {
-        card.classList.add('show');
-      });
-    }, 100);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const featuresGridRef = useRef<HTMLDivElement>(null);
+  const parallaxBgRef = useRef<HTMLDivElement>(null);
+
+  // Hero entrance animation
+  useGSAP(() => {
+    if (!heroRef.current) return;
+
+    const tl = gsap.timeline();
+
+    // Animate hero content
+    tl.fromTo(
+      heroRef.current.querySelector('h1'),
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: ANIMATION.easing.apple,
+      }
+    )
+      .fromTo(
+        heroRef.current.querySelector('p'),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: ANIMATION.easing.apple,
+        },
+        '-=0.4'
+      )
+      .fromTo(
+        heroRef.current.querySelector('.cta-btns'),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: ANIMATION.easing.apple,
+        },
+        '-=0.3'
+      );
+  }, []);
+
+  // Stagger feature cards animation
+  useGSAP(() => {
+    if (!featuresGridRef.current) return;
+
+    gsap.fromTo(
+      '.feature-card',
+      { opacity: 0, y: 40 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: ANIMATION.scrollReveal.stagger * 2, // 0.1s stagger
+        ease: ANIMATION.easing.apple,
+        scrollTrigger: {
+          trigger: featuresGridRef.current as gsap.DOMTarget,
+          start: 'top 80%',
+          once: true,
+        },
+      }
+    );
+  }, []);
+
+  // Parallax effect for hero background
+  useGSAP(() => {
+    if (!parallaxBgRef.current) return;
+
+    gsap.to(parallaxBgRef.current, {
+      y: -50,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: heroRef.current as gsap.DOMTarget,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1,
+      },
+    });
   }, []);
 
   return (
     <section id="home" data-route="home" className="active">
       <div className="container">
-        <div className="hero">
+        <div ref={heroRef} className="hero">
           {/* Parallax container for hero (empty; dotted global background handles aesthetics) */}
-          <div className="parallax-bg" aria-hidden="true"></div>
+          <div ref={parallaxBgRef} className="parallax-bg" aria-hidden="true"></div>
           <h1>Connect. Share. Discover.</h1>
           <p>
             Experience a new way to engage with your community. Real-time
@@ -42,7 +118,7 @@ export default function HomePage() {
           >
             Features
           </h2>
-          <div className="features-grid">
+          <div ref={featuresGridRef} className="features-grid">
             <div
               className="glass feature-card tilt-card"
               onClick={() => (window.location.hash = '#/feed')}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useMemo, memo } from 'react';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useModernTheme } from '@/contexts/ModernThemeContext';
 
 // Import only the final 15 best mini apps
 import CalculatorApp from './CalculatorApp';
@@ -79,7 +79,7 @@ export default function MiniAppManager({
   onClose,
 }: MiniAppManagerProps) {
   const contentRef = useRef<HTMLDivElement>(null);
-  const { colorMode, toggleColorMode } = useTheme();
+  const { colors, colorMode, toggleMode } = useModernTheme();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Fullscreen functionality
@@ -233,10 +233,12 @@ export default function MiniAppManager({
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
+          background: 'rgba(0, 0, 0, 0.7)',
           backdropFilter: 'blur(4px)',
+          WebkitBackdropFilter: 'blur(4px)',
           zIndex: 9999,
-          animation: 'fadeIn 0.2s ease',
+          opacity: 1,
+          transition: 'opacity 0.2s ease-out',
         }}
       />
 
@@ -249,17 +251,20 @@ export default function MiniAppManager({
           left: isFullscreen ? '0' : '50%',
           width: isFullscreen ? '100vw' : '90vw',
           height: isFullscreen ? '100vh' : 'auto',
-          maxWidth: isFullscreen ? 'none' : '800px',
+          maxWidth: isFullscreen ? 'none' : '900px',
           maxHeight: isFullscreen ? 'none' : 'calc(100vh - 80px)',
-          background: 'var(--bg, #ffffff)',
-          border: isFullscreen ? 'none' : '1px solid var(--border, #e0e0e0)',
-          borderRadius: isFullscreen ? '0' : '16px',
-          boxShadow: isFullscreen ? 'none' : '0 20px 40px rgba(0, 0, 0, 0.15)',
+          marginLeft: isFullscreen ? '0' : '-45vw',
+          background: colors.surface,
+          border: isFullscreen ? 'none' : `1px solid ${colors.border}`,
+          borderRadius: isFullscreen ? '0' : '24px',
+          boxShadow: isFullscreen ? 'none' : '0 20px 60px rgba(0, 0, 0, 0.3)',
           zIndex: 10000,
           overflow: 'hidden',
-          willChange: 'auto',
-          backfaceVisibility: 'hidden',
           WebkitFontSmoothing: 'antialiased',
+          MozOsxFontSmoothing: 'grayscale',
+          isolation: 'isolate',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -269,12 +274,12 @@ export default function MiniAppManager({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '1rem 1.5rem',
-            borderBottom: '1px solid var(--border, #e0e0e0)',
-            background: 'var(--surface, #f8f9fa)',
+            padding: '1.25rem 1.5rem',
+            borderBottom: `1px solid ${colors.border}`,
+            background: `linear-gradient(135deg, ${colors.surfaceElevated}, ${colors.surface})`,
           }}
         >
-          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600 }}>
+          <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600, color: colors.text }}>
             {getAppTitle(activeApp)}
           </h3>
 
@@ -282,59 +287,45 @@ export default function MiniAppManager({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {/* Theme Toggle */}
             <button
-              onClick={toggleColorMode}
-              title={`Switch to ${colorMode === 'dark' ? 'light' : 'dark'} mode`}
+              onClick={toggleMode}
+              className="miniapp-header-btn"
+              title={`Current mode: ${colorMode}${colorMode === 'auto' ? ' (click to cycle)' : ''}`}
               style={{
                 background: 'none',
                 border: 'none',
-                fontSize: '1.2rem',
+                fontSize: '1.25rem',
                 cursor: 'pointer',
                 padding: '0.5rem',
-                borderRadius: '6px',
-                color: 'var(--muted, #666)',
-                transition: 'all 0.2s ease',
+                borderRadius: '8px',
+                color: colors.textSecondary,
+                transition: 'background 0.15s ease, color 0.15s ease',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--hover, #f0f0f0)';
-                e.currentTarget.style.color = 'var(--fg, #000)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'none';
-                e.currentTarget.style.color = 'var(--muted, #666)';
-              }}
             >
-              {colorMode === 'dark' ? '☀️' : '🌙'}
+              {colorMode === 'dark' ? '🌙' : colorMode === 'light' ? '☀️' : '🌍'}
             </button>
 
             {/* Fullscreen Toggle */}
             <button
               onClick={toggleFullscreen}
+              className="miniapp-header-btn"
               title={
                 isFullscreen ? 'Exit fullscreen (Esc)' : 'Enter fullscreen'
               }
               style={{
                 background: 'none',
                 border: 'none',
-                fontSize: '1.2rem',
+                fontSize: '1.25rem',
                 cursor: 'pointer',
                 padding: '0.5rem',
-                borderRadius: '6px',
-                color: 'var(--muted, #666)',
-                transition: 'all 0.2s ease',
+                borderRadius: '8px',
+                color: colors.textSecondary,
+                transition: 'background 0.15s ease, color 0.15s ease',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--hover, #f0f0f0)';
-                e.currentTarget.style.color = 'var(--fg, #000)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'none';
-                e.currentTarget.style.color = 'var(--muted, #666)';
               }}
             >
               {isFullscreen ? '⊖' : '⊞'}
@@ -343,24 +334,17 @@ export default function MiniAppManager({
             {/* Close Button */}
             <button
               onClick={onClose}
+              className="miniapp-close-btn"
               title="Close mini app"
               style={{
                 background: 'none',
                 border: 'none',
                 fontSize: '1.5rem',
                 cursor: 'pointer',
-                padding: '0.25rem',
-                borderRadius: '4px',
-                color: 'var(--muted, #666)',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--hover, #f0f0f0)';
-                e.currentTarget.style.color = 'var(--fg, #000)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'none';
-                e.currentTarget.style.color = 'var(--muted, #666)';
+                padding: '0.25rem 0.5rem',
+                borderRadius: '8px',
+                color: colors.textSecondary,
+                transition: 'background 0.15s ease, color 0.15s ease',
               }}
             >
               ×
@@ -387,7 +371,11 @@ export default function MiniAppManager({
       </div>
 
       <style jsx>{`
-        @keyframes fadeIn {
+        .miniapp-backdrop {
+          animation: backdropFadeIn 0.2s ease-out;
+        }
+
+        @keyframes backdropFadeIn {
           from {
             opacity: 0;
           }
@@ -396,60 +384,97 @@ export default function MiniAppManager({
           }
         }
 
-        @keyframes slideDown {
+        .miniapp-dropdown:not(.fullscreen) {
+          animation: dropdownFadeIn 0.2s ease-out;
+        }
+
+        @keyframes dropdownFadeIn {
           from {
             opacity: 0;
-            transform: translateX(-50%) translateY(-20px) scale(0.95);
           }
           to {
             opacity: 1;
-            transform: translateX(-50%) translateY(0) scale(1);
+          }
+        }
+
+        .miniapp-dropdown.fullscreen {
+          animation: fullscreenFadeIn 0.2s ease-out;
+        }
+
+        @keyframes fullscreenFadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
           }
         }
 
         .miniapp-dropdown {
-          --bg: #ffffff;
-          --surface: #f8f9fa;
-          --border: #e0e0e0;
-          --fg: #000000;
-          --muted: #666666;
-          --hover: #f0f0f0;
-          --accent: #007bff;
-          --primary: #28a745;
+          --bg: ${colors.background};
+          --surface: ${colors.surface};
+          --border: ${colors.border};
+          --fg: ${colors.text};
+          --muted: ${colors.textSecondary};
+          --hover: ${colors.hover};
+          --accent: ${colors.accent};
+          --primary: ${colors.primary};
+          transform: translateZ(0);
         }
 
-        [data-theme='dark'] .miniapp-dropdown {
-          --bg: #1a1a1a;
-          --surface: #2a2a2a;
-          --border: #404040;
-          --fg: #ffffff;
-          --muted: #888888;
-          --hover: #333333;
-          --accent: #007bff;
-          --primary: #28a745;
+        /* Header button hover states */
+        .miniapp-header-btn:hover {
+          background: ${colors.hover} !important;
+          color: ${colors.text} !important;
+        }
+
+        .miniapp-close-btn:hover {
+          background: ${colors.error}20 !important;
+          color: ${colors.error} !important;
+        }
+
+        .miniapp-header-btn,
+        .miniapp-close-btn {
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
         }
 
         /* Ensure all mini apps inherit the CSS variables */
         .miniapp-content-wrapper {
-          --bg: #ffffff;
-          --surface: #f8f9fa;
-          --border: #e0e0e0;
-          --fg: #000000;
-          --muted: #666666;
-          --hover: #f0f0f0;
-          --accent: #007bff;
-          --primary: #28a745;
+          --bg: ${colors.background};
+          --surface: ${colors.surface};
+          --border: ${colors.border};
+          --fg: ${colors.text};
+          --muted: ${colors.textSecondary};
+          --hover: ${colors.hover};
+          --accent: ${colors.accent};
+          --primary: ${colors.primary};
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
         }
 
-        [data-theme='dark'] .miniapp-content-wrapper {
-          --bg: #1a1a1a;
-          --surface: #2a2a2a;
-          --border: #404040;
-          --fg: #ffffff;
-          --muted: #888888;
-          --hover: #333333;
-          --accent: #007bff;
-          --primary: #28a745;
+        .miniapp-content-wrapper::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        .miniapp-content-wrapper::-webkit-scrollbar-track {
+          background: ${colors.surfaceElevated};
+          border-radius: 4px;
+        }
+
+        .miniapp-content-wrapper::-webkit-scrollbar-thumb {
+          background: ${colors.border};
+          border-radius: 4px;
+        }
+
+        .miniapp-content-wrapper::-webkit-scrollbar-thumb:hover {
+          background: ${colors.textTertiary};
+        }
+
+        .miniapp-content-container {
+          min-height: 100%;
+          display: flex;
+          flex-direction: column;
         }
 
         /* Override individual app positioning for mini bar integration */
