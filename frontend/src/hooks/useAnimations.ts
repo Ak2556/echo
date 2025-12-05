@@ -45,8 +45,9 @@ export function useIntersectionAnimation(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
+            const target = entry.target as HTMLElement;
+            target.style.opacity = '1';
+            target.style.transform = 'translateY(0)';
             observerRef.current?.unobserve(entry.target);
           }
         });
@@ -326,7 +327,9 @@ export function useTypewriterEffect(
 
   useEffect(() => {
     const element = elementRef.current;
-    if (!element || accessibility.reducedMotion) {
+    if (!element) return;
+
+    if (accessibility.reducedMotion) {
       element.textContent = text;
       return;
     }

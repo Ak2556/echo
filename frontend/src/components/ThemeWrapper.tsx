@@ -26,9 +26,11 @@ export default function ThemeWrapper({ children }: ThemeWrapperProps) {
       'data-high-contrast',
       accessibilityPrefs.highContrast.toString()
     );
+    // Check for OS-level forced colors mode
+    const forcedColors = window.matchMedia('(forced-colors: active)').matches;
     html.setAttribute(
       'data-forced-colors',
-      accessibilityPrefs.forcedColors.toString()
+      forcedColors.toString()
     );
 
     // Apply transition class for smooth theme changes

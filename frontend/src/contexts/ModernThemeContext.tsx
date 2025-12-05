@@ -629,7 +629,7 @@ export function ModernThemeProvider({ children }: { children: ReactNode }) {
     // Apply accessibility
     root.setAttribute('data-reduced-motion', accessibility.reducedMotion.toString());
     root.setAttribute('data-high-contrast', accessibility.highContrast.toString());
-    root.setAttribute('data-font-size', accessibility.fontSize);
+    root.setAttribute('data-font-size', String(accessibility.fontSize));
 
     // Apply CSS custom properties
     Object.entries(colors).forEach(([key, value]) => {
