@@ -142,13 +142,9 @@ const Modal = memo(function Modal({
               'relative w-full max-h-[90vh] overflow-hidden',
 
               // Variant styles
-              {
-                'bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700': variant === 'default',
-
-                'bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-2xl border-2 border-gray-200 dark:border-gray-700': variant === 'modern',
-
-                'backdrop-blur-2xl bg-white/80 dark:bg-gray-900/80 rounded-2xl shadow-2xl border-2 border-white/50 dark:border-gray-700/50': variant === 'glass',
-              },
+              variant === 'default' && 'bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700',
+              variant === 'modern' && 'bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-2xl border-2 border-gray-200 dark:border-gray-700',
+              variant === 'glass' && 'backdrop-blur-2xl bg-white/80 dark:bg-gray-900/80 rounded-2xl shadow-2xl border-2 border-white/50 dark:border-gray-700/50',
 
               sizeVariants[size],
               className
@@ -246,7 +242,7 @@ export function ConfirmModal({
           <Button variant="outline" onClick={onClose} disabled={loading} size="md">
             {cancelText}
           </Button>
-          <Button variant={variant} onClick={onConfirm} loading={loading} size="md">
+          <Button variant={variant === 'success' ? 'primary' : variant} onClick={onConfirm} loading={loading} size="md">
             {confirmText}
           </Button>
         </div>

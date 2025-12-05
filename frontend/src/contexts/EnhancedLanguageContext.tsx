@@ -2,17 +2,11 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { 
-  SUPPORTED_LANGUAGES, 
-  type SupportedLanguageCode, 
+import {
+  SUPPORTED_LANGUAGES,
+  type SupportedLanguageCode,
   type LanguageInfo,
-  isRTL,
-  formatRelativeTime,
-  formatNumber,
-  formatCurrency,
-  formatDate,
-  formatList,
-  getCurrencyForRegion
+  isRTL
 } from '@/lib/i18n';
 
 interface LanguageContextType {
@@ -106,7 +100,7 @@ export function EnhancedLanguageProvider({
       const baseCode = navLang.split('-')[0].toLowerCase();
       const supported = SUPPORTED_LANGUAGES.find(lang => lang.code === baseCode);
       if (supported) {
-        return supported.code;
+        return supported.code as SupportedLanguageCode;
       }
     }
     
@@ -123,8 +117,8 @@ export function EnhancedLanguageProvider({
     for (const navLang of navigatorLanguages) {
       const baseCode = navLang.split('-')[0].toLowerCase();
       const supported = SUPPORTED_LANGUAGES.find(lang => lang.code === baseCode);
-      if (supported && !preferredLanguages.includes(supported.code)) {
-        preferredLanguages.push(supported.code);
+      if (supported && !preferredLanguages.includes(supported.code as SupportedLanguageCode)) {
+        preferredLanguages.push(supported.code as SupportedLanguageCode);
       }
     }
     
@@ -181,29 +175,41 @@ export function EnhancedLanguageProvider({
   }, [currentLanguage, i18n, enablePersistence]);
 
   // Translation with namespace support
-  const tWithNamespace = useCallback((namespace: string, key: string, options?: any) => {
-    return t(`${namespace}:${key}`, options);
+  const tWithNamespace = useCallback((namespace: string, key: string, options?: any): string => {
+    return String(t(`${namespace}:${key}`, options));
   }, [t]);
 
   // Formatting functions with current locale
   const formatRelativeTimeLocal = useCallback((date: Date) => {
-    return formatRelativeTime(date, currentLanguage);
+    const rtf = new Intl.RelativeTimeFormat(currentLanguage, { numeric: 'auto' });
+    const diff = date.getTime() - Date.now();
+    const seconds = Math.floor(diff / 1000);
+    if (Math.abs(seconds) < 60) return rtf.format(seconds, 'second');
+    const minutes = Math.floor(seconds / 60);
+    if (Math.abs(minutes) < 60) return rtf.format(minutes, 'minute');
+    const hours = Math.floor(minutes / 60);
+    if (Math.abs(hours) < 24) return rtf.format(hours, 'hour');
+    const days = Math.floor(hours / 24);
+    return rtf.format(days, 'day');
   }, [currentLanguage]);
 
   const formatNumberLocal = useCallback((value: number, options?: Intl.NumberFormatOptions) => {
-    return formatNumber(value, currentLanguage, options);
+    return new Intl.NumberFormat(currentLanguage, options).format(value);
   }, [currentLanguage]);
 
   const formatCurrencyLocal = useCallback((value: number, currency?: string) => {
-    return formatCurrency(value, currentLanguage, currency);
+    return new Intl.NumberFormat(currentLanguage, {
+      style: 'currency',
+      currency: currency || 'USD',
+    }).format(value);
   }, [currentLanguage]);
 
   const formatDateLocal = useCallback((date: Date, options?: Intl.DateTimeFormatOptions) => {
-    return formatDate(date, currentLanguage, options);
+    return new Intl.DateTimeFormat(currentLanguage, options).format(date);
   }, [currentLanguage]);
 
   const formatListLocal = useCallback((items: string[], type: 'conjunction' | 'disjunction' = 'conjunction') => {
-    return formatList(items, currentLanguage, type);
+    return new Intl.ListFormat(currentLanguage, { type }).format(items);
   }, [currentLanguage]);
 
   const formatPercent = useCallback((value: number) => {
@@ -239,9 +245,14 @@ export function EnhancedLanguageProvider({
     }
   }, []);
 
+  // Wrap t function to ensure string return type
+  const tString = useCallback((key: string, options?: any): string => {
+    return String(t(key, options));
+  }, [t]);
+
   // Pluralization helper
-  const plural = useCallback((key: string, count: number, options?: any) => {
-    return t(key, { count, ...options });
+  const plural = useCallback((key: string, count: number, options?: any): string => {
+    return String(t(key, { count, ...options }));
   }, [t]);
 
   // Translation API (mock implementation)
@@ -261,7 +272,7 @@ export function EnhancedLanguageProvider({
   // Get translation completion percentage
   const getLanguageCompletion = useCallback((): number => {
     // Mock implementation - in production, this would check actual translation coverage
-    const completionMap: Record<SupportedLanguageCode, number> = {
+    const completionMap: Record<string, number> = {
       'en': 100,
       'es': 95,
       'fr': 90,
@@ -396,7 +407,7 @@ export function EnhancedLanguageProvider({
     supportedLanguages: SUPPORTED_LANGUAGES,
     
     // Translation functions
-    t,
+    t: tString,
     tWithNamespace,
     
     // RTL support

@@ -323,7 +323,7 @@ export default function EnhancedSettingsPage() {
       case 'reducedMotion':
       case 'highContrast':
       case 'fontSize':
-        setAccessibility((prev: AccessibilitySettings) => ({ ...prev, [settingId]: value }));
+        setAccessibility({ ...accessibility, [settingId]: value });
         break;
     }
   };
