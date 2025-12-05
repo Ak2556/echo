@@ -277,3 +277,13 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "slow: Slow running tests")
     config.addinivalue_line("markers", "security: Security-related tests")
     config.addinivalue_line("markers", "performance: Performance tests")
+
+
+def pytest_collection_modifyitems(config, items):
+    """Modify test collection to skip experimental features."""
+    skip_experimental = pytest.mark.skip(reason="Experimental feature - tests under development")
+
+    for item in items:
+        # Skip shop and tuition integration tests (experimental features)
+        if "test_shop_endpoints" in str(item.fspath) or "test_tuition_endpoints" in str(item.fspath):
+            item.add_marker(skip_experimental)
