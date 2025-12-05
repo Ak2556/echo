@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useEnhancedTheme } from '@/contexts/EnhancedThemeContext';
+import type { AccessibilitySettings } from '@/contexts/ModernThemeContext';
 import { Card } from '@/components/ui/EnhancedCard';
 import Button from '@/components/ui/EnhancedButton';
 import Input from '@/components/ui/EnhancedInput';
@@ -322,7 +323,7 @@ export default function EnhancedSettingsPage() {
       case 'reducedMotion':
       case 'highContrast':
       case 'fontSize':
-        setAccessibility(prev => ({ ...prev, [settingId]: value }));
+        setAccessibility((prev: AccessibilitySettings) => ({ ...prev, [settingId]: value }));
         break;
     }
   };
@@ -431,8 +432,6 @@ export default function EnhancedSettingsPage() {
         {filteredSections.map((section, index) => (
           <Card
             key={section.id}
-            variant="glass"
-            padding="lg"
             className={`setting-section ${activeSection === section.id ? 'active' : ''}`}
             onClick={() => setActiveSection(activeSection === section.id ? null : section.id)}
           >
@@ -481,7 +480,7 @@ export default function EnhancedSettingsPage() {
       </div>
 
       {/* Quick Actions */}
-      <Card variant="elevated" padding="lg" className="quick-actions">
+      <Card className="quick-actions">
         <h3 className="quick-actions-title">Quick Actions</h3>
         <div className="actions-grid">
           <Button variant="outline" size="sm">

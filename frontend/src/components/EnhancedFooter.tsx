@@ -184,7 +184,7 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
 
       <div className="footer-container">
         {/* Status Bar */}
-        <Card variant="glass" padding="md" className="status-bar">
+        <Card className="status-bar">
           <div className="status-content">
             <div className="status-indicator">
               <div className="status-dot operational" />
@@ -200,7 +200,7 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
         </Card>
 
         {/* Stats Section */}
-        <Card variant="glass" padding="lg" className="stats-section">
+        <Card className="stats-section">
           <div className="stats-grid">
             <div className="stat-item">
               <div className="stat-icon">
@@ -297,7 +297,7 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
         </div>
 
         {/* Newsletter Section */}
-        <Card variant="glass" padding="lg" className="newsletter-section">
+        <Card className="newsletter-section">
           <div className="newsletter-content">
             <h3 className="newsletter-title">Stay in the Loop</h3>
             <p className="newsletter-description">

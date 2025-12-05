@@ -14,7 +14,7 @@ export function FooterColumn({ title, links }: FooterColumnProps) {
     // If it's a placeholder link (starts with #), show a toast and prevent navigation
     if (link.href.startsWith('#')) {
       e.preventDefault();
-      toast.info(`${link.label} - Coming soon!`, {
+      toast(`${link.label} - Coming soon!`, {
         icon: '🚧',
         duration: 3000,
       });

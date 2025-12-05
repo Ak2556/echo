@@ -129,6 +129,17 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
   const [showToast, setShowToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
 
+  // Notification preferences state
+  const [emailEnabled, setEmailEnabled] = useState(settings.emailNotifications ?? true);
+  const [soundEnabled, setSoundEnabled] = useState(settings.soundEffects ?? true);
+  const [mentions, setMentions] = useState(true);
+  const [comments, setComments] = useState(true);
+  const [likes, setLikes] = useState(true);
+  const [follows, setFollows] = useState(true);
+  const [messages, setMessages] = useState(true);
+  const [updates, setUpdates] = useState(true);
+  const [badges, setBadges] = useState(true);
+
   // Track if settings have changed
   useEffect(() => {
     setHasChanges(true);
