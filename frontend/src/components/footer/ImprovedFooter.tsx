@@ -231,7 +231,7 @@ export function ImprovedFooter() {
               Terms of Service
             </Link>
             <button
-              onClick={() => toast.info('Cookie preferences coming soon!')}
+              onClick={() => toast('Cookie preferences coming soon!')}
               className="hover:text-[var(--echo-primary)] transition-colors hover:underline"
             >
               Cookie Settings

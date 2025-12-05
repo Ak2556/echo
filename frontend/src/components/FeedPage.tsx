@@ -227,7 +227,7 @@ const PostCard = memo(function PostCard({
                 onQualityChange={(quality) => {
                   console.log(`Quality changed to: ${quality}`);
                   // You could add a toast notification here
-                  // toast.info(`Video quality changed to ${quality}`);
+                  // toast(`Video quality changed to ${quality}`);
                 }}
               />
             )}

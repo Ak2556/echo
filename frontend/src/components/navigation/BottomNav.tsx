@@ -29,6 +29,7 @@ export function BottomNav() {
   // GSAP hover animations for nav items
   useGSAP(() => {
     const items = document.querySelectorAll('.bottom-nav-item');
+    const handlers = new Map();
 
     items.forEach((item) => {
       const handleMouseEnter = () => {
@@ -47,14 +48,18 @@ export function BottomNav() {
         });
       };
 
+      handlers.set(item, { handleMouseEnter, handleMouseLeave });
       item.addEventListener('mouseenter', handleMouseEnter);
       item.addEventListener('mouseleave', handleMouseLeave);
     });
 
     return () => {
       items.forEach((item) => {
-        item.removeEventListener('mouseenter', handleMouseEnter);
-        item.removeEventListener('mouseleave', handleMouseLeave);
+        const itemHandlers = handlers.get(item);
+        if (itemHandlers) {
+          item.removeEventListener('mouseenter', itemHandlers.handleMouseEnter);
+          item.removeEventListener('mouseleave', itemHandlers.handleMouseLeave);
+        }
       });
     };
   }, []);
