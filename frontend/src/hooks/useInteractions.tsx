@@ -84,8 +84,8 @@ export function useLongPress(
   { delay = 500, shouldPreventDefault = true } = {}
 ) {
   const [longPressTriggered, setLongPressTriggered] = useState(false);
-  const timeout = useRef<NodeJS.Timeout>();
-  const target = useRef<EventTarget>();
+  const timeout = useRef<NodeJS.Timeout | undefined>(undefined);
+  const target = useRef<EventTarget | undefined>(undefined);
 
   const start = useCallback(
     (event: React.MouseEvent | React.TouchEvent) => {
@@ -260,7 +260,7 @@ export function useHoverIntent(
   onLeave?: () => void,
   delay = 300
 ) {
-  const timeout = useRef<NodeJS.Timeout>();
+  const timeout = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const handleMouseEnter = useCallback(() => {
     timeout.current = setTimeout(onHover, delay);

@@ -1711,8 +1711,8 @@ const MessagesView = memo(
     setNewMessage: React.Dispatch<React.SetStateAction<string>>;
     handleSendMessage: () => void;
     isTyping: boolean;
-    messagesEndRef: React.RefObject<HTMLDivElement>;
-    messageInputRef: React.RefObject<HTMLTextAreaElement>;
+    messagesEndRef: React.RefObject<HTMLDivElement | null>;
+    messageInputRef: React.RefObject<HTMLTextAreaElement | null>;
   }) => {
     const { isMobile } = useResponsive();
 

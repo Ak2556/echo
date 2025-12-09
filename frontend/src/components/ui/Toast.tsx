@@ -166,7 +166,7 @@ const ToastItem = memo(function ToastItem({
 }: ToastItemProps) {
   const [progress, setProgress] = React.useState(100);
   const [isPaused, setIsPaused] = React.useState(false);
-  const timerRef = React.useRef<NodeJS.Timeout>();
+  const timerRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
   const startTimeRef = React.useRef<number>(Date.now());
   const remainingTimeRef = React.useRef<number>(toast.duration || 5000);
 

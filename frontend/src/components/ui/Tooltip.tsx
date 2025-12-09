@@ -33,7 +33,7 @@ const Tooltip = memo(function Tooltip({
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const sizeClasses = {
     sm: 'px-2 py-1 text-xs max-w-xs',

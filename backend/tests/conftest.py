@@ -8,7 +8,7 @@ import warnings
 import pytest
 import pytest_asyncio
 from typing import AsyncGenerator, Generator
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.pool import NullPool
 
@@ -119,7 +119,7 @@ async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     # rate_limiter = get_rate_limiter()
     # await rate_limiter.reset()  # Clear any existing rate limit state
 
-    async with AsyncClient(app=app, base_url="http://test") as test_client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as test_client:
         yield test_client
 
     app.dependency_overrides.clear()

@@ -37,7 +37,7 @@ interface CommentDropdownProps {
   postId: string;
   isOpen: boolean;
   onClose: () => void;
-  buttonRef: React.RefObject<HTMLButtonElement>;
+  buttonRef: React.RefObject<HTMLButtonElement | null>;
 }
 
 const emojis = ['❤️', '😂', '👍', '🔥', '🙏', '💯', '👏', '✨'];
