@@ -40,6 +40,7 @@ dependencies = [
     "python-jose[cryptography]>=3.3.0",
     "PyJWT>=2.8.0",
     "passlib[bcrypt]>=1.7.4",
+    "aiofiles>=23.2.1",
     "structlog>=23.2.0",
     "prometheus-client>=0.19.0",
     "httpx>=0.25.2",
@@ -157,4 +158,4 @@ exclude_lines = [
     "if __name__ == .__main__.:",
     "class .*\\bProtocol\\):",
     "@(abc\\.)?abstractmethod",
-]aiofiles>=23.2.1
+]
