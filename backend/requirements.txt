@@ -65,4 +65,5 @@ stripe==7.6.0
 sentence-transformers==2.2.2
 
 # Monitoring
-sentry-sdk[fastapi]==1.38.0aiofiles==23.2.1
+sentry-sdk[fastapi]==1.38.0
+aiofiles==23.2.1
