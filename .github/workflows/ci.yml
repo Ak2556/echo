@@ -238,6 +238,14 @@ jobs:
           timeout 60 bash -c 'until redis-cli -h localhost -p 6379 ping | grep -q PONG; do echo "Waiting..."; sleep 2; done'
           echo "Redis is ready!"
 
+      - name: Verify imports
+        working-directory: ./backend
+        run: |
+          echo "Checking critical imports..."
+          python -c "import pyotp; import qrcode; import argon2; from jinja2 import Template; print('✓ All critical imports successful')"
+          python -c "from app.main import app; print('✓ Main app imports successfully')"
+          echo "All imports verified!"
+
       - name: Run tests with coverage
         working-directory: ./backend
         env:
@@ -246,15 +254,20 @@ jobs:
           SECRET_KEY: test-secret-key-for-ci-cd-pipeline-testing-must-be-32-chars-minimum
           ENVIRONMENT: testing
           PYTHONPATH: ${{ github.workspace }}/backend
+          PYTHONDONTWRITEBYTECODE: 1
         run: |
-          pytest tests/ -v \
+          echo "Running backend tests..."
+          python -m pytest tests/ -v \
             --cov=app \
             --cov-report=xml \
             --cov-report=html \
             --cov-report=term-missing \
             --cov-fail-under=40 \
             --timeout=60 \
-            --maxfail=5
+            --maxfail=5 \
+            --tb=short \
+            -p no:warnings \
+            || (echo "Tests failed! Exit code: $?" && exit 1)
 
       - name: Upload coverage to Codecov
         if: matrix.python-version == '3.11'
