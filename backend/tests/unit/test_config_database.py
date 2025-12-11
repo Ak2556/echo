@@ -12,41 +12,39 @@ class TestCoreDatabase:
     """Tests for core/database.py module."""
 
     def test_engine_kwargs_postgresql(self):
-        """Test engine_kwargs includes pool settings for PostgreSQL."""
-        import importlib
-        import sys
+        """Test create_database_engine uses pool settings for PostgreSQL."""
+        from app.core.database import create_database_engine
 
-        # Save original module
-        original_module = sys.modules.get("app.core.database")
+        # Mock settings object directly (it's already imported at module level)
+        mock_settings = Mock()
+        mock_settings.database_url = "postgresql+asyncpg://user:pass@localhost/testdb"
+        mock_settings.debug = False
+        mock_settings.database_pool_size = 10
+        mock_settings.database_max_overflow = 20
+        mock_settings.database_pool_timeout = 30
+        mock_settings.database_pool_recycle = 3600
+        mock_settings.database_echo = False
 
-        # Mock settings with PostgreSQL URL before importing
-        with patch("app.core.config.get_settings") as mock_get_settings:
-            mock_settings = Mock()
-            mock_settings.database_url = "postgresql+asyncpg://user:pass@localhost/testdb"
-            mock_settings.debug = False
-            mock_settings.database_pool_size = 10
-            mock_settings.database_max_overflow = 20
-            mock_settings.database_pool_timeout = 30
-            mock_settings.database_pool_recycle = 3600
-            mock_settings.database_echo = False
-            mock_get_settings.return_value = mock_settings
+        with patch("app.core.database.settings", mock_settings):
+            # Mock event.listens_for decorator to avoid event registration
+            with patch("app.core.database.event.listens_for"):
+                # Mock create_async_engine to avoid actual engine creation
+                with patch("app.core.database.create_async_engine") as mock_create:
+                    mock_engine = Mock()
+                    mock_engine.sync_engine = Mock()
+                    mock_create.return_value = mock_engine
 
-            # Remove module from cache to force re-import
-            if "app.core.database" in sys.modules:
-                del sys.modules["app.core.database"]
+                    engine = create_database_engine()
 
-            # Import module with PostgreSQL settings
-            import app.core.database
-
-            # The PostgreSQL branch should have been executed during import
-            # Verify the engine was created (this indirectly tests line 27 was executed)
-            assert app.core.database.engine is not None
-
-        # Restore original module
-        if original_module:
-            sys.modules["app.core.database"] = original_module
-        elif "app.core.database" in sys.modules:
-            del sys.modules["app.core.database"]
+                    # Verify engine was created with correct settings
+                    assert mock_create.called
+                    call_kwargs = mock_create.call_args[1]
+                    assert call_kwargs["url"] == "postgresql+asyncpg://user:pass@localhost/testdb"
+                    assert call_kwargs["pool_size"] == 10
+                    assert call_kwargs["max_overflow"] == 20
+                    assert call_kwargs["pool_timeout"] == 30
+                    assert call_kwargs["pool_recycle"] == 3600
+                    assert call_kwargs["pool_pre_ping"] is True
 
     def test_engine_kwargs_sqlite(self):
         """Test engine_kwargs uses connect_args for SQLite."""
@@ -134,23 +132,36 @@ class TestCoreDatabase:
 
         mock_conn = AsyncMock()
         mock_conn.run_sync = AsyncMock()
+        mock_conn.execute = AsyncMock()
 
         # Setup async context manager properly
-        mock_engine = Mock()
+        mock_engine = AsyncMock()
         mock_begin = AsyncMock()
         mock_begin.__aenter__ = AsyncMock(return_value=mock_conn)
         mock_begin.__aexit__ = AsyncMock(return_value=None)
         mock_engine.begin = Mock(return_value=mock_begin)
 
-        with patch("app.core.database.engine", mock_engine):
-            await init_db()
+        # Mock create_database_engine to return our mock engine
+        with patch("app.core.database.create_database_engine", return_value=mock_engine):
+            # Mock async_sessionmaker
+            with patch("app.core.database.async_sessionmaker") as mock_session_maker:
+                # Mock get_db_session for the connection test
+                mock_session = AsyncMock()
+                mock_result = AsyncMock()
+                mock_session.execute.return_value = mock_result
 
-            # Verify tables were created
-            mock_engine.begin.assert_called_once()
-            mock_conn.run_sync.assert_called()
-            # Verify SQLModel.metadata.create_all was passed as argument
-            call_args = mock_conn.run_sync.call_args
-            assert call_args is not None
+                async_context = AsyncMock()
+                async_context.__aenter__.return_value = mock_session
+                async_context.__aexit__.return_value = None
+
+                with patch("app.core.database.get_db_session", return_value=async_context):
+                    await init_db()
+
+                    # Verify tables were created
+                    mock_engine.begin.assert_called()
+                    assert mock_conn.run_sync.call_count >= 2  # Base and SQLModel metadata
+                    # Verify session factory was created
+                    mock_session_maker.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_close_db_disposes_engine(self):
