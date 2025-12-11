@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import OTPInput from '@/components/auth/OTPInput';
 
@@ -12,6 +12,11 @@ describe('OTPInput', () => {
   const user = userEvent.setup();
   const mockOnComplete = jest.fn();
   const mockOnChange = jest.fn();
+
+  // Helper to focus elements - userEvent.click handles act() internally
+  const focusElement = async (element: HTMLElement) => {
+    await user.click(element);
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -116,7 +121,7 @@ describe('OTPInput', () => {
 
       const inputs = screen.getAllByRole('textbox');
 
-      inputs[0].focus();
+      await focusElement(inputs[0]);
 
       await user.keyboard('{ArrowRight}');
       expect(inputs[1]).toHaveFocus();
@@ -130,7 +135,7 @@ describe('OTPInput', () => {
 
       const inputs = screen.getAllByRole('textbox');
 
-      inputs[3].focus();
+      await focusElement(inputs[3]);
       expect(inputs[3]).toHaveFocus();
 
       await user.keyboard('{Home}');
@@ -142,7 +147,7 @@ describe('OTPInput', () => {
 
       const inputs = screen.getAllByRole('textbox');
 
-      inputs[2].focus();
+      await focusElement(inputs[2]);
       expect(inputs[2]).toHaveFocus();
 
       await user.keyboard('{End}');
@@ -159,7 +164,7 @@ describe('OTPInput', () => {
       expect(inputs[0]).toHaveValue('1');
 
       // Go back to first input
-      inputs[0].focus();
+      await focusElement(inputs[0]);
 
       // Backspace should clear current input
       await user.keyboard('{Backspace}');
@@ -172,7 +177,7 @@ describe('OTPInput', () => {
       const inputs = screen.getAllByRole('textbox');
 
       // Start from middle input
-      inputs[2].focus();
+      await focusElement(inputs[2]);
 
       // Simulate rapid multi-character input
       fireEvent.change(inputs[2], { target: { value: '345' } });
@@ -190,7 +195,7 @@ describe('OTPInput', () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
 
       const firstInput = screen.getAllByRole('textbox')[0];
-      firstInput.focus();
+      await focusElement(firstInput);
 
       // Simulate paste event
       const pasteEvent = new ClipboardEvent('paste', {
@@ -209,7 +214,7 @@ describe('OTPInput', () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
 
       const firstInput = screen.getAllByRole('textbox')[0];
-      firstInput.focus();
+      await focusElement(firstInput);
 
       const pasteEvent = new ClipboardEvent('paste', {
         clipboardData: new DataTransfer(),
@@ -231,7 +236,7 @@ describe('OTPInput', () => {
       render(<OTPInput length={6} onComplete={mockOnComplete} />);
 
       const firstInput = screen.getAllByRole('textbox')[0];
-      firstInput.focus();
+      await focusElement(firstInput);
 
       const pasteEvent = new ClipboardEvent('paste', {
         clipboardData: new DataTransfer(),
@@ -251,7 +256,7 @@ describe('OTPInput', () => {
       render(<OTPInput length={4} onComplete={mockOnComplete} />);
 
       const firstInput = screen.getAllByRole('textbox')[0];
-      firstInput.focus();
+      await focusElement(firstInput);
 
       const pasteEvent = new ClipboardEvent('paste', {
         clipboardData: new DataTransfer(),
@@ -408,7 +413,7 @@ describe('OTPInput', () => {
       const inputs = screen.getAllByRole('textbox');
 
       // Focus on middle input
-      inputs[2].focus();
+      await focusElement(inputs[2]);
       expect(inputs[2]).toHaveFocus();
 
       // Type should work from any focused input
@@ -647,7 +652,7 @@ describe('OTPInput', () => {
       it('handles mixed valid and invalid characters in paste', async () => {
         render(<OTPInput length={6} onComplete={mockOnComplete} />);
         const firstInput = screen.getAllByRole('textbox')[0];
-        firstInput.focus();
+        await focusElement(firstInput);
 
         const pasteEvent = new ClipboardEvent('paste', {
           clipboardData: new DataTransfer(),
@@ -666,7 +671,7 @@ describe('OTPInput', () => {
       it('handles whitespace in pasted content', async () => {
         render(<OTPInput length={6} onComplete={mockOnComplete} />);
         const firstInput = screen.getAllByRole('textbox')[0];
-        firstInput.focus();
+        await focusElement(firstInput);
 
         const pasteEvent = new ClipboardEvent('paste', {
           clipboardData: new DataTransfer(),
@@ -683,7 +688,7 @@ describe('OTPInput', () => {
       it('handles newlines in pasted content', async () => {
         render(<OTPInput length={6} onComplete={mockOnComplete} />);
         const firstInput = screen.getAllByRole('textbox')[0];
-        firstInput.focus();
+        await focusElement(firstInput);
 
         const pasteEvent = new ClipboardEvent('paste', {
           clipboardData: new DataTransfer(),
@@ -782,9 +787,11 @@ describe('OTPInput', () => {
         const inputs = screen.getAllByRole('textbox');
 
         // Rapidly switch focus
-        for (let i = 0; i < 100; i++) {
-          inputs[i % 6].focus();
-        }
+        await act(async () => {
+          for (let i = 0; i < 100; i++) {
+            inputs[i % 6].focus();
+          }
+        });
 
         // Should handle gracefully
         expect(inputs.some((input) => input === document.activeElement)).toBe(

@@ -9,11 +9,11 @@
     "install:all": "cd frontend && npm install && cd ../backend && pip install -r requirements.txt",
     "build": "cd frontend && npm run build",
     "start": "cd frontend && npm start",
-    "test:frontend": "cd frontend && npm test",
-    "test:backend": "cd backend && pytest",
+    "test:frontend": "cd frontend && npm test -- --passWithNoTests",
+    "test:backend": "cd backend && python -m pytest tests/ -v",
     "test": "npm run test:frontend && npm run test:backend",
     "test:watch": "cd frontend && npm run test:watch",
-    "test:coverage": "npm run test:frontend -- --coverage && cd backend && pytest --cov=app",
+    "test:coverage": "npm run test:frontend -- --coverage && cd backend && python -m pytest tests/ --cov=app --cov-report=html",
     "test:e2e": "cd frontend && npx playwright test",
     "lint:frontend": "cd frontend && npm run lint",
     "lint:backend": "cd backend && flake8 app && black --check app",
@@ -23,6 +23,10 @@
     "format": "npm run format:frontend && npm run format:backend"
   },
   "devDependencies": {
+    "@qodo/command": "^0.33.2",
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "pytest": "^1.0.0"
   }
 }

@@ -1,23 +1,25 @@
 """
 Security utilities: password hashing, OTP, TOTP, breach checking, rate limiting.
 """
+
+import base64
 import hashlib
+import io
+import os
 import secrets
 import string
 from datetime import datetime, timedelta
 from typing import Optional, Tuple
+
+import httpx
 import pyotp
 import qrcode
-import io
-import base64
-import os
+import structlog
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-import httpx
-import structlog
 
 logger = structlog.get_logger(__name__)
 
@@ -52,7 +54,7 @@ def needs_rehash(password_hash: str) -> bool:
 
 def generate_otp(length: int = 6) -> str:
     """Generate a numeric OTP code."""
-    return ''.join(secrets.choice(string.digits) for _ in range(length))
+    return "".join(secrets.choice(string.digits) for _ in range(length))
 
 
 def generate_secure_token(length: int = 32) -> str:
@@ -79,7 +81,7 @@ def get_encryption_key() -> bytes:
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
-        salt=b'echo-totp-encryption-salt',  # In production, use a random salt stored securely
+        salt=b"echo-totp-encryption-salt",  # In production, use a random salt stored securely
         iterations=100000,
     )
     key = base64.urlsafe_b64encode(kdf.derive(secret_key.encode()))
@@ -141,7 +143,7 @@ def generate_qr_code(data: str) -> str:
 
     img = qr.make_image(fill_color="black", back_color="white")
     buffer = io.BytesIO()
-    img.save(buffer, format='PNG')
+    img.save(buffer, format="PNG")
     img_str = base64.b64encode(buffer.getvalue()).decode()
 
     return f"data:image/png;base64,{img_str}"
@@ -157,7 +159,9 @@ def generate_backup_codes(count: int = 10, length: int = 8) -> list[str]:
     """Generate backup codes for 2FA recovery."""
     codes = []
     for _ in range(count):
-        code = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(length))
+        code = "".join(
+            secrets.choice(string.ascii_uppercase + string.digits) for _ in range(length)
+        )
         # Format as XXXX-XXXX
         formatted = f"{code[:4]}-{code[4:]}"
         codes.append(formatted)
@@ -166,13 +170,13 @@ def generate_backup_codes(count: int = 10, length: int = 8) -> list[str]:
 
 def verify_backup_code(stored_codes: list[str], provided_code: str) -> Tuple[bool, list[str]]:
     """Verify and consume a backup code."""
-    provided_code = provided_code.upper().replace(' ', '').replace('-', '')
+    provided_code = provided_code.upper().replace(" ", "").replace("-", "")
 
     for i, stored in enumerate(stored_codes):
-        stored_clean = stored.upper().replace(' ', '').replace('-', '')
+        stored_clean = stored.upper().replace(" ", "").replace("-", "")
         if secrets.compare_digest(stored_clean, provided_code):
             # Remove used code
-            remaining_codes = stored_codes[:i] + stored_codes[i+1:]
+            remaining_codes = stored_codes[:i] + stored_codes[i + 1 :]
             return True, remaining_codes
 
     return False, stored_codes
@@ -184,7 +188,7 @@ async def check_password_breach(password: str) -> Tuple[bool, int]:
     Returns (is_breached, count_in_database).
     """
     # Hash password with SHA-1
-    sha1_hash = hashlib.sha1(password.encode('utf-8')).hexdigest().upper()
+    sha1_hash = hashlib.sha1(password.encode("utf-8")).hexdigest().upper()
     prefix = sha1_hash[:5]
     suffix = sha1_hash[5:]
 
@@ -192,15 +196,14 @@ async def check_password_breach(password: str) -> Tuple[bool, int]:
         # Query HIBP API
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"https://api.pwnedpasswords.com/range/{prefix}",
-                timeout=5.0
+                f"https://api.pwnedpasswords.com/range/{prefix}", timeout=5.0
             )
 
         if response.status_code == 200:
             # Parse response
             hashes = response.text.splitlines()
             for hash_line in hashes:
-                hash_suffix, count = hash_line.split(':')
+                hash_suffix, count = hash_line.split(":")
                 if hash_suffix == suffix:
                     return True, int(count)
             return False, 0
@@ -252,7 +255,7 @@ def calculate_password_strength(password: str) -> dict:
         suggestions.append("Add special characters (!@#$%^&*)")
 
     # Penalize common patterns
-    common_patterns = ['123', 'abc', 'password', 'qwerty', '111', '000']
+    common_patterns = ["123", "abc", "password", "qwerty", "111", "000"]
     if any(pattern in password.lower() for pattern in common_patterns):
         score -= 20
         suggestions.append("Avoid common patterns and sequences")
@@ -294,26 +297,26 @@ def parse_user_agent(user_agent: str) -> dict:
     ua_lower = user_agent.lower()
 
     # Simple device type detection
-    if 'mobile' in ua_lower or 'android' in ua_lower or 'iphone' in ua_lower:
-        device_type = 'mobile'
-    elif 'tablet' in ua_lower or 'ipad' in ua_lower:
-        device_type = 'tablet'
+    if "mobile" in ua_lower or "android" in ua_lower or "iphone" in ua_lower:
+        device_type = "mobile"
+    elif "tablet" in ua_lower or "ipad" in ua_lower:
+        device_type = "tablet"
     else:
-        device_type = 'desktop'
+        device_type = "desktop"
 
     # Extract device name
     device_name = "Unknown Device"
-    if 'windows' in ua_lower:
+    if "windows" in ua_lower:
         device_name = "Windows PC"
-    elif 'mac' in ua_lower:
+    elif "mac" in ua_lower:
         device_name = "Mac"
-    elif 'linux' in ua_lower:
+    elif "linux" in ua_lower:
         device_name = "Linux"
-    elif 'android' in ua_lower:
+    elif "android" in ua_lower:
         device_name = "Android Device"
-    elif 'iphone' in ua_lower:
+    elif "iphone" in ua_lower:
         device_name = "iPhone"
-    elif 'ipad' in ua_lower:
+    elif "ipad" in ua_lower:
         device_name = "iPad"
 
     return {

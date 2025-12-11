@@ -2,15 +2,17 @@
 Unit tests for cache module.
 """
 
-import pytest
 import time
 from unittest.mock import AsyncMock, patch
+
+import pytest
+
 from app.core.cache import (
-    InMemoryCache,
     CacheManager,
+    InMemoryCache,
     cache_manager,
-    get_cache,
     cached,
+    get_cache,
 )
 
 

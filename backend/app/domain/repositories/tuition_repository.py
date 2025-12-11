@@ -1,13 +1,20 @@
 """
 Repository interfaces for tuition functionality.
 """
+
 from abc import ABC, abstractmethod
-from typing import List, Optional, Dict, Any
-from datetime import datetime, date
+from datetime import date, datetime
+from typing import Any, Dict, List, Optional
+
 from ..entities.tuition import (
-    TuitionSessionEntity, SessionAttendanceEntity, AssignmentEntity,
-    AssignmentSubmissionEntity, StudyMaterialEntity, QuizEntity,
-    QuizAttemptEntity, ProgressReportEntity
+    AssignmentEntity,
+    AssignmentSubmissionEntity,
+    ProgressReportEntity,
+    QuizAttemptEntity,
+    QuizEntity,
+    SessionAttendanceEntity,
+    StudyMaterialEntity,
+    TuitionSessionEntity,
 )
 
 
@@ -36,40 +43,28 @@ class TuitionSessionRepositoryInterface(ABC):
 
     @abstractmethod
     async def get_course_sessions(
-        self,
-        course_id: int,
-        skip: int = 0,
-        limit: int = 100,
-        status: Optional[str] = None
+        self, course_id: int, skip: int = 0, limit: int = 100, status: Optional[str] = None
     ) -> List[TuitionSessionEntity]:
         """Get sessions for a course"""
         pass
 
     @abstractmethod
     async def get_teacher_sessions(
-        self,
-        teacher_id: int,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None
+        self, teacher_id: int, start_date: Optional[date] = None, end_date: Optional[date] = None
     ) -> List[TuitionSessionEntity]:
         """Get sessions for a teacher"""
         pass
 
     @abstractmethod
     async def get_upcoming_sessions(
-        self,
-        teacher_id: Optional[int] = None,
-        course_id: Optional[int] = None,
-        limit: int = 10
+        self, teacher_id: Optional[int] = None, course_id: Optional[int] = None, limit: int = 10
     ) -> List[TuitionSessionEntity]:
         """Get upcoming sessions"""
         pass
 
     @abstractmethod
     async def get_sessions_by_date(
-        self,
-        target_date: date,
-        teacher_id: Optional[int] = None
+        self, target_date: date, teacher_id: Optional[int] = None
     ) -> List[TuitionSessionEntity]:
         """Get sessions for a specific date"""
         pass
@@ -85,7 +80,7 @@ class TuitionSessionRepositoryInterface(ABC):
         course_id: Optional[int] = None,
         teacher_id: Optional[int] = None,
         start_date: Optional[date] = None,
-        end_date: Optional[date] = None
+        end_date: Optional[date] = None,
     ) -> Dict[str, Any]:
         """Get session statistics"""
         pass
@@ -125,7 +120,7 @@ class SessionAttendanceRepositoryInterface(ABC):
         student_id: int,
         course_id: Optional[int] = None,
         start_date: Optional[date] = None,
-        end_date: Optional[date] = None
+        end_date: Optional[date] = None,
     ) -> List[SessionAttendanceEntity]:
         """Get attendance for a student"""
         pass
@@ -136,7 +131,7 @@ class SessionAttendanceRepositoryInterface(ABC):
         session_id: int,
         student_id: int,
         status: str,
-        participation_score: Optional[int] = None
+        participation_score: Optional[int] = None,
     ) -> SessionAttendanceEntity:
         """Mark attendance for a student"""
         pass
@@ -147,16 +142,14 @@ class SessionAttendanceRepositoryInterface(ABC):
         student_id: Optional[int] = None,
         course_id: Optional[int] = None,
         start_date: Optional[date] = None,
-        end_date: Optional[date] = None
+        end_date: Optional[date] = None,
     ) -> Dict[str, Any]:
         """Get attendance statistics"""
         pass
 
     @abstractmethod
     async def bulk_mark_attendance(
-        self,
-        session_id: int,
-        attendance_data: List[Dict[str, Any]]
+        self, session_id: int, attendance_data: List[Dict[str, Any]]
     ) -> List[SessionAttendanceEntity]:
         """Bulk mark attendance for multiple students"""
         pass
@@ -187,40 +180,28 @@ class AssignmentRepositoryInterface(ABC):
 
     @abstractmethod
     async def get_course_assignments(
-        self,
-        course_id: int,
-        skip: int = 0,
-        limit: int = 100,
-        published_only: bool = True
+        self, course_id: int, skip: int = 0, limit: int = 100, published_only: bool = True
     ) -> List[AssignmentEntity]:
         """Get assignments for a course"""
         pass
 
     @abstractmethod
     async def get_teacher_assignments(
-        self,
-        teacher_id: int,
-        skip: int = 0,
-        limit: int = 100
+        self, teacher_id: int, skip: int = 0, limit: int = 100
     ) -> List[AssignmentEntity]:
         """Get assignments created by a teacher"""
         pass
 
     @abstractmethod
     async def get_upcoming_assignments(
-        self,
-        course_id: Optional[int] = None,
-        student_id: Optional[int] = None,
-        limit: int = 10
+        self, course_id: Optional[int] = None, student_id: Optional[int] = None, limit: int = 10
     ) -> List[AssignmentEntity]:
         """Get upcoming assignments"""
         pass
 
     @abstractmethod
     async def get_overdue_assignments(
-        self,
-        course_id: Optional[int] = None,
-        student_id: Optional[int] = None
+        self, course_id: Optional[int] = None, student_id: Optional[int] = None
     ) -> List[AssignmentEntity]:
         """Get overdue assignments"""
         pass
@@ -256,60 +237,42 @@ class AssignmentSubmissionRepositoryInterface(ABC):
 
     @abstractmethod
     async def get_assignment_submissions(
-        self,
-        assignment_id: int,
-        skip: int = 0,
-        limit: int = 100
+        self, assignment_id: int, skip: int = 0, limit: int = 100
     ) -> List[AssignmentSubmissionEntity]:
         """Get submissions for an assignment"""
         pass
 
     @abstractmethod
     async def get_student_submissions(
-        self,
-        student_id: int,
-        course_id: Optional[int] = None,
-        skip: int = 0,
-        limit: int = 100
+        self, student_id: int, course_id: Optional[int] = None, skip: int = 0, limit: int = 100
     ) -> List[AssignmentSubmissionEntity]:
         """Get submissions by a student"""
         pass
 
     @abstractmethod
     async def get_student_assignment_submission(
-        self,
-        assignment_id: int,
-        student_id: int
+        self, assignment_id: int, student_id: int
     ) -> Optional[AssignmentSubmissionEntity]:
         """Get specific student's submission for an assignment"""
         pass
 
     @abstractmethod
     async def submit_assignment(
-        self,
-        assignment_id: int,
-        student_id: int,
-        submission_data: Dict[str, Any]
+        self, assignment_id: int, student_id: int, submission_data: Dict[str, Any]
     ) -> AssignmentSubmissionEntity:
         """Submit an assignment"""
         pass
 
     @abstractmethod
     async def grade_submission(
-        self,
-        submission_id: int,
-        points: float,
-        grade: str,
-        feedback: Optional[str] = None
+        self, submission_id: int, points: float, grade: str, feedback: Optional[str] = None
     ) -> AssignmentSubmissionEntity:
         """Grade a submission"""
         pass
 
     @abstractmethod
     async def get_pending_grading(
-        self,
-        teacher_id: Optional[int] = None,
-        course_id: Optional[int] = None
+        self, teacher_id: Optional[int] = None, course_id: Optional[int] = None
     ) -> List[AssignmentSubmissionEntity]:
         """Get submissions pending grading"""
         pass
@@ -345,7 +308,7 @@ class StudyMaterialRepositoryInterface(ABC):
         category: Optional[str] = None,
         material_type: Optional[str] = None,
         skip: int = 0,
-        limit: int = 100
+        limit: int = 100,
     ) -> List[StudyMaterialEntity]:
         """Get materials for a course"""
         pass
@@ -357,20 +320,14 @@ class StudyMaterialRepositoryInterface(ABC):
 
     @abstractmethod
     async def get_public_materials(
-        self,
-        skip: int = 0,
-        limit: int = 100
+        self, skip: int = 0, limit: int = 100
     ) -> List[StudyMaterialEntity]:
         """Get public materials"""
         pass
 
     @abstractmethod
     async def search_materials(
-        self,
-        query: str,
-        course_id: Optional[int] = None,
-        skip: int = 0,
-        limit: int = 100
+        self, query: str, course_id: Optional[int] = None, skip: int = 0, limit: int = 100
     ) -> List[StudyMaterialEntity]:
         """Search materials"""
         pass
@@ -411,21 +368,13 @@ class QuizRepositoryInterface(ABC):
 
     @abstractmethod
     async def get_course_quizzes(
-        self,
-        course_id: int,
-        published_only: bool = True,
-        skip: int = 0,
-        limit: int = 100
+        self, course_id: int, published_only: bool = True, skip: int = 0, limit: int = 100
     ) -> List[QuizEntity]:
         """Get quizzes for a course"""
         pass
 
     @abstractmethod
-    async def get_available_quizzes(
-        self,
-        course_id: int,
-        student_id: int
-    ) -> List[QuizEntity]:
+    async def get_available_quizzes(self, course_id: int, student_id: int) -> List[QuizEntity]:
         """Get available quizzes for a student"""
         pass
 
@@ -460,48 +409,34 @@ class QuizAttemptRepositoryInterface(ABC):
 
     @abstractmethod
     async def get_quiz_attempts(
-        self,
-        quiz_id: int,
-        student_id: Optional[int] = None
+        self, quiz_id: int, student_id: Optional[int] = None
     ) -> List[QuizAttemptEntity]:
         """Get attempts for a quiz"""
         pass
 
     @abstractmethod
     async def get_student_attempts(
-        self,
-        student_id: int,
-        quiz_id: Optional[int] = None,
-        course_id: Optional[int] = None
+        self, student_id: int, quiz_id: Optional[int] = None, course_id: Optional[int] = None
     ) -> List[QuizAttemptEntity]:
         """Get attempts by a student"""
         pass
 
     @abstractmethod
     async def get_student_quiz_attempts(
-        self,
-        quiz_id: int,
-        student_id: int
+        self, quiz_id: int, student_id: int
     ) -> List[QuizAttemptEntity]:
         """Get specific student's attempts for a quiz"""
         pass
 
     @abstractmethod
     async def start_attempt(
-        self,
-        quiz_id: int,
-        student_id: int,
-        enrollment_id: int
+        self, quiz_id: int, student_id: int, enrollment_id: int
     ) -> QuizAttemptEntity:
         """Start a new quiz attempt"""
         pass
 
     @abstractmethod
-    async def submit_attempt(
-        self,
-        attempt_id: int,
-        answers: Dict[str, Any]
-    ) -> QuizAttemptEntity:
+    async def submit_attempt(self, attempt_id: int, answers: Dict[str, Any]) -> QuizAttemptEntity:
         """Submit a quiz attempt"""
         pass
 
@@ -536,42 +471,28 @@ class ProgressReportRepositoryInterface(ABC):
 
     @abstractmethod
     async def get_student_reports(
-        self,
-        student_id: int,
-        course_id: Optional[int] = None,
-        skip: int = 0,
-        limit: int = 100
+        self, student_id: int, course_id: Optional[int] = None, skip: int = 0, limit: int = 100
     ) -> List[ProgressReportEntity]:
         """Get reports for a student"""
         pass
 
     @abstractmethod
     async def get_course_reports(
-        self,
-        course_id: int,
-        report_period: Optional[str] = None,
-        skip: int = 0,
-        limit: int = 100
+        self, course_id: int, report_period: Optional[str] = None, skip: int = 0, limit: int = 100
     ) -> List[ProgressReportEntity]:
         """Get reports for a course"""
         pass
 
     @abstractmethod
     async def get_latest_report(
-        self,
-        student_id: int,
-        course_id: int
+        self, student_id: int, course_id: int
     ) -> Optional[ProgressReportEntity]:
         """Get latest report for a student in a course"""
         pass
 
     @abstractmethod
     async def generate_report(
-        self,
-        enrollment_id: int,
-        report_period: str,
-        start_date: datetime,
-        end_date: datetime
+        self, enrollment_id: int, report_period: str, start_date: datetime, end_date: datetime
     ) -> ProgressReportEntity:
         """Generate a new progress report"""
         pass
@@ -582,7 +503,7 @@ class ProgressReportRepositoryInterface(ABC):
         report_period: str,
         start_date: datetime,
         end_date: datetime,
-        teacher_id: Optional[int] = None
+        teacher_id: Optional[int] = None,
     ) -> List[ProgressReportEntity]:
         """Get reports by period"""
         pass

@@ -1,11 +1,13 @@
 """
 Production-grade Redis service for distributed caching and rate limiting.
 """
-import redis.asyncio as redis
-from typing import Optional, Any
+
 import json
-import structlog
 from datetime import timedelta
+from typing import Any, Optional
+
+import redis.asyncio as redis
+import structlog
 
 from app.config.settings import settings
 
@@ -54,12 +56,7 @@ class RedisService:
             logger.error(f"Redis GET error: {e}", key=key)
             return None
 
-    async def set(
-        self,
-        key: str,
-        value: str,
-        expire: Optional[int] = None
-    ) -> bool:
+    async def set(self, key: str, value: str, expire: Optional[int] = None) -> bool:
         """Set value in Redis with optional expiration."""
         if not self.connected:
             return False
@@ -128,10 +125,7 @@ class RedisService:
     # Rate limiting methods
 
     async def check_rate_limit(
-        self,
-        identifier: str,
-        max_requests: int,
-        window_seconds: int
+        self, identifier: str, max_requests: int, window_seconds: int
     ) -> tuple[bool, int, int]:
         """
         Check if request is within rate limit using sliding window.
@@ -185,12 +179,7 @@ class RedisService:
 
     # Caching methods
 
-    async def cache_set(
-        self,
-        key: str,
-        value: Any,
-        ttl: int = 300
-    ) -> bool:
+    async def cache_set(self, key: str, value: Any, ttl: int = 300) -> bool:
         """Cache a value with JSON serialization."""
         try:
             json_value = json.dumps(value)
@@ -234,11 +223,7 @@ class RedisService:
         """Check Redis health."""
         try:
             if not self.connected:
-                return {
-                    "status": "unhealthy",
-                    "connected": False,
-                    "error": "Not connected"
-                }
+                return {"status": "unhealthy", "connected": False, "error": "Not connected"}
 
             # Ping Redis
             await self.redis_client.ping()
@@ -256,11 +241,7 @@ class RedisService:
             }
         except Exception as e:
             logger.error(f"Redis health check error: {e}")
-            return {
-                "status": "unhealthy",
-                "connected": self.connected,
-                "error": str(e)
-            }
+            return {"status": "unhealthy", "connected": self.connected, "error": str(e)}
 
 
 # Global Redis service instance

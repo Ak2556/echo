@@ -3,8 +3,9 @@ Unit tests for posts endpoints.
 """
 
 import pytest
-from httpx import AsyncClient
 from fastapi import FastAPI
+from httpx import AsyncClient
+
 from app.api.v1.endpoints.posts import router
 
 
@@ -22,7 +23,7 @@ class TestPostsEndpoints:
     @pytest.mark.asyncio
     async def test_update_post(self, app):
         """Test update post endpoint."""
-        from app.api.v1.endpoints.posts import update_post, PostUpdate
+        from app.api.v1.endpoints.posts import PostUpdate, update_post
 
         post_id = "post_123"
         update_data = PostUpdate(title="Updated Title", content="Updated Content")

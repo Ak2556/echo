@@ -1,12 +1,14 @@
 """
 Production-grade email service with async support and templates.
 """
+
 import smtplib
 import ssl
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from typing import List, Optional
+from email.mime.text import MIMEText
 from pathlib import Path
+from typing import List, Optional
+
 import structlog
 from jinja2 import Template
 
@@ -76,9 +78,7 @@ class EmailService:
             context = ssl.create_default_context()
 
             if self.smtp_ssl:
-                with smtplib.SMTP_SSL(
-                    self.smtp_host, self.smtp_port, context=context
-                ) as server:
+                with smtplib.SMTP_SSL(self.smtp_host, self.smtp_port, context=context) as server:
                     server.login(self.smtp_username, self.smtp_password)
                     server.sendmail(self.email_from, to_email, message.as_string())
             else:

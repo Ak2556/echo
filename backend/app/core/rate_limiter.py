@@ -1,8 +1,8 @@
 """Simple rate limiting implementation."""
 
 import time
-from typing import Dict, Tuple
 from collections import defaultdict, deque
+from typing import Dict, Tuple
 
 
 class RateLimiter:
@@ -12,10 +12,7 @@ class RateLimiter:
         self._requests: Dict[str, deque] = defaultdict(deque)
 
     async def check_rate_limit(
-        self,
-        key: str,
-        max_requests: int = 100,
-        window_seconds: int = 60
+        self, key: str, max_requests: int = 100, window_seconds: int = 60
     ) -> Tuple[bool, int, float]:
         """
         Check if request is within rate limit.
@@ -51,10 +48,7 @@ class RateLimiter:
 
     def get_stats(self) -> Dict:
         """Get rate limiter statistics."""
-        return {
-            'total_keys': len(self._requests),
-            'type': 'in_memory'
-        }
+        return {"total_keys": len(self._requests), "type": "in_memory"}
 
 
 # Global rate limiter instance

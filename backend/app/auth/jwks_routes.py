@@ -2,7 +2,9 @@
 JWKS (JSON Web Key Set) endpoint for public key distribution.
 Allows clients to verify JWT signatures.
 """
+
 from fastapi import APIRouter
+
 from .jwt_utils import get_jwt_manager
 
 router = APIRouter(tags=["jwks"])

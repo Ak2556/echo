@@ -1,0 +1,76 @@
+........................................................................ [  6%]
+........................................................................ [ 13%]
+........................................................................ [ 20%]
+........................................................................ [ 26%]
+........................................................................ [ 33%]
+........................................................................ [ 40%]
+........................................................................ [ 47%]
+........................................................................ [ 53%]
+........................................................................ [ 60%]
+........................................................................ [ 67%]
+........................................................................ [ 74%]
+........................................................................ [ 80%]
+........................................................................ [ 87%]
+........................................................................ [ 94%]
+...........................................................              [100%]
+=============================== tests coverage ================================
+_______________ coverage: platform win32, python 3.13.7-final-0 _______________
+
+Name                                Stmts   Miss  Cover   Missing
+-----------------------------------------------------------------
+app\api\v1\__init__.py                 65     21    68%   10-11, 15-16, 20-21, 25-26, 30-31, 35-36, 40-41, 45-46, 50-51, 55-56, 86
+app\api\v1\endpoints\admin.py          19      6    68%   11, 24-47, 53, 59, 65
+app\api\v1\endpoints\analytics.py      25      0   100%
+app\api\v1\endpoints\auth.py           30      4    87%   37, 46, 55, 62
+app\api\v1\endpoints\chat.py          133     28    79%   60, 138-148, 185-195, 275-277, 305-307, 320-322, 330-348, 353-379, 393, 411
+app\api\v1\endpoints\files.py         128     47    63%   66, 69, 72, 99, 110, 123, 135, 137, 163-239, 247, 260, 274, 290, 303
+app\api\v1\endpoints\health.py         74      2    97%   85-86
+app\api\v1\endpoints\posts.py          54      0   100%
+app\api\v1\endpoints\search.py         39      0   100%
+app\api\v1\endpoints\shop.py          195      3    98%   207, 368, 461
+app\api\v1\endpoints\tuition.py       264     34    87%   83, 109-114, 166, 191, 194, 198, 234, 290, 346-355, 377, 400, 413, 464, 467, 472, 495, 505, 509, 560, 570, 588, 614, 661-670, 685, 725, 734, 826-827
+app\api\v1\endpoints\users.py          84     32    62%   47-52, 71-86, 105-120, 168-173
+app\api\v1\router.py                   14      0   100%
+app\auth\__init__.py                    0      0   100%
+app\auth\dependencies.py               96      0   100%
+app\auth\email_service.py              63      0   100%
+app\auth\jwks_routes.py                10      0   100%
+app\auth\jwt_utils.py                 103      0   100%
+app\auth\models.py                    127      0   100%
+app\auth\oauth.py                     109      0   100%
+app\auth\password_reset.py            130      5    96%   220, 227, 292, 316, 323
+app\auth\redis_service.py             137      2    99%   17-18
+app\auth\routes.py                    362     19    95%   41-46, 51-55, 315-330, 420-423, 590, 837
+app\auth\security.py                  177      0   100%
+app\auth\totp_routes.py               169      0   100%
+app\config\database.py                 50      1    98%   27
+app\config\settings.py                 97      4    96%   98, 105, 166, 170
+app\core\cache.py                      79      0   100%
+app\core\config.py                    183      5    97%   156-161
+app\core\csrf.py                       56     33    41%   32, 37, 42, 50-57, 90-147, 152, 157-166
+app\core\database.py                  113     10    91%   70-77, 82, 87
+app\core\exceptions.py                 81      0   100%
+app\core\logging.py                    61      0   100%
+app\core\middleware.py                101      0   100%
+app\core\redis.py                     139      3    98%   120-122
+app\core\security.py                   74      2    97%   80-81
+app\main.py                            92      3    97%   151, 181-182
+app\models\chat.py                     83      0   100%
+app\models\course.py                  117      0   100%
+app\models\enrollment.py               54      0   100%
+app\models\payment.py                  64      0   100%
+app\models\review.py                   59      0   100%
+app\models\shop.py                    212      0   100%
+app\models\teacher.py                  68      0   100%
+app\models\tuition.py                 278      0   100%
+app\services\file_service.py           59      0   100%
+app\services\payment_service.py        62      0   100%
+app\services\shop_service.py          300      0   100%
+app\services\tuition_service.py       549      0   100%
+app\utils\database_compat.py           94      0   100%
+-----------------------------------------------------------------
+TOTAL                                5732    264    95%
+Coverage HTML written to dir htmlcov
+Coverage XML written to file coverage.xml
+Required test coverage of 40% reached. Total coverage: 95.39%
+1067 passed in 160.27s (0:02:40)

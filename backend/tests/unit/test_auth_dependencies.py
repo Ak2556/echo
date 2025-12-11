@@ -2,19 +2,21 @@
 Unit tests for auth dependencies.
 """
 
+from unittest.mock import AsyncMock, Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, AsyncMock
-from fastapi import HTTPException, status, Request
+from fastapi import HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials
+
 from app.auth.dependencies import (
     AuthenticatedUser,
-    get_token_from_request,
+    get_current_active_user,
     get_current_user,
     get_current_user_optional,
-    require_verified_email,
+    get_token_from_request,
     require_2fa,
-    get_current_active_user,
     require_scopes,
+    require_verified_email,
 )
 from app.auth.models import User
 
@@ -29,11 +31,11 @@ class TestAuthenticatedUser:
         mock_user.email = "test@example.com"
         mock_user.email_verified = True
         mock_user.totp_enabled = False
-        
+
         payload = {"sub": "user123", "email": "test@example.com"}
-        
+
         auth_user = AuthenticatedUser(mock_user, payload)
-        
+
         assert auth_user.user is mock_user
         assert auth_user.payload == payload
         assert auth_user.id == "user123"
@@ -45,9 +47,9 @@ class TestAuthenticatedUser:
         """Test has_permission method (placeholder implementation)."""
         mock_user = Mock(spec=User)
         payload = {}
-        
+
         auth_user = AuthenticatedUser(mock_user, payload)
-        
+
         # Currently returns True for all permissions (placeholder)
         assert auth_user.has_permission("read:users") is True
         assert auth_user.has_permission("admin:all") is True
@@ -56,9 +58,9 @@ class TestAuthenticatedUser:
         """Test require_permission method success."""
         mock_user = Mock(spec=User)
         payload = {}
-        
+
         auth_user = AuthenticatedUser(mock_user, payload)
-        
+
         # Should not raise exception (placeholder implementation)
         auth_user.require_permission("read:users")
 
@@ -66,14 +68,14 @@ class TestAuthenticatedUser:
         """Test require_permission method failure."""
         mock_user = Mock(spec=User)
         payload = {}
-        
+
         auth_user = AuthenticatedUser(mock_user, payload)
-        
+
         # Mock has_permission to return False
-        with patch.object(auth_user, 'has_permission', return_value=False):
+        with patch.object(auth_user, "has_permission", return_value=False):
             with pytest.raises(HTTPException) as exc_info:
                 auth_user.require_permission("admin:all")
-            
+
             assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
 
 
@@ -86,9 +88,9 @@ class TestGetTokenFromRequest:
         mock_request = Mock(spec=Request)
         mock_credentials = Mock(spec=HTTPAuthorizationCredentials)
         mock_credentials.credentials = "test_token"
-        
+
         result = await get_token_from_request(mock_request, mock_credentials)
-        
+
         assert result == "test_token"
 
     @pytest.mark.asyncio
@@ -96,9 +98,9 @@ class TestGetTokenFromRequest:
         """Test token extraction from cookie."""
         mock_request = Mock(spec=Request)
         mock_request.cookies = {"access_token": "cookie_token"}
-        
+
         result = await get_token_from_request(mock_request, None)
-        
+
         assert result == "cookie_token"
 
     @pytest.mark.asyncio
@@ -106,9 +108,9 @@ class TestGetTokenFromRequest:
         """Test token extraction when no token is present."""
         mock_request = Mock(spec=Request)
         mock_request.cookies = {}
-        
+
         result = await get_token_from_request(mock_request, None)
-        
+
         assert result is None
 
     @pytest.mark.asyncio
@@ -118,9 +120,9 @@ class TestGetTokenFromRequest:
         mock_request.cookies = {"access_token": "cookie_token"}
         mock_credentials = Mock(spec=HTTPAuthorizationCredentials)
         mock_credentials.credentials = "header_token"
-        
+
         result = await get_token_from_request(mock_request, mock_credentials)
-        
+
         assert result == "header_token"
 
 
@@ -133,24 +135,26 @@ class TestGetCurrentUser:
         mock_request = Mock(spec=Request)
         mock_db = AsyncMock()
         token = "valid_token"
-        
+
         mock_user = Mock(spec=User)
         mock_user.id = "user123"
         mock_user.email = "test@example.com"
         mock_user.is_active = True
         mock_user.is_locked = False
         mock_user.token_version = 1
-        
-        with patch('app.auth.dependencies.get_jwt_manager') as mock_jwt_manager, \
-             patch('app.auth.dependencies.get_redis_service') as mock_redis:
-            
+
+        with (
+            patch("app.auth.dependencies.get_jwt_manager") as mock_jwt_manager,
+            patch("app.auth.dependencies.get_redis_service") as mock_redis,
+        ):
+
             # Mock JWT verification
             mock_jwt_manager.return_value.verify_token.return_value = {
                 "sub": "user123",
                 "email": "test@example.com",
-                "ver": 1
+                "ver": 1,
             }
-            
+
             # Mock Redis check
             mock_redis.return_value.is_user_tokens_blacklisted = AsyncMock(return_value=False)
 
@@ -160,7 +164,7 @@ class TestGetCurrentUser:
             mock_db.execute = AsyncMock(return_value=mock_result)
 
             result = await get_current_user(mock_request, mock_db, token)
-            
+
             assert isinstance(result, AuthenticatedUser)
             assert result.user is mock_user
 
@@ -169,10 +173,10 @@ class TestGetCurrentUser:
         """Test user retrieval without token."""
         mock_request = Mock(spec=Request)
         mock_db = AsyncMock()
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await get_current_user(mock_request, mock_db, None)
-        
+
         assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
 
     @pytest.mark.asyncio
@@ -181,13 +185,13 @@ class TestGetCurrentUser:
         mock_request = Mock(spec=Request)
         mock_db = AsyncMock()
         token = "invalid_token"
-        
-        with patch('app.auth.dependencies.get_jwt_manager') as mock_jwt_manager:
+
+        with patch("app.auth.dependencies.get_jwt_manager") as mock_jwt_manager:
             mock_jwt_manager.return_value.verify_token.side_effect = ValueError("Invalid token")
-            
+
             with pytest.raises(HTTPException) as exc_info:
                 await get_current_user(mock_request, mock_db, token)
-            
+
             assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
 
     @pytest.mark.asyncio
@@ -196,20 +200,19 @@ class TestGetCurrentUser:
         mock_request = Mock(spec=Request)
         mock_db = AsyncMock()
         token = "blacklisted_token"
-        
-        with patch('app.auth.dependencies.get_jwt_manager') as mock_jwt_manager, \
-             patch('app.auth.dependencies.get_redis_service') as mock_redis:
-            
-            mock_jwt_manager.return_value.verify_token.return_value = {
-                "sub": "user123",
-                "ver": 1
-            }
-            
+
+        with (
+            patch("app.auth.dependencies.get_jwt_manager") as mock_jwt_manager,
+            patch("app.auth.dependencies.get_redis_service") as mock_redis,
+        ):
+
+            mock_jwt_manager.return_value.verify_token.return_value = {"sub": "user123", "ver": 1}
+
             mock_redis.return_value.is_user_tokens_blacklisted = AsyncMock(return_value=True)
-            
+
             with pytest.raises(HTTPException) as exc_info:
                 await get_current_user(mock_request, mock_db, token)
-            
+
             assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
 
     @pytest.mark.asyncio
@@ -218,15 +221,17 @@ class TestGetCurrentUser:
         mock_request = Mock(spec=Request)
         mock_db = AsyncMock()
         token = "valid_token"
-        
-        with patch('app.auth.dependencies.get_jwt_manager') as mock_jwt_manager, \
-             patch('app.auth.dependencies.get_redis_service') as mock_redis:
-            
+
+        with (
+            patch("app.auth.dependencies.get_jwt_manager") as mock_jwt_manager,
+            patch("app.auth.dependencies.get_redis_service") as mock_redis,
+        ):
+
             mock_jwt_manager.return_value.verify_token.return_value = {
                 "sub": "nonexistent_user",
-                "ver": 1
+                "ver": 1,
             }
-            
+
             mock_redis.return_value.is_user_tokens_blacklisted = AsyncMock(return_value=False)
 
             mock_result = Mock()
@@ -235,7 +240,7 @@ class TestGetCurrentUser:
 
             with pytest.raises(HTTPException) as exc_info:
                 await get_current_user(mock_request, mock_db, token)
-            
+
             assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
 
     @pytest.mark.asyncio
@@ -244,20 +249,19 @@ class TestGetCurrentUser:
         mock_request = Mock(spec=Request)
         mock_db = AsyncMock()
         token = "valid_token"
-        
+
         mock_user = Mock(spec=User)
         mock_user.id = "user123"
         mock_user.is_active = False
         mock_user.is_locked = False
-        
-        with patch('app.auth.dependencies.get_jwt_manager') as mock_jwt_manager, \
-             patch('app.auth.dependencies.get_redis_service') as mock_redis:
-            
-            mock_jwt_manager.return_value.verify_token.return_value = {
-                "sub": "user123",
-                "ver": 1
-            }
-            
+
+        with (
+            patch("app.auth.dependencies.get_jwt_manager") as mock_jwt_manager,
+            patch("app.auth.dependencies.get_redis_service") as mock_redis,
+        ):
+
+            mock_jwt_manager.return_value.verify_token.return_value = {"sub": "user123", "ver": 1}
+
             mock_redis.return_value.is_user_tokens_blacklisted = AsyncMock(return_value=False)
 
             mock_result = Mock()
@@ -275,20 +279,19 @@ class TestGetCurrentUser:
         mock_request = Mock(spec=Request)
         mock_db = AsyncMock()
         token = "valid_token"
-        
+
         mock_user = Mock(spec=User)
         mock_user.id = "user123"
         mock_user.is_active = True
         mock_user.is_locked = True
-        
-        with patch('app.auth.dependencies.get_jwt_manager') as mock_jwt_manager, \
-             patch('app.auth.dependencies.get_redis_service') as mock_redis:
-            
-            mock_jwt_manager.return_value.verify_token.return_value = {
-                "sub": "user123",
-                "ver": 1
-            }
-            
+
+        with (
+            patch("app.auth.dependencies.get_jwt_manager") as mock_jwt_manager,
+            patch("app.auth.dependencies.get_redis_service") as mock_redis,
+        ):
+
+            mock_jwt_manager.return_value.verify_token.return_value = {"sub": "user123", "ver": 1}
+
             mock_redis.return_value.is_user_tokens_blacklisted = AsyncMock(return_value=False)
 
             mock_result = Mock()
@@ -306,21 +309,23 @@ class TestGetCurrentUser:
         mock_request = Mock(spec=Request)
         mock_db = AsyncMock()
         token = "valid_token"
-        
+
         mock_user = Mock(spec=User)
         mock_user.id = "user123"
         mock_user.is_active = True
         mock_user.is_locked = False
         mock_user.token_version = 2  # Different from token version
-        
-        with patch('app.auth.dependencies.get_jwt_manager') as mock_jwt_manager, \
-             patch('app.auth.dependencies.get_redis_service') as mock_redis:
-            
+
+        with (
+            patch("app.auth.dependencies.get_jwt_manager") as mock_jwt_manager,
+            patch("app.auth.dependencies.get_redis_service") as mock_redis,
+        ):
+
             mock_jwt_manager.return_value.verify_token.return_value = {
                 "sub": "user123",
-                "ver": 1  # Different from user token version
+                "ver": 1,  # Different from user token version
             }
-            
+
             mock_redis.return_value.is_user_tokens_blacklisted = AsyncMock(return_value=False)
 
             mock_result = Mock()
@@ -342,10 +347,10 @@ class TestGetCurrentUserOptional:
         mock_request = Mock(spec=Request)
         mock_db = AsyncMock()
         token = "valid_token"
-        
+
         mock_auth_user = Mock(spec=AuthenticatedUser)
-        
-        with patch('app.auth.dependencies.get_current_user', return_value=mock_auth_user):
+
+        with patch("app.auth.dependencies.get_current_user", return_value=mock_auth_user):
             result = await get_current_user_optional(mock_request, mock_db, token)
             assert result is mock_auth_user
 
@@ -354,7 +359,7 @@ class TestGetCurrentUserOptional:
         """Test optional user retrieval without token."""
         mock_request = Mock(spec=Request)
         mock_db = AsyncMock()
-        
+
         result = await get_current_user_optional(mock_request, mock_db, None)
         assert result is None
 
@@ -364,13 +369,12 @@ class TestGetCurrentUserOptional:
         mock_request = Mock(spec=Request)
         mock_db = AsyncMock()
         token = "invalid_token"
-        
-        with patch('app.auth.dependencies.get_current_user') as mock_get_user:
+
+        with patch("app.auth.dependencies.get_current_user") as mock_get_user:
             mock_get_user.side_effect = HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token"
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
             )
-            
+
             result = await get_current_user_optional(mock_request, mock_db, token)
             assert result is None
 
@@ -383,10 +387,10 @@ class TestRequireVerifiedEmail:
         """Test verified email requirement with verified user."""
         mock_user = Mock(spec=User)
         mock_user.email_verified = True
-        
+
         mock_auth_user = Mock(spec=AuthenticatedUser)
         mock_auth_user.is_verified = True
-        
+
         result = await require_verified_email(mock_auth_user)
         assert result is mock_auth_user
 
@@ -395,13 +399,13 @@ class TestRequireVerifiedEmail:
         """Test verified email requirement with unverified user."""
         mock_user = Mock(spec=User)
         mock_user.email_verified = False
-        
+
         mock_auth_user = Mock(spec=AuthenticatedUser)
         mock_auth_user.is_verified = False
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await require_verified_email(mock_auth_user)
-        
+
         assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
 
 
@@ -413,11 +417,11 @@ class TestRequire2FA:
         """Test 2FA requirement with 2FA enabled and used."""
         mock_user = Mock(spec=User)
         mock_user.totp_enabled = True
-        
+
         mock_auth_user = Mock(spec=AuthenticatedUser)
         mock_auth_user.has_2fa = True
         mock_auth_user.payload = {"amr": ["totp"]}
-        
+
         result = await require_2fa(mock_auth_user)
         assert result is mock_auth_user
 
@@ -426,13 +430,13 @@ class TestRequire2FA:
         """Test 2FA requirement with 2FA not enabled."""
         mock_user = Mock(spec=User)
         mock_user.totp_enabled = False
-        
+
         mock_auth_user = Mock(spec=AuthenticatedUser)
         mock_auth_user.has_2fa = False
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await require_2fa(mock_auth_user)
-        
+
         assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.asyncio
@@ -440,14 +444,14 @@ class TestRequire2FA:
         """Test 2FA requirement when 2FA enabled but not used in current session."""
         mock_user = Mock(spec=User)
         mock_user.totp_enabled = True
-        
+
         mock_auth_user = Mock(spec=AuthenticatedUser)
         mock_auth_user.has_2fa = True
         mock_auth_user.payload = {"amr": ["password"]}  # No TOTP in auth methods
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await require_2fa(mock_auth_user)
-        
+
         assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
 
 
@@ -458,7 +462,7 @@ class TestRequireScopes:
         """Test require_scopes dependency creation."""
         scopes = ["read:users", "write:users"]
         dependency = require_scopes(scopes)
-        
+
         assert callable(dependency)
 
     @pytest.mark.asyncio
@@ -466,10 +470,10 @@ class TestRequireScopes:
         """Test successful scope check."""
         mock_auth_user = Mock(spec=AuthenticatedUser)
         mock_auth_user.payload = {"scope": "read:users write:users admin:all"}
-        
+
         dependency = require_scopes(["read:users", "write:users"])
         result = await dependency(mock_auth_user)
-        
+
         assert result is mock_auth_user
 
     @pytest.mark.asyncio
@@ -477,12 +481,12 @@ class TestRequireScopes:
         """Test scope check with insufficient scopes."""
         mock_auth_user = Mock(spec=AuthenticatedUser)
         mock_auth_user.payload = {"scope": "read:users"}
-        
+
         dependency = require_scopes(["read:users", "write:users"])
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await dependency(mock_auth_user)
-        
+
         assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.asyncio
@@ -490,12 +494,12 @@ class TestRequireScopes:
         """Test scope check with no scopes in token."""
         mock_auth_user = Mock(spec=AuthenticatedUser)
         mock_auth_user.payload = {}
-        
+
         dependency = require_scopes(["read:users"])
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await dependency(mock_auth_user)
-        
+
         assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
 
 
@@ -506,6 +510,6 @@ class TestGetCurrentActiveUser:
     async def test_get_current_active_user(self):
         """Test get_current_active_user (alias for get_current_user)."""
         mock_auth_user = Mock(spec=AuthenticatedUser)
-        
+
         result = await get_current_active_user(mock_auth_user)
         assert result is mock_auth_user

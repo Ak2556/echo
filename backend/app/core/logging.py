@@ -2,6 +2,7 @@
 Production-grade logging configuration with structured logging,
 log rotation, and monitoring integration.
 """
+
 import logging
 import logging.handlers
 import sys
@@ -10,22 +11,23 @@ from typing import Any, Dict
 
 import structlog
 
+
 # Simple structured logger implementation
 class StructuredLogger:
     """Structured logger with context management."""
-    
+
     def __init__(self, name: str):
         self.name = name
         self.logger = logging.getLogger(name)
         self._context = {}
-    
+
     def bind(self, **kwargs) -> "StructuredLogger":
         """Bind context to logger."""
         new_logger = StructuredLogger(self.name)
         new_logger.logger = self.logger
         new_logger._context = {**self._context, **kwargs}
         return new_logger
-    
+
     def _format_message(self, message: str, **kwargs) -> str:
         """Format message with context."""
         context = {**self._context, **kwargs}
@@ -33,23 +35,23 @@ class StructuredLogger:
             context_str = " ".join(f"{k}={v}" for k, v in context.items())
             return f"{message} | {context_str}"
         return message
-    
+
     def debug(self, message: str, **kwargs) -> None:
         """Log debug message."""
         self.logger.debug(self._format_message(message, **kwargs))
-    
+
     def info(self, message: str, **kwargs) -> None:
         """Log info message."""
         self.logger.info(self._format_message(message, **kwargs))
-    
+
     def warning(self, message: str, **kwargs) -> None:
         """Log warning message."""
         self.logger.warning(self._format_message(message, **kwargs))
-    
+
     def error(self, message: str, **kwargs) -> None:
         """Log error message."""
         self.logger.error(self._format_message(message, **kwargs))
-    
+
     def critical(self, message: str, **kwargs) -> None:
         """Log critical message."""
         self.logger.critical(self._format_message(message, **kwargs))
@@ -71,11 +73,12 @@ def setup_logging(log_level: str = "INFO") -> None:
     logging.basicConfig(
         level=getattr(logging, level_name),
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[logging.StreamHandler(sys.stdout)]
+        handlers=[logging.StreamHandler(sys.stdout)],
     )
 
 
 # Request logging helpers
+
 
 def log_request_start(
     logger: StructuredLogger,
@@ -169,12 +172,13 @@ def log_external_api_call(
 
 # Performance logging
 
+
 class PerformanceLogger:
     """Logger for performance metrics."""
-    
+
     def __init__(self):
         self.logger = get_logger("performance")
-    
+
     def log_slow_query(self, query: str, duration: float, params: Dict = None) -> None:
         """Log slow database query."""
         self.logger.warning(
@@ -183,7 +187,7 @@ class PerformanceLogger:
             duration=f"{duration:.3f}s",
             params=params,
         )
-    
+
     def log_memory_usage(self, usage_mb: float, threshold_mb: float = 500) -> None:
         """Log high memory usage."""
         if usage_mb > threshold_mb:
@@ -192,7 +196,7 @@ class PerformanceLogger:
                 usage_mb=usage_mb,
                 threshold_mb=threshold_mb,
             )
-    
+
     def log_response_time(self, endpoint: str, duration: float, threshold: float = 1.0) -> None:
         """Log slow response times."""
         if duration > threshold:

@@ -2,20 +2,20 @@
 Unit tests for chat endpoints.
 """
 
-import pytest
 from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
 from fastapi import HTTPException
-from app.api.v1.endpoints.chat import (
-    chat,
-    generate_image,
-    get_available_models,
-    get_conversation,
-    delete_conversation,
-    get_chat_history,
-)
+
 from app.api.v1.endpoints.chat import (
     ChatRequest,
     ImageGenerationRequest,
+    chat,
+    delete_conversation,
+    generate_image,
+    get_available_models,
+    get_chat_history,
+    get_conversation,
 )
 
 
@@ -28,7 +28,7 @@ class TestChatEndpoints:
         request = ChatRequest(message="Hello")
         background_tasks = Mock()
 
-        with patch('app.api.v1.endpoints.chat.settings') as mock_settings:
+        with patch("app.api.v1.endpoints.chat.settings") as mock_settings:
             mock_settings.feature_ai_chat = False
 
             with pytest.raises(HTTPException) as exc_info:
@@ -43,7 +43,7 @@ class TestChatEndpoints:
         background_tasks = Mock()
         background_tasks.add_task = Mock()
 
-        with patch('app.api.v1.endpoints.chat.settings') as mock_settings:
+        with patch("app.api.v1.endpoints.chat.settings") as mock_settings:
             mock_settings.feature_ai_chat = True
 
             response = await chat(request, background_tasks)
@@ -61,18 +61,15 @@ class TestChatEndpoints:
 
         context = [
             ChatMessage(role="user", content="Hi"),
-            ChatMessage(role="assistant", content="Hello!")
+            ChatMessage(role="assistant", content="Hello!"),
         ]
         request = ChatRequest(
-            message="How are you?",
-            context=context,
-            temperature=0.8,
-            max_tokens=1000
+            message="How are you?", context=context, temperature=0.8, max_tokens=1000
         )
         background_tasks = Mock()
         background_tasks.add_task = Mock()
 
-        with patch('app.api.v1.endpoints.chat.settings') as mock_settings:
+        with patch("app.api.v1.endpoints.chat.settings") as mock_settings:
             mock_settings.feature_ai_chat = True
 
             response = await chat(request, background_tasks)
@@ -86,7 +83,7 @@ class TestChatEndpoints:
         request = ImageGenerationRequest(prompt="A beautiful sunset")
         background_tasks = Mock()
 
-        with patch('app.api.v1.endpoints.chat.settings') as mock_settings:
+        with patch("app.api.v1.endpoints.chat.settings") as mock_settings:
             mock_settings.feature_image_generation = False
 
             with pytest.raises(HTTPException) as exc_info:
@@ -98,14 +95,12 @@ class TestChatEndpoints:
     async def test_generate_image_success(self):
         """Test successful image generation."""
         request = ImageGenerationRequest(
-            prompt="A beautiful sunset",
-            size="1024x1024",
-            quality="standard"
+            prompt="A beautiful sunset", size="1024x1024", quality="standard"
         )
         background_tasks = Mock()
         background_tasks.add_task = Mock()
 
-        with patch('app.api.v1.endpoints.chat.settings') as mock_settings:
+        with patch("app.api.v1.endpoints.chat.settings") as mock_settings:
             mock_settings.feature_image_generation = True
 
             response = await generate_image(request, background_tasks)

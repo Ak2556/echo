@@ -3,35 +3,37 @@ Comprehensive unit tests for authentication routes.
 Covers registration, login, logout, token refresh, password reset, email verification, and 2FA.
 """
 
-import pytest
-from unittest.mock import Mock, patch, AsyncMock, MagicMock
 from datetime import datetime, timedelta, timezone
+from unittest.mock import AsyncMock, MagicMock, Mock, patch
+
+import pytest
 from fastapi import HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 
+from app.auth.models import Credential, RefreshToken, Session, User, VerificationCode
 from app.auth.routes import (
-    register,
-    verify_email,
+    LoginRequest,
+    LogoutRequest,
+    PasswordResetConfirm,
+    PasswordResetRequest,
+    RegisterRequest,
+    TokenRefreshRequest,
+    VerifyEmailRequest,
+    confirm_password_reset,
+    disable_2fa,
+    enable_2fa,
+)
+from app.auth.routes import get_current_user as get_me
+from app.auth.routes import (
+    list_sessions,
     login,
     logout,
     refresh_token,
-    get_current_user as get_me,
-    list_sessions,
-    request_password_reset,
-    confirm_password_reset,
+    register,
     request_email_verification,
-    enable_2fa,
-    disable_2fa,
-    RegisterRequest,
-    VerifyEmailRequest,
-    LoginRequest,
-    TokenRefreshRequest,
-    LogoutRequest,
-    PasswordResetRequest,
-    PasswordResetConfirm,
+    request_password_reset,
+    verify_email,
 )
-from app.auth.models import User, Credential, RefreshToken, Session, VerificationCode
-
 
 # ==================== Test Fixtures ====================
 
@@ -92,14 +94,16 @@ def mock_jwt_manager():
     jwt_manager = Mock()
     jwt_manager.create_access_token = Mock(return_value="access_token_123")
     jwt_manager.create_refresh_token = Mock(return_value=("refresh_token_123", "jti_123"))
-    jwt_manager.verify_token = Mock(return_value={
-        "sub": "user_123",
-        "email": "test@example.com",
-        "jti": "jti_123",
-        "family_id": "family_123",
-        "rot": 0,
-        "ver": 1
-    })
+    jwt_manager.verify_token = Mock(
+        return_value={
+            "sub": "user_123",
+            "email": "test@example.com",
+            "jti": "jti_123",
+            "family_id": "family_123",
+            "rot": 0,
+            "ver": 1,
+        }
+    )
     return jwt_manager
 
 
@@ -149,18 +153,21 @@ class TestRegister:
         mock_db.execute.return_value = mock_result
 
         data = RegisterRequest(
-            email="new@example.com",
-            password="StrongPassword123!",
-            full_name="New User"
+            email="new@example.com", password="StrongPassword123!", full_name="New User"
         )
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.calculate_password_strength', return_value={"score": 80, "feedback": []}), \
-             patch('app.auth.routes.check_password_breach', return_value=(False, 0)), \
-             patch('app.auth.routes.hash_password', return_value="hashed_password"), \
-             patch('app.auth.routes.generate_otp', return_value="123456"), \
-             patch('app.auth.routes.hash_token', return_value="hashed_otp"), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch(
+                "app.auth.routes.calculate_password_strength",
+                return_value={"score": 80, "feedback": []},
+            ),
+            patch("app.auth.routes.check_password_breach", return_value=(False, 0)),
+            patch("app.auth.routes.hash_password", return_value="hashed_password"),
+            patch("app.auth.routes.generate_otp", return_value="123456"),
+            patch("app.auth.routes.hash_token", return_value="hashed_otp"),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -180,13 +187,12 @@ class TestRegister:
         mock_result.scalar_one_or_none.return_value = mock_user
         mock_db.execute.return_value = mock_result
 
-        data = RegisterRequest(
-            email="existing@example.com",
-            password="StrongPassword123!"
-        )
+        data = RegisterRequest(email="existing@example.com", password="StrongPassword123!")
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -205,12 +211,17 @@ class TestRegister:
 
         data = RegisterRequest(
             email="new@example.com",
-            password="weakpass"  # 8 chars but weak (no uppercase, numbers, special chars)
+            password="weakpass",  # 8 chars but weak (no uppercase, numbers, special chars)
         )
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.calculate_password_strength', return_value={"score": 20, "feedback": ["Too short"]}), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch(
+                "app.auth.routes.calculate_password_strength",
+                return_value={"score": 20, "feedback": ["Too short"]},
+            ),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -227,15 +238,17 @@ class TestRegister:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute.return_value = mock_result
 
-        data = RegisterRequest(
-            email="new@example.com",
-            password="password123"
-        )
+        data = RegisterRequest(email="new@example.com", password="password123")
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.calculate_password_strength', return_value={"score": 50, "feedback": []}), \
-             patch('app.auth.routes.check_password_breach', return_value=(True, 1000)), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch(
+                "app.auth.routes.calculate_password_strength",
+                return_value={"score": 50, "feedback": []},
+            ),
+            patch("app.auth.routes.check_password_breach", return_value=(True, 1000)),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -252,13 +265,12 @@ class TestRegister:
         mock_redis.client = True
         mock_redis.check_rate_limit = AsyncMock(return_value=(False, 0))
 
-        data = RegisterRequest(
-            email="new@example.com",
-            password="StrongPassword123!"
-        )
+        data = RegisterRequest(email="new@example.com", password="StrongPassword123!")
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "production"
 
@@ -278,10 +290,7 @@ class TestVerifyEmail:
     @pytest.mark.asyncio
     async def test_verify_email_success(self, mock_db, mock_request, mock_redis, mock_user):
         """Test successful email verification."""
-        data = VerifyEmailRequest(
-            email="test@example.com",
-            code="123456"
-        )
+        data = VerifyEmailRequest(email="test@example.com", code="123456")
 
         # Mock verification code check
         mock_code = Mock(spec=VerificationCode)
@@ -296,8 +305,10 @@ class TestVerifyEmail:
 
         mock_db.execute.side_effect = [mock_result_code, mock_result_user]
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.hash_token', return_value="hashed_code"):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.hash_token", return_value="hashed_code"),
+        ):
 
             result = await verify_email(data, mock_request, mock_db)
 
@@ -308,16 +319,13 @@ class TestVerifyEmail:
     @pytest.mark.asyncio
     async def test_verify_email_invalid_code_redis(self, mock_db, mock_request):
         """Test email verification with invalid code from Redis."""
-        data = VerifyEmailRequest(
-            email="test@example.com",
-            code="wrong_code"
-        )
+        data = VerifyEmailRequest(email="test@example.com", code="wrong_code")
 
         mock_redis = AsyncMock()
         mock_redis.client = True
         mock_redis.verify_code = AsyncMock(return_value=(False, 2))
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis):
+        with patch("app.auth.routes.get_redis_service", return_value=mock_redis):
 
             with pytest.raises(HTTPException) as exc_info:
                 await verify_email(data, mock_request, mock_db)
@@ -328,10 +336,7 @@ class TestVerifyEmail:
     @pytest.mark.asyncio
     async def test_verify_email_invalid_code_database(self, mock_db, mock_request):
         """Test email verification with invalid code from database."""
-        data = VerifyEmailRequest(
-            email="test@example.com",
-            code="wrong_code"
-        )
+        data = VerifyEmailRequest(email="test@example.com", code="wrong_code")
 
         # No Redis available
         mock_redis = None
@@ -340,8 +345,10 @@ class TestVerifyEmail:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute.return_value = mock_result
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.hash_token', return_value="hashed_code"):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.hash_token", return_value="hashed_code"),
+        ):
 
             with pytest.raises(HTTPException) as exc_info:
                 await verify_email(data, mock_request, mock_db)
@@ -352,10 +359,7 @@ class TestVerifyEmail:
     @pytest.mark.asyncio
     async def test_verify_email_user_not_found(self, mock_db, mock_request, mock_redis):
         """Test email verification when user not found."""
-        data = VerifyEmailRequest(
-            email="test@example.com",
-            code="123456"
-        )
+        data = VerifyEmailRequest(email="test@example.com", code="123456")
 
         # Configure mock_redis to return valid code verification
         mock_redis.verify_code = AsyncMock(return_value=(True, 3))
@@ -365,7 +369,7 @@ class TestVerifyEmail:
 
         mock_db.execute.return_value = mock_result_user
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis):
+        with patch("app.auth.routes.get_redis_service", return_value=mock_redis):
 
             with pytest.raises(HTTPException) as exc_info:
                 await verify_email(data, mock_request, mock_db)
@@ -381,12 +385,19 @@ class TestLogin:
     """Tests for login endpoint."""
 
     @pytest.mark.asyncio
-    async def test_login_success(self, mock_db, mock_request, mock_response, mock_redis, mock_jwt_manager, mock_user, mock_credential):
+    async def test_login_success(
+        self,
+        mock_db,
+        mock_request,
+        mock_response,
+        mock_redis,
+        mock_jwt_manager,
+        mock_user,
+        mock_credential,
+    ):
         """Test successful login."""
         data = LoginRequest(
-            email="test@example.com",
-            password="CorrectPassword123!",
-            remember_me=False
+            email="test@example.com", password="CorrectPassword123!", remember_me=False
         )
 
         mock_result_user = Mock()
@@ -397,12 +408,14 @@ class TestLogin:
 
         mock_db.execute.side_effect = [mock_result_user, mock_result_cred]
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager), \
-             patch('app.auth.routes.verify_password', return_value=True), \
-             patch('app.auth.routes.generate_device_fingerprint', return_value="device_fp_123"), \
-             patch('app.auth.routes.create_session_record', return_value=Mock()), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager),
+            patch("app.auth.routes.verify_password", return_value=True),
+            patch("app.auth.routes.generate_device_fingerprint", return_value="device_fp_123"),
+            patch("app.auth.routes.create_session_record", return_value=Mock()),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -416,12 +429,11 @@ class TestLogin:
             assert mock_response.set_cookie.called
 
     @pytest.mark.asyncio
-    async def test_login_invalid_credentials(self, mock_db, mock_request, mock_response, mock_redis, mock_user, mock_credential):
+    async def test_login_invalid_credentials(
+        self, mock_db, mock_request, mock_response, mock_redis, mock_user, mock_credential
+    ):
         """Test login with invalid credentials."""
-        data = LoginRequest(
-            email="test@example.com",
-            password="WrongPassword"
-        )
+        data = LoginRequest(email="test@example.com", password="WrongPassword")
 
         mock_result_user = Mock()
         mock_result_user.scalar_one_or_none.return_value = mock_user
@@ -431,9 +443,11 @@ class TestLogin:
 
         mock_db.execute.side_effect = [mock_result_user, mock_result_cred]
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.verify_password', return_value=False), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.verify_password", return_value=False),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -446,17 +460,16 @@ class TestLogin:
     @pytest.mark.asyncio
     async def test_login_user_not_found(self, mock_db, mock_request, mock_response, mock_redis):
         """Test login when user not found."""
-        data = LoginRequest(
-            email="nonexistent@example.com",
-            password="Password123!"
-        )
+        data = LoginRequest(email="nonexistent@example.com", password="Password123!")
 
         mock_result = Mock()
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute.return_value = mock_result
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -467,12 +480,11 @@ class TestLogin:
             assert "Invalid credentials" in str(exc_info.value.detail)
 
     @pytest.mark.asyncio
-    async def test_login_account_locked(self, mock_db, mock_request, mock_response, mock_redis, mock_user):
+    async def test_login_account_locked(
+        self, mock_db, mock_request, mock_response, mock_redis, mock_user
+    ):
         """Test login with locked account."""
-        data = LoginRequest(
-            email="test@example.com",
-            password="Password123!"
-        )
+        data = LoginRequest(email="test@example.com", password="Password123!")
 
         mock_user.is_locked = True
         mock_user.locked_until = datetime.now(timezone.utc) + timedelta(minutes=30)
@@ -481,8 +493,10 @@ class TestLogin:
         mock_result.scalar_one_or_none.return_value = mock_user
         mock_db.execute.return_value = mock_result
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -493,12 +507,11 @@ class TestLogin:
             assert "Account is locked" in str(exc_info.value.detail)
 
     @pytest.mark.asyncio
-    async def test_login_email_not_verified(self, mock_db, mock_request, mock_response, mock_redis, mock_user, mock_credential):
+    async def test_login_email_not_verified(
+        self, mock_db, mock_request, mock_response, mock_redis, mock_user, mock_credential
+    ):
         """Test login with unverified email."""
-        data = LoginRequest(
-            email="test@example.com",
-            password="CorrectPassword123!"
-        )
+        data = LoginRequest(email="test@example.com", password="CorrectPassword123!")
 
         mock_user.email_verified = False
 
@@ -510,9 +523,11 @@ class TestLogin:
 
         mock_db.execute.side_effect = [mock_result_user, mock_result_cred]
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.verify_password', return_value=True), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.verify_password", return_value=True),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -523,12 +538,11 @@ class TestLogin:
             assert "verify your email" in str(exc_info.value.detail)
 
     @pytest.mark.asyncio
-    async def test_login_requires_2fa(self, mock_db, mock_request, mock_response, mock_redis, mock_user, mock_credential):
+    async def test_login_requires_2fa(
+        self, mock_db, mock_request, mock_response, mock_redis, mock_user, mock_credential
+    ):
         """Test login when 2FA is required."""
-        data = LoginRequest(
-            email="test@example.com",
-            password="CorrectPassword123!"
-        )
+        data = LoginRequest(email="test@example.com", password="CorrectPassword123!")
 
         mock_user.totp_enabled = True
 
@@ -540,9 +554,11 @@ class TestLogin:
 
         mock_db.execute.side_effect = [mock_result_user, mock_result_cred]
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.verify_password', return_value=True), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.verify_password", return_value=True),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -552,12 +568,11 @@ class TestLogin:
             assert isinstance(result, JSONResponse)
 
     @pytest.mark.asyncio
-    async def test_login_failed_attempts_lockout(self, mock_db, mock_request, mock_response, mock_redis, mock_user, mock_credential):
+    async def test_login_failed_attempts_lockout(
+        self, mock_db, mock_request, mock_response, mock_redis, mock_user, mock_credential
+    ):
         """Test account lockout after failed login attempts."""
-        data = LoginRequest(
-            email="test@example.com",
-            password="WrongPassword"
-        )
+        data = LoginRequest(email="test@example.com", password="WrongPassword")
 
         mock_user.failed_login_attempts = 4  # Will be 5 after this attempt
 
@@ -569,9 +584,11 @@ class TestLogin:
 
         mock_db.execute.side_effect = [mock_result_user, mock_result_cred]
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.verify_password', return_value=False), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.verify_password", return_value=False),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -585,17 +602,16 @@ class TestLogin:
     @pytest.mark.asyncio
     async def test_login_rate_limited(self, mock_db, mock_request, mock_response):
         """Test login rate limiting."""
-        data = LoginRequest(
-            email="test@example.com",
-            password="Password123!"
-        )
+        data = LoginRequest(email="test@example.com", password="Password123!")
 
         mock_redis = AsyncMock()
         mock_redis.client = True
         mock_redis.check_rate_limit = AsyncMock(return_value=(False, 0))
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "production"
 
@@ -623,8 +639,10 @@ class TestLogout:
         mock_result.scalar_one_or_none.return_value = mock_session
         mock_db.execute.return_value = mock_result
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager),
+        ):
 
             result = await logout(mock_request, data, mock_db)
 
@@ -643,8 +661,10 @@ class TestLogout:
         mock_result.scalar_one_or_none.return_value = mock_session
         mock_db.execute.return_value = mock_result
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager),
+        ):
 
             result = await logout(mock_request, data, mock_db)
 
@@ -657,7 +677,7 @@ class TestLogout:
         data = LogoutRequest(everywhere=False)
         mock_request.cookies = {}
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis):
+        with patch("app.auth.routes.get_redis_service", return_value=mock_redis):
 
             result = await logout(mock_request, data, mock_db)
 
@@ -672,8 +692,10 @@ class TestLogout:
         mock_jwt_manager = Mock()
         mock_jwt_manager.verify_token.side_effect = Exception("Invalid token")
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager),
+        ):
 
             result = await logout(mock_request, data, mock_db)
 
@@ -688,7 +710,9 @@ class TestRefreshToken:
     """Tests for token refresh endpoint."""
 
     @pytest.mark.asyncio
-    async def test_refresh_token_success(self, mock_db, mock_request, mock_response, mock_redis, mock_jwt_manager, mock_user):
+    async def test_refresh_token_success(
+        self, mock_db, mock_request, mock_response, mock_redis, mock_jwt_manager, mock_user
+    ):
         """Test successful token refresh."""
         data = TokenRefreshRequest(refresh_token="refresh_token_123")
 
@@ -709,8 +733,10 @@ class TestRefreshToken:
 
         mock_db.execute.side_effect = [mock_result_token, mock_result_user, mock_result_session]
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager),
+        ):
 
             result = await refresh_token(data, mock_request, mock_response, mock_db)
 
@@ -720,7 +746,9 @@ class TestRefreshToken:
             assert mock_response.set_cookie.called
 
     @pytest.mark.asyncio
-    async def test_refresh_token_from_cookie(self, mock_db, mock_request, mock_response, mock_redis, mock_jwt_manager, mock_user):
+    async def test_refresh_token_from_cookie(
+        self, mock_db, mock_request, mock_response, mock_redis, mock_jwt_manager, mock_user
+    ):
         """Test token refresh from cookie."""
         data = TokenRefreshRequest(refresh_token="")
         mock_request.cookies = {"refresh_token": "cookie_refresh_token"}
@@ -742,8 +770,10 @@ class TestRefreshToken:
 
         mock_db.execute.side_effect = [mock_result_token, mock_result_user, mock_result_session]
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager),
+        ):
 
             result = await refresh_token(data, mock_request, mock_response, mock_db)
 
@@ -755,7 +785,7 @@ class TestRefreshToken:
         data = TokenRefreshRequest(refresh_token="")
         mock_request.cookies = {}
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis):
+        with patch("app.auth.routes.get_redis_service", return_value=mock_redis):
 
             with pytest.raises(HTTPException) as exc_info:
                 await refresh_token(data, mock_request, mock_response, mock_db)
@@ -771,8 +801,10 @@ class TestRefreshToken:
         mock_jwt_manager = Mock()
         mock_jwt_manager.verify_token.side_effect = ValueError("Invalid token")
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager),
+        ):
 
             with pytest.raises(HTTPException) as exc_info:
                 await refresh_token(data, mock_request, mock_response, mock_db)
@@ -781,7 +813,9 @@ class TestRefreshToken:
             assert "Invalid or expired refresh token" in str(exc_info.value.detail)
 
     @pytest.mark.asyncio
-    async def test_refresh_token_blacklisted(self, mock_db, mock_request, mock_response, mock_jwt_manager):
+    async def test_refresh_token_blacklisted(
+        self, mock_db, mock_request, mock_response, mock_jwt_manager
+    ):
         """Test token refresh with blacklisted token."""
         data = TokenRefreshRequest(refresh_token="blacklisted_token")
 
@@ -789,8 +823,10 @@ class TestRefreshToken:
         mock_redis.client = True
         mock_redis.is_token_blacklisted = AsyncMock(return_value=True)
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager),
+        ):
 
             with pytest.raises(HTTPException) as exc_info:
                 await refresh_token(data, mock_request, mock_response, mock_db)
@@ -799,7 +835,9 @@ class TestRefreshToken:
             assert "Token has been revoked" in str(exc_info.value.detail)
 
     @pytest.mark.asyncio
-    async def test_refresh_token_reuse_detection(self, mock_db, mock_request, mock_response, mock_redis, mock_jwt_manager):
+    async def test_refresh_token_reuse_detection(
+        self, mock_db, mock_request, mock_response, mock_redis, mock_jwt_manager
+    ):
         """Test token reuse detection (revoked token)."""
         data = TokenRefreshRequest(refresh_token="reused_token")
 
@@ -807,8 +845,10 @@ class TestRefreshToken:
         mock_result.scalar_one_or_none.return_value = None  # Token not found
         mock_db.execute.return_value = mock_result
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager),
+        ):
 
             with pytest.raises(HTTPException) as exc_info:
                 await refresh_token(data, mock_request, mock_response, mock_db)
@@ -818,7 +858,9 @@ class TestRefreshToken:
             assert mock_redis.invalidate_token_family.called
 
     @pytest.mark.asyncio
-    async def test_refresh_token_inactive_user(self, mock_db, mock_request, mock_response, mock_redis, mock_jwt_manager, mock_user):
+    async def test_refresh_token_inactive_user(
+        self, mock_db, mock_request, mock_response, mock_redis, mock_jwt_manager, mock_user
+    ):
         """Test token refresh with inactive user."""
         data = TokenRefreshRequest(refresh_token="refresh_token_123")
 
@@ -834,8 +876,10 @@ class TestRefreshToken:
 
         mock_db.execute.side_effect = [mock_result_token, mock_result_user]
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager),
+        ):
 
             with pytest.raises(HTTPException) as exc_info:
                 await refresh_token(data, mock_request, mock_response, mock_db)
@@ -859,7 +903,7 @@ class TestGetCurrentUser:
         mock_result.scalar_one_or_none.return_value = mock_user
         mock_db.execute.return_value = mock_result
 
-        with patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager):
+        with patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager):
 
             result = await get_me(mock_request, mock_db)
 
@@ -887,7 +931,7 @@ class TestGetCurrentUser:
         mock_jwt_manager = Mock()
         mock_jwt_manager.verify_token.side_effect = ValueError("Invalid token")
 
-        with patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager):
+        with patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager):
 
             with pytest.raises(HTTPException) as exc_info:
                 await get_me(mock_request, mock_db)
@@ -903,7 +947,7 @@ class TestGetCurrentUser:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute.return_value = mock_result
 
-        with patch('app.auth.routes.get_jwt_manager', return_value=mock_jwt_manager):
+        with patch("app.auth.routes.get_jwt_manager", return_value=mock_jwt_manager):
 
             with pytest.raises(HTTPException) as exc_info:
                 await get_me(mock_request, mock_db)
@@ -919,7 +963,9 @@ class TestPasswordReset:
     """Tests for password reset endpoints."""
 
     @pytest.mark.asyncio
-    async def test_request_password_reset_success(self, mock_db, mock_request, mock_redis, mock_user):
+    async def test_request_password_reset_success(
+        self, mock_db, mock_request, mock_redis, mock_user
+    ):
         """Test successful password reset request."""
         data = PasswordResetRequest(email="test@example.com")
 
@@ -927,9 +973,11 @@ class TestPasswordReset:
         mock_result.scalar_one_or_none.return_value = mock_user
         mock_db.execute.return_value = mock_result
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.hash_token', return_value="hashed_token"), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.hash_token", return_value="hashed_token"),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -948,8 +996,10 @@ class TestPasswordReset:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute.return_value = mock_result
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -967,8 +1017,10 @@ class TestPasswordReset:
         mock_redis.client = True
         mock_redis.check_rate_limit = AsyncMock(return_value=(False, 0))
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "production"
 
@@ -979,12 +1031,11 @@ class TestPasswordReset:
             assert "Too many password reset attempts" in str(exc_info.value.detail)
 
     @pytest.mark.asyncio
-    async def test_confirm_password_reset_success(self, mock_db, mock_request, mock_redis, mock_user, mock_credential):
+    async def test_confirm_password_reset_success(
+        self, mock_db, mock_request, mock_redis, mock_user, mock_credential
+    ):
         """Test successful password reset confirmation."""
-        data = PasswordResetConfirm(
-            token="reset_token_123",
-            new_password="NewStrongPassword123!"
-        )
+        data = PasswordResetConfirm(token="reset_token_123", new_password="NewStrongPassword123!")
 
         mock_code = Mock(spec=VerificationCode)
         mock_code.user_id = "user_123"
@@ -1001,10 +1052,15 @@ class TestPasswordReset:
 
         mock_db.execute.side_effect = [mock_result_code, mock_result_user, mock_result_cred]
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.hash_token', return_value="hashed_token"), \
-             patch('app.auth.routes.calculate_password_strength', return_value={"score": 80, "feedback": []}), \
-             patch('app.auth.routes.hash_password', return_value="new_hashed_password"):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.hash_token", return_value="hashed_token"),
+            patch(
+                "app.auth.routes.calculate_password_strength",
+                return_value={"score": 80, "feedback": []},
+            ),
+            patch("app.auth.routes.hash_password", return_value="new_hashed_password"),
+        ):
 
             result = await confirm_password_reset(data, mock_request, mock_db)
 
@@ -1015,17 +1071,16 @@ class TestPasswordReset:
     @pytest.mark.asyncio
     async def test_confirm_password_reset_invalid_token(self, mock_db, mock_request, mock_redis):
         """Test password reset confirmation with invalid token."""
-        data = PasswordResetConfirm(
-            token="invalid_token",
-            new_password="NewStrongPassword123!"
-        )
+        data = PasswordResetConfirm(token="invalid_token", new_password="NewStrongPassword123!")
 
         mock_result = Mock()
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute.return_value = mock_result
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.hash_token', return_value="hashed_token"):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.hash_token", return_value="hashed_token"),
+        ):
 
             with pytest.raises(HTTPException) as exc_info:
                 await confirm_password_reset(data, mock_request, mock_db)
@@ -1037,8 +1092,7 @@ class TestPasswordReset:
     async def test_confirm_password_reset_weak_password(self, mock_db, mock_request, mock_redis):
         """Test password reset confirmation with weak password."""
         data = PasswordResetConfirm(
-            token="reset_token_123",
-            new_password="weakpass"  # 8 chars but weak
+            token="reset_token_123", new_password="weakpass"  # 8 chars but weak
         )
 
         mock_code = Mock(spec=VerificationCode)
@@ -1046,9 +1100,14 @@ class TestPasswordReset:
         mock_result.scalar_one_or_none.return_value = mock_code
         mock_db.execute.return_value = mock_result
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.hash_token', return_value="hashed_token"), \
-             patch('app.auth.routes.calculate_password_strength', return_value={"score": 20, "feedback": ["Too short"]}):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.hash_token", return_value="hashed_token"),
+            patch(
+                "app.auth.routes.calculate_password_strength",
+                return_value={"score": 20, "feedback": ["Too short"]},
+            ),
+        ):
 
             with pytest.raises(HTTPException) as exc_info:
                 await confirm_password_reset(data, mock_request, mock_db)
@@ -1133,7 +1192,7 @@ class TestHelperFunctions:
             "success",
             mock_request,
             "password",
-            {"test": "metadata"}
+            {"test": "metadata"},
         )
 
         assert mock_db.add.called
@@ -1144,17 +1203,17 @@ class TestHelperFunctions:
         """Test session record creation."""
         from app.auth.routes import create_session_record
 
-        with patch('app.auth.routes.parse_user_agent', return_value={
-            "device_name": "Chrome",
-            "device_type": "desktop"
-        }):
+        with patch(
+            "app.auth.routes.parse_user_agent",
+            return_value={"device_name": "Chrome", "device_type": "desktop"},
+        ):
 
             session = await create_session_record(
                 mock_db,
                 "user_123",
                 "jti_123",
                 mock_request,
-                datetime.now(timezone.utc) + timedelta(days=7)
+                datetime.now(timezone.utc) + timedelta(days=7),
             )
 
             assert mock_db.add.called
@@ -1172,26 +1231,17 @@ class TestSchemas:
         """Test RegisterRequest validation."""
         # Valid request
         data = RegisterRequest(
-            email="test@example.com",
-            password="StrongPassword123!",
-            full_name="Test User"
+            email="test@example.com", password="StrongPassword123!", full_name="Test User"
         )
         assert data.email == "test@example.com"
 
         # Invalid email should raise validation error
         with pytest.raises(Exception):
-            RegisterRequest(
-                email="invalid-email",
-                password="StrongPassword123!"
-            )
+            RegisterRequest(email="invalid-email", password="StrongPassword123!")
 
     def test_login_request_validation(self):
         """Test LoginRequest validation."""
-        data = LoginRequest(
-            email="test@example.com",
-            password="password123",
-            remember_me=True
-        )
+        data = LoginRequest(email="test@example.com", password="password123", remember_me=True)
         assert data.remember_me is True
 
     def test_password_reset_request_validation(self):
@@ -1223,18 +1273,21 @@ class TestAuthFlows:
         mock_db.execute.return_value = mock_result
 
         register_data = RegisterRequest(
-            email="newuser@example.com",
-            password="StrongPassword123!",
-            full_name="New User"
+            email="newuser@example.com", password="StrongPassword123!", full_name="New User"
         )
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.calculate_password_strength', return_value={"score": 80, "feedback": []}), \
-             patch('app.auth.routes.check_password_breach', return_value=(False, 0)), \
-             patch('app.auth.routes.hash_password', return_value="hashed"), \
-             patch('app.auth.routes.generate_otp', return_value="123456"), \
-             patch('app.auth.routes.hash_token', return_value="hashed_otp"), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch(
+                "app.auth.routes.calculate_password_strength",
+                return_value={"score": 80, "feedback": []},
+            ),
+            patch("app.auth.routes.check_password_breach", return_value=(False, 0)),
+            patch("app.auth.routes.hash_password", return_value="hashed"),
+            patch("app.auth.routes.generate_otp", return_value="123456"),
+            patch("app.auth.routes.hash_token", return_value="hashed_otp"),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -1254,19 +1307,20 @@ class TestAuthFlows:
 
         mock_db.execute.side_effect = [mock_result_code, mock_result_user]
 
-        verify_data = VerifyEmailRequest(
-            email="newuser@example.com",
-            code="123456"
-        )
+        verify_data = VerifyEmailRequest(email="newuser@example.com", code="123456")
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.hash_token', return_value="hashed_code"):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.hash_token", return_value="hashed_code"),
+        ):
 
             verify_result = await verify_email(verify_data, mock_request, mock_db)
             assert "Email verified successfully" in verify_result["message"]
 
     @pytest.mark.asyncio
-    async def test_complete_password_reset_flow(self, mock_db, mock_request, mock_redis, mock_user, mock_credential):
+    async def test_complete_password_reset_flow(
+        self, mock_db, mock_request, mock_redis, mock_user, mock_credential
+    ):
         """Test complete password reset flow."""
         # Step 1: Request reset
         mock_result = Mock()
@@ -1275,9 +1329,11 @@ class TestAuthFlows:
 
         request_data = PasswordResetRequest(email="test@example.com")
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.hash_token', return_value="hashed_token"), \
-             patch('app.auth.routes.settings') as mock_settings:
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.hash_token", return_value="hashed_token"),
+            patch("app.auth.routes.settings") as mock_settings,
+        ):
 
             mock_settings.environment = "test"
 
@@ -1301,14 +1357,18 @@ class TestAuthFlows:
         mock_db.execute.side_effect = [mock_result_code, mock_result_user, mock_result_cred]
 
         confirm_data = PasswordResetConfirm(
-            token="reset_token_123",
-            new_password="NewStrongPassword123!"
+            token="reset_token_123", new_password="NewStrongPassword123!"
         )
 
-        with patch('app.auth.routes.get_redis_service', return_value=mock_redis), \
-             patch('app.auth.routes.hash_token', return_value="hashed_token"), \
-             patch('app.auth.routes.calculate_password_strength', return_value={"score": 80, "feedback": []}), \
-             patch('app.auth.routes.hash_password', return_value="new_hashed_password"):
+        with (
+            patch("app.auth.routes.get_redis_service", return_value=mock_redis),
+            patch("app.auth.routes.hash_token", return_value="hashed_token"),
+            patch(
+                "app.auth.routes.calculate_password_strength",
+                return_value={"score": 80, "feedback": []},
+            ),
+            patch("app.auth.routes.hash_password", return_value="new_hashed_password"),
+        ):
 
             confirm_result = await confirm_password_reset(confirm_data, mock_request, mock_db)
             assert "Password has been reset successfully" in confirm_result["message"]

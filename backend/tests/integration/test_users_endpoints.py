@@ -3,15 +3,16 @@ Comprehensive tests for user management endpoints.
 Goal: 100% coverage for app/api/v1/endpoints/users.py
 """
 
-import pytest
-from httpx import AsyncClient
-from fastapi import status
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 from unittest.mock import Mock, patch
 
-from app.auth.models import User
+import pytest
+from fastapi import status
+from httpx import AsyncClient
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.auth.dependencies import AuthenticatedUser
+from app.auth.models import User
 
 
 @pytest.mark.integration
@@ -20,10 +21,7 @@ class TestUserProfileEndpoints:
     """Tests for user profile endpoints (/me)."""
 
     async def test_get_my_profile_success(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test successful retrieval of own profile."""
         # Create a user in the database
@@ -35,7 +33,7 @@ class TestUserProfileEndpoints:
             bio="Test bio",
             avatar_url="https://example.com/avatar.jpg",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -59,10 +57,7 @@ class TestUserProfileEndpoints:
         assert data["avatar_url"] == "https://example.com/avatar.jpg"
 
     async def test_get_my_profile_no_username(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test profile retrieval when username is not set (should derive from email)."""
         # Create a user without username
@@ -71,7 +66,7 @@ class TestUserProfileEndpoints:
             email="nouser@example.com",
             username=None,  # No username set
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -88,10 +83,7 @@ class TestUserProfileEndpoints:
         assert data["username"] == "nouser"
 
     async def test_get_my_profile_user_not_found(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test error when authenticated user doesn't exist in database (lines 45-46)."""
         # Create mock user with ID that doesn't exist in DB
@@ -105,10 +97,7 @@ class TestUserProfileEndpoints:
         assert "User not found" in response.json()["detail"]
 
     async def test_update_my_profile_put_success(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test full profile update with PUT (lines 65-89)."""
         # Create user
@@ -120,7 +109,7 @@ class TestUserProfileEndpoints:
             bio="Old bio",
             avatar_url="https://old.com/avatar.jpg",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -131,7 +120,7 @@ class TestUserProfileEndpoints:
         update_data = {
             "full_name": "New Name",
             "bio": "New bio",
-            "avatar_url": "https://new.com/avatar.jpg"
+            "avatar_url": "https://new.com/avatar.jpg",
         }
 
         with override_auth(mock_user):
@@ -150,10 +139,7 @@ class TestUserProfileEndpoints:
         assert user.avatar_url == "https://new.com/avatar.jpg"
 
     async def test_update_my_profile_put_user_not_found(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test PUT update error when user not found (lines 68-69)."""
         mock_user = Mock()
@@ -168,10 +154,7 @@ class TestUserProfileEndpoints:
         assert "User not found" in response.json()["detail"]
 
     async def test_update_my_profile_put_partial_fields(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test PUT with only some fields updated (lines 71-76)."""
         user = User(
@@ -181,7 +164,7 @@ class TestUserProfileEndpoints:
             full_name="Original Name",
             bio="Original bio",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -202,10 +185,7 @@ class TestUserProfileEndpoints:
         assert data["bio"] == "Original bio"
 
     async def test_update_my_profile_patch_success(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test partial profile update with PATCH (lines 99-122)."""
         user = User(
@@ -216,7 +196,7 @@ class TestUserProfileEndpoints:
             bio="Original bio",
             avatar_url="https://example.com/old.jpg",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -238,10 +218,7 @@ class TestUserProfileEndpoints:
         assert data["avatar_url"] == "https://example.com/old.jpg"
 
     async def test_update_my_profile_patch_user_not_found(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test PATCH update error when user not found (lines 101-102)."""
         mock_user = Mock()
@@ -256,10 +233,7 @@ class TestUserProfileEndpoints:
         assert "User not found" in response.json()["detail"]
 
     async def test_update_my_profile_patch_all_fields(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test PATCH with all fields to ensure coverage of all conditionals (lines 104-109)."""
         user = User(
@@ -267,7 +241,7 @@ class TestUserProfileEndpoints:
             email="allfields@example.com",
             username="allfieldsuser",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -279,7 +253,7 @@ class TestUserProfileEndpoints:
         update_data = {
             "full_name": "Complete Name",
             "bio": "Complete bio",
-            "avatar_url": "https://complete.com/avatar.jpg"
+            "avatar_url": "https://complete.com/avatar.jpg",
         }
 
         with override_auth(mock_user):
@@ -383,10 +357,7 @@ class TestDeleteUserEndpoint:
     """Tests for user deletion endpoint."""
 
     async def test_delete_own_user_success(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test user can delete their own account (lines 164-169)."""
         # Create user
@@ -395,7 +366,7 @@ class TestDeleteUserEndpoint:
             email="delete@example.com",
             username="deleteuser",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -412,10 +383,7 @@ class TestDeleteUserEndpoint:
         assert data["message"] == "User deleted successfully"
 
     async def test_delete_other_user_forbidden(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test user cannot delete another user's account (lines 160-161)."""
         # Create two users
@@ -424,14 +392,14 @@ class TestDeleteUserEndpoint:
             email="user1@example.com",
             username="user1",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         user2 = User(
             id="user-2-id",
             email="user2@example.com",
             username="user2",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user1)
         db_session.add(user2)
@@ -448,10 +416,7 @@ class TestDeleteUserEndpoint:
         assert "Not authorized" in response.json()["detail"]
 
     async def test_delete_user_not_found(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test delete returns 404 when user doesn't exist (lines 166-167)."""
         mock_user = Mock()
@@ -470,10 +435,7 @@ class TestUserProfileEdgeCases:
     """Edge case tests for user profile endpoints."""
 
     async def test_get_profile_null_optional_fields(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test profile with all optional fields as None."""
         user = User(
@@ -484,7 +446,7 @@ class TestUserProfileEdgeCases:
             bio=None,
             avatar_url=None,
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -503,10 +465,7 @@ class TestUserProfileEdgeCases:
         assert data["avatar_url"] is None
 
     async def test_update_profile_empty_strings(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test updating profile with empty strings."""
         user = User(
@@ -516,7 +475,7 @@ class TestUserProfileEdgeCases:
             full_name="Original Name",
             bio="Original bio",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -525,10 +484,7 @@ class TestUserProfileEdgeCases:
         mock_user.id = user.id
 
         # Update with empty strings (not None)
-        update_data = {
-            "full_name": "",
-            "bio": ""
-        }
+        update_data = {"full_name": "", "bio": ""}
 
         with override_auth(mock_user):
             response = await client.put("/api/v1/users/me", json=update_data)
@@ -541,10 +497,7 @@ class TestUserProfileEdgeCases:
         assert data["bio"] == "" or data["bio"] is None
 
     async def test_update_profile_only_one_field(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test updating only avatar_url field."""
         user = User(
@@ -553,7 +506,7 @@ class TestUserProfileEdgeCases:
             username="avataruser",
             bio="Keep this bio",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -573,10 +526,7 @@ class TestUserProfileEdgeCases:
         assert data["bio"] == "Keep this bio"
 
     async def test_user_model_without_bio_attribute(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test handling user model that doesn't have bio attribute."""
         user = User(
@@ -584,11 +534,11 @@ class TestUserProfileEdgeCases:
             email="nobio@example.com",
             username="nobiouser",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
 
         # Manually remove bio attribute to test hasattr check
-        if hasattr(user, 'bio'):
+        if hasattr(user, "bio"):
             # Can't actually remove the attribute in SQLModel, so we just verify the check exists
             pass
 
@@ -640,10 +590,7 @@ class TestUserProfileValidation:
     """Tests for input validation."""
 
     async def test_update_profile_invalid_json(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test update with invalid JSON structure."""
         user = User(
@@ -651,7 +598,7 @@ class TestUserProfileValidation:
             email="validation@example.com",
             username="validuser",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -669,10 +616,7 @@ class TestUserProfileValidation:
         assert response.status_code == 200
 
     async def test_update_profile_very_long_strings(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test updating with very long strings."""
         user = User(
@@ -680,7 +624,7 @@ class TestUserProfileValidation:
             email="longstring@example.com",
             username="longuser",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -706,10 +650,7 @@ class TestComplexUserScenarios:
     """Tests for complex user scenarios."""
 
     async def test_multiple_profile_updates_sequence(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test multiple sequential profile updates."""
         user = User(
@@ -717,7 +658,7 @@ class TestComplexUserScenarios:
             email="sequence@example.com",
             username="sequser",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -737,7 +678,9 @@ class TestComplexUserScenarios:
 
         # Third update
         with override_auth(mock_user):
-            response3 = await client.put("/api/v1/users/me", json={"avatar_url": "https://final.com/pic.jpg"})
+            response3 = await client.put(
+                "/api/v1/users/me", json={"avatar_url": "https://final.com/pic.jpg"}
+            )
         assert response3.status_code == 200
 
         # Verify final state
@@ -749,10 +692,7 @@ class TestComplexUserScenarios:
         assert data["avatar_url"] == "https://final.com/pic.jpg"
 
     async def test_user_with_special_characters_in_email(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test user with special characters in email."""
         user = User(
@@ -760,7 +700,7 @@ class TestComplexUserScenarios:
             email="user+tag@example.co.uk",
             username="specialuser",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()
@@ -776,10 +716,7 @@ class TestComplexUserScenarios:
         assert data["email"] == "user+tag@example.co.uk"
 
     async def test_concurrent_profile_reads(
-        self,
-        client: AsyncClient,
-        db_session: AsyncSession,
-        override_auth
+        self, client: AsyncClient, db_session: AsyncSession, override_auth
     ):
         """Test concurrent profile reads (simulated)."""
         user = User(
@@ -787,7 +724,7 @@ class TestComplexUserScenarios:
             email="concurrent@example.com",
             username="concurrentuser",
             email_verified=True,
-            is_active=True
+            is_active=True,
         )
         db_session.add(user)
         await db_session.commit()

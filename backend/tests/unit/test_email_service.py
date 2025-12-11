@@ -1,9 +1,12 @@
 """
 Unit tests for Email Service.
 """
+
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
-from app.auth.email_service import EmailService, init_email_service, get_email_service
+
+from app.auth.email_service import EmailService, get_email_service, init_email_service
 
 
 @pytest.fixture
@@ -16,7 +19,7 @@ def email_service():
         smtp_password="testpassword",
         from_email="noreply@echo.com",
         from_name="Echo Test",
-        use_tls=True
+        use_tls=True,
     )
 
 
@@ -36,36 +39,34 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_email_success(self, email_service):
         """Test sending email successfully"""
-        with patch('app.auth.email_service.aiosmtplib.send', new_callable=AsyncMock) as mock_send:
+        with patch("app.auth.email_service.aiosmtplib.send", new_callable=AsyncMock) as mock_send:
             mock_send.return_value = None
 
             result = await email_service.send_email(
                 to_email="user@test.com",
                 subject="Test Subject",
                 html_content="<p>Test HTML</p>",
-                text_content="Test Text"
+                text_content="Test Text",
             )
 
             assert result is True
             assert mock_send.called
             # Verify message parameters
             call_args = mock_send.call_args
-            assert call_args[1]['hostname'] == "smtp.test.com"
-            assert call_args[1]['port'] == 587
-            assert call_args[1]['username'] == "test@test.com"
-            assert call_args[1]['password'] == "testpassword"
-            assert call_args[1]['use_tls'] is True
+            assert call_args[1]["hostname"] == "smtp.test.com"
+            assert call_args[1]["port"] == 587
+            assert call_args[1]["username"] == "test@test.com"
+            assert call_args[1]["password"] == "testpassword"
+            assert call_args[1]["use_tls"] is True
 
     @pytest.mark.asyncio
     async def test_send_email_without_text_content(self, email_service):
         """Test sending email without text content"""
-        with patch('app.auth.email_service.aiosmtplib.send', new_callable=AsyncMock) as mock_send:
+        with patch("app.auth.email_service.aiosmtplib.send", new_callable=AsyncMock) as mock_send:
             mock_send.return_value = None
 
             result = await email_service.send_email(
-                to_email="user@test.com",
-                subject="Test Subject",
-                html_content="<p>Test HTML</p>"
+                to_email="user@test.com", subject="Test Subject", html_content="<p>Test HTML</p>"
             )
 
             assert result is True
@@ -74,13 +75,11 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_email_failure(self, email_service):
         """Test email sending failure"""
-        with patch('app.auth.email_service.aiosmtplib.send', new_callable=AsyncMock) as mock_send:
+        with patch("app.auth.email_service.aiosmtplib.send", new_callable=AsyncMock) as mock_send:
             mock_send.side_effect = Exception("SMTP connection failed")
 
             result = await email_service.send_email(
-                to_email="user@test.com",
-                subject="Test Subject",
-                html_content="<p>Test HTML</p>"
+                to_email="user@test.com", subject="Test Subject", html_content="<p>Test HTML</p>"
             )
 
             assert result is False
@@ -88,13 +87,11 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_verification_code_success(self, email_service):
         """Test sending verification code successfully"""
-        with patch.object(email_service, 'send_email', new_callable=AsyncMock) as mock_send:
+        with patch.object(email_service, "send_email", new_callable=AsyncMock) as mock_send:
             mock_send.return_value = True
 
             result = await email_service.send_verification_code(
-                to_email="user@test.com",
-                code="123456",
-                user_name="Test User"
+                to_email="user@test.com", code="123456", user_name="Test User"
             )
 
             assert result is True
@@ -110,12 +107,11 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_verification_code_without_username(self, email_service):
         """Test sending verification code without username"""
-        with patch.object(email_service, 'send_email', new_callable=AsyncMock) as mock_send:
+        with patch.object(email_service, "send_email", new_callable=AsyncMock) as mock_send:
             mock_send.return_value = True
 
             result = await email_service.send_verification_code(
-                to_email="user@test.com",
-                code="123456"
+                to_email="user@test.com", code="123456"
             )
 
             assert result is True
@@ -124,14 +120,12 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_password_reset_success(self, email_service):
         """Test sending password reset email successfully"""
-        with patch.object(email_service, 'send_email', new_callable=AsyncMock) as mock_send:
+        with patch.object(email_service, "send_email", new_callable=AsyncMock) as mock_send:
             mock_send.return_value = True
 
             reset_link = "https://echo.com/reset?token=abc123"
             result = await email_service.send_password_reset(
-                to_email="user@test.com",
-                reset_link=reset_link,
-                user_name="Test User"
+                to_email="user@test.com", reset_link=reset_link, user_name="Test User"
             )
 
             assert result is True
@@ -147,13 +141,12 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_password_reset_without_username(self, email_service):
         """Test sending password reset email without username"""
-        with patch.object(email_service, 'send_email', new_callable=AsyncMock) as mock_send:
+        with patch.object(email_service, "send_email", new_callable=AsyncMock) as mock_send:
             mock_send.return_value = True
 
             reset_link = "https://echo.com/reset?token=abc123"
             result = await email_service.send_password_reset(
-                to_email="user@test.com",
-                reset_link=reset_link
+                to_email="user@test.com", reset_link=reset_link
             )
 
             assert result is True
@@ -162,12 +155,11 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_password_changed_notification_success(self, email_service):
         """Test sending password changed notification successfully"""
-        with patch.object(email_service, 'send_email', new_callable=AsyncMock) as mock_send:
+        with patch.object(email_service, "send_email", new_callable=AsyncMock) as mock_send:
             mock_send.return_value = True
 
             result = await email_service.send_password_changed_notification(
-                to_email="user@test.com",
-                user_name="Test User"
+                to_email="user@test.com", user_name="Test User"
             )
 
             assert result is True
@@ -182,7 +174,7 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_password_changed_notification_without_username(self, email_service):
         """Test sending password changed notification without username"""
-        with patch.object(email_service, 'send_email', new_callable=AsyncMock) as mock_send:
+        with patch.object(email_service, "send_email", new_callable=AsyncMock) as mock_send:
             mock_send.return_value = True
 
             result = await email_service.send_password_changed_notification(
@@ -195,12 +187,11 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_welcome_email_success(self, email_service):
         """Test sending welcome email successfully"""
-        with patch.object(email_service, 'send_email', new_callable=AsyncMock) as mock_send:
+        with patch.object(email_service, "send_email", new_callable=AsyncMock) as mock_send:
             mock_send.return_value = True
 
             result = await email_service.send_welcome_email(
-                to_email="user@test.com",
-                user_name="Test User"
+                to_email="user@test.com", user_name="Test User"
             )
 
             assert result is True
@@ -215,12 +206,10 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_welcome_email_without_username(self, email_service):
         """Test sending welcome email without username"""
-        with patch.object(email_service, 'send_email', new_callable=AsyncMock) as mock_send:
+        with patch.object(email_service, "send_email", new_callable=AsyncMock) as mock_send:
             mock_send.return_value = True
 
-            result = await email_service.send_welcome_email(
-                to_email="user@test.com"
-            )
+            result = await email_service.send_welcome_email(to_email="user@test.com")
 
             assert result is True
             assert mock_send.called
@@ -238,7 +227,7 @@ class TestGlobalEmailService:
             smtp_password="testpassword",
             from_email="noreply@echo.com",
             from_name="Echo",
-            use_tls=True
+            use_tls=True,
         )
 
         assert service is not None
@@ -254,7 +243,7 @@ class TestGlobalEmailService:
             smtp_port=587,
             smtp_user="test@test.com",
             smtp_password="testpassword",
-            from_email="noreply@echo.com"
+            from_email="noreply@echo.com",
         )
 
         service = get_email_service()
@@ -265,6 +254,7 @@ class TestGlobalEmailService:
         """Test getting email service when not initialized"""
         # Reset global email_service to None
         import app.auth.email_service as email_module
+
         email_module.email_service = None
 
         with pytest.raises(RuntimeError, match="Email service not initialized"):
@@ -277,14 +267,11 @@ class TestEmailContentGeneration:
     @pytest.mark.asyncio
     async def test_verification_code_email_contains_code(self, email_service):
         """Test that verification code email contains the code"""
-        with patch.object(email_service, 'send_email', new_callable=AsyncMock) as mock_send:
+        with patch.object(email_service, "send_email", new_callable=AsyncMock) as mock_send:
             mock_send.return_value = True
 
             code = "987654"
-            await email_service.send_verification_code(
-                to_email="user@test.com",
-                code=code
-            )
+            await email_service.send_verification_code(to_email="user@test.com", code=code)
 
             # Check that code appears in both HTML and text
             html_content = mock_send.call_args[0][2]
@@ -298,14 +285,11 @@ class TestEmailContentGeneration:
     @pytest.mark.asyncio
     async def test_password_reset_email_contains_link(self, email_service):
         """Test that password reset email contains the reset link"""
-        with patch.object(email_service, 'send_email', new_callable=AsyncMock) as mock_send:
+        with patch.object(email_service, "send_email", new_callable=AsyncMock) as mock_send:
             mock_send.return_value = True
 
             reset_link = "https://echo.com/reset?token=xyz789"
-            await email_service.send_password_reset(
-                to_email="user@test.com",
-                reset_link=reset_link
-            )
+            await email_service.send_password_reset(to_email="user@test.com", reset_link=reset_link)
 
             # Check that link appears in both HTML and text
             html_content = mock_send.call_args[0][2]
@@ -319,13 +303,12 @@ class TestEmailContentGeneration:
     @pytest.mark.asyncio
     async def test_welcome_email_contains_frontend_url(self, email_service):
         """Test that welcome email contains frontend URL"""
-        with patch.object(email_service, 'send_email', new_callable=AsyncMock) as mock_send:
-            with patch.dict('os.environ', {'FRONTEND_URL': 'https://echo.com'}):
+        with patch.object(email_service, "send_email", new_callable=AsyncMock) as mock_send:
+            with patch.dict("os.environ", {"FRONTEND_URL": "https://echo.com"}):
                 mock_send.return_value = True
 
                 await email_service.send_welcome_email(
-                    to_email="user@test.com",
-                    user_name="Test User"
+                    to_email="user@test.com", user_name="Test User"
                 )
 
                 html_content = mock_send.call_args[0][2]

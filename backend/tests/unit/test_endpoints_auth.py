@@ -11,6 +11,7 @@ from fastapi.testclient import TestClient
 def test_app():
     """Create a test FastAPI app with the auth router."""
     from fastapi import FastAPI
+
     from app.api.v1.endpoints.auth import router
 
     app = FastAPI()

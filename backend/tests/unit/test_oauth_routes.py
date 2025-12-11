@@ -3,23 +3,23 @@ Comprehensive unit tests for OAuth routes.
 Covers OAuth flow for Google, GitHub, and other providers with 100% coverage.
 """
 
-import pytest
-from unittest.mock import Mock, patch, AsyncMock, MagicMock
+import uuid
 from datetime import datetime, timedelta, timezone
+from unittest.mock import AsyncMock, MagicMock, Mock, patch
+
+import pytest
 from fastapi import HTTPException, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-import uuid
 
+from app.auth.models import AuditLog, OAuthAccount, RefreshToken, Session, User
 from app.auth.oauth import (
-    router,
-    oauth_start,
-    oauth_callback,
     link_oauth_account,
+    oauth_callback,
+    oauth_start,
+    router,
     unlink_oauth_account,
 )
-from app.auth.models import User, OAuthAccount, RefreshToken, Session, AuditLog
-
 
 # ==================== Test Fixtures ====================
 
@@ -65,7 +65,9 @@ def mock_jwt_manager():
     """Mock JWT manager."""
     jwt_manager = Mock()
     jwt_manager.create_access_token = Mock(return_value="access_token_google_123")
-    jwt_manager.create_refresh_token = Mock(return_value=("refresh_token_google_123", "jti_google_123"))
+    jwt_manager.create_refresh_token = Mock(
+        return_value=("refresh_token_google_123", "jti_google_123")
+    )
     return jwt_manager
 
 
@@ -113,7 +115,7 @@ class TestOAuthStart:
     @pytest.mark.asyncio
     async def test_oauth_start_google(self, mock_request):
         """Test initiating OAuth flow with Google."""
-        with patch('app.auth.oauth.oauth') as mock_oauth:
+        with patch("app.auth.oauth.oauth") as mock_oauth:
             mock_client = AsyncMock()
             mock_client.authorize_redirect = AsyncMock(
                 return_value=RedirectResponse(url="https://accounts.google.com/o/oauth2/v2/auth")
@@ -129,7 +131,7 @@ class TestOAuthStart:
     @pytest.mark.asyncio
     async def test_oauth_start_github(self, mock_request):
         """Test initiating OAuth flow with GitHub."""
-        with patch('app.auth.oauth.oauth') as mock_oauth:
+        with patch("app.auth.oauth.oauth") as mock_oauth:
             mock_client = AsyncMock()
             mock_client.authorize_redirect = AsyncMock(
                 return_value=RedirectResponse(url="https://github.com/login/oauth/authorize")
@@ -154,7 +156,7 @@ class TestOAuthStart:
     @pytest.mark.asyncio
     async def test_oauth_start_exception_handling(self, mock_request):
         """Test OAuth start exception handling."""
-        with patch('app.auth.oauth.oauth') as mock_oauth:
+        with patch("app.auth.oauth.oauth") as mock_oauth:
             mock_oauth.create_client.side_effect = Exception("OAuth client error")
 
             with pytest.raises(HTTPException) as exc_info:
@@ -175,16 +177,16 @@ class TestOAuthCallbackGoogle:
         """Test successful Google OAuth callback creating new user."""
         # Mock OAuth token exchange
         google_token = {
-            'access_token': 'google_access_token_123',
-            'refresh_token': 'google_refresh_token_123',
-            'expires_in': 3600,
-            'userinfo': {
-                'sub': 'google_user_123',
-                'email': 'newuser@example.com',
-                'name': 'New User',
-                'picture': 'https://example.com/avatar.jpg',
-                'email_verified': True,
-            }
+            "access_token": "google_access_token_123",
+            "refresh_token": "google_refresh_token_123",
+            "expires_in": 3600,
+            "userinfo": {
+                "sub": "google_user_123",
+                "email": "newuser@example.com",
+                "name": "New User",
+                "picture": "https://example.com/avatar.jpg",
+                "email_verified": True,
+            },
         }
 
         # Mock database queries - no existing OAuth account or user
@@ -207,16 +209,18 @@ class TestOAuthCallbackGoogle:
 
         mock_db.execute.side_effect = [
             mock_oauth_result,  # OAuth account query
-            mock_user_result,   # User by email query
+            mock_user_result,  # User by email query
             mock_final_user_result,  # Final user query
         ]
 
-        with patch('app.auth.oauth.oauth') as mock_oauth, \
-             patch('app.auth.oauth.get_redis_service') as mock_redis_svc, \
-             patch('app.auth.oauth.get_jwt_manager') as mock_jwt_mgr, \
-             patch('app.auth.oauth.generate_device_fingerprint') as mock_fingerprint, \
-             patch('app.auth.oauth.create_session_record') as mock_session, \
-             patch('app.auth.oauth.log_audit_event') as mock_audit:
+        with (
+            patch("app.auth.oauth.oauth") as mock_oauth,
+            patch("app.auth.oauth.get_redis_service") as mock_redis_svc,
+            patch("app.auth.oauth.get_jwt_manager") as mock_jwt_mgr,
+            patch("app.auth.oauth.generate_device_fingerprint") as mock_fingerprint,
+            patch("app.auth.oauth.create_session_record") as mock_session,
+            patch("app.auth.oauth.log_audit_event") as mock_audit,
+        ):
 
             # Setup mocks
             mock_client = AsyncMock()
@@ -240,27 +244,29 @@ class TestOAuthCallbackGoogle:
 
             # Assertions
             assert isinstance(result, RedirectResponse)
-            assert "access_token=access_token_123" in result.headers['location']
-            assert "refresh_token=refresh_token_123" in result.headers['location']
+            assert "access_token=access_token_123" in result.headers["location"]
+            assert "refresh_token=refresh_token_123" in result.headers["location"]
 
             # Verify user was created
             assert mock_db.add.call_count >= 2  # User + OAuthAccount + RefreshToken
             mock_db.commit.assert_called()
 
     @pytest.mark.asyncio
-    async def test_google_callback_existing_oauth_account(self, mock_db, mock_request, sample_oauth_account, sample_user):
+    async def test_google_callback_existing_oauth_account(
+        self, mock_db, mock_request, sample_oauth_account, sample_user
+    ):
         """Test Google OAuth callback with existing OAuth account."""
         google_token = {
-            'access_token': 'new_google_access_token',
-            'refresh_token': 'new_google_refresh_token',
-            'expires_in': 3600,
-            'userinfo': {
-                'sub': 'google_user_123',
-                'email': 'testuser@example.com',
-                'name': 'Test User',
-                'picture': 'https://example.com/avatar.jpg',
-                'email_verified': True,
-            }
+            "access_token": "new_google_access_token",
+            "refresh_token": "new_google_refresh_token",
+            "expires_in": 3600,
+            "userinfo": {
+                "sub": "google_user_123",
+                "email": "testuser@example.com",
+                "name": "Test User",
+                "picture": "https://example.com/avatar.jpg",
+                "email_verified": True,
+            },
         }
 
         # Mock OAuth account exists
@@ -276,12 +282,14 @@ class TestOAuthCallbackGoogle:
             mock_final_user_result,  # Final user query
         ]
 
-        with patch('app.auth.oauth.oauth') as mock_oauth, \
-             patch('app.auth.oauth.get_redis_service') as mock_redis_svc, \
-             patch('app.auth.oauth.get_jwt_manager') as mock_jwt_mgr, \
-             patch('app.auth.oauth.generate_device_fingerprint') as mock_fingerprint, \
-             patch('app.auth.oauth.create_session_record') as mock_session, \
-             patch('app.auth.oauth.log_audit_event') as mock_audit:
+        with (
+            patch("app.auth.oauth.oauth") as mock_oauth,
+            patch("app.auth.oauth.get_redis_service") as mock_redis_svc,
+            patch("app.auth.oauth.get_jwt_manager") as mock_jwt_mgr,
+            patch("app.auth.oauth.generate_device_fingerprint") as mock_fingerprint,
+            patch("app.auth.oauth.create_session_record") as mock_session,
+            patch("app.auth.oauth.log_audit_event") as mock_audit,
+        ):
 
             # Setup mocks
             mock_client = AsyncMock()
@@ -303,26 +311,28 @@ class TestOAuthCallbackGoogle:
 
             # Assertions
             assert isinstance(result, RedirectResponse)
-            assert "access_token" in result.headers['location']
+            assert "access_token" in result.headers["location"]
 
             # Verify OAuth account was updated
             assert sample_oauth_account.access_token == "new_google_access_token"
             assert sample_oauth_account.refresh_token == "new_google_refresh_token"
 
     @pytest.mark.asyncio
-    async def test_google_callback_existing_user_link_account(self, mock_db, mock_request, sample_user):
+    async def test_google_callback_existing_user_link_account(
+        self, mock_db, mock_request, sample_user
+    ):
         """Test Google OAuth callback linking to existing user by email."""
         google_token = {
-            'access_token': 'google_access_token',
-            'refresh_token': 'google_refresh_token',
-            'expires_in': 3600,
-            'userinfo': {
-                'sub': 'google_user_new',
-                'email': 'testuser@example.com',  # Same email as existing user
-                'name': 'Test User',
-                'picture': 'https://example.com/avatar.jpg',
-                'email_verified': True,
-            }
+            "access_token": "google_access_token",
+            "refresh_token": "google_refresh_token",
+            "expires_in": 3600,
+            "userinfo": {
+                "sub": "google_user_new",
+                "email": "testuser@example.com",  # Same email as existing user
+                "name": "Test User",
+                "picture": "https://example.com/avatar.jpg",
+                "email_verified": True,
+            },
         }
 
         # Mock no OAuth account, but user exists
@@ -337,16 +347,18 @@ class TestOAuthCallbackGoogle:
 
         mock_db.execute.side_effect = [
             mock_oauth_result,  # OAuth account query
-            mock_user_result,   # User by email query
+            mock_user_result,  # User by email query
             mock_final_user_result,  # Final user query
         ]
 
-        with patch('app.auth.oauth.oauth') as mock_oauth, \
-             patch('app.auth.oauth.get_redis_service') as mock_redis_svc, \
-             patch('app.auth.oauth.get_jwt_manager') as mock_jwt_mgr, \
-             patch('app.auth.oauth.generate_device_fingerprint') as mock_fingerprint, \
-             patch('app.auth.oauth.create_session_record') as mock_session, \
-             patch('app.auth.oauth.log_audit_event') as mock_audit:
+        with (
+            patch("app.auth.oauth.oauth") as mock_oauth,
+            patch("app.auth.oauth.get_redis_service") as mock_redis_svc,
+            patch("app.auth.oauth.get_jwt_manager") as mock_jwt_mgr,
+            patch("app.auth.oauth.generate_device_fingerprint") as mock_fingerprint,
+            patch("app.auth.oauth.create_session_record") as mock_session,
+            patch("app.auth.oauth.log_audit_event") as mock_audit,
+        ):
 
             # Setup mocks
             mock_client = AsyncMock()
@@ -382,17 +394,17 @@ class TestOAuthCallbackGitHub:
     async def test_github_callback_with_email_success(self, mock_db, mock_request):
         """Test successful GitHub OAuth callback with email in profile."""
         github_token = {
-            'access_token': 'github_access_token_123',
-            'expires_in': 3600,
+            "access_token": "github_access_token_123",
+            "expires_in": 3600,
         }
 
         github_user_info = {
-            'id': 12345,
-            'login': 'githubuser',
-            'email': 'githubuser@example.com',
-            'name': 'GitHub User',
-            'avatar_url': 'https://github.com/avatar.jpg',
-            'bio': 'Software Developer',
+            "id": 12345,
+            "login": "githubuser",
+            "email": "githubuser@example.com",
+            "name": "GitHub User",
+            "avatar_url": "https://github.com/avatar.jpg",
+            "bio": "Software Developer",
         }
 
         # Mock database queries
@@ -418,12 +430,14 @@ class TestOAuthCallbackGitHub:
             mock_final_user_result,
         ]
 
-        with patch('app.auth.oauth.oauth') as mock_oauth, \
-             patch('app.auth.oauth.get_redis_service') as mock_redis_svc, \
-             patch('app.auth.oauth.get_jwt_manager') as mock_jwt_mgr, \
-             patch('app.auth.oauth.generate_device_fingerprint') as mock_fingerprint, \
-             patch('app.auth.oauth.create_session_record') as mock_session, \
-             patch('app.auth.oauth.log_audit_event') as mock_audit:
+        with (
+            patch("app.auth.oauth.oauth") as mock_oauth,
+            patch("app.auth.oauth.get_redis_service") as mock_redis_svc,
+            patch("app.auth.oauth.get_jwt_manager") as mock_jwt_mgr,
+            patch("app.auth.oauth.generate_device_fingerprint") as mock_fingerprint,
+            patch("app.auth.oauth.create_session_record") as mock_session,
+            patch("app.auth.oauth.log_audit_event") as mock_audit,
+        ):
 
             # Setup mocks
             mock_client = AsyncMock()
@@ -439,7 +453,9 @@ class TestOAuthCallbackGitHub:
             mock_redis_svc.return_value = AsyncMock()
             mock_jwt = Mock()
             mock_jwt.create_access_token = Mock(return_value="access_token_github")
-            mock_jwt.create_refresh_token = Mock(return_value=("refresh_token_github", "jti_github"))
+            mock_jwt.create_refresh_token = Mock(
+                return_value=("refresh_token_github", "jti_github")
+            )
             mock_jwt_mgr.return_value = mock_jwt
 
             mock_fingerprint.return_value = "device_fp_github"
@@ -451,28 +467,30 @@ class TestOAuthCallbackGitHub:
 
             # Assertions
             assert isinstance(result, RedirectResponse)
-            assert "access_token" in result.headers['location']
-            mock_client.get.assert_called_once_with('https://api.github.com/user', token=github_token)
+            assert "access_token" in result.headers["location"]
+            mock_client.get.assert_called_once_with(
+                "https://api.github.com/user", token=github_token
+            )
 
     @pytest.mark.asyncio
     async def test_github_callback_fetch_email_from_api(self, mock_db, mock_request):
         """Test GitHub OAuth callback fetching email from separate API."""
         github_token = {
-            'access_token': 'github_access_token_123',
-            'expires_in': 3600,
+            "access_token": "github_access_token_123",
+            "expires_in": 3600,
         }
 
         github_user_info = {
-            'id': 12345,
-            'login': 'githubuser',
-            'email': None,  # Email not in profile
-            'name': 'GitHub User',
-            'avatar_url': 'https://github.com/avatar.jpg',
+            "id": 12345,
+            "login": "githubuser",
+            "email": None,  # Email not in profile
+            "name": "GitHub User",
+            "avatar_url": "https://github.com/avatar.jpg",
         }
 
         github_emails = [
-            {'email': 'secondary@example.com', 'primary': False, 'verified': True},
-            {'email': 'primary@example.com', 'primary': True, 'verified': True},
+            {"email": "secondary@example.com", "primary": False, "verified": True},
+            {"email": "primary@example.com", "primary": True, "verified": True},
         ]
 
         # Mock database queries
@@ -497,12 +515,14 @@ class TestOAuthCallbackGitHub:
             mock_final_user_result,
         ]
 
-        with patch('app.auth.oauth.oauth') as mock_oauth, \
-             patch('app.auth.oauth.get_redis_service') as mock_redis_svc, \
-             patch('app.auth.oauth.get_jwt_manager') as mock_jwt_mgr, \
-             patch('app.auth.oauth.generate_device_fingerprint') as mock_fingerprint, \
-             patch('app.auth.oauth.create_session_record') as mock_session, \
-             patch('app.auth.oauth.log_audit_event') as mock_audit:
+        with (
+            patch("app.auth.oauth.oauth") as mock_oauth,
+            patch("app.auth.oauth.get_redis_service") as mock_redis_svc,
+            patch("app.auth.oauth.get_jwt_manager") as mock_jwt_mgr,
+            patch("app.auth.oauth.generate_device_fingerprint") as mock_fingerprint,
+            patch("app.auth.oauth.create_session_record") as mock_session,
+            patch("app.auth.oauth.log_audit_event") as mock_audit,
+        ):
 
             # Setup mocks
             mock_client = AsyncMock()
@@ -520,7 +540,9 @@ class TestOAuthCallbackGitHub:
             mock_redis_svc.return_value = AsyncMock()
             mock_jwt = Mock()
             mock_jwt.create_access_token = Mock(return_value="access_token_github")
-            mock_jwt.create_refresh_token = Mock(return_value=("refresh_token_github", "jti_github"))
+            mock_jwt.create_refresh_token = Mock(
+                return_value=("refresh_token_github", "jti_github")
+            )
             mock_jwt_mgr.return_value = mock_jwt
 
             mock_fingerprint.return_value = "device_fp_github"
@@ -533,27 +555,29 @@ class TestOAuthCallbackGitHub:
             # Assertions
             assert isinstance(result, RedirectResponse)
             assert mock_client.get.call_count == 2
-            mock_client.get.assert_any_call('https://api.github.com/user', token=github_token)
-            mock_client.get.assert_any_call('https://api.github.com/user/emails', token=github_token)
+            mock_client.get.assert_any_call("https://api.github.com/user", token=github_token)
+            mock_client.get.assert_any_call(
+                "https://api.github.com/user/emails", token=github_token
+            )
 
     @pytest.mark.asyncio
     async def test_github_callback_no_email_error(self, mock_db, mock_request):
         """Test GitHub OAuth callback fails when no email is available."""
         github_token = {
-            'access_token': 'github_access_token_123',
-            'expires_in': 3600,
+            "access_token": "github_access_token_123",
+            "expires_in": 3600,
         }
 
         github_user_info = {
-            'id': 12345,
-            'login': 'githubuser',
-            'email': None,
-            'name': 'GitHub User',
+            "id": 12345,
+            "login": "githubuser",
+            "email": None,
+            "name": "GitHub User",
         }
 
         github_emails = []  # No emails available
 
-        with patch('app.auth.oauth.oauth') as mock_oauth:
+        with patch("app.auth.oauth.oauth") as mock_oauth:
             # Setup mocks
             mock_client = AsyncMock()
             mock_client.authorize_access_token = AsyncMock(return_value=github_token)
@@ -571,7 +595,7 @@ class TestOAuthCallbackGitHub:
 
             # Assertions
             assert isinstance(result, RedirectResponse)
-            assert "oauth-error" in result.headers['location']
+            assert "oauth-error" in result.headers["location"]
 
 
 # ==================== OAuth Callback Error Tests ====================
@@ -583,46 +607,48 @@ class TestOAuthCallbackErrors:
     @pytest.mark.asyncio
     async def test_oauth_callback_unsupported_provider(self, mock_db, mock_request):
         """Test OAuth callback with unsupported provider."""
-        with patch('app.auth.oauth.oauth') as mock_oauth:
+        with patch("app.auth.oauth.oauth") as mock_oauth:
             mock_client = AsyncMock()
-            mock_client.authorize_access_token = AsyncMock(return_value={'access_token': 'token'})
+            mock_client.authorize_access_token = AsyncMock(return_value={"access_token": "token"})
             mock_oauth.create_client.return_value = mock_client
 
             result = await oauth_callback("facebook", mock_request, mock_db)
 
             assert isinstance(result, RedirectResponse)
-            assert "oauth-error" in result.headers['location']
+            assert "oauth-error" in result.headers["location"]
 
     @pytest.mark.asyncio
     async def test_oauth_callback_token_exchange_failure(self, mock_db, mock_request):
         """Test OAuth callback when token exchange fails."""
-        with patch('app.auth.oauth.oauth') as mock_oauth:
+        with patch("app.auth.oauth.oauth") as mock_oauth:
             mock_client = AsyncMock()
-            mock_client.authorize_access_token = AsyncMock(side_effect=Exception("Token exchange failed"))
+            mock_client.authorize_access_token = AsyncMock(
+                side_effect=Exception("Token exchange failed")
+            )
             mock_oauth.create_client.return_value = mock_client
 
             result = await oauth_callback("google", mock_request, mock_db)
 
             assert isinstance(result, RedirectResponse)
-            assert "oauth-error" in result.headers['location']
+            assert "oauth-error" in result.headers["location"]
 
     @pytest.mark.asyncio
     async def test_oauth_callback_database_error(self, mock_db, mock_request):
         """Test OAuth callback with database error."""
         google_token = {
-            'access_token': 'google_access_token',
-            'expires_in': 3600,
-            'userinfo': {
-                'sub': 'google_user_123',
-                'email': 'test@example.com',
-                'name': 'Test User',
-                'email_verified': True,
-            }
+            "access_token": "google_access_token",
+            "expires_in": 3600,
+            "userinfo": {
+                "sub": "google_user_123",
+                "email": "test@example.com",
+                "name": "Test User",
+                "email_verified": True,
+            },
         }
 
         mock_db.execute.side_effect = Exception("Database error")
 
-        with patch('app.auth.oauth.oauth') as mock_oauth:
+        with patch("app.auth.oauth.oauth") as mock_oauth:
             mock_client = AsyncMock()
             mock_client.authorize_access_token = AsyncMock(return_value=google_token)
             mock_oauth.create_client.return_value = mock_client
@@ -630,26 +656,26 @@ class TestOAuthCallbackErrors:
             result = await oauth_callback("google", mock_request, mock_db)
 
             assert isinstance(result, RedirectResponse)
-            assert "oauth-error" in result.headers['location']
+            assert "oauth-error" in result.headers["location"]
 
     @pytest.mark.asyncio
     async def test_oauth_callback_no_email_provided(self, mock_db, mock_request):
         """Test OAuth callback when provider doesn't provide email."""
         google_token = {
-            'access_token': 'google_access_token',
-            'expires_in': 3600,
-            'userinfo': {
-                'sub': 'google_user_123',
-                'email': None,  # No email
-                'name': 'Test User',
-            }
+            "access_token": "google_access_token",
+            "expires_in": 3600,
+            "userinfo": {
+                "sub": "google_user_123",
+                "email": None,  # No email
+                "name": "Test User",
+            },
         }
 
         mock_oauth_result = Mock()
         mock_oauth_result.scalar_one_or_none.return_value = None
         mock_db.execute.return_value = mock_oauth_result
 
-        with patch('app.auth.oauth.oauth') as mock_oauth:
+        with patch("app.auth.oauth.oauth") as mock_oauth:
             mock_client = AsyncMock()
             mock_client.authorize_access_token = AsyncMock(return_value=google_token)
             mock_oauth.create_client.return_value = mock_client
@@ -657,7 +683,7 @@ class TestOAuthCallbackErrors:
             result = await oauth_callback("google", mock_request, mock_db)
 
             assert isinstance(result, RedirectResponse)
-            assert "oauth-error" in result.headers['location']
+            assert "oauth-error" in result.headers["location"]
 
 
 # ==================== OAuth Link/Unlink Tests ====================
@@ -696,16 +722,16 @@ class TestOAuthIntegration:
         """Test complete Google OAuth flow for new user registration."""
         # This tests the full flow from start to callback
         google_token = {
-            'access_token': 'google_access_token_new',
-            'refresh_token': 'google_refresh_token_new',
-            'expires_in': 3600,
-            'userinfo': {
-                'sub': 'google_user_new_123',
-                'email': 'newgoogleuser@example.com',
-                'name': 'New Google User',
-                'picture': 'https://example.com/new_avatar.jpg',
-                'email_verified': True,
-            }
+            "access_token": "google_access_token_new",
+            "refresh_token": "google_refresh_token_new",
+            "expires_in": 3600,
+            "userinfo": {
+                "sub": "google_user_new_123",
+                "email": "newgoogleuser@example.com",
+                "name": "New Google User",
+                "picture": "https://example.com/new_avatar.jpg",
+                "email_verified": True,
+            },
         }
 
         # Mock database queries for new user
@@ -732,12 +758,14 @@ class TestOAuthIntegration:
             mock_final_user_result,
         ]
 
-        with patch('app.auth.oauth.oauth') as mock_oauth, \
-             patch('app.auth.oauth.get_redis_service') as mock_redis_svc, \
-             patch('app.auth.oauth.get_jwt_manager') as mock_jwt_mgr, \
-             patch('app.auth.oauth.generate_device_fingerprint') as mock_fingerprint, \
-             patch('app.auth.oauth.create_session_record') as mock_session, \
-             patch('app.auth.oauth.log_audit_event') as mock_audit:
+        with (
+            patch("app.auth.oauth.oauth") as mock_oauth,
+            patch("app.auth.oauth.get_redis_service") as mock_redis_svc,
+            patch("app.auth.oauth.get_jwt_manager") as mock_jwt_mgr,
+            patch("app.auth.oauth.generate_device_fingerprint") as mock_fingerprint,
+            patch("app.auth.oauth.create_session_record") as mock_session,
+            patch("app.auth.oauth.log_audit_event") as mock_audit,
+        ):
 
             # Setup mocks
             mock_client = AsyncMock()
@@ -759,9 +787,9 @@ class TestOAuthIntegration:
 
             # Verify complete flow
             assert isinstance(result, RedirectResponse)
-            assert "oauth-success" in result.headers['location']
-            assert "access_token=new_access_token" in result.headers['location']
-            assert "refresh_token=new_refresh_token" in result.headers['location']
+            assert "oauth-success" in result.headers["location"]
+            assert "access_token=new_access_token" in result.headers["location"]
+            assert "refresh_token=new_refresh_token" in result.headers["location"]
 
             # Verify all components were called
             mock_jwt.create_access_token.assert_called_once()
@@ -771,19 +799,21 @@ class TestOAuthIntegration:
             assert mock_db.commit.call_count >= 2
 
     @pytest.mark.asyncio
-    async def test_complete_github_oauth_flow_existing_user(self, mock_db, mock_request, sample_user):
+    async def test_complete_github_oauth_flow_existing_user(
+        self, mock_db, mock_request, sample_user
+    ):
         """Test complete GitHub OAuth flow for existing user."""
         github_token = {
-            'access_token': 'github_access_existing',
-            'expires_in': 3600,
+            "access_token": "github_access_existing",
+            "expires_in": 3600,
         }
 
         github_user_info = {
-            'id': 98765,
-            'login': 'existinguser',
-            'email': 'testuser@example.com',  # Same as sample_user
-            'name': 'Test User',
-            'avatar_url': 'https://github.com/avatar_existing.jpg',
+            "id": 98765,
+            "login": "existinguser",
+            "email": "testuser@example.com",  # Same as sample_user
+            "name": "Test User",
+            "avatar_url": "https://github.com/avatar_existing.jpg",
         }
 
         # Mock no OAuth account, but user exists
@@ -801,12 +831,14 @@ class TestOAuthIntegration:
             mock_final_user_result,
         ]
 
-        with patch('app.auth.oauth.oauth') as mock_oauth, \
-             patch('app.auth.oauth.get_redis_service') as mock_redis_svc, \
-             patch('app.auth.oauth.get_jwt_manager') as mock_jwt_mgr, \
-             patch('app.auth.oauth.generate_device_fingerprint') as mock_fingerprint, \
-             patch('app.auth.oauth.create_session_record') as mock_session, \
-             patch('app.auth.oauth.log_audit_event') as mock_audit:
+        with (
+            patch("app.auth.oauth.oauth") as mock_oauth,
+            patch("app.auth.oauth.get_redis_service") as mock_redis_svc,
+            patch("app.auth.oauth.get_jwt_manager") as mock_jwt_mgr,
+            patch("app.auth.oauth.generate_device_fingerprint") as mock_fingerprint,
+            patch("app.auth.oauth.create_session_record") as mock_session,
+            patch("app.auth.oauth.log_audit_event") as mock_audit,
+        ):
 
             # Setup mocks
             mock_client = AsyncMock()
@@ -821,7 +853,9 @@ class TestOAuthIntegration:
             mock_redis_svc.return_value = AsyncMock()
             mock_jwt = Mock()
             mock_jwt.create_access_token = Mock(return_value="existing_access_token")
-            mock_jwt.create_refresh_token = Mock(return_value=("existing_refresh_token", "existing_jti"))
+            mock_jwt.create_refresh_token = Mock(
+                return_value=("existing_refresh_token", "existing_jti")
+            )
             mock_jwt_mgr.return_value = mock_jwt
 
             mock_fingerprint.return_value = "existing_device_fp"
@@ -833,7 +867,7 @@ class TestOAuthIntegration:
 
             # Verify
             assert isinstance(result, RedirectResponse)
-            assert "oauth-success" in result.headers['location']
+            assert "oauth-success" in result.headers["location"]
             # Verify OAuth account was linked to existing user
             assert mock_db.add.call_count >= 2  # OAuthAccount + RefreshToken
 
@@ -845,17 +879,19 @@ class TestOAuthEdgeCases:
     """Tests for edge cases and security concerns."""
 
     @pytest.mark.asyncio
-    async def test_oauth_callback_updates_last_login(self, mock_db, mock_request, sample_user, sample_oauth_account):
+    async def test_oauth_callback_updates_last_login(
+        self, mock_db, mock_request, sample_user, sample_oauth_account
+    ):
         """Test that OAuth callback updates user's last_login_at."""
         google_token = {
-            'access_token': 'google_access_token',
-            'expires_in': 3600,
-            'userinfo': {
-                'sub': 'google_user_123',
-                'email': 'testuser@example.com',
-                'name': 'Test User',
-                'email_verified': True,
-            }
+            "access_token": "google_access_token",
+            "expires_in": 3600,
+            "userinfo": {
+                "sub": "google_user_123",
+                "email": "testuser@example.com",
+                "name": "Test User",
+                "email_verified": True,
+            },
         }
 
         mock_oauth_result = Mock()
@@ -865,12 +901,14 @@ class TestOAuthEdgeCases:
 
         mock_db.execute.side_effect = [mock_oauth_result, mock_final_user_result]
 
-        with patch('app.auth.oauth.oauth') as mock_oauth, \
-             patch('app.auth.oauth.get_redis_service'), \
-             patch('app.auth.oauth.get_jwt_manager') as mock_jwt_mgr, \
-             patch('app.auth.oauth.generate_device_fingerprint'), \
-             patch('app.auth.oauth.create_session_record'), \
-             patch('app.auth.oauth.log_audit_event'):
+        with (
+            patch("app.auth.oauth.oauth") as mock_oauth,
+            patch("app.auth.oauth.get_redis_service"),
+            patch("app.auth.oauth.get_jwt_manager") as mock_jwt_mgr,
+            patch("app.auth.oauth.generate_device_fingerprint"),
+            patch("app.auth.oauth.create_session_record"),
+            patch("app.auth.oauth.log_audit_event"),
+        ):
 
             mock_client = AsyncMock()
             mock_client.authorize_access_token = AsyncMock(return_value=google_token)
@@ -889,17 +927,19 @@ class TestOAuthEdgeCases:
             assert sample_user.last_login_at != initial_last_login
 
     @pytest.mark.asyncio
-    async def test_oauth_callback_creates_audit_log(self, mock_db, mock_request, sample_user, sample_oauth_account):
+    async def test_oauth_callback_creates_audit_log(
+        self, mock_db, mock_request, sample_user, sample_oauth_account
+    ):
         """Test that OAuth callback creates audit log entry."""
         google_token = {
-            'access_token': 'google_access_token',
-            'expires_in': 3600,
-            'userinfo': {
-                'sub': 'google_user_123',
-                'email': 'testuser@example.com',
-                'name': 'Test User',
-                'email_verified': True,
-            }
+            "access_token": "google_access_token",
+            "expires_in": 3600,
+            "userinfo": {
+                "sub": "google_user_123",
+                "email": "testuser@example.com",
+                "name": "Test User",
+                "email_verified": True,
+            },
         }
 
         mock_oauth_result = Mock()
@@ -909,12 +949,14 @@ class TestOAuthEdgeCases:
 
         mock_db.execute.side_effect = [mock_oauth_result, mock_final_user_result]
 
-        with patch('app.auth.oauth.oauth') as mock_oauth, \
-             patch('app.auth.oauth.get_redis_service'), \
-             patch('app.auth.oauth.get_jwt_manager') as mock_jwt_mgr, \
-             patch('app.auth.oauth.generate_device_fingerprint'), \
-             patch('app.auth.oauth.create_session_record'), \
-             patch('app.auth.oauth.log_audit_event') as mock_audit:
+        with (
+            patch("app.auth.oauth.oauth") as mock_oauth,
+            patch("app.auth.oauth.get_redis_service"),
+            patch("app.auth.oauth.get_jwt_manager") as mock_jwt_mgr,
+            patch("app.auth.oauth.generate_device_fingerprint"),
+            patch("app.auth.oauth.create_session_record"),
+            patch("app.auth.oauth.log_audit_event") as mock_audit,
+        ):
 
             mock_client = AsyncMock()
             mock_client.authorize_access_token = AsyncMock(return_value=google_token)
@@ -938,16 +980,16 @@ class TestOAuthEdgeCases:
     async def test_github_oauth_name_fallback_to_login(self, mock_db, mock_request):
         """Test GitHub OAuth uses login as name when name is not provided."""
         github_token = {
-            'access_token': 'github_access_token',
-            'expires_in': 3600,
+            "access_token": "github_access_token",
+            "expires_in": 3600,
         }
 
         github_user_info = {
-            'id': 12345,
-            'login': 'cooluser',
-            'email': 'cooluser@example.com',
-            'name': None,  # No name provided
-            'avatar_url': 'https://github.com/avatar.jpg',
+            "id": 12345,
+            "login": "cooluser",
+            "email": "cooluser@example.com",
+            "name": None,  # No name provided
+            "avatar_url": "https://github.com/avatar.jpg",
         }
 
         mock_oauth_result = Mock()
@@ -972,12 +1014,14 @@ class TestOAuthEdgeCases:
             mock_final_user_result,
         ]
 
-        with patch('app.auth.oauth.oauth') as mock_oauth, \
-             patch('app.auth.oauth.get_redis_service'), \
-             patch('app.auth.oauth.get_jwt_manager') as mock_jwt_mgr, \
-             patch('app.auth.oauth.generate_device_fingerprint'), \
-             patch('app.auth.oauth.create_session_record'), \
-             patch('app.auth.oauth.log_audit_event'):
+        with (
+            patch("app.auth.oauth.oauth") as mock_oauth,
+            patch("app.auth.oauth.get_redis_service"),
+            patch("app.auth.oauth.get_jwt_manager") as mock_jwt_mgr,
+            patch("app.auth.oauth.generate_device_fingerprint"),
+            patch("app.auth.oauth.create_session_record"),
+            patch("app.auth.oauth.log_audit_event"),
+        ):
 
             mock_client = AsyncMock()
             mock_client.authorize_access_token = AsyncMock(return_value=github_token)

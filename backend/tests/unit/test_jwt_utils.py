@@ -2,10 +2,12 @@
 Unit tests for JWT utilities.
 """
 
-import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import MagicMock, Mock, patch
+
 import jwt as pyjwt
-from app.auth.jwt_utils import JWTManager, init_jwt_manager, get_jwt_manager
+import pytest
+
+from app.auth.jwt_utils import JWTManager, get_jwt_manager, init_jwt_manager
 
 
 class TestJWTManager:
@@ -19,8 +21,7 @@ class TestJWTManager:
 
         # Manager will auto-generate keys since files don't exist
         manager = JWTManager(
-            private_key_path=str(private_key_path),
-            public_key_path=str(public_key_path)
+            private_key_path=str(private_key_path), public_key_path=str(public_key_path)
         )
         return manager
 
@@ -28,9 +29,7 @@ class TestJWTManager:
         """Test verify_token with wrong token type."""
         # Create an access token
         token = jwt_manager.create_access_token(
-            user_id="user123",
-            email="test@example.com",
-            token_version=1
+            user_id="user123", email="test@example.com", token_version=1
         )
 
         # Try to verify as refresh token (wrong type)
@@ -46,7 +45,7 @@ class TestJWTManager:
             user_id="user123",
             email="test@example.com",
             token_version=1,
-            expires_delta=timedelta(seconds=-10)
+            expires_delta=timedelta(seconds=-10),
         )
 
         # Should raise ValueError for expired token
@@ -69,9 +68,7 @@ class TestJWTManager:
     def test_decode_token_unsafe_success(self, jwt_manager):
         """Test decode_token_unsafe with valid token."""
         token = jwt_manager.create_access_token(
-            user_id="user123",
-            email="test@example.com",
-            token_version=1
+            user_id="user123", email="test@example.com", token_version=1
         )
 
         result = jwt_manager.decode_token_unsafe(token)
@@ -95,15 +92,13 @@ class TestJWTManagerKeyLoading:
 
     def test_load_keys_from_file(self, tmp_path):
         """Test loading existing keys from files."""
-        from cryptography.hazmat.primitives.asymmetric import rsa
         from cryptography.hazmat.backends import default_backend
         from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import rsa
 
         # Generate keys
         private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=2048,
-            backend=default_backend()
+            public_exponent=65537, key_size=2048, backend=default_backend()
         )
         public_key = private_key.public_key()
 
@@ -112,29 +107,30 @@ class TestJWTManagerKeyLoading:
         public_key_path = tmp_path / "public.pem"
 
         with open(private_key_path, "wb") as f:
-            f.write(private_key.private_bytes(
-                encoding=serialization.Encoding.PEM,
-                format=serialization.PrivateFormat.PKCS8,
-                encryption_algorithm=serialization.NoEncryption()
-            ))
+            f.write(
+                private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.PKCS8,
+                    encryption_algorithm=serialization.NoEncryption(),
+                )
+            )
 
         with open(public_key_path, "wb") as f:
-            f.write(public_key.public_bytes(
-                encoding=serialization.Encoding.PEM,
-                format=serialization.PublicFormat.SubjectPublicKeyInfo
-            ))
+            f.write(
+                public_key.public_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PublicFormat.SubjectPublicKeyInfo,
+                )
+            )
 
         # Create manager which should load the existing keys
         manager = JWTManager(
-            private_key_path=str(private_key_path),
-            public_key_path=str(public_key_path)
+            private_key_path=str(private_key_path), public_key_path=str(public_key_path)
         )
 
         # Verify keys were loaded by creating and verifying a token
         token = manager.create_access_token(
-            user_id="test",
-            email="test@example.com",
-            token_version=1
+            user_id="test", email="test@example.com", token_version=1
         )
         payload = manager.verify_token(token)
         assert payload["sub"] == "test"
@@ -153,10 +149,7 @@ class TestJWTManagerKeyLoading:
 
         # Should raise exception when trying to load invalid keys
         with pytest.raises(Exception):
-            JWTManager(
-                private_key_path=str(private_key_path),
-                public_key_path=str(public_key_path)
-            )
+            JWTManager(private_key_path=str(private_key_path), public_key_path=str(public_key_path))
 
 
 class TestJWTManagerGlobalInstance:
@@ -173,7 +166,7 @@ class TestJWTManagerGlobalInstance:
             access_token_expires=30,
             refresh_token_expires=14,
             issuer="test-issuer",
-            audience="test-audience"
+            audience="test-audience",
         )
 
         assert manager is not None
@@ -185,10 +178,7 @@ class TestJWTManagerGlobalInstance:
         private_key_path = str(tmp_path / "private.pem")
         public_key_path = str(tmp_path / "public.pem")
 
-        init_jwt_manager(
-            private_key_path=private_key_path,
-            public_key_path=public_key_path
-        )
+        init_jwt_manager(private_key_path=private_key_path, public_key_path=public_key_path)
 
         manager = get_jwt_manager()
         assert manager is not None

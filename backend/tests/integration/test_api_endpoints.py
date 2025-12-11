@@ -86,11 +86,7 @@ class TestPostEndpoints:
 
     async def test_create_post(self, client: AsyncClient, auth_headers: dict, test_post_data: dict):
         """Test creating a post."""
-        response = await client.post(
-            "/api/v1/posts/",
-            json=test_post_data,
-            headers=auth_headers
-        )
+        response = await client.post("/api/v1/posts/", json=test_post_data, headers=auth_headers)
 
         assert response.status_code in [200, 201]
         data = response.json()
@@ -105,13 +101,13 @@ class TestPostEndpoints:
         data = response.json()
         assert isinstance(data, list) or "items" in data
 
-    async def test_get_post_by_id(self, client: AsyncClient, auth_headers: dict, test_post_data: dict):
+    async def test_get_post_by_id(
+        self, client: AsyncClient, auth_headers: dict, test_post_data: dict
+    ):
         """Test getting post by ID."""
         # Create a post first
         create_response = await client.post(
-            "/api/v1/posts/",
-            json=test_post_data,
-            headers=auth_headers
+            "/api/v1/posts/", json=test_post_data, headers=auth_headers
         )
         post_id = create_response.json()["id"]
 
@@ -126,18 +122,14 @@ class TestPostEndpoints:
         """Test updating a post."""
         # Create a post first
         create_response = await client.post(
-            "/api/v1/posts/",
-            json=test_post_data,
-            headers=auth_headers
+            "/api/v1/posts/", json=test_post_data, headers=auth_headers
         )
         post_id = create_response.json()["id"]
 
         # Update the post
         update_data = {"title": "Updated Title"}
         response = await client.patch(
-            f"/api/v1/posts/{post_id}",
-            json=update_data,
-            headers=auth_headers
+            f"/api/v1/posts/{post_id}", json=update_data, headers=auth_headers
         )
 
         assert response.status_code == 200
@@ -148,17 +140,12 @@ class TestPostEndpoints:
         """Test deleting a post."""
         # Create a post first
         create_response = await client.post(
-            "/api/v1/posts/",
-            json=test_post_data,
-            headers=auth_headers
+            "/api/v1/posts/", json=test_post_data, headers=auth_headers
         )
         post_id = create_response.json()["id"]
 
         # Delete the post
-        response = await client.delete(
-            f"/api/v1/posts/{post_id}",
-            headers=auth_headers
-        )
+        response = await client.delete(f"/api/v1/posts/{post_id}", headers=auth_headers)
 
         assert response.status_code in [200, 204]
 
@@ -170,16 +157,9 @@ class TestChatEndpoints:
 
     async def test_send_chat_message(self, client: AsyncClient, auth_headers: dict):
         """Test sending a chat message."""
-        chat_data = {
-            "message": "Hello, how are you?",
-            "conversation_id": None
-        }
+        chat_data = {"message": "Hello, how are you?", "conversation_id": None}
 
-        response = await client.post(
-            "/api/v1/chat/",
-            json=chat_data,
-            headers=auth_headers
-        )
+        response = await client.post("/api/v1/chat/", json=chat_data, headers=auth_headers)
 
         # Might require OpenAI API key
         assert response.status_code in [200, 201, 503]
@@ -200,15 +180,9 @@ class TestFileUploadEndpoints:
 
     async def test_upload_file(self, client: AsyncClient, auth_headers: dict):
         """Test file upload."""
-        files = {
-            "file": ("test.txt", b"test content", "text/plain")
-        }
+        files = {"file": ("test.txt", b"test content", "text/plain")}
 
-        response = await client.post(
-            "/api/v1/files/upload",
-            files=files,
-            headers=auth_headers
-        )
+        response = await client.post("/api/v1/files/upload", files=files, headers=auth_headers)
 
         assert response.status_code in [200, 201]
 

@@ -2,12 +2,14 @@
 Unit tests for payment service.
 """
 
-import pytest
-from unittest.mock import AsyncMock, Mock, patch
 from datetime import datetime
-from app.services.payment_service import PaymentService
-from app.models.payment import Payment, PaymentStatus, PaymentMethod
+from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
+
 from app.core.exceptions import NotFoundException, ValidationException
+from app.models.payment import Payment, PaymentMethod, PaymentStatus
+from app.services.payment_service import PaymentService
 
 
 class TestPaymentService:
@@ -30,7 +32,7 @@ class TestPaymentService:
             order_id=1,
             course_id=1,
             customer_id=1,
-            payment_method=PaymentMethod.STRIPE
+            payment_method=PaymentMethod.STRIPE,
         )
 
         assert "payment_id" in result
@@ -52,11 +54,7 @@ class TestPaymentService:
         service = PaymentService(mock_db)
 
         with pytest.raises(ValidationException, match="Amount must be positive"):
-            await service.create_payment_intent(
-                amount=-100.0,
-                currency="INR",
-                customer_id=1
-            )
+            await service.create_payment_intent(amount=-100.0, currency="INR", customer_id=1)
 
     @pytest.mark.asyncio
     async def test_create_payment_intent_zero_amount(self):
@@ -65,11 +63,7 @@ class TestPaymentService:
         service = PaymentService(mock_db)
 
         with pytest.raises(ValidationException, match="Amount must be positive"):
-            await service.create_payment_intent(
-                amount=0.0,
-                currency="INR",
-                customer_id=1
-            )
+            await service.create_payment_intent(amount=0.0, currency="INR", customer_id=1)
 
     @pytest.mark.asyncio
     async def test_create_payment_intent_fee_calculation(self):
@@ -82,11 +76,7 @@ class TestPaymentService:
         mock_db.refresh = AsyncMock()
 
         amount = 1000.0
-        result = await service.create_payment_intent(
-            amount=amount,
-            currency="INR",
-            customer_id=1
-        )
+        result = await service.create_payment_intent(amount=amount, currency="INR", customer_id=1)
 
         # Verify the payment object was created with correct calculations
         # Platform fee = 2.5% + ₹3 = (1000 * 0.025) + 3 = 28.0
@@ -111,9 +101,7 @@ class TestPaymentService:
         mock_db.refresh = AsyncMock()
 
         result = await service.confirm_payment(
-            payment_id=1,
-            gateway_payment_id="gw_123",
-            gateway_order_id="order_456"
+            payment_id=1, gateway_payment_id="gw_123", gateway_order_id="order_456"
         )
 
         assert result == mock_payment
@@ -135,10 +123,7 @@ class TestPaymentService:
         mock_db.get = AsyncMock(return_value=None)
 
         with pytest.raises(NotFoundException, match="Payment not found"):
-            await service.confirm_payment(
-                payment_id=999,
-                gateway_payment_id="gw_123"
-            )
+            await service.confirm_payment(payment_id=999, gateway_payment_id="gw_123")
 
     @pytest.mark.asyncio
     async def test_confirm_payment_not_pending(self):
@@ -153,10 +138,7 @@ class TestPaymentService:
         mock_db.get = AsyncMock(return_value=mock_payment)
 
         with pytest.raises(ValidationException, match="Payment is not in pending status"):
-            await service.confirm_payment(
-                payment_id=1,
-                gateway_payment_id="gw_123"
-            )
+            await service.confirm_payment(payment_id=1, gateway_payment_id="gw_123")
 
     @pytest.mark.asyncio
     async def test_fail_payment_success(self):
@@ -173,10 +155,7 @@ class TestPaymentService:
         mock_db.commit = AsyncMock()
         mock_db.refresh = AsyncMock()
 
-        result = await service.fail_payment(
-            payment_id=1,
-            reason="Insufficient funds"
-        )
+        result = await service.fail_payment(payment_id=1, reason="Insufficient funds")
 
         assert result == mock_payment
         assert mock_payment.status == PaymentStatus.FAILED
@@ -232,9 +211,7 @@ class TestPaymentService:
         mock_db.refresh = AsyncMock()
 
         result = await service.refund_payment(
-            payment_id=1,
-            refund_amount=500.0,
-            reason="Customer request"
+            payment_id=1, refund_amount=500.0, reason="Customer request"
         )
 
         assert result == mock_payment
@@ -256,11 +233,7 @@ class TestPaymentService:
         mock_db.get = AsyncMock(return_value=None)
 
         with pytest.raises(NotFoundException, match="Payment not found"):
-            await service.refund_payment(
-                payment_id=999,
-                refund_amount=100.0,
-                reason="Test"
-            )
+            await service.refund_payment(payment_id=999, refund_amount=100.0, reason="Test")
 
     @pytest.mark.asyncio
     async def test_refund_payment_not_completed(self):
@@ -274,11 +247,7 @@ class TestPaymentService:
         mock_db.get = AsyncMock(return_value=mock_payment)
 
         with pytest.raises(ValidationException, match="Can only refund completed payments"):
-            await service.refund_payment(
-                payment_id=1,
-                refund_amount=100.0,
-                reason="Test"
-            )
+            await service.refund_payment(payment_id=1, refund_amount=100.0, reason="Test")
 
     @pytest.mark.asyncio
     async def test_refund_payment_exceeds_amount(self):
@@ -293,11 +262,7 @@ class TestPaymentService:
         mock_db.get = AsyncMock(return_value=mock_payment)
 
         with pytest.raises(ValidationException, match="Refund amount cannot exceed payment amount"):
-            await service.refund_payment(
-                payment_id=1,
-                refund_amount=1500.0,
-                reason="Test"
-            )
+            await service.refund_payment(payment_id=1, refund_amount=1500.0, reason="Test")
 
     @pytest.mark.asyncio
     async def test_full_refund(self):
@@ -314,9 +279,7 @@ class TestPaymentService:
         mock_db.refresh = AsyncMock()
 
         result = await service.refund_payment(
-            payment_id=1,
-            refund_amount=1000.0,
-            reason="Full refund"
+            payment_id=1, refund_amount=1000.0, reason="Full refund"
         )
 
         assert result == mock_payment
@@ -337,11 +300,7 @@ class TestPaymentServiceIntegration:
         mock_db.commit = AsyncMock()
         mock_db.refresh = AsyncMock()
 
-        intent = await service.create_payment_intent(
-            amount=1000.0,
-            currency="INR",
-            customer_id=1
-        )
+        intent = await service.create_payment_intent(amount=1000.0, currency="INR", customer_id=1)
 
         assert intent["status"] == "pending"
 
@@ -350,10 +309,7 @@ class TestPaymentServiceIntegration:
         mock_payment.status = PaymentStatus.PENDING
         mock_db.get = AsyncMock(return_value=mock_payment)
 
-        confirmed = await service.confirm_payment(
-            payment_id=1,
-            gateway_payment_id="gw_123"
-        )
+        confirmed = await service.confirm_payment(payment_id=1, gateway_payment_id="gw_123")
 
         assert confirmed.status == PaymentStatus.COMPLETED
 
@@ -374,15 +330,12 @@ class TestPaymentServiceIntegration:
             PaymentMethod.DEBIT_CARD,
             PaymentMethod.UPI,
             PaymentMethod.NET_BANKING,
-            PaymentMethod.WALLET
+            PaymentMethod.WALLET,
         ]
 
         for method in methods:
             result = await service.create_payment_intent(
-                amount=1000.0,
-                currency="INR",
-                customer_id=1,
-                payment_method=method
+                amount=1000.0, currency="INR", customer_id=1, payment_method=method
             )
 
             assert result["status"] == "pending"

@@ -16,7 +16,9 @@ class TestSettingsValidators:
         from app.config.settings import Settings
 
         # Test the validator method directly - covers line 98
-        result = Settings.assemble_cors_origins("http://localhost:3000,http://localhost:3001,http://localhost:3002")
+        result = Settings.assemble_cors_origins(
+            "http://localhost:3000,http://localhost:3001,http://localhost:3002"
+        )
         assert result == ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"]
 
     def test_assemble_cors_origins_with_spaces(self):
@@ -24,7 +26,9 @@ class TestSettingsValidators:
         from app.config.settings import Settings
 
         # Test the validator method with spaces - covers line 98
-        result = Settings.assemble_cors_origins("http://localhost:3000 , http://localhost:3001 , http://localhost:3002")
+        result = Settings.assemble_cors_origins(
+            "http://localhost:3000 , http://localhost:3001 , http://localhost:3002"
+        )
         assert result == ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"]
 
     def test_assemble_cors_origins_with_list(self):
@@ -120,7 +124,11 @@ class TestGetSettings:
 class TestSettingsClasses:
     """Tests for Settings classes."""
 
-    @patch.dict(os.environ, {"DEBUG": "true", "DATABASE_URL": "postgresql+asyncpg://test:test@localhost/test"}, clear=False)
+    @patch.dict(
+        os.environ,
+        {"DEBUG": "true", "DATABASE_URL": "postgresql+asyncpg://test:test@localhost/test"},
+        clear=False,
+    )
     def test_development_settings(self):
         """Test DevelopmentSettings can be instantiated."""
         from app.config.settings import DevelopmentSettings
@@ -131,7 +139,11 @@ class TestSettingsClasses:
         assert hasattr(settings, "debug")
         assert hasattr(settings, "environment")
 
-    @patch.dict(os.environ, {"DEBUG": "false", "DATABASE_URL": "postgresql+asyncpg://test:test@localhost/test"}, clear=False)
+    @patch.dict(
+        os.environ,
+        {"DEBUG": "false", "DATABASE_URL": "postgresql+asyncpg://test:test@localhost/test"},
+        clear=False,
+    )
     def test_production_settings(self):
         """Test ProductionSettings can be instantiated."""
         from app.config.settings import ProductionSettings

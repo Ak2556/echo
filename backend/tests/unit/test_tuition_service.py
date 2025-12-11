@@ -1,23 +1,37 @@
 """
 Unit tests for Tuition Service.
 """
-import pytest
-from datetime import datetime, date, time, timedelta, timezone
+
+from datetime import date, datetime, time, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.services.tuition_service import TuitionService
-from app.models.tuition import (
-    TuitionSession, TuitionSessionCreate, TuitionSessionUpdate, SessionStatus,
-    SessionAttendance, AttendanceCreate, AttendanceStatus,
-    Assignment, AssignmentCreate, AssignmentSubmission, AssignmentStatus,
-    StudyMaterial, StudyMaterialCreate,
-    Quiz, QuizCreate, QuizAttempt, QuizQuestion,
-    ProgressReport
-)
+from app.core.exceptions import NotFoundException, ValidationException
 from app.models.course import Course
 from app.models.enrollment import Enrollment, EnrollmentStatus
-from app.core.exceptions import ValidationException, NotFoundException
+from app.models.tuition import (
+    Assignment,
+    AssignmentCreate,
+    AssignmentStatus,
+    AssignmentSubmission,
+    AttendanceCreate,
+    AttendanceStatus,
+    ProgressReport,
+    Quiz,
+    QuizAttempt,
+    QuizCreate,
+    QuizQuestion,
+    SessionAttendance,
+    SessionStatus,
+    StudyMaterial,
+    StudyMaterialCreate,
+    TuitionSession,
+    TuitionSessionCreate,
+    TuitionSessionUpdate,
+)
+from app.services.tuition_service import TuitionService
 
 # Aliases for test compatibility
 ValidationError = ValidationException
@@ -52,11 +66,11 @@ class TestSessionManagement:
             session_number=1,
             scheduled_date=datetime.now(timezone.utc) + timedelta(days=1),
             start_time=time(10, 0),
-            end_time=time(11, 0)
+            end_time=time(11, 0),
         )
 
         # Mock _check_session_conflicts
-        with patch.object(tuition_service, '_check_session_conflicts', return_value=False):
+        with patch.object(tuition_service, "_check_session_conflicts", return_value=False):
             result = await tuition_service.create_session(session_data, teacher_id=1)
 
         # Verify
@@ -74,7 +88,7 @@ class TestSessionManagement:
             session_number=1,
             scheduled_date=datetime.now(timezone.utc) + timedelta(days=1),
             start_time=time(10, 0),
-            end_time=time(11, 0)
+            end_time=time(11, 0),
         )
 
         with pytest.raises(NotFoundError, match="Course not found"):
@@ -92,7 +106,7 @@ class TestSessionManagement:
             session_number=1,
             scheduled_date=datetime.now(timezone.utc) + timedelta(days=1),
             start_time=time(10, 0),
-            end_time=time(11, 0)
+            end_time=time(11, 0),
         )
 
         with pytest.raises(ValidationError, match="Teacher not authorized"):
@@ -110,11 +124,11 @@ class TestSessionManagement:
             session_number=1,
             scheduled_date=datetime.now(timezone.utc) + timedelta(days=1),
             start_time=time(10, 0),
-            end_time=time(11, 0)
+            end_time=time(11, 0),
         )
 
         # Mock _check_session_conflicts to return True (conflict exists)
-        with patch.object(tuition_service, '_check_session_conflicts', return_value=True):
+        with patch.object(tuition_service, "_check_session_conflicts", return_value=True):
             with pytest.raises(ValidationError, match="Session conflicts with existing schedule"):
                 await tuition_service.create_session(session_data, teacher_id=1)
 
@@ -140,10 +154,10 @@ class TestSessionManagement:
             teacher_id=1,
             scheduled_date=date.today(),
             start_time=time(10, 0),
-            end_time=time(11, 0)
+            end_time=time(11, 0),
         )
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
             session_data = TuitionSessionUpdate(title="New Title")
             result = await tuition_service.update_session(1, session_data)
 
@@ -153,7 +167,7 @@ class TestSessionManagement:
     @pytest.mark.asyncio
     async def test_update_session_not_found(self, tuition_service, mock_db):
         """Test updating non-existent session"""
-        with patch.object(tuition_service, 'get_session_by_id', return_value=None):
+        with patch.object(tuition_service, "get_session_by_id", return_value=None):
             session_data = TuitionSessionUpdate(title="New Title")
 
             with pytest.raises(NotFoundError, match="Session not found"):
@@ -162,13 +176,9 @@ class TestSessionManagement:
     @pytest.mark.asyncio
     async def test_start_session_success(self, tuition_service, mock_db):
         """Test starting a session successfully"""
-        mock_session = TuitionSession(
-            id=1,
-            teacher_id=1,
-            status=SessionStatus.SCHEDULED
-        )
+        mock_session = TuitionSession(id=1, teacher_id=1, status=SessionStatus.SCHEDULED)
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
             result = await tuition_service.start_session(1, teacher_id=1)
 
         assert mock_session.status == SessionStatus.IN_PROGRESS
@@ -178,26 +188,18 @@ class TestSessionManagement:
     @pytest.mark.asyncio
     async def test_start_session_unauthorized(self, tuition_service, mock_db):
         """Test starting session with unauthorized teacher"""
-        mock_session = TuitionSession(
-            id=1,
-            teacher_id=1,
-            status=SessionStatus.SCHEDULED
-        )
+        mock_session = TuitionSession(id=1, teacher_id=1, status=SessionStatus.SCHEDULED)
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
             with pytest.raises(ValidationError, match="Not authorized"):
                 await tuition_service.start_session(1, teacher_id=2)
 
     @pytest.mark.asyncio
     async def test_start_session_invalid_status(self, tuition_service, mock_db):
         """Test starting session with invalid status"""
-        mock_session = TuitionSession(
-            id=1,
-            teacher_id=1,
-            status=SessionStatus.COMPLETED
-        )
+        mock_session = TuitionSession(id=1, teacher_id=1, status=SessionStatus.COMPLETED)
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
             with pytest.raises(ValidationError, match="Session cannot be started"):
                 await tuition_service.start_session(1, teacher_id=1)
 
@@ -208,10 +210,10 @@ class TestSessionManagement:
             id=1,
             teacher_id=1,
             status=SessionStatus.IN_PROGRESS,
-            started_at=datetime.now(timezone.utc)
+            started_at=datetime.now(timezone.utc),
         )
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
             result = await tuition_service.end_session(1, teacher_id=1, summary="Great session")
 
         assert mock_session.status == SessionStatus.COMPLETED
@@ -228,11 +230,7 @@ class TestSessionManagement:
         mock_db.execute.return_value = mock_result
 
         result = await tuition_service.list_sessions(
-            course_id=1,
-            teacher_id=1,
-            status=SessionStatus.SCHEDULED,
-            skip=0,
-            limit=10
+            course_id=1, teacher_id=1, status=SessionStatus.SCHEDULED, skip=0, limit=10
         )
 
         assert len(result) == 2
@@ -252,12 +250,9 @@ class TestAttendance:
 
         # Mock enrollment
         mock_enrollment = Enrollment(id=1, student_id=1, course_id=1)
-        with patch.object(tuition_service, '_get_student_enrollment', return_value=mock_enrollment):
+        with patch.object(tuition_service, "_get_student_enrollment", return_value=mock_enrollment):
             result = await tuition_service.mark_attendance(
-                session_id=1,
-                student_id=1,
-                status=AttendanceStatus.PRESENT,
-                participation_score=5
+                session_id=1, student_id=1, status=AttendanceStatus.PRESENT, participation_score=5
             )
 
         assert mock_db.add.called
@@ -267,20 +262,14 @@ class TestAttendance:
     async def test_mark_attendance_update_existing(self, tuition_service, mock_db):
         """Test updating existing attendance"""
         mock_attendance = SessionAttendance(
-            id=1,
-            session_id=1,
-            student_id=1,
-            enrollment_id=1,
-            status=AttendanceStatus.ABSENT
+            id=1, session_id=1, student_id=1, enrollment_id=1, status=AttendanceStatus.ABSENT
         )
         mock_result = MagicMock()
         mock_result.scalar_one_or_none.return_value = mock_attendance
         mock_db.execute.return_value = mock_result
 
         result = await tuition_service.mark_attendance(
-            session_id=1,
-            student_id=1,
-            status=AttendanceStatus.PRESENT
+            session_id=1, student_id=1, status=AttendanceStatus.PRESENT
         )
 
         assert mock_attendance.status == AttendanceStatus.PRESENT
@@ -295,12 +284,10 @@ class TestAttendance:
         mock_db.execute.return_value = mock_result
 
         # Mock no enrollment
-        with patch.object(tuition_service, '_get_student_enrollment', return_value=None):
+        with patch.object(tuition_service, "_get_student_enrollment", return_value=None):
             with pytest.raises(ValidationError, match="Student not enrolled"):
                 await tuition_service.mark_attendance(
-                    session_id=1,
-                    student_id=1,
-                    status=AttendanceStatus.PRESENT
+                    session_id=1, student_id=1, status=AttendanceStatus.PRESENT
                 )
 
     @pytest.mark.asyncio
@@ -308,10 +295,10 @@ class TestAttendance:
         """Test marking bulk attendance"""
         attendance_data = [
             AttendanceCreate(session_id=1, student_id=1, status=AttendanceStatus.PRESENT),
-            AttendanceCreate(session_id=1, student_id=2, status=AttendanceStatus.ABSENT)
+            AttendanceCreate(session_id=1, student_id=2, status=AttendanceStatus.ABSENT),
         ]
 
-        with patch.object(tuition_service, 'mark_attendance', new_callable=AsyncMock) as mock_mark:
+        with patch.object(tuition_service, "mark_attendance", new_callable=AsyncMock) as mock_mark:
             mock_mark.return_value = SessionAttendance(id=1)
             result = await tuition_service.mark_bulk_attendance(1, attendance_data)
 
@@ -345,7 +332,7 @@ class TestAssignments:
             title="Test Assignment",
             description="Description",
             due_date=datetime.now(timezone.utc) + timedelta(days=7),
-            max_points=100
+            max_points=100,
         )
 
         result = await tuition_service.create_assignment(assignment_data, teacher_id=1)
@@ -364,7 +351,7 @@ class TestAssignments:
             title="Test Assignment",
             description="Description",
             due_date=datetime.now(timezone.utc) + timedelta(days=7),
-            max_points=100
+            max_points=100,
         )
 
         with pytest.raises(ValidationError, match="Teacher not authorized"):
@@ -378,17 +365,21 @@ class TestAssignments:
             course_id=1,
             is_published=True,
             allow_late_submission=True,
-            due_date=datetime.now(timezone.utc) + timedelta(days=1)
+            due_date=datetime.now(timezone.utc) + timedelta(days=1),
         )
-        mock_enrollment = Enrollment(id=1, student_id=1, course_id=1, status=EnrollmentStatus.ACTIVE)
+        mock_enrollment = Enrollment(
+            id=1, student_id=1, course_id=1, status=EnrollmentStatus.ACTIVE
+        )
 
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=mock_assignment):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=mock_enrollment):
-                with patch.object(tuition_service, 'get_student_assignment_submission', return_value=None):
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=mock_assignment):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=mock_enrollment
+            ):
+                with patch.object(
+                    tuition_service, "get_student_assignment_submission", return_value=None
+                ):
                     result = await tuition_service.submit_assignment(
-                        assignment_id=1,
-                        student_id=1,
-                        submission_text="My submission"
+                        assignment_id=1, student_id=1, submission_text="My submission"
                     )
 
         assert mock_db.add.called
@@ -399,29 +390,33 @@ class TestAssignments:
         """Test submitting unpublished assignment"""
         mock_assignment = Assignment(id=1, course_id=1, is_published=False)
 
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=mock_assignment):
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=mock_assignment):
             with pytest.raises(ValidationError, match="Assignment is not published"):
                 await tuition_service.submit_assignment(
-                    assignment_id=1,
-                    student_id=1,
-                    submission_text="My submission"
+                    assignment_id=1, student_id=1, submission_text="My submission"
                 )
 
     @pytest.mark.asyncio
     async def test_submit_assignment_already_submitted(self, tuition_service, mock_db):
         """Test submitting assignment that was already submitted"""
         mock_assignment = Assignment(id=1, course_id=1, is_published=True)
-        mock_enrollment = Enrollment(id=1, student_id=1, course_id=1, status=EnrollmentStatus.ACTIVE)
+        mock_enrollment = Enrollment(
+            id=1, student_id=1, course_id=1, status=EnrollmentStatus.ACTIVE
+        )
         mock_submission = AssignmentSubmission(id=1)
 
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=mock_assignment):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=mock_enrollment):
-                with patch.object(tuition_service, 'get_student_assignment_submission', return_value=mock_submission):
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=mock_assignment):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=mock_enrollment
+            ):
+                with patch.object(
+                    tuition_service,
+                    "get_student_assignment_submission",
+                    return_value=mock_submission,
+                ):
                     with pytest.raises(ValidationError, match="Assignment already submitted"):
                         await tuition_service.submit_assignment(
-                            assignment_id=1,
-                            student_id=1,
-                            submission_text="My submission"
+                            assignment_id=1, student_id=1, submission_text="My submission"
                         )
 
     @pytest.mark.asyncio
@@ -429,12 +424,9 @@ class TestAssignments:
         """Test grading submission successfully"""
         mock_submission = AssignmentSubmission(id=1, assignment_id=1, student_id=1)
 
-        with patch.object(tuition_service, 'get_submission_by_id', return_value=mock_submission):
+        with patch.object(tuition_service, "get_submission_by_id", return_value=mock_submission):
             result = await tuition_service.grade_submission(
-                submission_id=1,
-                points=85.5,
-                grade="B+",
-                feedback="Good work"
+                submission_id=1, points=85.5, grade="B+", feedback="Good work"
             )
 
         assert mock_submission.points_earned == 85.5
@@ -467,11 +459,11 @@ class TestQuizzes:
                     "points": 5,
                     "options": [
                         {"text": "3", "is_correct": False},
-                        {"text": "4", "is_correct": True}
+                        {"text": "4", "is_correct": True},
                     ],
-                    "correct_answer": "4"
+                    "correct_answer": "4",
                 }
-            ]
+            ],
         )
 
         result = await tuition_service.create_quiz(quiz_data, teacher_id=1)
@@ -488,13 +480,17 @@ class TestQuizzes:
             is_published=True,
             max_attempts=3,
             available_from=datetime.now(timezone.utc) - timedelta(hours=1),
-            available_until=datetime.now(timezone.utc) + timedelta(hours=1)
+            available_until=datetime.now(timezone.utc) + timedelta(hours=1),
         )
-        mock_enrollment = Enrollment(id=1, student_id=1, course_id=1, status=EnrollmentStatus.ACTIVE)
+        mock_enrollment = Enrollment(
+            id=1, student_id=1, course_id=1, status=EnrollmentStatus.ACTIVE
+        )
 
-        with patch.object(tuition_service, 'get_quiz_by_id', return_value=mock_quiz):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=mock_enrollment):
-                with patch.object(tuition_service, 'get_quiz_attempt_count', return_value=0):
+        with patch.object(tuition_service, "get_quiz_by_id", return_value=mock_quiz):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=mock_enrollment
+            ):
+                with patch.object(tuition_service, "get_quiz_attempt_count", return_value=0):
                     result = await tuition_service.start_quiz_attempt(quiz_id=1, student_id=1)
 
         assert mock_db.add.called
@@ -509,13 +505,17 @@ class TestQuizzes:
             is_published=True,
             max_attempts=3,
             available_from=datetime.now(timezone.utc) - timedelta(hours=1),
-            available_until=datetime.now(timezone.utc) + timedelta(hours=1)
+            available_until=datetime.now(timezone.utc) + timedelta(hours=1),
         )
-        mock_enrollment = Enrollment(id=1, student_id=1, course_id=1, status=EnrollmentStatus.ACTIVE)
+        mock_enrollment = Enrollment(
+            id=1, student_id=1, course_id=1, status=EnrollmentStatus.ACTIVE
+        )
 
-        with patch.object(tuition_service, 'get_quiz_by_id', return_value=mock_quiz):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=mock_enrollment):
-                with patch.object(tuition_service, 'get_quiz_attempt_count', return_value=3):
+        with patch.object(tuition_service, "get_quiz_by_id", return_value=mock_quiz):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=mock_enrollment
+            ):
+                with patch.object(tuition_service, "get_quiz_attempt_count", return_value=3):
                     with pytest.raises(ValidationError, match="Maximum attempts reached"):
                         await tuition_service.start_quiz_attempt(quiz_id=1, student_id=1)
 
@@ -528,30 +528,23 @@ class TestQuizzes:
             question_text="What is 2+2?",
             question_type="multiple_choice",
             points=5,
-            options=[
-                {"text": "3", "is_correct": False},
-                {"text": "4", "is_correct": True}
-            ]
+            options=[{"text": "3", "is_correct": False}, {"text": "4", "is_correct": True}],
         )
         mock_quiz = Quiz(
-            id=1,
-            duration_minutes=30,
-            total_points=5,
-            passing_score=3,
-            questions=[mock_question]
+            id=1, duration_minutes=30, total_points=5, passing_score=3, questions=[mock_question]
         )
         mock_attempt = QuizAttempt(
             id=1,
             quiz_id=1,
             student_id=1,
             is_completed=False,
-            started_at=datetime.now(timezone.utc) - timedelta(minutes=10)
+            started_at=datetime.now(timezone.utc) - timedelta(minutes=10),
         )
 
         answers = {"1": "4"}  # Correct answer
 
-        with patch.object(tuition_service, 'get_quiz_attempt_by_id', return_value=mock_attempt):
-            with patch.object(tuition_service, 'get_quiz_by_id', return_value=mock_quiz):
+        with patch.object(tuition_service, "get_quiz_attempt_by_id", return_value=mock_attempt):
+            with patch.object(tuition_service, "get_quiz_by_id", return_value=mock_quiz):
                 result = await tuition_service.submit_quiz_attempt(attempt_id=1, answers=answers)
 
         assert mock_attempt.is_completed
@@ -574,7 +567,7 @@ class TestStudyMaterials:
             title="Study Material",
             description="Description",
             material_type="pdf",
-            file_url="https://example.com/material.pdf"
+            file_url="https://example.com/material.pdf",
         )
 
         result = await tuition_service.create_study_material(material_data, teacher_id=1)
@@ -594,10 +587,7 @@ class TestStudyMaterials:
         mock_enrollment_result.fetchall.return_value = [(1,), (2,)]
         mock_db.execute.side_effect = [mock_enrollment_result, mock_result]
 
-        result = await tuition_service.list_study_materials(
-            user_id=1,
-            user_role="student"
-        )
+        result = await tuition_service.list_study_materials(user_id=1, user_role="student")
 
         assert len(result) == 2
 
@@ -606,7 +596,7 @@ class TestStudyMaterials:
         """Test incrementing material view count"""
         mock_material = StudyMaterial(id=1, view_count=5)
 
-        with patch.object(tuition_service, 'get_study_material_by_id', return_value=mock_material):
+        with patch.object(tuition_service, "get_study_material_by_id", return_value=mock_material):
             result = await tuition_service.increment_material_view_count(1)
 
         assert result is True
@@ -624,27 +614,31 @@ class TestProgressReports:
         mock_db.get.return_value = mock_enrollment
 
         # Mock stats calculations
-        with patch.object(tuition_service, '_calculate_attendance_stats', return_value={
-            "total_sessions": 10,
-            "attended_sessions": 8,
-            "attendance_percentage": 80.0
-        }):
-            with patch.object(tuition_service, '_calculate_assignment_stats', return_value={
-                "total": 5,
-                "completed": 4,
-                "average_score": 85.0
-            }):
-                with patch.object(tuition_service, '_calculate_quiz_stats', return_value={
-                    "taken": 3,
-                    "passed": 3,
-                    "average_score": 90.0
-                }):
+        with patch.object(
+            tuition_service,
+            "_calculate_attendance_stats",
+            return_value={
+                "total_sessions": 10,
+                "attended_sessions": 8,
+                "attendance_percentage": 80.0,
+            },
+        ):
+            with patch.object(
+                tuition_service,
+                "_calculate_assignment_stats",
+                return_value={"total": 5, "completed": 4, "average_score": 85.0},
+            ):
+                with patch.object(
+                    tuition_service,
+                    "_calculate_quiz_stats",
+                    return_value={"taken": 3, "passed": 3, "average_score": 90.0},
+                ):
                     result = await tuition_service.generate_progress_report(
                         enrollment_id=1,
                         report_period="monthly",
                         start_date=datetime.now(timezone.utc) - timedelta(days=30),
                         end_date=datetime.now(timezone.utc),
-                        teacher_id=1
+                        teacher_id=1,
                     )
 
         assert mock_db.add.called
@@ -660,31 +654,25 @@ class TestAnalytics:
         # Mock session stats
         mock_session_result = MagicMock()
         mock_session_result.first.return_value = MagicMock(
-            total_sessions=10,
-            completed_sessions=8,
-            avg_duration=60
+            total_sessions=10, completed_sessions=8, avg_duration=60
         )
 
         # Mock enrollment stats
         mock_enrollment_result = MagicMock()
         mock_enrollment_result.first.return_value = MagicMock(
-            total_enrollments=20,
-            active_enrollments=15,
-            avg_completion=75
+            total_enrollments=20, active_enrollments=15, avg_completion=75
         )
 
         # Mock attendance stats
         mock_attendance_result = MagicMock()
         mock_attendance_result.first.return_value = MagicMock(
-            total_attendance_records=100,
-            present_count=85,
-            avg_participation=4.5
+            total_attendance_records=100, present_count=85, avg_participation=4.5
         )
 
         mock_db.execute.side_effect = [
             mock_session_result,
             mock_enrollment_result,
-            mock_attendance_result
+            mock_attendance_result,
         ]
 
         result = await tuition_service.get_course_analytics(course_id=1)
@@ -698,7 +686,7 @@ class TestAnalytics:
         """Test getting student analytics"""
         mock_enrollments = [
             Enrollment(id=1, status=EnrollmentStatus.ACTIVE),
-            Enrollment(id=2, status=EnrollmentStatus.ACTIVE)
+            Enrollment(id=2, status=EnrollmentStatus.ACTIVE),
         ]
 
         # Mock enrollment query
@@ -708,32 +696,26 @@ class TestAnalytics:
         # Mock attendance stats
         mock_attendance_result = MagicMock()
         mock_attendance_result.first.return_value = MagicMock(
-            total_sessions=10,
-            attended_sessions=8,
-            avg_participation=4.5
+            total_sessions=10, attended_sessions=8, avg_participation=4.5
         )
 
         # Mock assignment stats
         mock_assignment_result = MagicMock()
         mock_assignment_result.first.return_value = MagicMock(
-            total_submissions=5,
-            graded_submissions=4,
-            avg_points=85.0
+            total_submissions=5, graded_submissions=4, avg_points=85.0
         )
 
         # Mock quiz stats
         mock_quiz_result = MagicMock()
         mock_quiz_result.first.return_value = MagicMock(
-            total_attempts=3,
-            passed_attempts=3,
-            avg_percentage=90.0
+            total_attempts=3, passed_attempts=3, avg_percentage=90.0
         )
 
         mock_db.execute.side_effect = [
             mock_enrollment_result,
             mock_attendance_result,
             mock_assignment_result,
-            mock_quiz_result
+            mock_quiz_result,
         ]
 
         result = await tuition_service.get_student_analytics(student_id=1)
@@ -752,11 +734,9 @@ class TestPermissionChecks:
         """Test admin has access to all sessions"""
         mock_session = TuitionSession(id=1, teacher_id=1)
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
             result = await tuition_service.check_session_access(
-                session_id=1,
-                user_id=999,
-                user_role="admin"
+                session_id=1, user_id=999, user_role="admin"
             )
 
         assert result is True
@@ -766,11 +746,9 @@ class TestPermissionChecks:
         """Test teacher has access to own sessions"""
         mock_session = TuitionSession(id=1, teacher_id=1)
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
             result = await tuition_service.check_session_access(
-                session_id=1,
-                user_id=1,
-                user_role="teacher"
+                session_id=1, user_id=1, user_role="teacher"
             )
 
         assert result is True
@@ -781,12 +759,12 @@ class TestPermissionChecks:
         mock_session = TuitionSession(id=1, course_id=1)
         mock_enrollment = Enrollment(id=1, status=EnrollmentStatus.ACTIVE)
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=mock_enrollment):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=mock_enrollment
+            ):
                 result = await tuition_service.check_session_access(
-                    session_id=1,
-                    user_id=1,
-                    user_role="student"
+                    session_id=1, user_id=1, user_role="student"
                 )
 
         assert result is True
@@ -796,11 +774,9 @@ class TestPermissionChecks:
         """Test assignment access check"""
         mock_assignment = Assignment(id=1, teacher_id=1, is_published=True)
 
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=mock_assignment):
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=mock_assignment):
             result = await tuition_service.check_assignment_access(
-                assignment_id=1,
-                user_id=1,
-                user_role="teacher"
+                assignment_id=1, user_id=1, user_role="teacher"
             )
 
         assert result is True
@@ -810,11 +786,9 @@ class TestPermissionChecks:
         """Test material access check"""
         mock_material = StudyMaterial(id=1, is_public=True)
 
-        with patch.object(tuition_service, 'get_study_material_by_id', return_value=mock_material):
+        with patch.object(tuition_service, "get_study_material_by_id", return_value=mock_material):
             result = await tuition_service.check_material_access(
-                material_id=1,
-                user_id=1,
-                user_role="student"
+                material_id=1, user_id=1, user_role="student"
             )
 
         assert result is True
@@ -834,7 +808,7 @@ class TestHelperMethods:
             teacher_id=1,
             scheduled_date=datetime.now(timezone.utc) + timedelta(days=1),
             start_time=time(10, 0),
-            end_time=time(11, 0)
+            end_time=time(11, 0),
         )
 
         assert result is False
@@ -842,7 +816,9 @@ class TestHelperMethods:
     @pytest.mark.asyncio
     async def test_get_student_enrollment_by_course(self, tuition_service, mock_db):
         """Test getting student enrollment by course"""
-        mock_enrollment = Enrollment(id=1, student_id=1, course_id=1, status=EnrollmentStatus.ACTIVE)
+        mock_enrollment = Enrollment(
+            id=1, student_id=1, course_id=1, status=EnrollmentStatus.ACTIVE
+        )
         mock_result = MagicMock()
         mock_result.scalar_one_or_none.return_value = mock_enrollment
         mock_db.execute.return_value = mock_result
@@ -855,17 +831,14 @@ class TestHelperMethods:
     async def test_calculate_attendance_stats(self, tuition_service, mock_db):
         """Test calculating attendance stats"""
         mock_result = MagicMock()
-        mock_result.first.return_value = MagicMock(
-            total_sessions=10,
-            attended_sessions=8
-        )
+        mock_result.first.return_value = MagicMock(total_sessions=10, attended_sessions=8)
         mock_db.execute.return_value = mock_result
 
         result = await tuition_service._calculate_attendance_stats(
             student_id=1,
             course_id=1,
             start_date=datetime.now(timezone.utc) - timedelta(days=30),
-            end_date=datetime.now(timezone.utc)
+            end_date=datetime.now(timezone.utc),
         )
 
         assert result["total_sessions"] == 10
@@ -877,9 +850,7 @@ class TestHelperMethods:
         """Test calculating assignment stats"""
         mock_result = MagicMock()
         mock_result.first.return_value = MagicMock(
-            total_submissions=5,
-            graded_submissions=4,
-            avg_points=85.0
+            total_submissions=5, graded_submissions=4, avg_points=85.0
         )
         mock_db.execute.return_value = mock_result
 
@@ -887,7 +858,7 @@ class TestHelperMethods:
             student_id=1,
             course_id=1,
             start_date=datetime.now(timezone.utc) - timedelta(days=30),
-            end_date=datetime.now(timezone.utc)
+            end_date=datetime.now(timezone.utc),
         )
 
         assert result["total"] == 5
@@ -899,9 +870,7 @@ class TestHelperMethods:
         """Test calculating quiz stats"""
         mock_result = MagicMock()
         mock_result.first.return_value = MagicMock(
-            total_attempts=3,
-            passed_attempts=3,
-            avg_percentage=90.0
+            total_attempts=3, passed_attempts=3, avg_percentage=90.0
         )
         mock_db.execute.return_value = mock_result
 
@@ -909,7 +878,7 @@ class TestHelperMethods:
             student_id=1,
             course_id=1,
             start_date=datetime.now(timezone.utc) - timedelta(days=30),
-            end_date=datetime.now(timezone.utc)
+            end_date=datetime.now(timezone.utc),
         )
 
         assert result["taken"] == 3
@@ -929,14 +898,16 @@ class TestSessionUpdateWithConflicts:
             teacher_id=1,
             scheduled_date=date.today(),
             start_time=time(10, 0),
-            end_time=time(11, 0)
+            end_time=time(11, 0),
         )
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
-            with patch.object(tuition_service, '_check_session_conflicts', return_value=True):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
+            with patch.object(tuition_service, "_check_session_conflicts", return_value=True):
                 session_data = TuitionSessionUpdate(start_time=time(11, 0))
 
-                with pytest.raises(ValidationError, match="Session conflicts with existing schedule"):
+                with pytest.raises(
+                    ValidationError, match="Session conflicts with existing schedule"
+                ):
                     await tuition_service.update_session(1, session_data)
 
     @pytest.mark.asyncio
@@ -948,11 +919,11 @@ class TestSessionUpdateWithConflicts:
             teacher_id=1,
             scheduled_date=date.today(),
             start_time=time(10, 0),
-            end_time=time(11, 0)
+            end_time=time(11, 0),
         )
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
-            with patch.object(tuition_service, '_check_session_conflicts', return_value=False):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
+            with patch.object(tuition_service, "_check_session_conflicts", return_value=False):
                 session_data = TuitionSessionUpdate(scheduled_date=date.today() + timedelta(days=1))
                 result = await tuition_service.update_session(1, session_data)
 
@@ -1019,7 +990,7 @@ class TestStudentSessions:
             course_id=1,
             status=SessionStatus.SCHEDULED,
             start_date=date.today(),
-            end_date=date.today() + timedelta(days=7)
+            end_date=date.today() + timedelta(days=7),
         )
 
         assert len(result) == 2
@@ -1027,7 +998,9 @@ class TestStudentSessions:
     @pytest.mark.asyncio
     async def test_get_student_upcoming_sessions(self, tuition_service, mock_db):
         """Test getting upcoming sessions for student"""
-        with patch.object(tuition_service, 'get_student_sessions', return_value=[TuitionSession(id=1)]) as mock_get:
+        with patch.object(
+            tuition_service, "get_student_sessions", return_value=[TuitionSession(id=1)]
+        ) as mock_get:
             result = await tuition_service.get_student_upcoming_sessions(student_id=1, limit=5)
 
             mock_get.assert_called_once()
@@ -1040,11 +1013,11 @@ class TestTeacherSessions:
     @pytest.mark.asyncio
     async def test_get_teacher_sessions(self, tuition_service, mock_db):
         """Test getting teacher sessions"""
-        with patch.object(tuition_service, 'list_sessions', return_value=[TuitionSession(id=1)]) as mock_list:
+        with patch.object(
+            tuition_service, "list_sessions", return_value=[TuitionSession(id=1)]
+        ) as mock_list:
             result = await tuition_service.get_teacher_sessions(
-                teacher_id=1,
-                course_id=1,
-                status=SessionStatus.SCHEDULED
+                teacher_id=1, course_id=1, status=SessionStatus.SCHEDULED
             )
 
             mock_list.assert_called_once()
@@ -1053,7 +1026,9 @@ class TestTeacherSessions:
     @pytest.mark.asyncio
     async def test_get_teacher_upcoming_sessions(self, tuition_service, mock_db):
         """Test getting upcoming sessions for teacher"""
-        with patch.object(tuition_service, 'get_teacher_sessions', return_value=[TuitionSession(id=1)]) as mock_get:
+        with patch.object(
+            tuition_service, "get_teacher_sessions", return_value=[TuitionSession(id=1)]
+        ) as mock_get:
             result = await tuition_service.get_teacher_upcoming_sessions(teacher_id=1, limit=5)
 
             mock_get.assert_called_once()
@@ -1083,40 +1058,32 @@ class TestStartEndSessionErrors:
     @pytest.mark.asyncio
     async def test_start_session_not_found(self, tuition_service, mock_db):
         """Test starting non-existent session"""
-        with patch.object(tuition_service, 'get_session_by_id', return_value=None):
+        with patch.object(tuition_service, "get_session_by_id", return_value=None):
             with pytest.raises(NotFoundError, match="Session not found"):
                 await tuition_service.start_session(1, teacher_id=1)
 
     @pytest.mark.asyncio
     async def test_end_session_not_found(self, tuition_service, mock_db):
         """Test ending non-existent session"""
-        with patch.object(tuition_service, 'get_session_by_id', return_value=None):
+        with patch.object(tuition_service, "get_session_by_id", return_value=None):
             with pytest.raises(NotFoundError, match="Session not found"):
                 await tuition_service.end_session(1, teacher_id=1)
 
     @pytest.mark.asyncio
     async def test_end_session_unauthorized(self, tuition_service, mock_db):
         """Test ending session with unauthorized teacher"""
-        mock_session = TuitionSession(
-            id=1,
-            teacher_id=1,
-            status=SessionStatus.IN_PROGRESS
-        )
+        mock_session = TuitionSession(id=1, teacher_id=1, status=SessionStatus.IN_PROGRESS)
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
             with pytest.raises(ValidationError, match="Not authorized"):
                 await tuition_service.end_session(1, teacher_id=2)
 
     @pytest.mark.asyncio
     async def test_end_session_invalid_status(self, tuition_service, mock_db):
         """Test ending session with invalid status"""
-        mock_session = TuitionSession(
-            id=1,
-            teacher_id=1,
-            status=SessionStatus.SCHEDULED
-        )
+        mock_session = TuitionSession(id=1, teacher_id=1, status=SessionStatus.SCHEDULED)
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
             with pytest.raises(ValidationError, match="Session is not in progress"):
                 await tuition_service.end_session(1, teacher_id=1)
 
@@ -1136,7 +1103,7 @@ class TestAttendanceEdgeCases:
             student_id=1,
             course_id=1,
             start_date=date.today() - timedelta(days=30),
-            end_date=date.today()
+            end_date=date.today(),
         )
 
         assert len(result) == 2
@@ -1155,7 +1122,7 @@ class TestAssignmentEdgeCases:
             title="Test Assignment",
             description="Description",
             due_date=datetime.now(timezone.utc) + timedelta(days=7),
-            max_points=100
+            max_points=100,
         )
 
         with pytest.raises(NotFoundError, match="Course not found"):
@@ -1182,9 +1149,7 @@ class TestAssignmentEdgeCases:
         mock_db.execute.return_value = mock_result
 
         result = await tuition_service.list_assignments(
-            course_id=1,
-            teacher_id=1,
-            published_only=False
+            course_id=1, teacher_id=1, published_only=False
         )
 
         assert len(result) == 2
@@ -1219,7 +1184,9 @@ class TestAssignmentEdgeCases:
     @pytest.mark.asyncio
     async def test_get_teacher_assignments(self, tuition_service, mock_db):
         """Test getting teacher assignments"""
-        with patch.object(tuition_service, 'list_assignments', return_value=[Assignment(id=1)]) as mock_list:
+        with patch.object(
+            tuition_service, "list_assignments", return_value=[Assignment(id=1)]
+        ) as mock_list:
             result = await tuition_service.get_teacher_assignments(teacher_id=1)
 
             mock_list.assert_called_once()
@@ -1228,12 +1195,10 @@ class TestAssignmentEdgeCases:
     @pytest.mark.asyncio
     async def test_submit_assignment_not_found(self, tuition_service, mock_db):
         """Test submitting non-existent assignment"""
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=None):
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=None):
             with pytest.raises(NotFoundError, match="Assignment not found"):
                 await tuition_service.submit_assignment(
-                    assignment_id=999,
-                    student_id=1,
-                    submission_text="Test"
+                    assignment_id=999, student_id=1, submission_text="Test"
                 )
 
     @pytest.mark.asyncio
@@ -1241,13 +1206,13 @@ class TestAssignmentEdgeCases:
         """Test submitting assignment when student not enrolled"""
         mock_assignment = Assignment(id=1, course_id=1, is_published=True)
 
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=mock_assignment):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=None):
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=mock_assignment):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=None
+            ):
                 with pytest.raises(ValidationError, match="Student not enrolled"):
                     await tuition_service.submit_assignment(
-                        assignment_id=1,
-                        student_id=1,
-                        submission_text="Test"
+                        assignment_id=1, student_id=1, submission_text="Test"
                     )
 
     @pytest.mark.asyncio
@@ -1258,18 +1223,20 @@ class TestAssignmentEdgeCases:
             course_id=1,
             is_published=True,
             allow_late_submission=False,
-            due_date=datetime.now(timezone.utc) - timedelta(days=1)
+            due_date=datetime.now(timezone.utc) - timedelta(days=1),
         )
         mock_enrollment = Enrollment(id=1, student_id=1, course_id=1)
 
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=mock_assignment):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=mock_enrollment):
-                with patch.object(tuition_service, 'get_student_assignment_submission', return_value=None):
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=mock_assignment):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=mock_enrollment
+            ):
+                with patch.object(
+                    tuition_service, "get_student_assignment_submission", return_value=None
+                ):
                     with pytest.raises(ValidationError, match="Assignment deadline has passed"):
                         await tuition_service.submit_assignment(
-                            assignment_id=1,
-                            student_id=1,
-                            submission_text="Test"
+                            assignment_id=1, student_id=1, submission_text="Test"
                         )
 
     @pytest.mark.asyncio
@@ -1292,7 +1259,9 @@ class TestAssignmentEdgeCases:
         mock_result.scalar_one_or_none.return_value = mock_submission
         mock_db.execute.return_value = mock_result
 
-        result = await tuition_service.get_student_assignment_submission(assignment_id=1, student_id=1)
+        result = await tuition_service.get_student_assignment_submission(
+            assignment_id=1, student_id=1
+        )
 
         assert result == mock_submission
 
@@ -1311,13 +1280,9 @@ class TestAssignmentEdgeCases:
     @pytest.mark.asyncio
     async def test_grade_submission_not_found(self, tuition_service, mock_db):
         """Test grading non-existent submission"""
-        with patch.object(tuition_service, 'get_submission_by_id', return_value=None):
+        with patch.object(tuition_service, "get_submission_by_id", return_value=None):
             with pytest.raises(NotFoundError, match="Submission not found"):
-                await tuition_service.grade_submission(
-                    submission_id=999,
-                    points=85,
-                    grade="B+"
-                )
+                await tuition_service.grade_submission(submission_id=999, points=85, grade="B+")
 
 
 class TestStudyMaterialEdgeCases:
@@ -1333,7 +1298,7 @@ class TestStudyMaterialEdgeCases:
             title="Material",
             description="Description",
             material_type="pdf",
-            file_url="https://example.com/file.pdf"
+            file_url="https://example.com/file.pdf",
         )
 
         with pytest.raises(NotFoundError, match="Course not found"):
@@ -1350,7 +1315,7 @@ class TestStudyMaterialEdgeCases:
             title="Material",
             description="Description",
             material_type="pdf",
-            file_url="https://example.com/file.pdf"
+            file_url="https://example.com/file.pdf",
         )
 
         with pytest.raises(ValidationError, match="Teacher not authorized"):
@@ -1376,10 +1341,7 @@ class TestStudyMaterialEdgeCases:
         mock_result.scalars.return_value.all.return_value = mock_materials
         mock_db.execute.return_value = mock_result
 
-        result = await tuition_service.list_study_materials(
-            user_id=1,
-            user_role="teacher"
-        )
+        result = await tuition_service.list_study_materials(user_id=1, user_role="teacher")
 
         assert len(result) == 1
 
@@ -1392,10 +1354,7 @@ class TestStudyMaterialEdgeCases:
         mock_db.execute.return_value = mock_result
 
         result = await tuition_service.list_study_materials(
-            course_id=1,
-            session_id=1,
-            category="notes",
-            material_type="pdf"
+            course_id=1, session_id=1, category="notes", material_type="pdf"
         )
 
         assert len(result) == 1
@@ -1403,7 +1362,7 @@ class TestStudyMaterialEdgeCases:
     @pytest.mark.asyncio
     async def test_increment_material_view_count_not_found(self, tuition_service, mock_db):
         """Test incrementing view count for non-existent material"""
-        with patch.object(tuition_service, 'get_study_material_by_id', return_value=None):
+        with patch.object(tuition_service, "get_study_material_by_id", return_value=None):
             result = await tuition_service.increment_material_view_count(999)
 
         assert result is False
@@ -1424,7 +1383,7 @@ class TestQuizEdgeCases:
             duration_minutes=30,
             available_from=datetime.now(timezone.utc),
             available_until=datetime.now(timezone.utc) + timedelta(days=7),
-            questions=[]
+            questions=[],
         )
 
         with pytest.raises(NotFoundError, match="Course not found"):
@@ -1443,7 +1402,7 @@ class TestQuizEdgeCases:
             duration_minutes=30,
             available_from=datetime.now(timezone.utc),
             available_until=datetime.now(timezone.utc) + timedelta(days=7),
-            questions=[]
+            questions=[],
         )
 
         with pytest.raises(ValidationError, match="Teacher not authorized"):
@@ -1470,10 +1429,7 @@ class TestQuizEdgeCases:
         mock_db.execute.return_value = mock_result
 
         result = await tuition_service.list_quizzes(
-            course_id=1,
-            published_only=True,
-            skip=0,
-            limit=10
+            course_id=1, published_only=True, skip=0, limit=10
         )
 
         assert len(result) == 2
@@ -1514,9 +1470,7 @@ class TestQuizEdgeCases:
         mock_db.execute.return_value = mock_result
 
         result = await tuition_service.get_teacher_quizzes(
-            teacher_id=1,
-            course_id=1,
-            published_only=True
+            teacher_id=1, course_id=1, published_only=True
         )
 
         assert len(result) == 2
@@ -1524,7 +1478,7 @@ class TestQuizEdgeCases:
     @pytest.mark.asyncio
     async def test_start_quiz_attempt_not_found(self, tuition_service, mock_db):
         """Test starting quiz attempt for non-existent quiz"""
-        with patch.object(tuition_service, 'get_quiz_by_id', return_value=None):
+        with patch.object(tuition_service, "get_quiz_by_id", return_value=None):
             with pytest.raises(NotFoundError, match="Quiz not found"):
                 await tuition_service.start_quiz_attempt(quiz_id=999, student_id=1)
 
@@ -1537,10 +1491,10 @@ class TestQuizEdgeCases:
             is_published=False,
             max_attempts=3,
             available_from=datetime.now(timezone.utc) - timedelta(hours=1),
-            available_until=datetime.now(timezone.utc) + timedelta(hours=1)
+            available_until=datetime.now(timezone.utc) + timedelta(hours=1),
         )
 
-        with patch.object(tuition_service, 'get_quiz_by_id', return_value=mock_quiz):
+        with patch.object(tuition_service, "get_quiz_by_id", return_value=mock_quiz):
             with pytest.raises(ValidationError, match="Quiz is not available"):
                 await tuition_service.start_quiz_attempt(quiz_id=1, student_id=1)
 
@@ -1553,18 +1507,20 @@ class TestQuizEdgeCases:
             is_published=True,
             max_attempts=3,
             available_from=datetime.now(timezone.utc) - timedelta(hours=1),
-            available_until=datetime.now(timezone.utc) + timedelta(hours=1)
+            available_until=datetime.now(timezone.utc) + timedelta(hours=1),
         )
 
-        with patch.object(tuition_service, 'get_quiz_by_id', return_value=mock_quiz):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=None):
+        with patch.object(tuition_service, "get_quiz_by_id", return_value=mock_quiz):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=None
+            ):
                 with pytest.raises(ValidationError, match="Student not enrolled"):
                     await tuition_service.start_quiz_attempt(quiz_id=1, student_id=1)
 
     @pytest.mark.asyncio
     async def test_submit_quiz_attempt_not_found(self, tuition_service, mock_db):
         """Test submitting non-existent quiz attempt"""
-        with patch.object(tuition_service, 'get_quiz_attempt_by_id', return_value=None):
+        with patch.object(tuition_service, "get_quiz_attempt_by_id", return_value=None):
             with pytest.raises(NotFoundError, match="Quiz attempt not found"):
                 await tuition_service.submit_quiz_attempt(attempt_id=999, answers={})
 
@@ -1573,7 +1529,7 @@ class TestQuizEdgeCases:
         """Test submitting already completed quiz attempt"""
         mock_attempt = QuizAttempt(id=1, is_completed=True)
 
-        with patch.object(tuition_service, 'get_quiz_attempt_by_id', return_value=mock_attempt):
+        with patch.object(tuition_service, "get_quiz_attempt_by_id", return_value=mock_attempt):
             with pytest.raises(ValidationError, match="Quiz attempt already submitted"):
                 await tuition_service.submit_quiz_attempt(attempt_id=1, answers={})
 
@@ -1585,11 +1541,11 @@ class TestQuizEdgeCases:
             id=1,
             quiz_id=1,
             is_completed=False,
-            started_at=datetime.now(timezone.utc) - timedelta(minutes=60)
+            started_at=datetime.now(timezone.utc) - timedelta(minutes=60),
         )
 
-        with patch.object(tuition_service, 'get_quiz_attempt_by_id', return_value=mock_attempt):
-            with patch.object(tuition_service, 'get_quiz_by_id', return_value=mock_quiz):
+        with patch.object(tuition_service, "get_quiz_attempt_by_id", return_value=mock_attempt):
+            with patch.object(tuition_service, "get_quiz_by_id", return_value=mock_quiz):
                 with pytest.raises(ValidationError, match="Time limit exceeded"):
                     await tuition_service.submit_quiz_attempt(attempt_id=1, answers={})
 
@@ -1602,26 +1558,19 @@ class TestQuizEdgeCases:
             question_text="Is this true?",
             question_type="true_false",
             points=5,
-            correct_answer="True"
+            correct_answer="True",
         )
         mock_quiz = Quiz(
-            id=1,
-            duration_minutes=0,
-            total_points=5,
-            passing_score=3,
-            questions=[mock_question]
+            id=1, duration_minutes=0, total_points=5, passing_score=3, questions=[mock_question]
         )
         mock_attempt = QuizAttempt(
-            id=1,
-            quiz_id=1,
-            is_completed=False,
-            started_at=datetime.now(timezone.utc)
+            id=1, quiz_id=1, is_completed=False, started_at=datetime.now(timezone.utc)
         )
 
         answers = {"1": "true"}
 
-        with patch.object(tuition_service, 'get_quiz_attempt_by_id', return_value=mock_attempt):
-            with patch.object(tuition_service, 'get_quiz_by_id', return_value=mock_quiz):
+        with patch.object(tuition_service, "get_quiz_attempt_by_id", return_value=mock_attempt):
+            with patch.object(tuition_service, "get_quiz_by_id", return_value=mock_quiz):
                 result = await tuition_service.submit_quiz_attempt(attempt_id=1, answers=answers)
 
         assert mock_attempt.is_completed
@@ -1665,7 +1614,7 @@ class TestProgressReportsEdgeCases:
                 report_period="monthly",
                 start_date=datetime.now(timezone.utc) - timedelta(days=30),
                 end_date=datetime.now(timezone.utc),
-                teacher_id=1
+                teacher_id=1,
             )
 
     @pytest.mark.asyncio
@@ -1674,27 +1623,31 @@ class TestProgressReportsEdgeCases:
         mock_enrollment = Enrollment(id=1, student_id=1, course_id=1)
         mock_db.get.return_value = mock_enrollment
 
-        with patch.object(tuition_service, '_calculate_attendance_stats', return_value={
-            "total_sessions": 10,
-            "attended_sessions": 8,
-            "attendance_percentage": 80.0
-        }):
-            with patch.object(tuition_service, '_calculate_assignment_stats', return_value={
-                "total": 5,
-                "completed": 4,
-                "average_score": 85.0
-            }):
-                with patch.object(tuition_service, '_calculate_quiz_stats', return_value={
-                    "taken": 3,
-                    "passed": 3,
-                    "average_score": 85.0
-                }):
+        with patch.object(
+            tuition_service,
+            "_calculate_attendance_stats",
+            return_value={
+                "total_sessions": 10,
+                "attended_sessions": 8,
+                "attendance_percentage": 80.0,
+            },
+        ):
+            with patch.object(
+                tuition_service,
+                "_calculate_assignment_stats",
+                return_value={"total": 5, "completed": 4, "average_score": 85.0},
+            ):
+                with patch.object(
+                    tuition_service,
+                    "_calculate_quiz_stats",
+                    return_value={"taken": 3, "passed": 3, "average_score": 85.0},
+                ):
                     result = await tuition_service.generate_progress_report(
                         enrollment_id=1,
                         report_period="monthly",
                         start_date=datetime.now(timezone.utc) - timedelta(days=30),
                         end_date=datetime.now(timezone.utc),
-                        teacher_id=1
+                        teacher_id=1,
                     )
 
         assert mock_db.add.called
@@ -1705,27 +1658,31 @@ class TestProgressReportsEdgeCases:
         mock_enrollment = Enrollment(id=1, student_id=1, course_id=1)
         mock_db.get.return_value = mock_enrollment
 
-        with patch.object(tuition_service, '_calculate_attendance_stats', return_value={
-            "total_sessions": 10,
-            "attended_sessions": 7,
-            "attendance_percentage": 70.0
-        }):
-            with patch.object(tuition_service, '_calculate_assignment_stats', return_value={
-                "total": 5,
-                "completed": 3,
-                "average_score": 75.0
-            }):
-                with patch.object(tuition_service, '_calculate_quiz_stats', return_value={
-                    "taken": 3,
-                    "passed": 2,
-                    "average_score": 75.0
-                }):
+        with patch.object(
+            tuition_service,
+            "_calculate_attendance_stats",
+            return_value={
+                "total_sessions": 10,
+                "attended_sessions": 7,
+                "attendance_percentage": 70.0,
+            },
+        ):
+            with patch.object(
+                tuition_service,
+                "_calculate_assignment_stats",
+                return_value={"total": 5, "completed": 3, "average_score": 75.0},
+            ):
+                with patch.object(
+                    tuition_service,
+                    "_calculate_quiz_stats",
+                    return_value={"taken": 3, "passed": 2, "average_score": 75.0},
+                ):
                     result = await tuition_service.generate_progress_report(
                         enrollment_id=1,
                         report_period="monthly",
                         start_date=datetime.now(timezone.utc) - timedelta(days=30),
                         end_date=datetime.now(timezone.utc),
-                        teacher_id=1
+                        teacher_id=1,
                     )
 
         assert mock_db.add.called
@@ -1736,27 +1693,31 @@ class TestProgressReportsEdgeCases:
         mock_enrollment = Enrollment(id=1, student_id=1, course_id=1)
         mock_db.get.return_value = mock_enrollment
 
-        with patch.object(tuition_service, '_calculate_attendance_stats', return_value={
-            "total_sessions": 10,
-            "attended_sessions": 6,
-            "attendance_percentage": 60.0
-        }):
-            with patch.object(tuition_service, '_calculate_assignment_stats', return_value={
-                "total": 5,
-                "completed": 3,
-                "average_score": 65.0
-            }):
-                with patch.object(tuition_service, '_calculate_quiz_stats', return_value={
-                    "taken": 3,
-                    "passed": 2,
-                    "average_score": 65.0
-                }):
+        with patch.object(
+            tuition_service,
+            "_calculate_attendance_stats",
+            return_value={
+                "total_sessions": 10,
+                "attended_sessions": 6,
+                "attendance_percentage": 60.0,
+            },
+        ):
+            with patch.object(
+                tuition_service,
+                "_calculate_assignment_stats",
+                return_value={"total": 5, "completed": 3, "average_score": 65.0},
+            ):
+                with patch.object(
+                    tuition_service,
+                    "_calculate_quiz_stats",
+                    return_value={"taken": 3, "passed": 2, "average_score": 65.0},
+                ):
                     result = await tuition_service.generate_progress_report(
                         enrollment_id=1,
                         report_period="monthly",
                         start_date=datetime.now(timezone.utc) - timedelta(days=30),
                         end_date=datetime.now(timezone.utc),
-                        teacher_id=1
+                        teacher_id=1,
                     )
 
         assert mock_db.add.called
@@ -1767,27 +1728,31 @@ class TestProgressReportsEdgeCases:
         mock_enrollment = Enrollment(id=1, student_id=1, course_id=1)
         mock_db.get.return_value = mock_enrollment
 
-        with patch.object(tuition_service, '_calculate_attendance_stats', return_value={
-            "total_sessions": 10,
-            "attended_sessions": 5,
-            "attendance_percentage": 50.0
-        }):
-            with patch.object(tuition_service, '_calculate_assignment_stats', return_value={
-                "total": 5,
-                "completed": 2,
-                "average_score": 50.0
-            }):
-                with patch.object(tuition_service, '_calculate_quiz_stats', return_value={
-                    "taken": 3,
-                    "passed": 1,
-                    "average_score": 50.0
-                }):
+        with patch.object(
+            tuition_service,
+            "_calculate_attendance_stats",
+            return_value={
+                "total_sessions": 10,
+                "attended_sessions": 5,
+                "attendance_percentage": 50.0,
+            },
+        ):
+            with patch.object(
+                tuition_service,
+                "_calculate_assignment_stats",
+                return_value={"total": 5, "completed": 2, "average_score": 50.0},
+            ):
+                with patch.object(
+                    tuition_service,
+                    "_calculate_quiz_stats",
+                    return_value={"taken": 3, "passed": 1, "average_score": 50.0},
+                ):
                     result = await tuition_service.generate_progress_report(
                         enrollment_id=1,
                         report_period="monthly",
                         start_date=datetime.now(timezone.utc) - timedelta(days=30),
                         end_date=datetime.now(timezone.utc),
-                        teacher_id=1
+                        teacher_id=1,
                     )
 
         assert mock_db.add.called
@@ -1801,9 +1766,7 @@ class TestProgressReportsEdgeCases:
         mock_db.execute.return_value = mock_result
 
         result = await tuition_service.get_progress_reports(
-            student_id=1,
-            course_id=1,
-            report_period="monthly"
+            student_id=1, course_id=1, report_period="monthly"
         )
 
         assert len(result) == 2
@@ -1817,35 +1780,27 @@ class TestAnalyticsEdgeCases:
         """Test getting course analytics with date filters"""
         mock_session_result = MagicMock()
         mock_session_result.first.return_value = MagicMock(
-            total_sessions=10,
-            completed_sessions=8,
-            avg_duration=60
+            total_sessions=10, completed_sessions=8, avg_duration=60
         )
 
         mock_enrollment_result = MagicMock()
         mock_enrollment_result.first.return_value = MagicMock(
-            total_enrollments=20,
-            active_enrollments=15,
-            avg_completion=75
+            total_enrollments=20, active_enrollments=15, avg_completion=75
         )
 
         mock_attendance_result = MagicMock()
         mock_attendance_result.first.return_value = MagicMock(
-            total_attendance_records=100,
-            present_count=85,
-            avg_participation=4.5
+            total_attendance_records=100, present_count=85, avg_participation=4.5
         )
 
         mock_db.execute.side_effect = [
             mock_session_result,
             mock_enrollment_result,
-            mock_attendance_result
+            mock_attendance_result,
         ]
 
         result = await tuition_service.get_course_analytics(
-            course_id=1,
-            start_date=date.today() - timedelta(days=30),
-            end_date=date.today()
+            course_id=1, start_date=date.today() - timedelta(days=30), end_date=date.today()
         )
 
         assert "sessions" in result
@@ -1862,30 +1817,24 @@ class TestAnalyticsEdgeCases:
 
         mock_attendance_result = MagicMock()
         mock_attendance_result.first.return_value = MagicMock(
-            total_sessions=10,
-            attended_sessions=8,
-            avg_participation=4.5
+            total_sessions=10, attended_sessions=8, avg_participation=4.5
         )
 
         mock_assignment_result = MagicMock()
         mock_assignment_result.first.return_value = MagicMock(
-            total_submissions=5,
-            graded_submissions=4,
-            avg_points=85.0
+            total_submissions=5, graded_submissions=4, avg_points=85.0
         )
 
         mock_quiz_result = MagicMock()
         mock_quiz_result.first.return_value = MagicMock(
-            total_attempts=3,
-            passed_attempts=3,
-            avg_percentage=90.0
+            total_attempts=3, passed_attempts=3, avg_percentage=90.0
         )
 
         mock_db.execute.side_effect = [
             mock_enrollment_result,
             mock_attendance_result,
             mock_assignment_result,
-            mock_quiz_result
+            mock_quiz_result,
         ]
 
         result = await tuition_service.get_student_analytics(student_id=1, course_id=1)
@@ -1900,11 +1849,9 @@ class TestPermissionChecksEdgeCases:
     @pytest.mark.asyncio
     async def test_check_session_access_session_not_found(self, tuition_service, mock_db):
         """Test checking access to non-existent session"""
-        with patch.object(tuition_service, 'get_session_by_id', return_value=None):
+        with patch.object(tuition_service, "get_session_by_id", return_value=None):
             result = await tuition_service.check_session_access(
-                session_id=999,
-                user_id=1,
-                user_role="student"
+                session_id=999, user_id=1, user_role="student"
             )
 
         assert result is False
@@ -1914,12 +1861,12 @@ class TestPermissionChecksEdgeCases:
         """Test student access when not enrolled"""
         mock_session = TuitionSession(id=1, course_id=1)
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=None):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=None
+            ):
                 result = await tuition_service.check_session_access(
-                    session_id=1,
-                    user_id=1,
-                    user_role="student"
+                    session_id=1, user_id=1, user_role="student"
                 )
 
         assert result is False
@@ -1929,11 +1876,9 @@ class TestPermissionChecksEdgeCases:
         """Test checking session access with unknown role"""
         mock_session = TuitionSession(id=1, teacher_id=1)
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
             result = await tuition_service.check_session_access(
-                session_id=1,
-                user_id=1,
-                user_role="unknown"
+                session_id=1, user_id=1, user_role="unknown"
             )
 
         assert result is False
@@ -1941,11 +1886,9 @@ class TestPermissionChecksEdgeCases:
     @pytest.mark.asyncio
     async def test_check_assignment_access_not_found(self, tuition_service, mock_db):
         """Test checking access to non-existent assignment"""
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=None):
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=None):
             result = await tuition_service.check_assignment_access(
-                assignment_id=999,
-                user_id=1,
-                user_role="student"
+                assignment_id=999, user_id=1, user_role="student"
             )
 
         assert result is False
@@ -1955,11 +1898,9 @@ class TestPermissionChecksEdgeCases:
         """Test student access to unpublished assignment"""
         mock_assignment = Assignment(id=1, teacher_id=1, is_published=False, course_id=1)
 
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=mock_assignment):
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=mock_assignment):
             result = await tuition_service.check_assignment_access(
-                assignment_id=1,
-                user_id=1,
-                user_role="student"
+                assignment_id=1, user_id=1, user_role="student"
             )
 
         assert result is False
@@ -1969,12 +1910,12 @@ class TestPermissionChecksEdgeCases:
         """Test student access to assignment when not enrolled"""
         mock_assignment = Assignment(id=1, teacher_id=1, is_published=True, course_id=1)
 
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=mock_assignment):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=None):
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=mock_assignment):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=None
+            ):
                 result = await tuition_service.check_assignment_access(
-                    assignment_id=1,
-                    user_id=1,
-                    user_role="student"
+                    assignment_id=1, user_id=1, user_role="student"
                 )
 
         assert result is False
@@ -1984,11 +1925,9 @@ class TestPermissionChecksEdgeCases:
         """Test checking assignment access with unknown role"""
         mock_assignment = Assignment(id=1, teacher_id=1)
 
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=mock_assignment):
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=mock_assignment):
             result = await tuition_service.check_assignment_access(
-                assignment_id=1,
-                user_id=1,
-                user_role="unknown"
+                assignment_id=1, user_id=1, user_role="unknown"
             )
 
         assert result is False
@@ -1996,11 +1935,9 @@ class TestPermissionChecksEdgeCases:
     @pytest.mark.asyncio
     async def test_check_material_access_not_found(self, tuition_service, mock_db):
         """Test checking access to non-existent material"""
-        with patch.object(tuition_service, 'get_study_material_by_id', return_value=None):
+        with patch.object(tuition_service, "get_study_material_by_id", return_value=None):
             result = await tuition_service.check_material_access(
-                material_id=999,
-                user_id=1,
-                user_role="student"
+                material_id=999, user_id=1, user_role="student"
             )
 
         assert result is False
@@ -2010,32 +1947,27 @@ class TestPermissionChecksEdgeCases:
         """Test teacher access to private material"""
         mock_material = StudyMaterial(id=1, teacher_id=1, is_public=False)
 
-        with patch.object(tuition_service, 'get_study_material_by_id', return_value=mock_material):
+        with patch.object(tuition_service, "get_study_material_by_id", return_value=mock_material):
             result = await tuition_service.check_material_access(
-                material_id=1,
-                user_id=1,
-                user_role="teacher"
+                material_id=1, user_id=1, user_role="teacher"
             )
 
         assert result is True
 
     @pytest.mark.asyncio
-    async def test_check_material_access_student_requires_enrollment(self, tuition_service, mock_db):
+    async def test_check_material_access_student_requires_enrollment(
+        self, tuition_service, mock_db
+    ):
         """Test student access to material requiring enrollment"""
-        mock_material = StudyMaterial(
-            id=1,
-            course_id=1,
-            is_public=False,
-            requires_enrollment=True
-        )
+        mock_material = StudyMaterial(id=1, course_id=1, is_public=False, requires_enrollment=True)
         mock_enrollment = Enrollment(id=1, status=EnrollmentStatus.ACTIVE)
 
-        with patch.object(tuition_service, 'get_study_material_by_id', return_value=mock_material):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=mock_enrollment):
+        with patch.object(tuition_service, "get_study_material_by_id", return_value=mock_material):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=mock_enrollment
+            ):
                 result = await tuition_service.check_material_access(
-                    material_id=1,
-                    user_id=1,
-                    user_role="student"
+                    material_id=1, user_id=1, user_role="student"
                 )
 
         assert result is True
@@ -2043,19 +1975,14 @@ class TestPermissionChecksEdgeCases:
     @pytest.mark.asyncio
     async def test_check_material_access_student_not_enrolled(self, tuition_service, mock_db):
         """Test student access when not enrolled"""
-        mock_material = StudyMaterial(
-            id=1,
-            course_id=1,
-            is_public=False,
-            requires_enrollment=True
-        )
+        mock_material = StudyMaterial(id=1, course_id=1, is_public=False, requires_enrollment=True)
 
-        with patch.object(tuition_service, 'get_study_material_by_id', return_value=mock_material):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=None):
+        with patch.object(tuition_service, "get_study_material_by_id", return_value=mock_material):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=None
+            ):
                 result = await tuition_service.check_material_access(
-                    material_id=1,
-                    user_id=1,
-                    user_role="student"
+                    material_id=1, user_id=1, user_role="student"
                 )
 
         assert result is False
@@ -2065,11 +1992,9 @@ class TestPermissionChecksEdgeCases:
         """Test checking material access with unknown role"""
         mock_material = StudyMaterial(id=1, is_public=False)
 
-        with patch.object(tuition_service, 'get_study_material_by_id', return_value=mock_material):
+        with patch.object(tuition_service, "get_study_material_by_id", return_value=mock_material):
             result = await tuition_service.check_material_access(
-                material_id=1,
-                user_id=1,
-                user_role="unknown"
+                material_id=1, user_id=1, user_role="unknown"
             )
 
         assert result is False
@@ -2120,7 +2045,7 @@ class TestHelperMethodsEdgeCases:
             teacher_id=1,
             scheduled_date=datetime.now(timezone.utc) + timedelta(days=1),
             start_time=time(10, 0),
-            end_time=time(11, 0)
+            end_time=time(11, 0),
         )
 
         assert result is True
@@ -2137,7 +2062,7 @@ class TestHelperMethodsEdgeCases:
             scheduled_date=datetime.now(timezone.utc) + timedelta(days=1),
             start_time=time(10, 0),
             end_time=time(11, 0),
-            exclude_session_id=1
+            exclude_session_id=1,
         )
 
         assert result is False
@@ -2145,7 +2070,7 @@ class TestHelperMethodsEdgeCases:
     @pytest.mark.asyncio
     async def test_get_student_enrollment_session_not_found(self, tuition_service, mock_db):
         """Test getting student enrollment for non-existent session"""
-        with patch.object(tuition_service, 'get_session_by_id', return_value=None):
+        with patch.object(tuition_service, "get_session_by_id", return_value=None):
             result = await tuition_service._get_student_enrollment(student_id=1, session_id=999)
 
         assert result is None
@@ -2156,8 +2081,10 @@ class TestHelperMethodsEdgeCases:
         mock_session = TuitionSession(id=1, course_id=1)
         mock_enrollment = Enrollment(id=1, student_id=1, course_id=1)
 
-        with patch.object(tuition_service, 'get_session_by_id', return_value=mock_session):
-            with patch.object(tuition_service, '_get_student_enrollment_by_course', return_value=mock_enrollment):
+        with patch.object(tuition_service, "get_session_by_id", return_value=mock_session):
+            with patch.object(
+                tuition_service, "_get_student_enrollment_by_course", return_value=mock_enrollment
+            ):
                 result = await tuition_service._get_student_enrollment(student_id=1, session_id=1)
 
         assert result == mock_enrollment
@@ -2171,15 +2098,13 @@ class TestTuitionServiceEdgeCases:
         """Test listing assignments with published_only=True filter"""
         mock_assignments = [
             Assignment(id=1, title="Published Assignment", is_published=True),
-            Assignment(id=2, title="Another Published", is_published=True)
+            Assignment(id=2, title="Another Published", is_published=True),
         ]
         mock_result = MagicMock()
         mock_result.scalars.return_value.all.return_value = mock_assignments
         mock_db.execute.return_value = mock_result
 
-        result = await tuition_service.list_assignments(
-            published_only=True
-        )
+        result = await tuition_service.list_assignments(published_only=True)
 
         assert len(result) == 2
         # Verify the query includes the is_published filter
@@ -2189,21 +2114,17 @@ class TestTuitionServiceEdgeCases:
     async def test_check_assignment_access_as_teacher(self, tuition_service, mock_db):
         """Test assignment access check for teacher role"""
         mock_assignment = Assignment(id=1, teacher_id=5, is_published=True)
-        
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=mock_assignment):
+
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=mock_assignment):
             # Teacher accessing their own assignment
             result = await tuition_service.check_assignment_access(
-                assignment_id=1,
-                user_id=5,
-                user_role="teacher"
+                assignment_id=1, user_id=5, user_role="teacher"
             )
             assert result is True
 
             # Teacher accessing someone else's assignment
             result = await tuition_service.check_assignment_access(
-                assignment_id=1,
-                user_id=999,
-                user_role="teacher"
+                assignment_id=1, user_id=999, user_role="teacher"
             )
             assert result is False
 
@@ -2212,23 +2133,21 @@ class TestTuitionServiceEdgeCases:
         """Test material access check for teacher role"""
         # Teacher's own material
         mock_material = StudyMaterial(id=1, teacher_id=5, is_public=False)
-        
-        with patch.object(tuition_service, 'get_study_material_by_id', return_value=mock_material):
+
+        with patch.object(tuition_service, "get_study_material_by_id", return_value=mock_material):
             result = await tuition_service.check_material_access(
-                material_id=1,
-                user_id=5,
-                user_role="teacher"
+                material_id=1, user_id=5, user_role="teacher"
             )
             assert result is True
 
         # Teacher accessing public material from another teacher
         mock_public_material = StudyMaterial(id=2, teacher_id=10, is_public=True)
-        
-        with patch.object(tuition_service, 'get_study_material_by_id', return_value=mock_public_material):
+
+        with patch.object(
+            tuition_service, "get_study_material_by_id", return_value=mock_public_material
+        ):
             result = await tuition_service.check_material_access(
-                material_id=2,
-                user_id=5,
-                user_role="teacher"
+                material_id=2, user_id=5, user_role="teacher"
             )
             assert result is True
 
@@ -2238,27 +2157,31 @@ class TestTuitionServiceEdgeCases:
         mock_enrollment = Enrollment(id=1, student_id=1, course_id=1)
         mock_db.get.return_value = mock_enrollment
 
-        with patch.object(tuition_service, '_calculate_attendance_stats', return_value={
-            "total_sessions": 10,
-            "attended_sessions": 9,
-            "attendance_percentage": 90.0
-        }):
-            with patch.object(tuition_service, '_calculate_assignment_stats', return_value={
-                "total": 5,
-                "completed": 5,
-                "average_score": 95.0
-            }):
-                with patch.object(tuition_service, '_calculate_quiz_stats', return_value={
-                    "taken": 3,
-                    "passed": 3,
-                    "average_score": 92.0
-                }):
+        with patch.object(
+            tuition_service,
+            "_calculate_attendance_stats",
+            return_value={
+                "total_sessions": 10,
+                "attended_sessions": 9,
+                "attendance_percentage": 90.0,
+            },
+        ):
+            with patch.object(
+                tuition_service,
+                "_calculate_assignment_stats",
+                return_value={"total": 5, "completed": 5, "average_score": 95.0},
+            ):
+                with patch.object(
+                    tuition_service,
+                    "_calculate_quiz_stats",
+                    return_value={"taken": 3, "passed": 3, "average_score": 92.0},
+                ):
                     result = await tuition_service.generate_progress_report(
                         enrollment_id=1,
                         report_period="monthly",
                         start_date=datetime.now(timezone.utc) - timedelta(days=30),
                         end_date=datetime.now(timezone.utc),
-                        teacher_id=1
+                        teacher_id=1,
                     )
 
         assert mock_db.add.called
@@ -2269,12 +2192,10 @@ class TestTuitionServiceEdgeCases:
         """Test assignment access check for admin role"""
         mock_assignment = Assignment(id=1, teacher_id=5, is_published=True)
 
-        with patch.object(tuition_service, 'get_assignment_by_id', return_value=mock_assignment):
+        with patch.object(tuition_service, "get_assignment_by_id", return_value=mock_assignment):
             # Admin should have access to any assignment
             result = await tuition_service.check_assignment_access(
-                assignment_id=1,
-                user_id=999,
-                user_role="admin"
+                assignment_id=1, user_id=999, user_role="admin"
             )
             assert result is True
         # This test covers line 1218: return True for admin role
@@ -2284,12 +2205,10 @@ class TestTuitionServiceEdgeCases:
         """Test material access check for admin role"""
         mock_material = StudyMaterial(id=1, teacher_id=5, is_public=False)
 
-        with patch.object(tuition_service, 'get_study_material_by_id', return_value=mock_material):
+        with patch.object(tuition_service, "get_study_material_by_id", return_value=mock_material):
             # Admin should have access to any material
             result = await tuition_service.check_material_access(
-                material_id=1,
-                user_id=999,
-                user_role="admin"
+                material_id=1, user_id=999, user_role="admin"
             )
             assert result is True
         # This test covers line 1237: return True for admin role

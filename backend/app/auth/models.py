@@ -1,15 +1,18 @@
 """
 Authentication models for users, credentials, sessions, and audit logs.
 """
-from datetime import datetime, timezone
-from typing import Optional, List
-from sqlmodel import SQLModel, Field, Column, JSON
-from sqlalchemy import Index, text
+
 import uuid
+from datetime import datetime, timezone
+from typing import List, Optional
+
+from sqlalchemy import Index, text
+from sqlmodel import JSON, Column, Field, SQLModel
 
 
 class User(SQLModel, table=True):
     """Core user identity model."""
+
     __tablename__ = "auth_users"
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -44,13 +47,14 @@ class User(SQLModel, table=True):
     last_login_at: Optional[datetime] = None
 
     __table_args__ = (
-        Index('idx_email_verified', 'email', 'email_verified'),
-        Index('idx_active_users', 'is_active', 'is_locked'),
+        Index("idx_email_verified", "email", "email_verified"),
+        Index("idx_active_users", "is_active", "is_locked"),
     )
 
 
 class Credential(SQLModel, table=True):
     """Password credentials - separate from User for security."""
+
     __tablename__ = "auth_credentials"
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -67,6 +71,7 @@ class Credential(SQLModel, table=True):
 
 class OAuthAccount(SQLModel, table=True):
     """Linked OAuth provider accounts."""
+
     __tablename__ = "auth_oauth_accounts"
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -85,13 +90,12 @@ class OAuthAccount(SQLModel, table=True):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    __table_args__ = (
-        Index('idx_provider_user', 'provider', 'provider_user_id', unique=True),
-    )
+    __table_args__ = (Index("idx_provider_user", "provider", "provider_user_id", unique=True),)
 
 
 class RefreshToken(SQLModel, table=True):
     """Refresh token storage with rotation tracking."""
+
     __tablename__ = "auth_refresh_tokens"
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -118,13 +122,14 @@ class RefreshToken(SQLModel, table=True):
     last_used_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
-        Index('idx_family_rotation', 'family_id', 'rotation_count'),
-        Index('idx_expiry', 'expires_at', 'is_revoked'),
+        Index("idx_family_rotation", "family_id", "rotation_count"),
+        Index("idx_expiry", "expires_at", "is_revoked"),
     )
 
 
 class Session(SQLModel, table=True):
     """Active user sessions for tracking and management."""
+
     __tablename__ = "auth_sessions"
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -148,13 +153,12 @@ class Session(SQLModel, table=True):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     expires_at: datetime
 
-    __table_args__ = (
-        Index('idx_user_current', 'user_id', 'is_current'),
-    )
+    __table_args__ = (Index("idx_user_current", "user_id", "is_current"),)
 
 
 class VerificationCode(SQLModel, table=True):
     """OTP codes for email verification, 2FA, password reset."""
+
     __tablename__ = "auth_verification_codes"
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -175,13 +179,12 @@ class VerificationCode(SQLModel, table=True):
     expires_at: datetime
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    __table_args__ = (
-        Index('idx_code_purpose', 'code_hash', 'purpose', 'is_used'),
-    )
+    __table_args__ = (Index("idx_code_purpose", "code_hash", "purpose", "is_used"),)
 
 
 class AuditLog(SQLModel, table=True):
     """Security audit trail for all auth events."""
+
     __tablename__ = "auth_audit_logs"
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -205,17 +208,18 @@ class AuditLog(SQLModel, table=True):
     timestamp: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         index=True,
-        sa_column_kwargs={"server_default": text("CURRENT_TIMESTAMP")}
+        sa_column_kwargs={"server_default": text("CURRENT_TIMESTAMP")},
     )
 
     __table_args__ = (
-        Index('idx_user_events', 'user_id', 'event_type', 'timestamp'),
-        Index('idx_failed_logins', 'email', 'event_type', 'event_status', 'timestamp'),
+        Index("idx_user_events", "user_id", "event_type", "timestamp"),
+        Index("idx_failed_logins", "email", "event_type", "event_status", "timestamp"),
     )
 
 
 class MagicLink(SQLModel, table=True):
     """Magic link tokens for passwordless authentication."""
+
     __tablename__ = "auth_magic_links"
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -234,6 +238,4 @@ class MagicLink(SQLModel, table=True):
     expires_at: datetime
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    __table_args__ = (
-        Index('idx_token_used', 'token_hash', 'is_used'),
-    )
+    __table_args__ = (Index("idx_token_used", "token_hash", "is_used"),)

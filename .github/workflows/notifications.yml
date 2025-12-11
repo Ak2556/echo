@@ -1,0 +1,127 @@
+name: Build Status Notifications
+
+on:
+  workflow_run:
+    workflows: ["CI/CD Pipeline", "Code Quality", "Performance Monitoring"]
+    types:
+      - completed
+
+jobs:
+  notify:
+    name: Send Notifications
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine workflow status
+        id: status
+        run: |
+          if [ "${{ github.event.workflow_run.conclusion }}" == "success" ]; then
+            echo "emoji=✅" >> $GITHUB_OUTPUT
+            echo "status=Success" >> $GITHUB_OUTPUT
+            echo "color=28a745" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.workflow_run.conclusion }}" == "failure" ]; then
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+            echo "status=Failed" >> $GITHUB_OUTPUT
+            echo "color=dc3545" >> $GITHUB_OUTPUT
+          else
+            echo "emoji=⚠️" >> $GITHUB_OUTPUT
+            echo "status=Cancelled" >> $GITHUB_OUTPUT
+            echo "color=ffc107" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create status badge
+        run: |
+          echo "## ${{ steps.status.outputs.emoji }} Build Status" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow:** ${{ github.event.workflow_run.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ steps.status.outputs.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.event.workflow_run.head_branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.event.workflow_run.head_sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Run URL:** ${{ github.event.workflow_run.html_url }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment on PR (if applicable)
+        if: github.event.workflow_run.event == 'pull_request'
+        uses: actions/github-script@v7
+        continue-on-error: true
+        with:
+          script: |
+            const workflowName = '${{ github.event.workflow_run.name }}';
+            const status = '${{ steps.status.outputs.status }}';
+            const emoji = '${{ steps.status.outputs.emoji }}';
+            const runUrl = '${{ github.event.workflow_run.html_url }}';
+
+            const comment = `${emoji} **${workflowName}** - ${status}
+
+            [View workflow run](${runUrl})`;
+
+            const prNumber = context.payload.workflow_run.pull_requests[0]?.number;
+
+            if (prNumber) {
+              await github.rest.issues.createComment({
+                issue_number: prNumber,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+
+  # ===========================================================================
+  # FAILURE NOTIFICATION
+  # ===========================================================================
+  notify-failure:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'failure'
+    timeout-minutes: 5
+
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const workflowName = '${{ github.event.workflow_run.name }}';
+            const runUrl = '${{ github.event.workflow_run.html_url }}';
+            const branch = '${{ github.event.workflow_run.head_branch }}';
+            const sha = '${{ github.event.workflow_run.head_sha }}';
+
+            // Check if issue already exists
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'ci-failure',
+              per_page: 100
+            });
+
+            const existingIssue = issues.data.find(issue =>
+              issue.title.includes(workflowName) &&
+              issue.body.includes(branch)
+            );
+
+            if (!existingIssue) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `❌ CI/CD Failure: ${workflowName} on ${branch}`,
+                body: `## Workflow Failure Report
+
+                **Workflow:** ${workflowName}
+                **Branch:** ${branch}
+                **Commit:** ${sha}
+                **Status:** Failed
+
+                ### Details
+                [View failed workflow run](${runUrl})
+
+                ### Action Required
+                Please investigate the failure and fix the issues.
+
+                ---
+                *This issue was automatically created by the notification workflow.*`,
+                labels: ['ci-failure', 'bug', 'high-priority']
+              });
+            }

@@ -2,6 +2,7 @@
 Production-ready Echo API application.
 Comprehensive FastAPI application with enterprise-grade features.
 """
+
 import asyncio
 import logging
 import sys
@@ -15,35 +16,39 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
-# from prometheus_client import make_asgi_app
 
 from app.api.v1.router import api_router
 from app.auth.routes import router as auth_router
 from app.core.config import get_settings
-from app.core.database import init_db, close_db
+from app.core.csrf import CSRFMiddleware, set_csrf_secret
+from app.core.database import close_db, init_db
 from app.core.exceptions import (
     APIException,
-    ValidationException,
     AuthenticationException,
     AuthorizationException,
     RateLimitException,
+    ValidationException,
     api_exception_handler,
-    validation_exception_handler,
     authentication_exception_handler,
     authorization_exception_handler,
-    rate_limit_exception_handler,
     general_exception_handler,
+    rate_limit_exception_handler,
+    validation_exception_handler,
 )
-from app.core.logging import setup_logging, get_logger
+from app.core.logging import get_logger, setup_logging
 from app.core.middleware import (
-    SecurityHeadersMiddleware,
-    RequestLoggingMiddleware,
     PerformanceMiddleware,
+    RequestLoggingMiddleware,
     RequestSizeLimitMiddleware,
+    SecurityHeadersMiddleware,
 )
-from app.core.csrf import CSRFMiddleware, set_csrf_secret
+
 # from app.core.monitoring import setup_monitoring
-from app.core.redis import init_redis, close_redis
+from app.core.redis import close_redis, init_redis
+
+# from prometheus_client import make_asgi_app
+
+
 # from app.core.security import setup_security
 
 # Initialize settings
@@ -58,52 +63,52 @@ logger = get_logger(__name__)
 async def lifespan(app: FastAPI):
     """Application lifespan manager for startup and shutdown events."""
     logger.info("Starting Echo API application", version=settings.app_version)
-    
+
     try:
         # Initialize database
         await init_db()
         logger.info("Database initialized successfully")
-        
+
         # Initialize Redis
         await init_redis()
         logger.info("Redis initialized successfully")
-        
+
         # Setup monitoring
         if settings.enable_metrics:
             # setup_monitoring()
             logger.info("Monitoring setup completed")
-        
+
         # Setup security
         # setup_security()
         logger.info("Security setup completed")
-        
+
         logger.info("Application startup completed successfully")
-        
+
         yield
-        
+
     except Exception as e:
         logger.error("Failed to start application", error=str(e))
         raise
     finally:
         # Cleanup on shutdown
         logger.info("Shutting down Echo API application")
-        
+
         try:
             await close_redis()
             logger.info("Redis connections closed")
-            
+
             await close_db()
             logger.info("Database connections closed")
-            
+
         except Exception as e:
             logger.error("Error during shutdown", error=str(e))
-        
+
         logger.info("Application shutdown completed")
 
 
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
-    
+
     # Create FastAPI app with production settings
     app = FastAPI(
         title=settings.app_name,
@@ -114,16 +119,18 @@ def create_app() -> FastAPI:
         openapi_url="/openapi.json" if settings.debug else None,
         lifespan=lifespan,
         # Production optimizations
-        generate_unique_id_function=lambda route: f"{route.tags[0]}-{route.name}" if route.tags else route.name,
+        generate_unique_id_function=lambda route: (
+            f"{route.tags[0]}-{route.name}" if route.tags else route.name
+        ),
     )
-    
+
     # Security middleware (order matters!)
     if not settings.debug:
         app.add_middleware(
             TrustedHostMiddleware,
-            allowed_hosts=["*"]  # Configure with actual domains in production
+            allowed_hosts=["*"],  # Configure with actual domains in production
         )
-    
+
     # CORS middleware
     # SECURITY FIX: Never use wildcard (*) with credentials
     # Use specific origins based on environment
@@ -163,11 +170,12 @@ def create_app() -> FastAPI:
         expose_headers=["X-Request-ID", "X-Response-Time"],
         max_age=3600,  # Cache preflight requests for 1 hour
     )
-    
+
     # Custom middleware (order matters!)
     # SECURITY: CSRF protection must be added before other middleware
     # Skip CSRF in test environment to simplify testing
     import os
+
     if os.getenv("ENVIRONMENT") != "test":
         set_csrf_secret(settings.secret_key)  # Initialize CSRF secret
         app.add_middleware(CSRFMiddleware)  # CSRF protection
@@ -175,10 +183,10 @@ def create_app() -> FastAPI:
     app.add_middleware(RequestLoggingMiddleware)
     app.add_middleware(PerformanceMiddleware)
     app.add_middleware(RequestSizeLimitMiddleware)
-    
+
     # Built-in middleware
     app.add_middleware(GZipMiddleware, minimum_size=1000)
-    
+
     # Exception handlers
     app.add_exception_handler(APIException, api_exception_handler)
     app.add_exception_handler(ValidationException, validation_exception_handler)
@@ -186,7 +194,7 @@ def create_app() -> FastAPI:
     app.add_exception_handler(AuthorizationException, authorization_exception_handler)
     app.add_exception_handler(RateLimitException, rate_limit_exception_handler)
     app.add_exception_handler(Exception, general_exception_handler)
-    
+
     # Root endpoint
     @app.get("/", tags=["Root"])
     async def root():
@@ -196,7 +204,7 @@ def create_app() -> FastAPI:
             "version": settings.app_version,
             "status": "running",
             "docs_url": "/docs",
-            "health_url": "/health"
+            "health_url": "/health",
         }
 
     # Health check endpoint
@@ -207,19 +215,14 @@ def create_app() -> FastAPI:
             "status": "healthy",
             "version": settings.app_version,
             "environment": settings.environment,
-            "checks": {
-                "database": "ok",
-                "redis": "ok"
-            }
+            "checks": {"database": "ok", "redis": "ok"},
         }
 
     # Stats endpoint
     @app.get("/stats", tags=["Health"])
     async def stats_endpoint():
         """Stats endpoint."""
-        return {
-            "status": "ok"
-        }
+        return {"status": "ok"}
 
     # Readiness check endpoint
     @app.get("/ready", tags=["Health"])
@@ -228,13 +231,9 @@ def create_app() -> FastAPI:
         # Add actual readiness checks here
         return {
             "status": "ready",
-            "checks": {
-                "database": "ok",
-                "redis": "ok",
-                "external_apis": "ok"
-            }
+            "checks": {"database": "ok", "redis": "ok", "external_apis": "ok"},
         }
-    
+
     # Include auth routes (at /api/auth - prefix already defined in router)
     app.include_router(auth_router)
 
@@ -246,7 +245,7 @@ def create_app() -> FastAPI:
         # metrics_app = make_asgi_app()
         # app.mount("/metrics", metrics_app)
         pass
-    
+
     return app
 
 

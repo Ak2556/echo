@@ -3,8 +3,9 @@ Unit tests for JWKS routes.
 Tests JWT public key distribution and OpenID Connect discovery.
 """
 
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import patch, Mock
 
 from app.auth.jwks_routes import get_jwks, get_openid_configuration
 
@@ -17,13 +18,7 @@ class TestGetJWKS:
         """Test successful JWKS retrieval."""
         mock_jwks = {
             "keys": [
-                {
-                    "kty": "RSA",
-                    "use": "sig",
-                    "kid": "test-key-id",
-                    "n": "test-modulus",
-                    "e": "AQAB"
-                }
+                {"kty": "RSA", "use": "sig", "kid": "test-key-id", "n": "test-modulus", "e": "AQAB"}
             ]
         }
 

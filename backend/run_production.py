@@ -12,14 +12,15 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'app'))
 
 async def init_database():
     """Initialize database tables."""
-    from app.config.database import init_db, engine, Base
+    from app.core.database import init_db, engine, Base
     from app.auth import models  # Import models to register them
 
     print("🔧 Initializing database...")
 
-    async with engine.begin() as conn:
-        # Create all tables
-        await conn.run_sync(Base.metadata.create_all)
+    if engine:
+        async with engine.begin() as conn:
+            # Create all tables
+            await conn.run_sync(Base.metadata.create_all)
 
     print("✅ Database initialized successfully")
 

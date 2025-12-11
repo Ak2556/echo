@@ -2,30 +2,32 @@
 Unit tests for auth security module.
 """
 
-import pytest
-from unittest.mock import patch, Mock, AsyncMock
+from unittest.mock import AsyncMock, Mock, patch
+
 import pyotp
+import pytest
+
 from app.auth.security import (
-    hash_password,
-    verify_password,
-    needs_rehash,
-    generate_otp,
-    generate_secure_token,
-    hash_token,
-    get_encryption_key,
-    encrypt_totp_secret,
-    decrypt_totp_secret,
-    generate_totp_secret,
-    get_totp_provisioning_uri,
-    generate_qr_code,
-    verify_totp,
-    generate_backup_codes,
-    verify_backup_code,
-    check_password_breach,
-    calculate_password_strength,
     _get_strength_label,
+    calculate_password_strength,
+    check_password_breach,
+    decrypt_totp_secret,
+    encrypt_totp_secret,
+    generate_backup_codes,
     generate_device_fingerprint,
+    generate_otp,
+    generate_qr_code,
+    generate_secure_token,
+    generate_totp_secret,
+    get_encryption_key,
+    get_totp_provisioning_uri,
+    hash_password,
+    hash_token,
+    needs_rehash,
     parse_user_agent,
+    verify_backup_code,
+    verify_password,
+    verify_totp,
 )
 
 
@@ -123,7 +125,7 @@ class TestTOTPEncryption:
 
     def test_get_encryption_key(self):
         """Test getting encryption key."""
-        with patch.dict('os.environ', {'SECRET_KEY': 'test-secret-key'}):
+        with patch.dict("os.environ", {"SECRET_KEY": "test-secret-key"}):
             key = get_encryption_key()
 
             assert key is not None
@@ -133,7 +135,7 @@ class TestTOTPEncryption:
         """Test encrypting and decrypting TOTP secret."""
         secret = "JBSWY3DPEHPK3PXP"
 
-        with patch.dict('os.environ', {'SECRET_KEY': 'test-secret-key'}):
+        with patch.dict("os.environ", {"SECRET_KEY": "test-secret-key"}):
             # Encrypt
             encrypted = encrypt_totp_secret(secret)
             assert encrypted != secret
@@ -147,7 +149,7 @@ class TestTOTPEncryption:
         secret = "JBSWY3DPEHPK3PXP"
 
         # Mock Fernet to raise an exception
-        with patch('app.auth.security.Fernet') as mock_fernet:
+        with patch("app.auth.security.Fernet") as mock_fernet:
             mock_fernet.side_effect = Exception("Encryption failed")
 
             with pytest.raises(Exception):
@@ -158,7 +160,7 @@ class TestTOTPEncryption:
         encrypted = "invalid-encrypted-data"
 
         # Mock Fernet to raise an exception
-        with patch('app.auth.security.Fernet') as mock_fernet:
+        with patch("app.auth.security.Fernet") as mock_fernet:
             mock_instance = Mock()
             mock_instance.decrypt.side_effect = Exception("Decryption failed")
             mock_fernet.return_value = mock_instance
@@ -278,6 +280,7 @@ class TestPasswordBreach:
     async def test_check_password_breach_found(self):
         """Test checking breached password."""
         import hashlib
+
         password = "password123"
 
         # Calculate the actual hash to match
@@ -290,8 +293,10 @@ class TestPasswordBreach:
         # Include the actual suffix for this password
         mock_response.text = f"{suffix}:12345\n00D4F6E8FA6EECAD2A3AA415EEC418D38EC:3"
 
-        with patch('httpx.AsyncClient') as mock_client:
-            mock_client.return_value.__aenter__.return_value.get = AsyncMock(return_value=mock_response)
+        with patch("httpx.AsyncClient") as mock_client:
+            mock_client.return_value.__aenter__.return_value.get = AsyncMock(
+                return_value=mock_response
+            )
 
             is_breached, count = await check_password_breach(password)
 
@@ -308,8 +313,10 @@ class TestPasswordBreach:
         mock_response.status_code = 200
         mock_response.text = "00D4F6E8FA6EECAD2A3AA415EEC418D38EC:3"
 
-        with patch('httpx.AsyncClient') as mock_client:
-            mock_client.return_value.__aenter__.return_value.get = AsyncMock(return_value=mock_response)
+        with patch("httpx.AsyncClient") as mock_client:
+            mock_client.return_value.__aenter__.return_value.get = AsyncMock(
+                return_value=mock_response
+            )
 
             is_breached, count = await check_password_breach(password)
 
@@ -321,8 +328,10 @@ class TestPasswordBreach:
         """Test handling API error gracefully."""
         password = "test-password"
 
-        with patch('httpx.AsyncClient') as mock_client:
-            mock_client.return_value.__aenter__.return_value.get = AsyncMock(side_effect=Exception("API Error"))
+        with patch("httpx.AsyncClient") as mock_client:
+            mock_client.return_value.__aenter__.return_value.get = AsyncMock(
+                side_effect=Exception("API Error")
+            )
 
             is_breached, count = await check_password_breach(password)
 
@@ -338,8 +347,10 @@ class TestPasswordBreach:
         mock_response = Mock()
         mock_response.status_code = 500
 
-        with patch('httpx.AsyncClient') as mock_client:
-            mock_client.return_value.__aenter__.return_value.get = AsyncMock(return_value=mock_response)
+        with patch("httpx.AsyncClient") as mock_client:
+            mock_client.return_value.__aenter__.return_value.get = AsyncMock(
+                return_value=mock_response
+            )
 
             is_breached, count = await check_password_breach(password)
 
@@ -381,7 +392,7 @@ class TestPasswordStrength:
         password = "Password123"
         result = calculate_password_strength(password)
 
-        assert "common patterns" in ' '.join(result["suggestions"]).lower()
+        assert "common patterns" in " ".join(result["suggestions"]).lower()
 
     def test_password_no_lowercase(self):
         """Test password without lowercase letters."""
@@ -389,7 +400,7 @@ class TestPasswordStrength:
         result = calculate_password_strength(password)
 
         # Should suggest adding lowercase letters
-        suggestions_text = ' '.join(result["suggestions"]).lower()
+        suggestions_text = " ".join(result["suggestions"]).lower()
         assert "lowercase" in suggestions_text
 
     def test_get_strength_label(self):

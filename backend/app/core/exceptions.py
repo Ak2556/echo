@@ -2,6 +2,7 @@
 Production-grade exception handling with structured error responses,
 logging, and monitoring integration.
 """
+
 import traceback
 from typing import Any, Dict, Optional, Union
 
@@ -15,7 +16,7 @@ logger = structlog.get_logger(__name__)
 
 class APIException(Exception):
     """Base API exception with structured error handling."""
-    
+
     def __init__(
         self,
         message: str,
@@ -30,7 +31,7 @@ class APIException(Exception):
         self.details = details or {}
         self.headers = headers or {}
         super().__init__(message)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert exception to dictionary for JSON response."""
         return {
@@ -45,7 +46,7 @@ class APIException(Exception):
 
 class ValidationException(APIException):
     """Validation error exception."""
-    
+
     def __init__(
         self,
         message: str = "Validation failed",
@@ -53,7 +54,7 @@ class ValidationException(APIException):
     ):
         super().__init__(
             message=message,
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             error_code="VALIDATION_ERROR",
             details={"field_errors": field_errors or {}},
         )
@@ -61,7 +62,7 @@ class ValidationException(APIException):
 
 class AuthenticationException(APIException):
     """Authentication error exception."""
-    
+
     def __init__(self, message: str = "Authentication failed"):
         super().__init__(
             message=message,
@@ -73,7 +74,7 @@ class AuthenticationException(APIException):
 
 class AuthorizationException(APIException):
     """Authorization error exception."""
-    
+
     def __init__(self, message: str = "Insufficient permissions"):
         super().__init__(
             message=message,
@@ -84,7 +85,7 @@ class AuthorizationException(APIException):
 
 class NotFoundException(APIException):
     """Resource not found exception."""
-    
+
     def __init__(self, message: str = "Resource not found", resource_type: str = "resource"):
         super().__init__(
             message=message,
@@ -96,7 +97,7 @@ class NotFoundException(APIException):
 
 class ConflictException(APIException):
     """Resource conflict exception."""
-    
+
     def __init__(self, message: str = "Resource conflict", conflict_type: str = "duplicate"):
         super().__init__(
             message=message,
@@ -108,7 +109,7 @@ class ConflictException(APIException):
 
 class RateLimitException(APIException):
     """Rate limit exceeded exception."""
-    
+
     def __init__(
         self,
         message: str = "Rate limit exceeded",
@@ -118,7 +119,7 @@ class RateLimitException(APIException):
         headers = {}
         if retry_after:
             headers["Retry-After"] = str(retry_after)
-        
+
         super().__init__(
             message=message,
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
@@ -130,7 +131,7 @@ class RateLimitException(APIException):
 
 class ExternalServiceException(APIException):
     """External service error exception."""
-    
+
     def __init__(
         self,
         message: str = "External service error",
@@ -150,7 +151,7 @@ class ExternalServiceException(APIException):
 
 class DatabaseException(APIException):
     """Database error exception."""
-    
+
     def __init__(self, message: str = "Database error", operation: str = "unknown"):
         super().__init__(
             message=message,
@@ -162,7 +163,7 @@ class DatabaseException(APIException):
 
 class CacheException(APIException):
     """Cache error exception."""
-    
+
     def __init__(self, message: str = "Cache error", operation: str = "unknown"):
         super().__init__(
             message=message,
@@ -173,6 +174,7 @@ class CacheException(APIException):
 
 
 # Exception handlers
+
 
 async def api_exception_handler(request: Request, exc: APIException) -> JSONResponse:
     """Handle API exceptions with structured logging."""
@@ -185,7 +187,7 @@ async def api_exception_handler(request: Request, exc: APIException) -> JSONResp
         method=request.method,
         details=exc.details,
     )
-    
+
     return JSONResponse(
         status_code=exc.status_code,
         content=exc.to_dict(),
@@ -203,19 +205,19 @@ async def validation_exception_handler(request: Request, exc: ValidationError) -
             "type": error["type"],
             "input": error.get("input"),
         }
-    
+
     logger.warning(
         "Validation error occurred",
         path=request.url.path,
         method=request.method,
         field_errors=field_errors,
     )
-    
+
     validation_exc = ValidationException(
         message="Request validation failed",
         field_errors=field_errors,
     )
-    
+
     return JSONResponse(
         status_code=validation_exc.status_code,
         content=validation_exc.to_dict(),
@@ -232,7 +234,7 @@ async def authentication_exception_handler(
         method=request.method,
         message=exc.message,
     )
-    
+
     return JSONResponse(
         status_code=exc.status_code,
         content=exc.to_dict(),
@@ -250,16 +252,14 @@ async def authorization_exception_handler(
         method=request.method,
         message=exc.message,
     )
-    
+
     return JSONResponse(
         status_code=exc.status_code,
         content=exc.to_dict(),
     )
 
 
-async def rate_limit_exception_handler(
-    request: Request, exc: RateLimitException
-) -> JSONResponse:
+async def rate_limit_exception_handler(request: Request, exc: RateLimitException) -> JSONResponse:
     """Handle rate limit exceptions."""
     logger.warning(
         "Rate limit exceeded",
@@ -268,7 +268,7 @@ async def rate_limit_exception_handler(
         client_ip=request.client.host if request.client else "unknown",
         details=exc.details,
     )
-    
+
     return JSONResponse(
         status_code=exc.status_code,
         content=exc.to_dict(),
@@ -279,7 +279,7 @@ async def rate_limit_exception_handler(
 async def general_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Handle unexpected exceptions with error tracking."""
     error_id = f"error_{hash(str(exc))}_{request.url.path}"
-    
+
     logger.error(
         "Unexpected error occurred",
         error_id=error_id,
@@ -289,7 +289,7 @@ async def general_exception_handler(request: Request, exc: Exception) -> JSONRes
         method=request.method,
         traceback=traceback.format_exc(),
     )
-    
+
     # Don't expose internal errors in production
     error_response = {
         "error": {
@@ -301,7 +301,7 @@ async def general_exception_handler(request: Request, exc: Exception) -> JSONRes
         },
         "success": False,
     }
-    
+
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content=error_response,
@@ -309,6 +309,7 @@ async def general_exception_handler(request: Request, exc: Exception) -> JSONRes
 
 
 # Error response helpers
+
 
 def create_error_response(
     message: str,
@@ -337,11 +338,11 @@ def create_success_response(
         "success": True,
         "message": message,
     }
-    
+
     if data is not None:
         response["data"] = data
-    
+
     if meta:
         response["meta"] = meta
-    
+
     return response

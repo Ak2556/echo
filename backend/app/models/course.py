@@ -1,8 +1,10 @@
-from sqlmodel import SQLModel, Field, Relationship, Column
-from typing import Optional, List
 from datetime import datetime, timezone
 from enum import Enum
+from typing import List, Optional
+
 from sqlalchemy import JSON
+from sqlmodel import Column, Field, Relationship, SQLModel
+
 from ..utils.database_compat import get_vector_column
 
 
@@ -30,6 +32,7 @@ class CourseStatus(str, Enum):
 
 class Course(SQLModel, table=True):
     """Course/Class model"""
+
     __tablename__ = "courses"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -81,10 +84,7 @@ class Course(SQLModel, table=True):
     learning_outcomes: List[str] = Field(sa_column=Column(JSON), default=[])
 
     # Vector embedding for AI recommendations
-    embedding: Optional[List[float]] = Field(
-        sa_column=get_vector_column(1536),
-        default=None
-    )
+    embedding: Optional[List[float]] = Field(sa_column=get_vector_column(1536), default=None)
 
     # Timestamps
     start_date: Optional[datetime] = None
@@ -101,6 +101,7 @@ class Course(SQLModel, table=True):
 
 class CourseCreate(SQLModel):
     """Schema for creating a course"""
+
     title: str
     subject: str
     level: CourseLevel
@@ -120,6 +121,7 @@ class CourseCreate(SQLModel):
 
 class CourseUpdate(SQLModel):
     """Schema for updating a course"""
+
     title: Optional[str] = None
     subject: Optional[str] = None
     level: Optional[CourseLevel] = None
@@ -137,6 +139,7 @@ class CourseUpdate(SQLModel):
 
 class CourseResponse(SQLModel):
     """Schema for course response"""
+
     id: int
     teacher_id: int
     title: str

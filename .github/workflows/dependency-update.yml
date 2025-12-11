@@ -132,11 +132,35 @@ jobs:
           npm audit --audit-level=high --json > audit-report.json || true
 
       - name: Run tests to verify updates
+        id: frontend_tests
+        working-directory: ./frontend
+        continue-on-error: true
+        run: |
+          TEST_FAILED=false
+
+          npm run lint || { echo "::warning::Linting issues detected"; TEST_FAILED=true; }
+          npx tsc --noEmit || { echo "::warning::Type errors detected"; TEST_FAILED=true; }
+
+          if npm run | grep -q "test:ci"; then
+            npm run test:ci || { echo "::error::Tests failed"; TEST_FAILED=true; }
+          elif npm run | grep -q "test"; then
+            npm run test -- --watchAll=false || { echo "::error::Tests failed"; TEST_FAILED=true; }
+          fi
+
+          if [ "$TEST_FAILED" = true ]; then
+            echo "test_status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "test_status=passed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Rollback if tests failed
+        if: steps.frontend_tests.outputs.test_status == 'failed'
         working-directory: ./frontend
         run: |
-          npm run lint || echo "Linting issues detected"
-          npx tsc --noEmit || echo "Type errors detected"
-          npm run test:ci || echo "Tests failed"
+          echo "::warning::Tests failed after update. Rolling back changes."
+          git checkout package.json package-lock.json
+          npm ci
 
       - name: Generate update summary
         working-directory: ./frontend
@@ -223,15 +247,17 @@ jobs:
           case "$UPDATE_TYPE" in
             "patch"|"minor")
               # Update only compatible versions
-              pip-review --auto
+              pip-review --auto || echo "No updates available"
               ;;
             "major"|"all")
               # Update all including major versions
-              pip install --upgrade -r requirements.txt
+              pip install --upgrade -r requirements.txt || echo "Some packages failed to update"
               ;;
           esac
 
-          pip freeze > requirements.txt
+          # Update requirements.txt with pinned versions
+          pip freeze | grep -v "pkg-resources" > requirements-new.txt
+          mv requirements-new.txt requirements.txt
 
       - name: Run security audit
         working-directory: ./backend
@@ -241,18 +267,39 @@ jobs:
           pip-audit --format=json > pip-audit-report.json || true
 
       - name: Run tests to verify updates
+        id: backend_tests
         working-directory: ./backend
         env:
           DATABASE_URL: postgresql+asyncpg://test_user:test_password@localhost:5432/test_db
           REDIS_URL: redis://localhost:6379/0
           SECRET_KEY: test-secret-key-for-dependency-updates
           ENVIRONMENT: testing
+        continue-on-error: true
         run: |
           pip install pytest pytest-cov pytest-asyncio black isort flake8
-          black --check . || echo "Formatting issues detected"
-          isort --check-only . || echo "Import order issues detected"
-          flake8 app --max-line-length=100 || echo "Linting issues detected"
-          pytest tests/ -v --cov=app || echo "Tests failed"
+
+          # Run all checks
+          TEST_FAILED=false
+
+          black --check . || { echo "::warning::Formatting issues detected"; TEST_FAILED=true; }
+          isort --check-only . || { echo "::warning::Import order issues detected"; TEST_FAILED=true; }
+          flake8 app --max-line-length=100 || { echo "::warning::Linting issues detected"; TEST_FAILED=true; }
+          pytest tests/ -v --cov=app || { echo "::error::Tests failed"; TEST_FAILED=true; }
+
+          if [ "$TEST_FAILED" = true ]; then
+            echo "test_status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "test_status=passed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Rollback if tests failed
+        if: steps.backend_tests.outputs.test_status == 'failed'
+        working-directory: ./backend
+        run: |
+          echo "::warning::Tests failed after update. Rolling back changes."
+          git checkout requirements.txt
+          pip install -r requirements.txt
 
       - name: Generate update summary
         working-directory: ./backend
@@ -285,7 +332,10 @@ jobs:
     name: Create Update Pull Request
     runs-on: ubuntu-latest
     needs: [update-frontend, update-backend]
-    if: always() && (needs.update-frontend.result == 'success' || needs.update-backend.result == 'success')
+    if: |
+      always() &&
+      (needs.update-frontend.result == 'success' || needs.update-backend.result == 'success') &&
+      !(needs.update-frontend.result == 'failure' && needs.update-backend.result == 'failure')
     timeout-minutes: 5
 
     permissions:
@@ -298,6 +348,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
+          ref: ${{ github.ref }}
 
       - name: Download artifacts
         uses: actions/download-artifact@v4

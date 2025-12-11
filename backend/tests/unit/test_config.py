@@ -215,7 +215,9 @@ class TestGetSettings:
         from app.core.config import Settings
 
         # Test valid JSON array - covers lines 156-159
-        result = Settings.assemble_cors_origins('["http://localhost:3000", "http://localhost:3001"]')
+        result = Settings.assemble_cors_origins(
+            '["http://localhost:3000", "http://localhost:3001"]'
+        )
         assert result == ["http://localhost:3000", "http://localhost:3001"]
 
     def test_cors_origins_validator_with_invalid_json_string(self):

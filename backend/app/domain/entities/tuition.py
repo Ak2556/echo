@@ -1,10 +1,11 @@
 """
 Domain entities for tuition functionality.
 """
+
 from dataclasses import dataclass
-from typing import List, Optional, Dict
 from datetime import datetime, time
 from enum import Enum
+from typing import Dict, List, Optional
 
 
 class SessionStatus(str, Enum):
@@ -32,6 +33,7 @@ class AssignmentStatus(str, Enum):
 @dataclass
 class TuitionSessionEntity:
     """Tuition session domain entity"""
+
     id: Optional[int]
     course_id: int
     teacher_id: int
@@ -101,16 +103,14 @@ class TuitionSessionEntity:
 
     def is_past_due(self) -> bool:
         """Check if session is past its scheduled time"""
-        session_datetime = datetime.combine(
-            self.scheduled_date.date(),
-            self.start_time
-        )
+        session_datetime = datetime.combine(self.scheduled_date.date(), self.start_time)
         return datetime.now() > session_datetime and self.status == SessionStatus.SCHEDULED
 
 
 @dataclass
 class SessionAttendanceEntity:
     """Session attendance domain entity"""
+
     id: Optional[int]
     session_id: int
     student_id: int
@@ -156,6 +156,7 @@ class SessionAttendanceEntity:
 @dataclass
 class AssignmentEntity:
     """Assignment domain entity"""
+
     id: Optional[int]
     course_id: int
     teacher_id: int
@@ -205,6 +206,7 @@ class AssignmentEntity:
 @dataclass
 class AssignmentSubmissionEntity:
     """Assignment submission domain entity"""
+
     id: Optional[int]
     assignment_id: int
     student_id: int
@@ -253,6 +255,7 @@ class AssignmentSubmissionEntity:
 @dataclass
 class StudyMaterialEntity:
     """Study material domain entity"""
+
     id: Optional[int]
     course_id: int
     teacher_id: int
@@ -298,6 +301,7 @@ class StudyMaterialEntity:
 @dataclass
 class QuizEntity:
     """Quiz domain entity"""
+
     id: Optional[int]
     course_id: int
     teacher_id: int
@@ -321,10 +325,7 @@ class QuizEntity:
     def is_available(self) -> bool:
         """Check if quiz is currently available"""
         now = datetime.utcnow()
-        return (
-            self.is_published and
-            self.available_from <= now <= self.available_until
-        )
+        return self.is_published and self.available_from <= now <= self.available_until
 
     def publish(self) -> None:
         """Publish the quiz"""
@@ -346,6 +347,7 @@ class QuizEntity:
 @dataclass
 class QuizAttemptEntity:
     """Quiz attempt domain entity"""
+
     id: Optional[int]
     quiz_id: int
     student_id: int
@@ -367,7 +369,7 @@ class QuizAttemptEntity:
         self.answers = answers
         self.submitted_at = datetime.utcnow()
         self.is_completed = True
-        
+
         # Calculate time taken
         if self.started_at and self.submitted_at:
             duration = self.submitted_at - self.started_at
@@ -388,7 +390,7 @@ class QuizAttemptEntity:
         """Check if time limit has been exceeded"""
         if not self.started_at:
             return False
-        
+
         elapsed = datetime.utcnow() - self.started_at
         elapsed_minutes = elapsed.total_seconds() / 60
         return elapsed_minutes > duration_minutes
@@ -397,6 +399,7 @@ class QuizAttemptEntity:
 @dataclass
 class ProgressReportEntity:
     """Progress report domain entity"""
+
     id: Optional[int]
     enrollment_id: int
     student_id: int

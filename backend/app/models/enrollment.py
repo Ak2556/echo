@@ -1,7 +1,8 @@
-from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional
 from datetime import datetime, timezone
 from enum import Enum
+from typing import Optional
+
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class EnrollmentStatus(str, Enum):
@@ -14,6 +15,7 @@ class EnrollmentStatus(str, Enum):
 
 class Enrollment(SQLModel, table=True):
     """Student enrollment in a course"""
+
     __tablename__ = "enrollments"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -54,11 +56,13 @@ class Enrollment(SQLModel, table=True):
 
 class EnrollmentCreate(SQLModel):
     """Schema for creating an enrollment"""
+
     course_id: int
 
 
 class EnrollmentUpdate(SQLModel):
     """Schema for updating an enrollment"""
+
     status: Optional[EnrollmentStatus] = None
     attendance_count: Optional[int] = None
     completion_percentage: Optional[float] = None
@@ -68,6 +72,7 @@ class EnrollmentUpdate(SQLModel):
 
 class EnrollmentResponse(SQLModel):
     """Schema for enrollment response"""
+
     id: int
     student_id: int
     course_id: int

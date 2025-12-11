@@ -2,12 +2,14 @@
 Email service for sending verification codes, password reset links, etc.
 Supports SMTP and SendGrid.
 """
-from typing import Optional, Dict
-from pathlib import Path
-import aiosmtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+
 import os
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from pathlib import Path
+from typing import Dict, Optional
+
+import aiosmtplib
 import structlog
 
 logger = structlog.get_logger(__name__)

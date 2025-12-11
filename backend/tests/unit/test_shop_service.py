@@ -2,15 +2,27 @@
 Comprehensive unit tests for shop service.
 """
 
-import pytest
-from unittest.mock import Mock, patch, AsyncMock, MagicMock
 from datetime import datetime, timezone
-from app.services.shop_service import ShopService
-from app.core.exceptions import NotFoundException, ValidationException, APIException
+from unittest.mock import AsyncMock, MagicMock, Mock, patch
+
+import pytest
+
+from app.core.exceptions import APIException, NotFoundException, ValidationException
 from app.models.shop import (
-    Product, Order, Cart, CartItem, OrderItem, ProductStatus, OrderStatus,
-    ProductCreate, ProductUpdate, ProductReview, ProductReviewCreate, ProductCategory
+    Cart,
+    CartItem,
+    Order,
+    OrderItem,
+    OrderStatus,
+    Product,
+    ProductCategory,
+    ProductCreate,
+    ProductReview,
+    ProductReviewCreate,
+    ProductStatus,
+    ProductUpdate,
 )
+from app.services.shop_service import ShopService
 
 
 class TestShopService:
@@ -36,11 +48,13 @@ class TestShopService:
             description="Test description",
             category=ProductCategory.BOOKS,
             price=99.99,
-            stock_quantity=10
+            stock_quantity=10,
         )
 
         # Mock ensure_unique_slug
-        with patch.object(service, '_ensure_unique_slug', new_callable=AsyncMock, return_value="test-product"):
+        with patch.object(
+            service, "_ensure_unique_slug", new_callable=AsyncMock, return_value="test-product"
+        ):
             result = await service.create_product(product_data, seller_id="1")
 
             assert result is not None
@@ -112,7 +126,9 @@ class TestShopService:
         mock_product.name = "Original Product"
 
         # Mock get_product_by_id to return the product
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
             update_data = ProductUpdate(name="Updated Product", price=149.99)
 
             result = await service.update_product(1, update_data)
@@ -129,7 +145,7 @@ class TestShopService:
         service = ShopService(mock_db)
 
         # Mock get_product_by_id to return None
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=None):
+        with patch.object(service, "get_product_by_id", new_callable=AsyncMock, return_value=None):
             update_data = ProductUpdate(name="Updated Product")
 
             with pytest.raises(NotFoundException):
@@ -145,7 +161,9 @@ class TestShopService:
         mock_product.id = 1
 
         # Mock get_product_by_id to return the product
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
             result = await service.delete_product(1)
 
             assert result is True
@@ -159,7 +177,7 @@ class TestShopService:
         service = ShopService(mock_db)
 
         # Mock get_product_by_id to return None
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=None):
+        with patch.object(service, "get_product_by_id", new_callable=AsyncMock, return_value=None):
             with pytest.raises(NotFoundException):
                 await service.delete_product(999)
 
@@ -201,7 +219,7 @@ class TestShopService:
             "seller_id": 1,
             "status": ProductStatus.ACTIVE,
             "min_price": 10.0,
-            "max_price": 100.0
+            "max_price": 100.0,
         }
         result = await service.list_products(skip=0, limit=10, filters=filters)
 
@@ -274,7 +292,9 @@ class TestShopService:
         mock_products = [Mock(spec=Product), Mock(spec=Product)]
 
         # Mock list_products method
-        with patch.object(service, 'list_products', new_callable=AsyncMock, return_value=mock_products):
+        with patch.object(
+            service, "list_products", new_callable=AsyncMock, return_value=mock_products
+        ):
             result = await service.search_products("test query")
 
             assert result == mock_products
@@ -290,7 +310,9 @@ class TestShopService:
         filters = {"category": ProductCategory.BOOKS}
 
         # Mock list_products method
-        with patch.object(service, 'list_products', new_callable=AsyncMock, return_value=mock_products):
+        with patch.object(
+            service, "list_products", new_callable=AsyncMock, return_value=mock_products
+        ):
             result = await service.search_products("test", filters=filters, skip=0, limit=20)
 
             assert result == mock_products
@@ -332,7 +354,9 @@ class TestShopService:
         mock_result.scalars.return_value = mock_scalars
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
             result = await service.get_related_products(1, limit=5)
 
             assert result == mock_related
@@ -344,7 +368,7 @@ class TestShopService:
         mock_db = AsyncMock()
         service = ShopService(mock_db)
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=None):
+        with patch.object(service, "get_product_by_id", new_callable=AsyncMock, return_value=None):
             result = await service.get_related_products(999)
 
             assert result == []
@@ -362,7 +386,9 @@ class TestShopService:
         mock_product.status = ProductStatus.ACTIVE
 
         # Mock get_product_by_id to return the product
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
             result = await service.update_product_stock(1, 5)
 
             assert result is True
@@ -381,7 +407,9 @@ class TestShopService:
         mock_product.is_digital = False
         mock_product.status = ProductStatus.ACTIVE
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
             result = await service.update_product_stock(1, -10)
 
             assert result is True
@@ -401,7 +429,9 @@ class TestShopService:
         mock_product.is_digital = False
         mock_product.status = ProductStatus.OUT_OF_STOCK
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
             result = await service.update_product_stock(1, 5)
 
             assert result is True
@@ -420,7 +450,9 @@ class TestShopService:
         mock_product.stock_quantity = 0
         mock_product.is_digital = True
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
             result = await service.update_product_stock(1, 5)
 
             assert result is True
@@ -439,7 +471,9 @@ class TestShopService:
         mock_product.is_digital = False
 
         # Mock get_product_by_id to return the product
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
             with pytest.raises(ValidationException):
                 await service.update_product_stock(1, -10)
 
@@ -449,7 +483,7 @@ class TestShopService:
         mock_db = AsyncMock()
         service = ShopService(mock_db)
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=None):
+        with patch.object(service, "get_product_by_id", new_callable=AsyncMock, return_value=None):
             with pytest.raises(NotFoundException):
                 await service.update_product_stock(999, 5)
 
@@ -521,9 +555,13 @@ class TestShopService:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
-            with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
-                with patch.object(service, '_update_cart_totals', new_callable=AsyncMock):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
+            with patch.object(
+                service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart
+            ):
+                with patch.object(service, "_update_cart_totals", new_callable=AsyncMock):
                     result = await service.add_to_cart("123", 1, 2)
 
                     assert result.product_id == 1
@@ -558,9 +596,13 @@ class TestShopService:
         mock_result.scalar_one_or_none.return_value = mock_cart_item
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
-            with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
-                with patch.object(service, '_update_cart_totals', new_callable=AsyncMock):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
+            with patch.object(
+                service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart
+            ):
+                with patch.object(service, "_update_cart_totals", new_callable=AsyncMock):
                     result = await service.add_to_cart("123", 1, 3)
 
                     assert result.quantity == 5
@@ -571,6 +613,7 @@ class TestShopService:
     async def test_add_to_cart_existing_item_insufficient_stock(self):
         """Test adding to existing cart item when total would exceed stock."""
         from app.models.shop import ProductStatus
+
         mock_db = AsyncMock()
         service = ShopService(mock_db)
 
@@ -593,8 +636,12 @@ class TestShopService:
         mock_result.scalar_one_or_none.return_value = mock_cart_item
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
-            with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
+            with patch.object(
+                service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart
+            ):
                 # Try to add 5 more (total would be 13, exceeds stock of 10)
                 with pytest.raises(ValidationException, match="Insufficient stock"):
                     await service.add_to_cart("123", 1, 5)
@@ -617,7 +664,7 @@ class TestShopService:
         mock_db = AsyncMock()
         service = ShopService(mock_db)
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=None):
+        with patch.object(service, "get_product_by_id", new_callable=AsyncMock, return_value=None):
             with pytest.raises(NotFoundException, match="Product not found"):
                 await service.add_to_cart("123", 999, 1)
 
@@ -630,7 +677,9 @@ class TestShopService:
         mock_product = Mock(spec=Product)
         mock_product.status = ProductStatus.INACTIVE
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
             with pytest.raises(ValidationException, match="Product is not available"):
                 await service.add_to_cart("123", 1, 1)
 
@@ -645,7 +694,9 @@ class TestShopService:
         mock_product.is_digital = False
         mock_product.stock_quantity = 2
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
             with pytest.raises(ValidationException, match="Insufficient stock"):
                 await service.add_to_cart("123", 1, 5)
 
@@ -671,9 +722,13 @@ class TestShopService:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
-            with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
-                with patch.object(service, '_update_cart_totals', new_callable=AsyncMock):
+        with patch.object(
+            service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+        ):
+            with patch.object(
+                service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart
+            ):
+                with patch.object(service, "_update_cart_totals", new_callable=AsyncMock):
                     result = await service.add_to_cart("123", 1, 1)
                     assert result.product_id == 1
 
@@ -698,9 +753,11 @@ class TestShopService:
         mock_result.scalar_one_or_none.return_value = mock_cart_item
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
-            with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
-                with patch.object(service, '_update_cart_totals', new_callable=AsyncMock):
+        with patch.object(service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart):
+            with patch.object(
+                service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+            ):
+                with patch.object(service, "_update_cart_totals", new_callable=AsyncMock):
                     result = await service.update_cart_item("123", 1, 3)
 
                     assert result.quantity == 3
@@ -723,8 +780,8 @@ class TestShopService:
         mock_result.scalar_one_or_none.return_value = mock_cart_item
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
-            with patch.object(service, '_update_cart_totals', new_callable=AsyncMock):
+        with patch.object(service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart):
+            with patch.object(service, "_update_cart_totals", new_callable=AsyncMock):
                 result = await service.update_cart_item("123", 1, 0)
 
                 assert result is None
@@ -753,7 +810,7 @@ class TestShopService:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
+        with patch.object(service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart):
             with pytest.raises(NotFoundException, match="Cart item not found"):
                 await service.update_cart_item("123", 999, 2)
 
@@ -777,8 +834,10 @@ class TestShopService:
         mock_result.scalar_one_or_none.return_value = mock_cart_item
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
-            with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
+        with patch.object(service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart):
+            with patch.object(
+                service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+            ):
                 with pytest.raises(ValidationException, match="Insufficient stock"):
                     await service.update_cart_item("123", 1, 5)
 
@@ -797,8 +856,8 @@ class TestShopService:
         mock_result.scalar_one_or_none.return_value = mock_cart_item
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
-            with patch.object(service, '_update_cart_totals', new_callable=AsyncMock):
+        with patch.object(service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart):
+            with patch.object(service, "_update_cart_totals", new_callable=AsyncMock):
                 result = await service.remove_from_cart("123", 1)
 
                 assert result is True
@@ -818,7 +877,7 @@ class TestShopService:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
+        with patch.object(service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart):
             result = await service.remove_from_cart("123", 999)
             assert result is True
 
@@ -836,7 +895,7 @@ class TestShopService:
         mock_result = Mock()
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
+        with patch.object(service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart):
             result = await service.clear_cart("123")
 
             assert result is True
@@ -874,9 +933,9 @@ class TestShopService:
         shipping_address = {"street": "123 Main St", "city": "Test City"}
         billing_address = {"street": "123 Main St", "city": "Test City"}
 
-        with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
-            with patch.object(service, 'update_product_stock', new_callable=AsyncMock):
-                with patch.object(service, 'clear_cart', new_callable=AsyncMock):
+        with patch.object(service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart):
+            with patch.object(service, "update_product_stock", new_callable=AsyncMock):
+                with patch.object(service, "clear_cart", new_callable=AsyncMock):
                     result = await service.create_order_from_cart(
                         "123", shipping_address, billing_address
                     )
@@ -917,9 +976,9 @@ class TestShopService:
         shipping_address = {"street": "123 Main St"}
         billing_address = {"street": "123 Main St"}
 
-        with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
-            with patch.object(service, 'update_product_stock', new_callable=AsyncMock):
-                with patch.object(service, 'clear_cart', new_callable=AsyncMock):
+        with patch.object(service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart):
+            with patch.object(service, "update_product_stock", new_callable=AsyncMock):
+                with patch.object(service, "clear_cart", new_callable=AsyncMock):
                     result = await service.create_order_from_cart(
                         "123", shipping_address, billing_address
                     )
@@ -935,7 +994,7 @@ class TestShopService:
         mock_cart = Mock(spec=Cart)
         mock_cart.items = []
 
-        with patch.object(service, 'get_user_cart', new_callable=AsyncMock, return_value=mock_cart):
+        with patch.object(service, "get_user_cart", new_callable=AsyncMock, return_value=mock_cart):
             with pytest.raises(ValidationException, match="Cart is empty"):
                 await service.create_order_from_cart("123", {}, {})
 
@@ -1028,10 +1087,7 @@ class TestShopService:
         mock_result.scalars.return_value = mock_scalars
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        result = await service.list_orders(
-            status=OrderStatus.PENDING,
-            customer_id="123"
-        )
+        result = await service.list_orders(status=OrderStatus.PENDING, customer_id="123")
 
         assert result == mock_orders
         mock_db.execute.assert_called_once()
@@ -1047,7 +1103,9 @@ class TestShopService:
         mock_order.status = OrderStatus.PENDING
 
         # Mock get_order_by_id to return the order
-        with patch.object(service, 'get_order_by_id', new_callable=AsyncMock, return_value=mock_order):
+        with patch.object(
+            service, "get_order_by_id", new_callable=AsyncMock, return_value=mock_order
+        ):
             result = await service.update_order_status(1, OrderStatus.CONFIRMED)
 
             assert result is mock_order
@@ -1064,14 +1122,16 @@ class TestShopService:
         mock_order.id = 1
         mock_order.status = OrderStatus.CONFIRMED
 
-        with patch.object(service, 'get_order_by_id', new_callable=AsyncMock, return_value=mock_order):
+        with patch.object(
+            service, "get_order_by_id", new_callable=AsyncMock, return_value=mock_order
+        ):
             result = await service.update_order_status(
                 1, OrderStatus.SHIPPED, tracking_number="TRACK123"
             )
 
             assert mock_order.status == OrderStatus.SHIPPED
             assert mock_order.tracking_number == "TRACK123"
-            assert hasattr(mock_order, 'shipped_at')
+            assert hasattr(mock_order, "shipped_at")
 
     @pytest.mark.asyncio
     async def test_update_order_status_to_delivered(self):
@@ -1083,11 +1143,13 @@ class TestShopService:
         mock_order.id = 1
         mock_order.status = OrderStatus.SHIPPED
 
-        with patch.object(service, 'get_order_by_id', new_callable=AsyncMock, return_value=mock_order):
+        with patch.object(
+            service, "get_order_by_id", new_callable=AsyncMock, return_value=mock_order
+        ):
             result = await service.update_order_status(1, OrderStatus.DELIVERED)
 
             assert mock_order.status == OrderStatus.DELIVERED
-            assert hasattr(mock_order, 'delivered_at')
+            assert hasattr(mock_order, "delivered_at")
 
     @pytest.mark.asyncio
     async def test_update_order_status_not_found(self):
@@ -1096,7 +1158,7 @@ class TestShopService:
         service = ShopService(mock_db)
 
         # Mock get_order_by_id to return None
-        with patch.object(service, 'get_order_by_id', new_callable=AsyncMock, return_value=None):
+        with patch.object(service, "get_order_by_id", new_callable=AsyncMock, return_value=None):
             with pytest.raises(NotFoundException):
                 await service.update_order_status(999, OrderStatus.CONFIRMED)
 
@@ -1118,9 +1180,13 @@ class TestShopService:
         mock_order.status = OrderStatus.PENDING
         mock_order.items = [mock_order_item]
 
-        with patch.object(service, 'get_order_by_id', new_callable=AsyncMock, return_value=mock_order):
-            with patch.object(service, 'get_product_by_id', new_callable=AsyncMock, return_value=mock_product):
-                with patch.object(service, 'update_product_stock', new_callable=AsyncMock):
+        with patch.object(
+            service, "get_order_by_id", new_callable=AsyncMock, return_value=mock_order
+        ):
+            with patch.object(
+                service, "get_product_by_id", new_callable=AsyncMock, return_value=mock_product
+            ):
+                with patch.object(service, "update_product_stock", new_callable=AsyncMock):
                     result = await service.cancel_order(1)
 
                     assert result.status == OrderStatus.CANCELLED
@@ -1132,7 +1198,7 @@ class TestShopService:
         mock_db = AsyncMock()
         service = ShopService(mock_db)
 
-        with patch.object(service, 'get_order_by_id', new_callable=AsyncMock, return_value=None):
+        with patch.object(service, "get_order_by_id", new_callable=AsyncMock, return_value=None):
             with pytest.raises(NotFoundException, match="Order not found"):
                 await service.cancel_order(999)
 
@@ -1146,7 +1212,9 @@ class TestShopService:
         mock_order.id = 1
         mock_order.status = OrderStatus.DELIVERED
 
-        with patch.object(service, 'get_order_by_id', new_callable=AsyncMock, return_value=mock_order):
+        with patch.object(
+            service, "get_order_by_id", new_callable=AsyncMock, return_value=mock_order
+        ):
             with pytest.raises(ValidationException, match="Order cannot be cancelled"):
                 await service.cancel_order(1)
 
@@ -1164,13 +1232,13 @@ class TestShopService:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch.object(service, '_update_product_rating', new_callable=AsyncMock):
+        with patch.object(service, "_update_product_rating", new_callable=AsyncMock):
             result = await service.create_product_review(
                 product_id=1,
                 customer_id="123",
                 rating=5,
                 title="Great Product",
-                comment="Loved it!"
+                comment="Loved it!",
             )
 
             assert result.product_id == 1
@@ -1372,10 +1440,7 @@ class TestShopService:
         mock_result.first.return_value = mock_stats
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        result = await service.get_sales_analytics(
-            start_date="2024-01-01",
-            end_date="2024-12-31"
-        )
+        result = await service.get_sales_analytics(start_date="2024-01-01", end_date="2024-12-31")
 
         assert result["total_orders"] == 50
         mock_db.execute.assert_called_once()
@@ -1501,9 +1566,9 @@ class TestShopServiceHelperMethods:
         mock_result4 = Mock()
         mock_result4.scalar_one_or_none.return_value = None
 
-        mock_db.execute = AsyncMock(side_effect=[
-            mock_result1, mock_result2, mock_result3, mock_result4
-        ])
+        mock_db.execute = AsyncMock(
+            side_effect=[mock_result1, mock_result2, mock_result3, mock_result4]
+        )
 
         result = await service._ensure_unique_slug("popular-slug")
 

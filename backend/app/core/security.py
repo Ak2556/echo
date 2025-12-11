@@ -6,20 +6,21 @@ SECURITY: This module now delegates to secure implementations.
 - Password hashing: Uses Argon2id from app.auth.security
 - JWT tokens: Uses RS256 from app.auth.jwt_utils
 """
+
 import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional, Union
 
 from fastapi import HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.core.config import get_settings
-from app.core.exceptions import AuthenticationException, AuthorizationException
+from app.auth.jwt_utils import get_jwt_manager
 
 # Import secure implementations
 from app.auth.security import hash_password as secure_hash_password
 from app.auth.security import verify_password as secure_verify_password
-from app.auth.jwt_utils import get_jwt_manager
+from app.core.config import get_settings
+from app.core.exceptions import AuthenticationException, AuthorizationException
 
 settings = get_settings()
 
@@ -62,7 +63,7 @@ class SecurityManager:
             session_id=data.get("sid"),
             auth_methods=data.get("amr"),
             scopes=data.get("scope", "").split() if data.get("scope") else None,
-            expires_delta=expires_delta
+            expires_delta=expires_delta,
         )
 
     def verify_token(self, token: str, token_type: str = "access") -> Dict[str, Any]:
@@ -78,38 +79,40 @@ class SecurityManager:
             raise AuthenticationException(f"Invalid token: {str(e)}")
         except Exception as e:
             raise AuthenticationException(f"Invalid token: {str(e)}")
-    
+
     def generate_api_key(self, length: int = 32) -> str:
         """Generate a secure API key."""
         return secrets.token_urlsafe(length)
-    
+
     def validate_password_strength(self, password: str) -> Dict[str, Any]:
         """Validate password strength."""
         issues = []
         score = 0
-        
+
         # Length check
         if len(password) < settings.password_min_length:
-            issues.append(f"Password must be at least {settings.password_min_length} characters long")
+            issues.append(
+                f"Password must be at least {settings.password_min_length} characters long"
+            )
         else:
             score += 1
-        
+
         # Character variety checks
         if not any(c.islower() for c in password):
             issues.append("Password must contain at least one lowercase letter")
         else:
             score += 1
-        
+
         if not any(c.isupper() for c in password):
             issues.append("Password must contain at least one uppercase letter")
         else:
             score += 1
-        
+
         if not any(c.isdigit() for c in password):
             issues.append("Password must contain at least one number")
         else:
             score += 1
-        
+
         # Determine strength
         if score >= 4:
             strength = "strong"
@@ -117,7 +120,7 @@ class SecurityManager:
             strength = "medium"
         else:
             strength = "weak"
-        
+
         return {
             "valid": len(issues) == 0,
             "strength": strength,
@@ -138,7 +141,10 @@ def validate_password_strength(password: str) -> Dict[str, Any]:
 
 # Dependency functions
 
-async def get_current_user_token(credentials: HTTPAuthorizationCredentials = security) -> Dict[str, Any]:
+
+async def get_current_user_token(
+    credentials: HTTPAuthorizationCredentials = security,
+) -> Dict[str, Any]:
     """Get current user from JWT token."""
     try:
         payload = security_manager.verify_token(credentials.credentials)
@@ -162,7 +168,7 @@ def get_cors_origins() -> list:
     if settings.is_development:
         return [
             "http://localhost:3000",
-            "http://localhost:3001", 
+            "http://localhost:3001",
             "http://localhost:3002",
             "http://127.0.0.1:3000",
         ]

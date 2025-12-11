@@ -1,7 +1,8 @@
-from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional, List
 from datetime import datetime
 from enum import Enum
+from typing import List, Optional
+
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class UserRole(str, Enum):
@@ -12,6 +13,7 @@ class UserRole(str, Enum):
 
 class User(SQLModel, table=True):
     """Base user model for authentication and common user data"""
+
     __tablename__ = "users"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -47,6 +49,7 @@ class User(SQLModel, table=True):
 
 class UserCreate(SQLModel):
     """Schema for user registration"""
+
     email: str
     username: str
     password: str
@@ -56,12 +59,14 @@ class UserCreate(SQLModel):
 
 class UserLogin(SQLModel):
     """Schema for user login"""
+
     email: str
     password: str
 
 
 class UserResponse(SQLModel):
     """Schema for user response (without password)"""
+
     id: int
     email: str
     username: str
@@ -75,6 +80,7 @@ class UserResponse(SQLModel):
 
 class Token(SQLModel):
     """JWT token response"""
+
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
@@ -83,6 +89,7 @@ class Token(SQLModel):
 
 class TokenData(SQLModel):
     """Token payload data"""
+
     user_id: int
     email: str
     role: UserRole

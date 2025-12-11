@@ -1,15 +1,18 @@
 """
 Redis service for sessions, token blacklist, rate limiting, and caching.
 """
+
+import json
 from datetime import timedelta
 from typing import Optional
-import json
-import structlog
 
 # Import both real and fake redis
 import redis.asyncio as redis
+import structlog
+
 try:
     from fakeredis import aioredis as fakeredis_module
+
     HAS_FAKEREDIS = True
 except ImportError:
     HAS_FAKEREDIS = False
@@ -32,9 +35,7 @@ class RedisService:
             logger.info("Connected to FakeRedis (development/test mode)")
         else:
             self.client = await redis.from_url(
-                self.redis_url,
-                encoding="utf-8",
-                decode_responses=True
+                self.redis_url, encoding="utf-8", decode_responses=True
             )
             logger.info("Connected to Redis")
 
@@ -96,10 +97,7 @@ class RedisService:
     # Rate Limiting
 
     async def check_rate_limit(
-        self,
-        key: str,
-        max_requests: int,
-        window_seconds: int
+        self, key: str, max_requests: int, window_seconds: int
     ) -> tuple[bool, int]:
         """
         Check if rate limit is exceeded.
@@ -139,11 +137,7 @@ class RedisService:
     # Verification Codes
 
     async def store_verification_code(
-        self,
-        email: str,
-        code: str,
-        purpose: str,
-        expires_in_seconds: int = 600  # 10 minutes
+        self, email: str, code: str, purpose: str, expires_in_seconds: int = 600  # 10 minutes
     ):
         """Store a verification code."""
         key = f"verify:{purpose}:{email}"
@@ -153,7 +147,9 @@ class RedisService:
         }
         await self.client.setex(key, expires_in_seconds, json.dumps(data))
 
-    async def verify_code(self, email: str, code: str, purpose: str, max_attempts: int = 3) -> tuple[bool, int]:
+    async def verify_code(
+        self, email: str, code: str, purpose: str, max_attempts: int = 3
+    ) -> tuple[bool, int]:
         """
         Verify a code and track attempts.
         Returns (is_valid, attempts_remaining).

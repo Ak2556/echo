@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Query
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Optional
 
+from fastapi import APIRouter, Query
+
 router = APIRouter()
+
 
 @router.get("/")
 async def get_analytics():
@@ -13,8 +15,9 @@ async def get_analytics():
         "total_sessions": 8543,
         "avg_session_duration": "12m 34s",
         "bounce_rate": 32.5,
-        "conversion_rate": 4.2
+        "conversion_rate": 4.2,
     }
+
 
 @router.get("/overview")
 async def get_analytics_overview():
@@ -25,14 +28,12 @@ async def get_analytics_overview():
         "total_sessions": 8543,
         "avg_session_duration": "12m 34s",
         "bounce_rate": 32.5,
-        "conversion_rate": 4.2
+        "conversion_rate": 4.2,
     }
 
+
 @router.get("/traffic")
-async def get_traffic_stats(
-    start_date: Optional[str] = None,
-    end_date: Optional[str] = None
-):
+async def get_traffic_stats(start_date: Optional[str] = None, end_date: Optional[str] = None):
     """Get traffic statistics"""
     return {
         "pageviews": [
@@ -43,8 +44,9 @@ async def get_traffic_stats(
             {"date": "2025-10-05", "views": 1890},
         ],
         "unique_visitors": 842,
-        "returning_visitors": 405
+        "returning_visitors": 405,
     }
+
 
 @router.get("/user-engagement")
 async def get_user_engagement():
@@ -54,8 +56,9 @@ async def get_user_engagement():
         "total_comments": 12304,
         "total_likes": 45678,
         "total_shares": 2345,
-        "engagement_rate": 65.4
+        "engagement_rate": 65.4,
     }
+
 
 @router.get("/popular-content")
 async def get_popular_content(limit: int = 10):
@@ -68,14 +71,16 @@ async def get_popular_content(limit: int = 10):
         ]
     }
 
+
 @router.get("/export")
 async def export_analytics(format: str = Query("csv", pattern="^(csv|json|pdf)$")):
     """Export analytics data"""
     return {
         "success": True,
         "download_url": f"/downloads/analytics-report.{format}",
-        "generated_at": datetime.now(timezone.utc).isoformat()
+        "generated_at": datetime.now(timezone.utc).isoformat(),
     }
+
 
 @router.get("/realtime")
 async def get_realtime_stats():
@@ -84,9 +89,5 @@ async def get_realtime_stats():
         "active_users_now": 45,
         "current_sessions": 67,
         "pageviews_last_minute": 123,
-        "top_pages": [
-            {"/home": 34},
-            {"/dashboard": 21},
-            {"/profile": 12}
-        ]
+        "top_pages": [{"/home": 34}, {"/dashboard": 21}, {"/profile": 12}],
     }

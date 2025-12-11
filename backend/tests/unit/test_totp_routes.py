@@ -3,27 +3,27 @@ Comprehensive unit tests for TOTP (2FA) routes.
 Tests setup, verification, login, disable, and backup code functionality.
 """
 
-import pytest
-from unittest.mock import Mock, patch, AsyncMock, MagicMock
 from datetime import datetime, timedelta, timezone
+from unittest.mock import AsyncMock, MagicMock, Mock, patch
+
+import pytest
 from fastapi import HTTPException, Request
 
+from app.auth.models import Credential, RefreshToken, Session, User
 from app.auth.totp_routes import (
-    setup_2fa,
-    verify_2fa_setup,
-    verify_2fa_login,
-    disable_2fa,
-    regenerate_backup_codes,
-    get_2fa_status,
-    get_current_user_from_token,
-    Setup2FAResponse,
-    Verify2FASetupRequest,
-    Verify2FALoginRequest,
     Disable2FARequest,
     RegenerateBackupCodesRequest,
+    Setup2FAResponse,
+    Verify2FALoginRequest,
+    Verify2FASetupRequest,
+    disable_2fa,
+    get_2fa_status,
+    get_current_user_from_token,
+    regenerate_backup_codes,
+    setup_2fa,
+    verify_2fa_login,
+    verify_2fa_setup,
 )
-from app.auth.models import User, Credential, RefreshToken, Session
-
 
 # ==================== Test Fixtures ====================
 
@@ -48,7 +48,7 @@ def mock_request():
     request.client.host = "127.0.0.1"
     request.headers = {
         "authorization": "Bearer test_token_123",
-        "user-agent": "Mozilla/5.0 (Test Browser)"
+        "user-agent": "Mozilla/5.0 (Test Browser)",
     }
     return request
 
@@ -241,7 +241,18 @@ class TestSetup2FA:
                             mock_qr.return_value = "data:image/png;base64,iVBORw0KGgoAAAANS"
 
                             with patch("app.auth.totp_routes.generate_backup_codes") as mock_backup:
-                                mock_backup.return_value = ["CODE1", "CODE2", "CODE3", "CODE4", "CODE5", "CODE6", "CODE7", "CODE8", "CODE9", "CODE10"]
+                                mock_backup.return_value = [
+                                    "CODE1",
+                                    "CODE2",
+                                    "CODE3",
+                                    "CODE4",
+                                    "CODE5",
+                                    "CODE6",
+                                    "CODE7",
+                                    "CODE8",
+                                    "CODE9",
+                                    "CODE10",
+                                ]
 
                                 response = await setup_2fa(mock_request, mock_db)
 
@@ -289,10 +300,7 @@ class TestVerify2FASetup:
     @pytest.mark.asyncio
     async def test_verify_setup_invalid_code(self, mock_request, mock_db, mock_user):
         """Test verification fails with invalid TOTP code."""
-        setup_data = {
-            "secret": "JBSWY3DPEHPK3PXP",
-            "backup_codes": ["CODE1", "CODE2", "CODE3"]
-        }
+        setup_data = {"secret": "JBSWY3DPEHPK3PXP", "backup_codes": ["CODE1", "CODE2", "CODE3"]}
 
         with patch("app.auth.totp_routes.get_current_user_from_token") as mock_get_user:
             mock_get_user.return_value = mock_user
@@ -318,7 +326,7 @@ class TestVerify2FASetup:
         """Test successful 2FA setup verification."""
         setup_data = {
             "secret": "JBSWY3DPEHPK3PXP",
-            "backup_codes": ["CODE1", "CODE2", "CODE3", "CODE4", "CODE5"]
+            "backup_codes": ["CODE1", "CODE2", "CODE3", "CODE4", "CODE5"],
         }
 
         with patch("app.auth.totp_routes.get_current_user_from_token") as mock_get_user:
@@ -352,7 +360,9 @@ class TestVerify2FASetup:
                             mock_db.commit.assert_called_once()
 
                             # Verify Redis cache was cleared
-                            mock_redis.cache_delete.assert_called_once_with(f"totp_setup:{mock_user.id}")
+                            mock_redis.cache_delete.assert_called_once_with(
+                                f"totp_setup:{mock_user.id}"
+                            )
 
                             # Verify audit log
                             mock_audit.assert_called_once()
@@ -377,9 +387,7 @@ class TestVerify2FALogin:
             mock_get_redis.return_value = mock_redis
 
             request_data = Verify2FALoginRequest(
-                temp_token="invalid_token",
-                code="123456",
-                trust_device=False
+                temp_token="invalid_token", code="123456", trust_device=False
             )
 
             with pytest.raises(HTTPException) as exc_info:
@@ -404,9 +412,7 @@ class TestVerify2FALogin:
             mock_db.execute.return_value = mock_result
 
             request_data = Verify2FALoginRequest(
-                temp_token="temp_token_123",
-                code="123456",
-                trust_device=False
+                temp_token="temp_token_123", code="123456", trust_device=False
             )
 
             with pytest.raises(HTTPException) as exc_info:
@@ -431,9 +437,7 @@ class TestVerify2FALogin:
             mock_db.execute.return_value = mock_result
 
             request_data = Verify2FALoginRequest(
-                temp_token="temp_token_123",
-                code="123456",
-                trust_device=False
+                temp_token="temp_token_123", code="123456", trust_device=False
             )
 
             with pytest.raises(HTTPException) as exc_info:
@@ -466,9 +470,7 @@ class TestVerify2FALogin:
                         mock_verify_backup.return_value = (False, mock_user_with_2fa.backup_codes)
 
                         request_data = Verify2FALoginRequest(
-                            temp_token="temp_token_123",
-                            code="999999",
-                            trust_device=False
+                            temp_token="temp_token_123", code="999999", trust_device=False
                         )
 
                         with pytest.raises(HTTPException) as exc_info:
@@ -502,23 +504,32 @@ class TestVerify2FALogin:
                     with patch("app.auth.jwt_utils.get_jwt_manager") as mock_jwt_mgr:
                         mock_jwt_manager = Mock()
                         mock_jwt_manager.create_access_token.return_value = "access_token_123"
-                        mock_jwt_manager.create_refresh_token.return_value = ("refresh_token_123", "jti_123")
+                        mock_jwt_manager.create_refresh_token.return_value = (
+                            "refresh_token_123",
+                            "jti_123",
+                        )
                         mock_jwt_mgr.return_value = mock_jwt_manager
 
                         with patch("app.auth.security.generate_device_fingerprint") as mock_fp:
                             mock_fp.return_value = "device_fp_123"
 
-                            with patch("app.auth.routes.create_session_record", new=AsyncMock()) as mock_session:
+                            with patch(
+                                "app.auth.routes.create_session_record", new=AsyncMock()
+                            ) as mock_session:
 
-                                with patch("app.auth.totp_routes.log_audit_event", new=AsyncMock()) as mock_audit:
+                                with patch(
+                                    "app.auth.totp_routes.log_audit_event", new=AsyncMock()
+                                ) as mock_audit:
 
                                     request_data = Verify2FALoginRequest(
                                         temp_token="temp_token_123",
                                         code="123456",
-                                        trust_device=False
+                                        trust_device=False,
                                     )
 
-                                    response = await verify_2fa_login(request_data, mock_request, mock_db)
+                                    response = await verify_2fa_login(
+                                        request_data, mock_request, mock_db
+                                    )
 
                                     # Verify tokens were created
                                     assert response["access_token"] == "access_token_123"
@@ -540,7 +551,9 @@ class TestVerify2FALogin:
                                     mock_audit.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_verify_login_success_with_backup_code(self, mock_request, mock_db, mock_user_with_2fa):
+    async def test_verify_login_success_with_backup_code(
+        self, mock_request, mock_db, mock_user_with_2fa
+    ):
         """Test successful login verification with backup code."""
         pending_data = {"user_id": "user_123"}
         remaining_codes = ["BACKUP2", "BACKUP3", "BACKUP4", "BACKUP5"]
@@ -563,28 +576,40 @@ class TestVerify2FALogin:
                     mock_verify_totp.return_value = False  # TOTP fails
 
                     with patch("app.auth.totp_routes.verify_backup_code") as mock_verify_backup:
-                        mock_verify_backup.return_value = (True, remaining_codes)  # Backup code succeeds
+                        mock_verify_backup.return_value = (
+                            True,
+                            remaining_codes,
+                        )  # Backup code succeeds
 
                         with patch("app.auth.jwt_utils.get_jwt_manager") as mock_jwt_mgr:
                             mock_jwt_manager = Mock()
                             mock_jwt_manager.create_access_token.return_value = "access_token_123"
-                            mock_jwt_manager.create_refresh_token.return_value = ("refresh_token_123", "jti_123")
+                            mock_jwt_manager.create_refresh_token.return_value = (
+                                "refresh_token_123",
+                                "jti_123",
+                            )
                             mock_jwt_mgr.return_value = mock_jwt_manager
 
                             with patch("app.auth.security.generate_device_fingerprint") as mock_fp:
                                 mock_fp.return_value = "device_fp_123"
 
-                                with patch("app.auth.routes.create_session_record", new=AsyncMock()) as mock_session:
+                                with patch(
+                                    "app.auth.routes.create_session_record", new=AsyncMock()
+                                ) as mock_session:
 
-                                    with patch("app.auth.totp_routes.log_audit_event", new=AsyncMock()) as mock_audit:
+                                    with patch(
+                                        "app.auth.totp_routes.log_audit_event", new=AsyncMock()
+                                    ) as mock_audit:
 
                                         request_data = Verify2FALoginRequest(
                                             temp_token="temp_token_123",
                                             code="BACKUP1",
-                                            trust_device=False
+                                            trust_device=False,
                                         )
 
-                                        response = await verify_2fa_login(request_data, mock_request, mock_db)
+                                        response = await verify_2fa_login(
+                                            request_data, mock_request, mock_db
+                                        )
 
                                         # Verify backup codes were updated
                                         assert mock_user_with_2fa.backup_codes == remaining_codes
@@ -594,7 +619,9 @@ class TestVerify2FALogin:
                                         assert response["refresh_token"] == "refresh_token_123"
 
     @pytest.mark.asyncio
-    async def test_verify_login_backup_code_low_warning(self, mock_request, mock_db, mock_user_with_2fa):
+    async def test_verify_login_backup_code_low_warning(
+        self, mock_request, mock_db, mock_user_with_2fa
+    ):
         """Test warning is logged when backup codes are running low."""
         pending_data = {"user_id": "user_123"}
         remaining_codes = ["BACKUP5"]  # Only 1 code remaining
@@ -622,22 +649,31 @@ class TestVerify2FALogin:
                         with patch("app.auth.jwt_utils.get_jwt_manager") as mock_jwt_mgr:
                             mock_jwt_manager = Mock()
                             mock_jwt_manager.create_access_token.return_value = "access_token"
-                            mock_jwt_manager.create_refresh_token.return_value = ("refresh_token", "jti")
+                            mock_jwt_manager.create_refresh_token.return_value = (
+                                "refresh_token",
+                                "jti",
+                            )
                             mock_jwt_mgr.return_value = mock_jwt_manager
 
                             with patch("app.auth.security.generate_device_fingerprint"):
-                                with patch("app.auth.routes.create_session_record", new=AsyncMock()) as mock_session:
+                                with patch(
+                                    "app.auth.routes.create_session_record", new=AsyncMock()
+                                ) as mock_session:
 
-                                    with patch("app.auth.totp_routes.log_audit_event", new=AsyncMock()) as mock_audit:
+                                    with patch(
+                                        "app.auth.totp_routes.log_audit_event", new=AsyncMock()
+                                    ) as mock_audit:
 
                                         with patch("app.auth.totp_routes.logger") as mock_logger:
                                             request_data = Verify2FALoginRequest(
                                                 temp_token="temp_token_123",
                                                 code="BACKUP4",
-                                                trust_device=False
+                                                trust_device=False,
                                             )
 
-                                            response = await verify_2fa_login(request_data, mock_request, mock_db)
+                                            response = await verify_2fa_login(
+                                                request_data, mock_request, mock_db
+                                            )
 
                                             # Verify warning was logged
                                             mock_logger.warning.assert_called()
@@ -666,7 +702,9 @@ class TestDisable2FA:
             assert "2FA is not enabled" in exc_info.value.detail
 
     @pytest.mark.asyncio
-    async def test_disable_2fa_invalid_password(self, mock_request, mock_db, mock_user_with_2fa, mock_credential):
+    async def test_disable_2fa_invalid_password(
+        self, mock_request, mock_db, mock_user_with_2fa, mock_credential
+    ):
         """Test disable fails with invalid password."""
         with patch("app.auth.totp_routes.get_current_user_from_token") as mock_get_user:
             mock_get_user.return_value = mock_user_with_2fa
@@ -706,7 +744,9 @@ class TestDisable2FA:
             assert exc_info.value.status_code == 401
 
     @pytest.mark.asyncio
-    async def test_disable_2fa_with_invalid_totp_code(self, mock_request, mock_db, mock_user_with_2fa, mock_credential):
+    async def test_disable_2fa_with_invalid_totp_code(
+        self, mock_request, mock_db, mock_user_with_2fa, mock_credential
+    ):
         """Test disable fails with invalid TOTP code."""
         with patch("app.auth.totp_routes.get_current_user_from_token") as mock_get_user:
             mock_get_user.return_value = mock_user_with_2fa
@@ -726,7 +766,10 @@ class TestDisable2FA:
                         mock_verify_totp.return_value = False
 
                         with patch("app.auth.totp_routes.verify_backup_code") as mock_verify_backup:
-                            mock_verify_backup.return_value = (False, mock_user_with_2fa.backup_codes)
+                            mock_verify_backup.return_value = (
+                                False,
+                                mock_user_with_2fa.backup_codes,
+                            )
 
                             request_data = Disable2FARequest(password="password123", code="999999")
 
@@ -737,7 +780,9 @@ class TestDisable2FA:
                             assert "Invalid 2FA code" in exc_info.value.detail
 
     @pytest.mark.asyncio
-    async def test_disable_2fa_success_with_password_only(self, mock_request, mock_db, mock_user_with_2fa, mock_credential):
+    async def test_disable_2fa_success_with_password_only(
+        self, mock_request, mock_db, mock_user_with_2fa, mock_credential
+    ):
         """Test successful disable with password only (no code)."""
         with patch("app.auth.totp_routes.get_current_user_from_token") as mock_get_user:
             mock_get_user.return_value = mock_user_with_2fa
@@ -772,7 +817,9 @@ class TestDisable2FA:
                     assert "disabled successfully" in response["message"]
 
     @pytest.mark.asyncio
-    async def test_disable_2fa_success_with_totp_code(self, mock_request, mock_db, mock_user_with_2fa, mock_credential):
+    async def test_disable_2fa_success_with_totp_code(
+        self, mock_request, mock_db, mock_user_with_2fa, mock_credential
+    ):
         """Test successful disable with password and valid TOTP code."""
         with patch("app.auth.totp_routes.get_current_user_from_token") as mock_get_user:
             mock_get_user.return_value = mock_user_with_2fa
@@ -807,7 +854,9 @@ class TestDisable2FA:
                             assert "disabled successfully" in response["message"]
 
     @pytest.mark.asyncio
-    async def test_disable_2fa_success_with_backup_code(self, mock_request, mock_db, mock_user_with_2fa, mock_credential):
+    async def test_disable_2fa_success_with_backup_code(
+        self, mock_request, mock_db, mock_user_with_2fa, mock_credential
+    ):
         """Test successful disable with password and valid backup code."""
         with patch("app.auth.totp_routes.get_current_user_from_token") as mock_get_user:
             mock_get_user.return_value = mock_user_with_2fa
@@ -832,7 +881,9 @@ class TestDisable2FA:
                             with patch("app.auth.totp_routes.log_audit_event") as mock_audit:
                                 mock_audit.return_value = AsyncMock()
 
-                                request_data = Disable2FARequest(password="password123", code="CODE1")
+                                request_data = Disable2FARequest(
+                                    password="password123", code="CODE1"
+                                )
 
                                 response = await disable_2fa(request_data, mock_request, mock_db)
 
@@ -864,7 +915,9 @@ class TestRegenerateBackupCodes:
             assert "2FA is not enabled" in exc_info.value.detail
 
     @pytest.mark.asyncio
-    async def test_regenerate_invalid_password(self, mock_request, mock_db, mock_user_with_2fa, mock_credential):
+    async def test_regenerate_invalid_password(
+        self, mock_request, mock_db, mock_user_with_2fa, mock_credential
+    ):
         """Test regenerate fails with invalid password."""
         with patch("app.auth.totp_routes.get_current_user_from_token") as mock_get_user:
             mock_get_user.return_value = mock_user_with_2fa
@@ -904,7 +957,9 @@ class TestRegenerateBackupCodes:
             assert exc_info.value.status_code == 401
 
     @pytest.mark.asyncio
-    async def test_regenerate_success(self, mock_request, mock_db, mock_user_with_2fa, mock_credential):
+    async def test_regenerate_success(
+        self, mock_request, mock_db, mock_user_with_2fa, mock_credential
+    ):
         """Test successful backup codes regeneration."""
         with patch("app.auth.totp_routes.get_current_user_from_token") as mock_get_user:
             mock_get_user.return_value = mock_user_with_2fa
@@ -918,7 +973,18 @@ class TestRegenerateBackupCodes:
                 mock_verify.return_value = True
 
                 with patch("app.auth.totp_routes.generate_backup_codes") as mock_gen_codes:
-                    new_codes = ["NEW1", "NEW2", "NEW3", "NEW4", "NEW5", "NEW6", "NEW7", "NEW8", "NEW9", "NEW10"]
+                    new_codes = [
+                        "NEW1",
+                        "NEW2",
+                        "NEW3",
+                        "NEW4",
+                        "NEW5",
+                        "NEW6",
+                        "NEW7",
+                        "NEW8",
+                        "NEW9",
+                        "NEW10",
+                    ]
                     mock_gen_codes.return_value = new_codes
 
                     with patch("app.auth.totp_routes.log_audit_event") as mock_audit:
@@ -926,7 +992,9 @@ class TestRegenerateBackupCodes:
 
                         request_data = RegenerateBackupCodesRequest(password="password123")
 
-                        response = await regenerate_backup_codes(request_data, mock_request, mock_db)
+                        response = await regenerate_backup_codes(
+                            request_data, mock_request, mock_db
+                        )
 
                         # Verify backup codes were updated
                         assert mock_user_with_2fa.backup_codes == new_codes
@@ -972,7 +1040,9 @@ class TestGet2FAStatus:
             assert response["backup_codes_remaining"] == 5
 
     @pytest.mark.asyncio
-    async def test_status_2fa_enabled_no_backup_codes(self, mock_request, mock_db, mock_user_with_2fa):
+    async def test_status_2fa_enabled_no_backup_codes(
+        self, mock_request, mock_db, mock_user_with_2fa
+    ):
         """Test status when 2FA is enabled but no backup codes remain."""
         mock_user_with_2fa.backup_codes = []
 

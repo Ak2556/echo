@@ -4,17 +4,18 @@ Unit tests for exception handling.
 
 import pytest
 from fastapi import status
+
 from app.core.exceptions import (
     APIException,
-    ValidationException,
     AuthenticationException,
     AuthorizationException,
-    NotFoundException,
-    ConflictException,
-    RateLimitException,
-    ExternalServiceException,
-    DatabaseException,
     CacheException,
+    ConflictException,
+    DatabaseException,
+    ExternalServiceException,
+    NotFoundException,
+    RateLimitException,
+    ValidationException,
     create_error_response,
     create_success_response,
 )
@@ -41,7 +42,7 @@ class TestAPIException:
             status_code=status.HTTP_400_BAD_REQUEST,
             error_code="CUSTOM_ERROR",
             details=details,
-            headers=headers
+            headers=headers,
         )
         assert exc.message == "Custom error"
         assert exc.status_code == status.HTTP_400_BAD_REQUEST
@@ -53,7 +54,7 @@ class TestAPIException:
         """Test APIException to_dict method."""
         exc = APIException("Test error", error_code="TEST_ERROR")
         result = exc.to_dict()
-        
+
         assert result["success"] is False
         assert result["error"]["code"] == "TEST_ERROR"
         assert result["error"]["message"] == "Test error"
@@ -67,7 +68,7 @@ class TestValidationException:
         """Test ValidationException with default values."""
         exc = ValidationException()
         assert exc.message == "Validation failed"
-        assert exc.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert exc.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
         assert exc.error_code == "VALIDATION_ERROR"
         assert exc.details["field_errors"] == {}
 
@@ -231,7 +232,7 @@ class TestResponseHelpers:
     def test_create_error_response_default(self):
         """Test create_error_response with default values."""
         response = create_error_response("Test error")
-        
+
         assert response["success"] is False
         assert response["error"]["code"] == "ERROR"
         assert response["error"]["message"] == "Test error"
@@ -241,12 +242,9 @@ class TestResponseHelpers:
         """Test create_error_response with custom values."""
         details = {"field": "value"}
         response = create_error_response(
-            "Custom error",
-            "CUSTOM_ERROR",
-            status.HTTP_400_BAD_REQUEST,
-            details
+            "Custom error", "CUSTOM_ERROR", status.HTTP_400_BAD_REQUEST, details
         )
-        
+
         assert response["success"] is False
         assert response["error"]["code"] == "CUSTOM_ERROR"
         assert response["error"]["message"] == "Custom error"
@@ -255,7 +253,7 @@ class TestResponseHelpers:
     def test_create_success_response_default(self):
         """Test create_success_response with default values."""
         response = create_success_response()
-        
+
         assert response["success"] is True
         assert response["message"] == "Success"
         assert "data" not in response
@@ -265,7 +263,7 @@ class TestResponseHelpers:
         """Test create_success_response with data."""
         data = {"id": 1, "name": "Test"}
         response = create_success_response(data, "Operation successful")
-        
+
         assert response["success"] is True
         assert response["message"] == "Operation successful"
         assert response["data"] == data
@@ -275,7 +273,7 @@ class TestResponseHelpers:
         data = [1, 2, 3]
         meta = {"total": 3, "page": 1}
         response = create_success_response(data, "Data retrieved", meta)
-        
+
         assert response["success"] is True
         assert response["message"] == "Data retrieved"
         assert response["data"] == data
@@ -297,6 +295,7 @@ class TestExceptionHandlers:
     def mock_request(self):
         """Create a mock FastAPI Request."""
         from unittest.mock import Mock
+
         request = Mock()
         request.url.path = "/api/test"
         request.method = "GET"
@@ -312,7 +311,7 @@ class TestExceptionHandlers:
             message="Test error",
             status_code=status.HTTP_400_BAD_REQUEST,
             error_code="TEST_ERROR",
-            details={"field": "value"}
+            details={"field": "value"},
         )
 
         response = await api_exception_handler(mock_request, exc)
@@ -320,6 +319,7 @@ class TestExceptionHandlers:
         assert response.status_code == 400
         # Response content is in body
         import json
+
         content = json.loads(response.body.decode())
         assert content["success"] is False
         assert content["error"]["code"] == "TEST_ERROR"
@@ -328,8 +328,9 @@ class TestExceptionHandlers:
     @pytest.mark.asyncio
     async def test_validation_exception_handler(self, mock_request):
         """Test validation_exception_handler with Pydantic ValidationError."""
-        from app.core.exceptions import validation_exception_handler
         from pydantic import BaseModel, ValidationError
+
+        from app.core.exceptions import validation_exception_handler
 
         class TestModel(BaseModel):
             email: str
@@ -343,6 +344,7 @@ class TestExceptionHandlers:
 
             assert response.status_code == 422
             import json
+
             content = json.loads(response.body.decode())
             assert content["success"] is False
             assert content["error"]["code"] == "VALIDATION_ERROR"
@@ -358,6 +360,7 @@ class TestExceptionHandlers:
 
         assert response.status_code == 401
         import json
+
         content = json.loads(response.body.decode())
         assert content["error"]["message"] == "Invalid credentials"
 
@@ -372,6 +375,7 @@ class TestExceptionHandlers:
 
         assert response.status_code == 403
         import json
+
         content = json.loads(response.body.decode())
         assert content["error"]["message"] == "Admin access required"
 
@@ -381,15 +385,14 @@ class TestExceptionHandlers:
         from app.core.exceptions import rate_limit_exception_handler
 
         exc = RateLimitException(
-            message="Too many requests",
-            retry_after=60,
-            limit_info={"limit": 100}
+            message="Too many requests", retry_after=60, limit_info={"limit": 100}
         )
 
         response = await rate_limit_exception_handler(mock_request, exc)
 
         assert response.status_code == 429
         import json
+
         content = json.loads(response.body.decode())
         assert content["error"]["code"] == "RATE_LIMIT_EXCEEDED"
 
@@ -404,6 +407,7 @@ class TestExceptionHandlers:
 
         assert response.status_code == 500
         import json
+
         content = json.loads(response.body.decode())
         assert content["success"] is False
         assert content["error"]["code"] == "INTERNAL_ERROR"

@@ -1,8 +1,9 @@
-from sqlmodel import SQLModel, Field, Relationship, Column
-from typing import Optional
 from datetime import datetime, timezone
 from enum import Enum
+from typing import Optional
+
 from sqlalchemy import JSON
+from sqlmodel import Column, Field, Relationship, SQLModel
 
 
 class PaymentStatus(str, Enum):
@@ -25,6 +26,7 @@ class PaymentMethod(str, Enum):
 
 class Payment(SQLModel, table=True):
     """Payment transactions"""
+
     __tablename__ = "payments"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -68,6 +70,7 @@ class Payment(SQLModel, table=True):
 
 class PaymentCreate(SQLModel):
     """Schema for creating a payment"""
+
     course_id: int
     method: PaymentMethod
     amount: float
@@ -75,6 +78,7 @@ class PaymentCreate(SQLModel):
 
 class PaymentUpdate(SQLModel):
     """Schema for updating a payment"""
+
     status: Optional[PaymentStatus] = None
     gateway_payment_id: Optional[str] = None
     transaction_id: Optional[str] = None
@@ -82,6 +86,7 @@ class PaymentUpdate(SQLModel):
 
 class PaymentResponse(SQLModel):
     """Schema for payment response"""
+
     id: int
     student_id: int
     course_id: int

@@ -11,8 +11,11 @@ const customJestConfig = {
   // Add more setup options before each test is run
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
 
-  // Test environment
+  // Test environment with React 18 support
   testEnvironment: 'jsdom',
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
 
   // Coverage thresholds - balanced for production readiness
   coverageThreshold: {

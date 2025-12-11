@@ -1,8 +1,10 @@
-from sqlmodel import SQLModel, Field, Relationship, Column
-from typing import Optional, List
 from datetime import datetime, timezone
 from enum import Enum
+from typing import List, Optional
+
 from sqlalchemy import JSON
+from sqlmodel import Column, Field, Relationship, SQLModel
+
 from ..utils.database_compat import get_vector_column
 
 
@@ -27,6 +29,7 @@ class ProductStatus(str, Enum):
 
 class Product(SQLModel, table=True):
     """Product model for the shop"""
+
     __tablename__ = "products"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -91,10 +94,7 @@ class Product(SQLModel, table=True):
     free_shipping: bool = Field(default=False)
 
     # Vector embedding for AI recommendations
-    embedding: Optional[List[float]] = Field(
-        sa_column=get_vector_column(1536),
-        default=None
-    )
+    embedding: Optional[List[float]] = Field(sa_column=get_vector_column(1536), default=None)
 
     # Timestamps
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -121,6 +121,7 @@ class OrderStatus(str, Enum):
 
 class Order(SQLModel, table=True):
     """Order model for shop purchases"""
+
     __tablename__ = "orders"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -164,6 +165,7 @@ class Order(SQLModel, table=True):
 
 class OrderItem(SQLModel, table=True):
     """Individual items in an order"""
+
     __tablename__ = "order_items"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -191,6 +193,7 @@ class OrderItem(SQLModel, table=True):
 
 class Cart(SQLModel, table=True):
     """Shopping cart for users"""
+
     __tablename__ = "carts"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -212,6 +215,7 @@ class Cart(SQLModel, table=True):
 
 class CartItem(SQLModel, table=True):
     """Items in a shopping cart"""
+
     __tablename__ = "cart_items"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -234,6 +238,7 @@ class CartItem(SQLModel, table=True):
 
 class ProductReview(SQLModel, table=True):
     """Product reviews and ratings"""
+
     __tablename__ = "product_reviews"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -244,7 +249,7 @@ class ProductReview(SQLModel, table=True):
     rating: int = Field(ge=1, le=5)  # 1-5 stars
     title: Optional[str] = None
     comment: Optional[str] = None
-    
+
     # Review metadata
     is_verified_purchase: bool = Field(default=False)
     helpful_count: int = Field(default=0)
@@ -262,8 +267,10 @@ class ProductReview(SQLModel, table=True):
 
 # Pydantic schemas for API
 
+
 class ProductCreate(SQLModel):
     """Schema for creating a product"""
+
     name: str
     description: str
     short_description: Optional[str] = None
@@ -281,6 +288,7 @@ class ProductCreate(SQLModel):
 
 class ProductUpdate(SQLModel):
     """Schema for updating a product"""
+
     name: Optional[str] = None
     description: Optional[str] = None
     price: Optional[float] = None
@@ -291,6 +299,7 @@ class ProductUpdate(SQLModel):
 
 class ProductResponse(SQLModel):
     """Schema for product response"""
+
     id: int
     name: str
     slug: str
@@ -308,17 +317,20 @@ class ProductResponse(SQLModel):
 
 class CartItemCreate(SQLModel):
     """Schema for adding item to cart"""
+
     product_id: int
     quantity: int
 
 
 class CartItemUpdate(SQLModel):
     """Schema for updating cart item"""
+
     quantity: int
 
 
 class OrderCreate(SQLModel):
     """Schema for creating an order"""
+
     shipping_address: dict
     billing_address: dict
     shipping_method: Optional[str] = None
@@ -327,6 +339,7 @@ class OrderCreate(SQLModel):
 
 class ProductReviewCreate(SQLModel):
     """Schema for creating a product review"""
+
     rating: int = Field(ge=1, le=5)
     title: Optional[str] = None
     comment: Optional[str] = None

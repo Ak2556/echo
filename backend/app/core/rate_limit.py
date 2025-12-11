@@ -4,12 +4,15 @@ Fail-closed rate limiting module.
 SECURITY: This module ensures rate limiting fails CLOSED (denies requests)
 when Redis is unavailable, rather than failing OPEN (allowing all requests).
 """
-from typing import Tuple, Optional
-from fastapi import HTTPException, status, Request
+
 from datetime import datetime, timedelta
+from typing import Optional, Tuple
+
 import structlog
+from fastapi import HTTPException, Request, status
 
 logger = structlog.get_logger(__name__)
+
 
 # In-memory fallback rate limiter (simple, not distributed)
 # Only used when Redis is completely unavailable
@@ -24,10 +27,7 @@ class InMemoryRateLimiter:
         self._cleanup_counter = 0
 
     def check_rate_limit(
-        self,
-        key: str,
-        max_requests: int,
-        window_seconds: int
+        self, key: str, max_requests: int, window_seconds: int
     ) -> Tuple[bool, int]:
         """
         Check rate limit using in-memory storage.
@@ -67,7 +67,8 @@ class InMemoryRateLimiter:
         """Remove expired entries."""
         now = datetime.now()
         expired_keys = [
-            key for key, (_, window_start) in self._limits.items()
+            key
+            for key, (_, window_start) in self._limits.items()
             if now - window_start > timedelta(seconds=3600)  # 1 hour max
         ]
         for key in expired_keys:
@@ -86,7 +87,7 @@ async def check_rate_limit_safe(
     key: str,
     max_requests: int,
     window_seconds: int,
-    fail_closed: bool = True
+    fail_closed: bool = True,
 ) -> Tuple[bool, int]:
     """
     Check rate limit with fail-closed behavior.
@@ -107,15 +108,12 @@ async def check_rate_limit_safe(
     - Never allows unlimited requests
     """
     # Try Redis first
-    if redis_service and hasattr(redis_service, 'client') and redis_service.client:
+    if redis_service and hasattr(redis_service, "client") and redis_service.client:
         try:
             return await redis_service.check_rate_limit(key, max_requests, window_seconds)
         except Exception as e:
             logger.error(
-                "Redis rate limiting failed",
-                error=str(e),
-                key=key,
-                fail_closed=fail_closed
+                "Redis rate limiting failed", error=str(e), key=key, fail_closed=fail_closed
             )
             # Fall through to fallback handling
 
@@ -123,17 +121,12 @@ async def check_rate_limit_safe(
     if fail_closed:
         # Use in-memory fallback
         logger.warning(
-            "Using in-memory rate limiting fallback",
-            key=key,
-            reason="Redis unavailable"
+            "Using in-memory rate limiting fallback", key=key, reason="Redis unavailable"
         )
         return _fallback_limiter.check_rate_limit(key, max_requests, window_seconds)
     else:
         # Fail open (old behavior - not recommended)
-        logger.warning(
-            "Rate limiting bypassed - Redis unavailable and fail_closed=False",
-            key=key
-        )
+        logger.warning("Rate limiting bypassed - Redis unavailable and fail_closed=False", key=key)
         return True, max_requests
 
 
@@ -142,7 +135,7 @@ def require_rate_limit(
     max_requests: int,
     window_seconds: int,
     fail_closed: bool = True,
-    error_message: str = "Rate limit exceeded. Please try again later."
+    error_message: str = "Rate limit exceeded. Please try again later.",
 ):
     """
     Decorator for endpoints requiring rate limiting with fail-closed behavior.
@@ -157,13 +150,14 @@ def require_rate_limit(
         async def login_endpoint(request: Request):
             ...
     """
+
     def decorator(func):
         async def wrapper(*args, request: Request = None, **kwargs):
             from ..auth.redis_service import get_redis_service
 
             if not request:
                 # Try to find request in kwargs
-                request = kwargs.get('request')
+                request = kwargs.get("request")
 
             if not request:
                 logger.error("Rate limit decorator: Request not found")
@@ -171,7 +165,7 @@ def require_rate_limit(
                 if fail_closed:
                     raise HTTPException(
                         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                        detail="Service temporarily unavailable"
+                        detail="Service temporarily unavailable",
                     )
 
             # Get rate limit key
@@ -184,11 +178,7 @@ def require_rate_limit(
             # Check rate limit
             redis = get_redis_service()
             is_allowed, remaining = await check_rate_limit_safe(
-                redis,
-                rate_key,
-                max_requests,
-                window_seconds,
-                fail_closed=fail_closed
+                redis, rate_key, max_requests, window_seconds, fail_closed=fail_closed
             )
 
             if not is_allowed:
@@ -196,19 +186,24 @@ def require_rate_limit(
                     "Rate limit exceeded",
                     key=rate_key,
                     max_requests=max_requests,
-                    window_seconds=window_seconds
+                    window_seconds=window_seconds,
                 )
                 raise HTTPException(
                     status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                     detail=error_message,
-                    headers={"Retry-After": str(window_seconds)}
+                    headers={"Retry-After": str(window_seconds)},
                 )
 
             # Add rate limit headers
-            if hasattr(request, 'state'):
+            if hasattr(request, "state"):
                 request.state.rate_limit_remaining = remaining
 
-            return await func(*args, **kwargs, request=request) if request in kwargs.values() else await func(*args, **kwargs)
+            return (
+                await func(*args, **kwargs, request=request)
+                if request in kwargs.values()
+                else await func(*args, **kwargs)
+            )
 
         return wrapper
+
     return decorator

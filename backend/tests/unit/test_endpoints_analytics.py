@@ -3,14 +3,15 @@ Unit tests for analytics endpoints.
 """
 
 import pytest
+
 from app.api.v1.endpoints.analytics import (
+    export_analytics,
     get_analytics,
     get_analytics_overview,
+    get_popular_content,
+    get_realtime_stats,
     get_traffic_stats,
     get_user_engagement,
-    get_popular_content,
-    export_analytics,
-    get_realtime_stats,
 )
 
 
@@ -50,10 +51,7 @@ class TestAnalyticsEndpoints:
     @pytest.mark.asyncio
     async def test_get_traffic_stats_with_dates(self):
         """Test getting traffic stats with date range."""
-        response = await get_traffic_stats(
-            start_date="2025-10-01",
-            end_date="2025-10-05"
-        )
+        response = await get_traffic_stats(start_date="2025-10-01", end_date="2025-10-05")
 
         assert "pageviews" in response
         assert len(response["pageviews"]) > 0

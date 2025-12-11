@@ -1,6 +1,7 @@
 """
 API v1 router with all endpoints.
 """
+
 from fastapi import APIRouter
 
 # Import existing endpoints
@@ -78,6 +79,7 @@ if search:
 if analytics:
     api_router.include_router(analytics.router, prefix="/analytics", tags=["Analytics"])
 
+
 @api_router.get("/")
 async def api_info():
     """API version information."""
@@ -92,6 +94,6 @@ async def api_info():
             "files": "/files - File upload and management",
             "search": "/search - Search functionality",
             "analytics": "/analytics - Analytics and metrics",
-            "admin": "/admin - Administrative functions"
-        }
+            "admin": "/admin - Administrative functions",
+        },
     }

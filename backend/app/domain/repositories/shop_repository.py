@@ -1,11 +1,11 @@
 """
 Repository interfaces for shop functionality.
 """
+
 from abc import ABC, abstractmethod
-from typing import List, Optional, Dict, Any
-from ..entities.shop import (
-    ProductEntity, CartEntity, OrderEntity, ProductReviewEntity
-)
+from typing import Any, Dict, List, Optional
+
+from ..entities.shop import CartEntity, OrderEntity, ProductEntity, ProductReviewEntity
 
 
 class ProductRepositoryInterface(ABC):
@@ -51,18 +51,14 @@ class ProductRepositoryInterface(ABC):
         seller_id: Optional[int] = None,
         status: Optional[str] = None,
         sort_by: str = "created_at",
-        sort_order: str = "desc"
+        sort_order: str = "desc",
     ) -> List[ProductEntity]:
         """List products with filters"""
         pass
 
     @abstractmethod
     async def search_products(
-        self,
-        query: str,
-        filters: Dict[str, Any] = None,
-        skip: int = 0,
-        limit: int = 100
+        self, query: str, filters: Dict[str, Any] = None, skip: int = 0, limit: int = 100
     ) -> List[ProductEntity]:
         """Search products"""
         pass
@@ -73,11 +69,7 @@ class ProductRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def get_related_products(
-        self, 
-        product_id: int, 
-        limit: int = 5
-    ) -> List[ProductEntity]:
+    async def get_related_products(self, product_id: int, limit: int = 5) -> List[ProductEntity]:
         """Get related products"""
         pass
 
@@ -121,12 +113,7 @@ class CartRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def update_item_quantity(
-        self, 
-        cart_id: int, 
-        product_id: int, 
-        quantity: int
-    ) -> bool:
+    async def update_item_quantity(self, cart_id: int, product_id: int, quantity: int) -> bool:
         """Update item quantity in cart"""
         pass
 
@@ -182,17 +169,14 @@ class OrderRepositoryInterface(ABC):
         skip: int = 0,
         limit: int = 100,
         sort_by: str = "created_at",
-        sort_order: str = "desc"
+        sort_order: str = "desc",
     ) -> List[OrderEntity]:
         """List orders with filters"""
         pass
 
     @abstractmethod
     async def get_customer_orders(
-        self, 
-        customer_id: int,
-        skip: int = 0,
-        limit: int = 100
+        self, customer_id: int, skip: int = 0, limit: int = 100
     ) -> List[OrderEntity]:
         """Get orders for a specific customer"""
         pass
@@ -209,9 +193,7 @@ class OrderRepositoryInterface(ABC):
 
     @abstractmethod
     async def get_sales_analytics(
-        self,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None
+        self, start_date: Optional[str] = None, end_date: Optional[str] = None
     ) -> Dict[str, Any]:
         """Get sales analytics"""
         pass
@@ -242,21 +224,14 @@ class ProductReviewRepositoryInterface(ABC):
 
     @abstractmethod
     async def get_product_reviews(
-        self,
-        product_id: int,
-        skip: int = 0,
-        limit: int = 100,
-        rating_filter: Optional[int] = None
+        self, product_id: int, skip: int = 0, limit: int = 100, rating_filter: Optional[int] = None
     ) -> List[ProductReviewEntity]:
         """Get reviews for a product"""
         pass
 
     @abstractmethod
     async def get_customer_reviews(
-        self,
-        customer_id: int,
-        skip: int = 0,
-        limit: int = 100
+        self, customer_id: int, skip: int = 0, limit: int = 100
     ) -> List[ProductReviewEntity]:
         """Get reviews by a customer"""
         pass

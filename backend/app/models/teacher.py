@@ -1,15 +1,20 @@
-from sqlmodel import SQLModel, Field, Relationship, Column
-from typing import Optional, List
 from datetime import datetime, timezone
+from typing import List, Optional
+
 from sqlalchemy import JSON
+from sqlmodel import Column, Field, Relationship, SQLModel
+
 from ..utils.database_compat import get_vector_column
 
 
 class Teacher(SQLModel, table=True):
     """Teacher profile with extended information"""
+
     __tablename__ = "teachers"
 
-    id: Optional[str] = Field(default_factory=lambda: str(__import__('uuid').uuid4()), primary_key=True)
+    id: Optional[str] = Field(
+        default_factory=lambda: str(__import__("uuid").uuid4()), primary_key=True
+    )
     user_id: str = Field(foreign_key="auth_users.id", unique=True, index=True)
 
     # Professional information
@@ -22,7 +27,9 @@ class Teacher(SQLModel, table=True):
     # Teaching details
     hourly_rate: float = Field(default=0.0)
     languages: List[str] = Field(sa_column=Column(JSON), default=["English"])
-    teaching_mode: List[str] = Field(sa_column=Column(JSON), default=["online"])  # online, offline, hybrid
+    teaching_mode: List[str] = Field(
+        sa_column=Column(JSON), default=["online"]
+    )  # online, offline, hybrid
 
     # Media
     demo_video_url: Optional[str] = None
@@ -40,10 +47,7 @@ class Teacher(SQLModel, table=True):
     max_students: int = Field(default=50)
 
     # Vector embedding for AI recommendations (1536 dimensions for OpenAI ada-002)
-    embedding: Optional[List[float]] = Field(
-        sa_column=get_vector_column(1536),
-        default=None
-    )
+    embedding: Optional[List[float]] = Field(sa_column=get_vector_column(1536), default=None)
 
     # Timestamps
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -58,6 +62,7 @@ class Teacher(SQLModel, table=True):
 
 class TeacherCreate(SQLModel):
     """Schema for creating teacher profile"""
+
     title: str = "Teacher"
     subjects: List[str]
     education: Optional[str] = None
@@ -70,6 +75,7 @@ class TeacherCreate(SQLModel):
 
 class TeacherUpdate(SQLModel):
     """Schema for updating teacher profile"""
+
     title: Optional[str] = None
     subjects: Optional[List[str]] = None
     education: Optional[str] = None
@@ -84,6 +90,7 @@ class TeacherUpdate(SQLModel):
 
 class TeacherResponse(SQLModel):
     """Schema for teacher profile response"""
+
     id: str
     user_id: str
     title: str

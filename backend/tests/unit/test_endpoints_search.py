@@ -3,11 +3,12 @@ Unit tests for search endpoints.
 """
 
 import pytest
+
 from app.api.v1.endpoints.search import (
+    SearchType,
     advanced_search,
     autocomplete,
     get_filters,
-    SearchType,
 )
 
 
@@ -17,12 +18,7 @@ class TestSearchEndpoints:
     @pytest.mark.asyncio
     async def test_search_all_types(self):
         """Test searching all types."""
-        response = await advanced_search(
-            q="test",
-            search_type=SearchType.ALL,
-            limit=10,
-            offset=0
-        )
+        response = await advanced_search(q="test", search_type=SearchType.ALL, limit=10, offset=0)
 
         assert "query" in response
         assert response["query"] == "test"
@@ -34,12 +30,7 @@ class TestSearchEndpoints:
     @pytest.mark.asyncio
     async def test_search_users_only(self):
         """Test searching users only."""
-        response = await advanced_search(
-            q="john",
-            search_type=SearchType.USERS,
-            limit=5,
-            offset=0
-        )
+        response = await advanced_search(q="john", search_type=SearchType.USERS, limit=5, offset=0)
 
         assert response["query"] == "john"
         assert "users" in response["results"]
@@ -48,12 +39,7 @@ class TestSearchEndpoints:
     @pytest.mark.asyncio
     async def test_search_posts_only(self):
         """Test searching posts only."""
-        response = await advanced_search(
-            q="echo",
-            search_type=SearchType.POSTS,
-            limit=5,
-            offset=0
-        )
+        response = await advanced_search(q="echo", search_type=SearchType.POSTS, limit=5, offset=0)
 
         assert response["query"] == "echo"
         assert "posts" in response["results"]
@@ -63,10 +49,7 @@ class TestSearchEndpoints:
     async def test_search_files_only(self):
         """Test searching files only."""
         response = await advanced_search(
-            q="document",
-            search_type=SearchType.FILES,
-            limit=5,
-            offset=0
+            q="document", search_type=SearchType.FILES, limit=5, offset=0
         )
 
         assert response["query"] == "document"
@@ -75,12 +58,7 @@ class TestSearchEndpoints:
     @pytest.mark.asyncio
     async def test_search_with_pagination(self):
         """Test search with pagination."""
-        response = await advanced_search(
-            q="test",
-            search_type=SearchType.ALL,
-            limit=2,
-            offset=1
-        )
+        response = await advanced_search(q="test", search_type=SearchType.ALL, limit=2, offset=1)
 
         assert "results" in response
         # Results should be limited and offset applied
@@ -89,12 +67,7 @@ class TestSearchEndpoints:
     async def test_search_with_sorting(self):
         """Test search with sorting."""
         response = await advanced_search(
-            q="test",
-            search_type=SearchType.ALL,
-            limit=10,
-            offset=0,
-            sort_by="name",
-            order="desc"
+            q="test", search_type=SearchType.ALL, limit=10, offset=0, sort_by="name", order="desc"
         )
 
         assert "results" in response

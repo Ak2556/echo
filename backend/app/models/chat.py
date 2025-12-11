@@ -1,8 +1,9 @@
-from sqlmodel import SQLModel, Field, Relationship, Column
-from typing import Optional, List
 from datetime import datetime, timezone
 from enum import Enum
+from typing import List, Optional
+
 from sqlalchemy import JSON
+from sqlmodel import Column, Field, Relationship, SQLModel
 
 
 class MessageType(str, Enum):
@@ -22,6 +23,7 @@ class ChatRoomType(str, Enum):
 
 class ChatRoom(SQLModel, table=True):
     """Chat room for teacher-student or group communication"""
+
     __tablename__ = "chat_rooms"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -55,6 +57,7 @@ class ChatRoom(SQLModel, table=True):
 
 class ChatMessage(SQLModel, table=True):
     """Individual chat messages"""
+
     __tablename__ = "chat_messages"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -92,6 +95,7 @@ class ChatMessage(SQLModel, table=True):
 
 class ChatMessageCreate(SQLModel):
     """Schema for creating a chat message"""
+
     room_id: int
     message_type: MessageType = MessageType.TEXT
     content: str
@@ -100,6 +104,7 @@ class ChatMessageCreate(SQLModel):
 
 class ChatMessageResponse(SQLModel):
     """Schema for chat message response"""
+
     id: int
     room_id: int
     sender_id: int
@@ -114,6 +119,7 @@ class ChatMessageResponse(SQLModel):
 
 class ChatRoomCreate(SQLModel):
     """Schema for creating a chat room"""
+
     course_id: Optional[int] = None
     teacher_id: int
     room_type: ChatRoomType = ChatRoomType.DIRECT
@@ -123,6 +129,7 @@ class ChatRoomCreate(SQLModel):
 
 class ChatRoomResponse(SQLModel):
     """Schema for chat room response"""
+
     id: int
     course_id: Optional[int]
     teacher_id: int

@@ -1,10 +1,11 @@
 """
 Domain entities for shop functionality.
 """
+
 from dataclasses import dataclass
-from typing import List, Optional, Dict
 from datetime import datetime
 from enum import Enum
+from typing import Dict, List, Optional
 
 
 class ProductCategory(str, Enum):
@@ -40,6 +41,7 @@ class OrderStatus(str, Enum):
 @dataclass
 class ProductEntity:
     """Product domain entity"""
+
     id: Optional[int]
     seller_id: int
     name: str
@@ -62,9 +64,8 @@ class ProductEntity:
 
     def is_available(self) -> bool:
         """Check if product is available for purchase"""
-        return (
-            self.status == ProductStatus.ACTIVE and
-            (not self.requires_shipping or self.stock_quantity > 0)
+        return self.status == ProductStatus.ACTIVE and (
+            not self.requires_shipping or self.stock_quantity > 0
         )
 
     def calculate_sale_price(self, discount_percentage: float = 0.0) -> float:
@@ -93,6 +94,7 @@ class ProductEntity:
 @dataclass
 class CartItemEntity:
     """Cart item domain entity"""
+
     id: Optional[int]
     cart_id: int
     product_id: int
@@ -111,6 +113,7 @@ class CartItemEntity:
 @dataclass
 class CartEntity:
     """Shopping cart domain entity"""
+
     id: Optional[int]
     user_id: int
     items: List[CartItemEntity]
@@ -122,11 +125,8 @@ class CartEntity:
     def add_item(self, product: ProductEntity, quantity: int) -> None:
         """Add item to cart"""
         # Check if item already exists
-        existing_item = next(
-            (item for item in self.items if item.product_id == product.id),
-            None
-        )
-        
+        existing_item = next((item for item in self.items if item.product_id == product.id), None)
+
         if existing_item:
             new_quantity = existing_item.quantity + quantity
             existing_item.update_quantity(new_quantity, product.price)
@@ -138,10 +138,10 @@ class CartEntity:
                 quantity=quantity,
                 unit_price=product.price,
                 total_price=product.price * quantity,
-                created_at=datetime.utcnow()
+                created_at=datetime.utcnow(),
             )
             self.items.append(new_item)
-        
+
         self.recalculate_totals()
 
     def remove_item(self, product_id: int) -> None:
@@ -151,10 +151,7 @@ class CartEntity:
 
     def update_item_quantity(self, product_id: int, quantity: int, unit_price: float) -> None:
         """Update item quantity"""
-        item = next(
-            (item for item in self.items if item.product_id == product_id),
-            None
-        )
+        item = next((item for item in self.items if item.product_id == product_id), None)
         if item:
             if quantity <= 0:
                 self.remove_item(product_id)
@@ -181,6 +178,7 @@ class CartEntity:
 @dataclass
 class OrderItemEntity:
     """Order item domain entity"""
+
     id: Optional[int]
     order_id: int
     product_id: int
@@ -196,6 +194,7 @@ class OrderItemEntity:
 @dataclass
 class OrderEntity:
     """Order domain entity"""
+
     id: Optional[int]
     customer_id: int
     order_number: str
@@ -218,10 +217,7 @@ class OrderEntity:
         """Calculate order totals"""
         self.subtotal = sum(item.total_price for item in self.items)
         self.total_amount = (
-            self.subtotal + 
-            self.tax_amount + 
-            self.shipping_amount - 
-            self.discount_amount
+            self.subtotal + self.tax_amount + self.shipping_amount - self.discount_amount
         )
 
     def can_be_cancelled(self) -> bool:
@@ -254,6 +250,7 @@ class OrderEntity:
 @dataclass
 class ProductReviewEntity:
     """Product review domain entity"""
+
     id: Optional[int]
     product_id: int
     customer_id: int

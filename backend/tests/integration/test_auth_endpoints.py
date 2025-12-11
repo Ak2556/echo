@@ -78,10 +78,7 @@ class TestUserLogin:
         await verify_test_user_email(db_session, test_user_data["email"])
 
         # Login
-        login_data = {
-            "email": test_user_data["email"],
-            "password": test_user_data["password"]
-        }
+        login_data = {"email": test_user_data["email"], "password": test_user_data["password"]}
         response = await client.post("/api/auth/login", json=login_data)
 
         assert response.status_code == 200
@@ -90,7 +87,9 @@ class TestUserLogin:
         assert "refresh_token" in data
         assert data["token_type"] == "bearer"
 
-    async def test_login_wrong_password(self, client: AsyncClient, test_user_data: dict, db_session):
+    async def test_login_wrong_password(
+        self, client: AsyncClient, test_user_data: dict, db_session
+    ):
         """Test login with wrong password."""
         from tests.conftest import verify_test_user_email
 
@@ -101,20 +100,14 @@ class TestUserLogin:
         await verify_test_user_email(db_session, test_user_data["email"])
 
         # Try login with wrong password
-        login_data = {
-            "email": test_user_data["email"],
-            "password": "WrongPassword123!"
-        }
+        login_data = {"email": test_user_data["email"], "password": "WrongPassword123!"}
         response = await client.post("/api/auth/login", json=login_data)
 
         assert response.status_code == 401
 
     async def test_login_nonexistent_user(self, client: AsyncClient):
         """Test login with nonexistent user."""
-        login_data = {
-            "email": "nonexistent@example.com",
-            "password": "Password123!"
-        }
+        login_data = {"email": "nonexistent@example.com", "password": "Password123!"}
         response = await client.post("/api/auth/login", json=login_data)
 
         assert response.status_code == 401
@@ -134,8 +127,7 @@ class TestTokenRefresh:
     async def test_refresh_token_success(self, client: AsyncClient, authenticated_user: dict):
         """Test successful token refresh."""
         response = await client.post(
-            "/api/auth/refresh",
-            json={"refresh_token": authenticated_user["refresh_token"]}
+            "/api/auth/refresh", json={"refresh_token": authenticated_user["refresh_token"]}
         )
 
         assert response.status_code == 200
@@ -145,10 +137,7 @@ class TestTokenRefresh:
 
     async def test_refresh_invalid_token(self, client: AsyncClient):
         """Test refresh with invalid token."""
-        response = await client.post(
-            "/api/auth/refresh",
-            json={"refresh_token": "invalid_token"}
-        )
+        response = await client.post("/api/auth/refresh", json={"refresh_token": "invalid_token"})
 
         assert response.status_code == 401
 
@@ -171,8 +160,7 @@ class TestPasswordReset:
 
         # Request password reset
         response = await client.post(
-            "/api/auth/password-reset/request",
-            json={"email": test_user_data["email"]}
+            "/api/auth/password-reset/request", json={"email": test_user_data["email"]}
         )
 
         assert response.status_code == 200
@@ -181,8 +169,7 @@ class TestPasswordReset:
     async def test_request_password_reset_nonexistent_email(self, client: AsyncClient):
         """Test password reset for nonexistent email."""
         response = await client.post(
-            "/api/auth/password-reset/request",
-            json={"email": "nonexistent@example.com"}
+            "/api/auth/password-reset/request", json={"email": "nonexistent@example.com"}
         )
 
         # Should return 200 even for nonexistent email (security best practice)
@@ -196,10 +183,7 @@ class TestEmailVerification:
 
     async def test_request_email_verification(self, client: AsyncClient, auth_headers: dict):
         """Test email verification request."""
-        response = await client.post(
-            "/api/auth/verify-email/request",
-            headers=auth_headers
-        )
+        response = await client.post("/api/auth/verify-email/request", headers=auth_headers)
 
         assert response.status_code == 200
 
@@ -228,15 +212,8 @@ class TestUserProfile:
 
     async def test_update_profile(self, client: AsyncClient, auth_headers: dict):
         """Test updating user profile."""
-        update_data = {
-            "full_name": "Updated Name",
-            "bio": "Updated bio"
-        }
-        response = await client.patch(
-            "/api/v1/users/me",
-            json=update_data,
-            headers=auth_headers
-        )
+        update_data = {"full_name": "Updated Name", "bio": "Updated bio"}
+        response = await client.patch("/api/v1/users/me", json=update_data, headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -251,10 +228,7 @@ class TestAuthSecurity:
 
     async def test_rate_limiting(self, client: AsyncClient):
         """Test rate limiting on login endpoint."""
-        login_data = {
-            "username": "testuser",
-            "password": "wrong_password"
-        }
+        login_data = {"username": "testuser", "password": "wrong_password"}
 
         # Make multiple failed login attempts
         responses = []
@@ -268,10 +242,7 @@ class TestAuthSecurity:
 
     async def test_sql_injection_protection(self, client: AsyncClient):
         """Test SQL injection protection."""
-        malicious_data = {
-            "username": "admin' OR '1'='1",
-            "password": "password"
-        }
+        malicious_data = {"username": "admin' OR '1'='1", "password": "password"}
         response = await client.post("/api/auth/login", json=malicious_data)
 
         # Should not succeed with SQL injection
@@ -287,7 +258,9 @@ class TestAuthSecurity:
             # Script tags should be sanitized
             assert "<script>" not in data.get("full_name", "")
 
-    async def test_password_not_exposed_in_response(self, client: AsyncClient, test_user_data: dict):
+    async def test_password_not_exposed_in_response(
+        self, client: AsyncClient, test_user_data: dict
+    ):
         """Test that password is never exposed in API responses."""
         response = await client.post("/api/auth/register", json=test_user_data)
 

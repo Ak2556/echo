@@ -5,19 +5,23 @@ Pytest configuration and fixtures for the Echo backend tests.
 import asyncio
 import os
 import warnings
+from typing import AsyncGenerator, Generator
+
 import pytest
 import pytest_asyncio
-from typing import AsyncGenerator, Generator
-from httpx import AsyncClient, ASGITransport
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
 # Suppress Pydantic V2 deprecation warnings from unittest.mock
 # These warnings occur when Mock(spec=PydanticModel) introspects the model
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="unittest.mock")
-warnings.filterwarnings("ignore", category=DeprecationWarning, module="pydantic._internal._model_construction")
+warnings.filterwarnings(
+    "ignore", category=DeprecationWarning, module="pydantic._internal._model_construction"
+)
 try:
     from pydantic.warnings import PydanticDeprecatedSince20
+
     warnings.filterwarnings("ignore", category=PydanticDeprecatedSince20)
 except ImportError:
     pass
@@ -25,6 +29,7 @@ except ImportError:
 # Test database URL - using temporary file-based SQLite for tests
 # Set this BEFORE importing app to ensure it uses the test database
 import tempfile
+
 TEST_DB_FILE = tempfile.NamedTemporaryFile(delete=False, suffix=".db")
 TEST_DATABASE_URL = f"sqlite+aiosqlite:///{TEST_DB_FILE.name}"
 
@@ -32,38 +37,36 @@ TEST_DATABASE_URL = f"sqlite+aiosqlite:///{TEST_DB_FILE.name}"
 os.environ["ENVIRONMENT"] = "test"
 os.environ["DATABASE_URL"] = TEST_DATABASE_URL
 
-# Now import app and dependencies
-from app.main import app
-from app.core.database import Base, get_db
-from app.core.security import security_manager
-from app.core.cache import cache_manager
-from app.auth.redis_service import init_redis_service
-from app.auth.dependencies import get_current_active_user, get_current_user
+# Import SQLModel for auth tables
+from sqlmodel import SQLModel
 
 # Import all models to register them with metadata
 from app.auth import models as auth_models  # noqa
+from app.auth.dependencies import get_current_active_user, get_current_user
+from app.auth.redis_service import init_redis_service
+from app.core.cache import cache_manager
+from app.core.database import Base, get_db
+from app.core.security import security_manager
+
+# Now import app and dependencies
+from app.main import app
+
 # Note: infrastructure.database.models has naming conflicts, skipping for now
 
-# Import SQLModel for auth tables
-from sqlmodel import SQLModel
 
 # Create async engine for tests
 test_engine = create_async_engine(
     TEST_DATABASE_URL,
     poolclass=NullPool,  # Disable connection pooling for tests
     echo=False,  # Disable SQL logging for cleaner test output
-    connect_args={"check_same_thread": False}  # Required for SQLite
+    connect_args={"check_same_thread": False},  # Required for SQLite
 )
 
 # Bind SQLModel metadata to test engine
 SQLModel.metadata.bind = test_engine
 
 # Create async session factory
-TestSessionLocal = async_sessionmaker(
-    test_engine,
-    class_=AsyncSession,
-    expire_on_commit=False
-)
+TestSessionLocal = async_sessionmaker(test_engine, class_=AsyncSession, expire_on_commit=False)
 
 
 @pytest.fixture(scope="session")
@@ -108,6 +111,7 @@ async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     """
     Create an async test client with database session override.
     """
+
     # Override database dependency
     async def override_get_db():
         yield db_session
@@ -151,7 +155,7 @@ def test_user_data() -> dict:
         "email": "test@example.com",
         "username": "testuser",
         "password": "TestP@ssw0rd!2024#UniqueForTesting",  # Strong password unlikely to be in breach databases
-        "full_name": "Test User"
+        "full_name": "Test User",
     }
 
 
@@ -163,15 +167,17 @@ def test_admin_data() -> dict:
         "username": "adminuser",
         "password": "Admin123!@#",
         "full_name": "Admin User",
-        "is_admin": True
+        "is_admin": True,
     }
 
 
 async def verify_test_user_email(db_session: AsyncSession, email: str):
     """Helper to verify a test user's email."""
-    from app.auth.models import User
-    from sqlalchemy import select
     from datetime import datetime, timezone
+
+    from sqlalchemy import select
+
+    from app.auth.models import User
 
     result = await db_session.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
@@ -182,7 +188,9 @@ async def verify_test_user_email(db_session: AsyncSession, email: str):
 
 
 @pytest_asyncio.fixture(scope="function")
-async def authenticated_user(client: AsyncClient, test_user_data: dict, db_session: AsyncSession) -> dict:
+async def authenticated_user(
+    client: AsyncClient, test_user_data: dict, db_session: AsyncSession
+) -> dict:
     """
     Create and authenticate a test user, return tokens.
     """
@@ -194,10 +202,7 @@ async def authenticated_user(client: AsyncClient, test_user_data: dict, db_sessi
     await verify_test_user_email(db_session, test_user_data["email"])
 
     # Login with email (not username)
-    login_data = {
-        "email": test_user_data["email"],
-        "password": test_user_data["password"]
-    }
+    login_data = {"email": test_user_data["email"], "password": test_user_data["password"]}
     response = await client.post("/api/auth/login", json=login_data)
     assert response.status_code == 200
 
@@ -207,9 +212,7 @@ async def authenticated_user(client: AsyncClient, test_user_data: dict, db_sessi
 @pytest_asyncio.fixture(scope="function")
 async def auth_headers(authenticated_user: dict) -> dict:
     """Create authorization headers for authenticated requests."""
-    return {
-        "Authorization": f"Bearer {authenticated_user['access_token']}"
-    }
+    return {"Authorization": f"Bearer {authenticated_user['access_token']}"}
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -228,19 +231,14 @@ def mock_openai_response():
         "object": "chat.completion",
         "created": 1677652288,
         "model": "gpt-4",
-        "choices": [{
-            "index": 0,
-            "message": {
-                "role": "assistant",
-                "content": "This is a test response from the AI."
-            },
-            "finish_reason": "stop"
-        }],
-        "usage": {
-            "prompt_tokens": 10,
-            "completion_tokens": 20,
-            "total_tokens": 30
-        }
+        "choices": [
+            {
+                "index": 0,
+                "message": {"role": "assistant", "content": "This is a test response from the AI."},
+                "finish_reason": "stop",
+            }
+        ],
+        "usage": {"prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30},
     }
 
 
@@ -251,7 +249,7 @@ def test_post_data() -> dict:
         "title": "Test Post",
         "content": "This is a test post content.",
         "tags": ["test", "pytest"],
-        "is_public": True
+        "is_public": True,
     }
 
 
@@ -264,7 +262,7 @@ def test_course_data() -> dict:
         "category": "programming",
         "difficulty": "beginner",
         "price": 99.99,
-        "is_published": True
+        "is_published": True,
     }
 
 
@@ -279,11 +277,12 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "performance: Performance tests")
 
 
-def pytest_collection_modifyitems(config, items):
-    """Modify test collection to skip experimental features."""
-    skip_experimental = pytest.mark.skip(reason="Experimental feature - tests under development")
-
-    for item in items:
-        # Skip shop and tuition integration tests (experimental features)
-        if "test_shop_endpoints" in str(item.fspath) or "test_tuition_endpoints" in str(item.fspath):
-            item.add_marker(skip_experimental)
+# Removed: No longer skipping experimental features
+# def pytest_collection_modifyitems(config, items):
+#     """Modify test collection to skip experimental features."""
+#     skip_experimental = pytest.mark.skip(reason="Experimental feature - tests under development")
+#
+#     for item in items:
+#         # Skip shop and tuition integration tests (experimental features)
+#         if "test_shop_endpoints" in str(item.fspath) or "test_tuition_endpoints" in str(item.fspath):
+#             item.add_marker(skip_experimental)

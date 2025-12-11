@@ -1,9 +1,9 @@
 """Simple caching system with in-memory fallback."""
 
-import time
 import hashlib
-from typing import Any, Optional, Dict
+import time
 from functools import wraps
+from typing import Any, Dict, Optional
 
 
 class InMemoryCache:
@@ -16,8 +16,8 @@ class InMemoryCache:
     async def get(self, key: str) -> Optional[Any]:
         if key in self._cache:
             entry = self._cache[key]
-            if entry['expires_at'] > time.time():
-                return entry['value']
+            if entry["expires_at"] > time.time():
+                return entry["value"]
             else:
                 await self.delete(key)
         return None
@@ -25,13 +25,13 @@ class InMemoryCache:
     async def set(self, key: str, value: Any, ttl: int = 300) -> bool:
         if len(self._cache) >= self._max_size:
             # Simple eviction: remove oldest entry
-            oldest_key = min(self._cache.keys(), key=lambda k: self._cache[k].get('created_at', 0))
+            oldest_key = min(self._cache.keys(), key=lambda k: self._cache[k].get("created_at", 0))
             await self.delete(oldest_key)
 
         self._cache[key] = {
-            'value': value,
-            'expires_at': time.time() + ttl,
-            'created_at': time.time()
+            "value": value,
+            "expires_at": time.time() + ttl,
+            "created_at": time.time(),
         }
         return True
 
@@ -46,15 +46,12 @@ class InMemoryCache:
         return True
 
     async def exists(self, key: str) -> bool:
-        return key in self._cache and self._cache[key]['expires_at'] > time.time()
+        return key in self._cache and self._cache[key]["expires_at"] > time.time()
 
     async def cleanup_expired(self):
         """Remove expired entries from cache."""
         now = time.time()
-        expired_keys = [
-            key for key, entry in self._cache.items()
-            if entry['expires_at'] <= now
-        ]
+        expired_keys = [key for key, entry in self._cache.items() if entry["expires_at"] <= now]
         for key in expired_keys:
             await self.delete(key)
 
@@ -94,9 +91,9 @@ class CacheManager:
     def get_stats(self) -> Dict[str, Any]:
         """Get cache statistics."""
         return {
-            'type': 'in_memory',
-            'total_entries': len(self.cache._cache),
-            'connected': self._connected
+            "type": "in_memory",
+            "total_entries": len(self.cache._cache),
+            "connected": self._connected,
         }
 
 
@@ -117,6 +114,7 @@ def cached(ttl: int = 300, key_prefix: str = ""):
         ttl: Time to live in seconds
         key_prefix: Prefix for cache keys
     """
+
     def decorator(func):
         @wraps(func)
         async def wrapper(*args, **kwargs):
@@ -148,4 +146,5 @@ def cached(ttl: int = 300, key_prefix: str = ""):
             return result
 
         return wrapper
+
     return decorator

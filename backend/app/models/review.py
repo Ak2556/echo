@@ -1,10 +1,12 @@
-from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional
 from datetime import datetime, timezone
+from typing import Optional
+
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class Review(SQLModel, table=True):
     """Course and teacher reviews"""
+
     __tablename__ = "reviews"
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -49,6 +51,7 @@ class Review(SQLModel, table=True):
 
 class ReviewCreate(SQLModel):
     """Schema for creating a review"""
+
     course_id: int
     enrollment_id: int
     overall_rating: float = Field(ge=1, le=5)
@@ -62,6 +65,7 @@ class ReviewCreate(SQLModel):
 
 class ReviewUpdate(SQLModel):
     """Schema for updating a review"""
+
     overall_rating: Optional[float] = Field(ge=1, le=5, default=None)
     teaching_quality: Optional[float] = Field(ge=1, le=5, default=None)
     course_content: Optional[float] = Field(ge=1, le=5, default=None)
@@ -73,6 +77,7 @@ class ReviewUpdate(SQLModel):
 
 class ReviewResponse(SQLModel):
     """Schema for review response"""
+
     id: int
     course_id: int
     student_id: int

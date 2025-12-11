@@ -1,20 +1,15 @@
 """
 AI Chat endpoints with production-grade features.
 """
-import asyncio
-import time
-from typing import Dict, List, Optional, Any
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+import time
+from typing import Any, Dict, List, Optional
+
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
 from app.core.config import get_settings
-from app.core.exceptions import (
-    create_success_response,
-    ExternalServiceException,
-    ValidationException,
-)
-from app.core.redis import cache
+from app.core.exceptions import ExternalServiceException, create_success_response
 from app.core.logging import get_logger
 
 router = APIRouter()
@@ -24,12 +19,14 @@ logger = get_logger(__name__)
 
 # Request/Response Models
 
+
 class ChatMessage(BaseModel):
     """Chat message model."""
+
     role: str = Field(..., description="Message role (user, assistant, system)")
     content: str = Field(..., min_length=1, max_length=10000, description="Message content")
     timestamp: Optional[float] = Field(None, description="Message timestamp")
-    
+
     @field_validator("role")
     @classmethod
     def validate_role(cls, v):
@@ -41,6 +38,7 @@ class ChatMessage(BaseModel):
 
 class ChatRequest(BaseModel):
     """Chat request model."""
+
     message: str = Field(..., min_length=1, max_length=10000, description="User message")
     conversation_id: Optional[str] = Field(None, description="Conversation ID for context")
     model: Optional[str] = Field("anthropic/claude-3-haiku", description="AI model to use")
@@ -48,7 +46,7 @@ class ChatRequest(BaseModel):
     max_tokens: Optional[int] = Field(500, ge=1, le=4000, description="Maximum response tokens")
     system_prompt: Optional[str] = Field(None, max_length=2000, description="Custom system prompt")
     context: Optional[List[ChatMessage]] = Field([], description="Conversation context")
-    
+
     @field_validator("temperature")
     @classmethod
     def validate_temperature(cls, v):
@@ -59,11 +57,12 @@ class ChatRequest(BaseModel):
 
 class ImageGenerationRequest(BaseModel):
     """Image generation request model."""
+
     prompt: str = Field(..., min_length=1, max_length=1000, description="Image description")
     size: Optional[str] = Field("1024x1024", description="Image size")
     quality: Optional[str] = Field("standard", description="Image quality")
     style: Optional[str] = Field("natural", description="Image style")
-    
+
     @field_validator("size")
     @classmethod
     def validate_size(cls, v):
@@ -75,6 +74,7 @@ class ImageGenerationRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     """Chat response model."""
+
     message: str = Field(..., description="AI response message")
     conversation_id: str = Field(..., description="Conversation ID")
     model: str = Field(..., description="Model used for response")
@@ -85,6 +85,7 @@ class ChatResponse(BaseModel):
 
 class ImageResponse(BaseModel):
     """Image generation response model."""
+
     image_url: str = Field(..., description="Generated image URL")
     prompt: str = Field(..., description="Original prompt")
     revised_prompt: Optional[str] = Field(None, description="Revised prompt used")
@@ -93,6 +94,7 @@ class ImageResponse(BaseModel):
 
 
 # Endpoints
+
 
 @router.post("/", response_model=ChatResponse)
 async def chat(
@@ -104,10 +106,7 @@ async def chat(
 
     try:
         if not settings.feature_ai_chat:
-            raise HTTPException(
-                status_code=503,
-                detail="AI chat feature is currently disabled"
-            )
+            raise HTTPException(status_code=503, detail="AI chat feature is currently disabled")
 
         response_time = time.time() - start_time
 
@@ -154,8 +153,7 @@ async def generate_image(
     try:
         if not settings.feature_image_generation:
             raise HTTPException(
-                status_code=503,
-                detail="Image generation feature is currently disabled"
+                status_code=503, detail="Image generation feature is currently disabled"
             )
 
         generation_time = time.time() - start_time
@@ -254,7 +252,7 @@ async def get_chat_history():
                 "last_message": "Hello! How can I help you today?",
                 "created_at": time.time() - 7200,
                 "updated_at": time.time() - 3600,
-                "message_count": 5
+                "message_count": 5,
             },
             {
                 "id": "conv_2",
@@ -262,8 +260,8 @@ async def get_chat_history():
                 "last_message": "That should solve your problem!",
                 "created_at": time.time() - 3600,
                 "updated_at": time.time() - 1800,
-                "message_count": 10
-            }
+                "message_count": 10,
+            },
         ]
 
         return history
@@ -282,19 +280,15 @@ async def get_conversation(
         conversation = {
             "id": conversation_id,
             "messages": [
-                {
-                    "role": "user",
-                    "content": "Hello!",
-                    "timestamp": time.time() - 3600
-                },
+                {"role": "user", "content": "Hello!", "timestamp": time.time() - 3600},
                 {
                     "role": "assistant",
                     "content": "Hello! How can I help you today?",
-                    "timestamp": time.time() - 3500
-                }
+                    "timestamp": time.time() - 3500,
+                },
             ],
             "created_at": time.time() - 3600,
-            "updated_at": time.time() - 3500
+            "updated_at": time.time() - 3500,
         }
 
         return create_success_response(
@@ -316,7 +310,7 @@ async def delete_conversation(
         return create_success_response(
             message="Conversation deleted successfully",
         )
-        
+
     except Exception as e:
         logger.error("Failed to delete conversation", conversation_id=conversation_id, error=str(e))
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -324,12 +318,26 @@ async def delete_conversation(
 
 # Helper functions
 
+
 def _is_image_request(message: str) -> bool:
     """Check if message is requesting image generation."""
     image_keywords = [
-        "generate image", "create image", "draw", "picture", "generate picture",
-        "make image", "image of", "picture of", "generate a", "create a",
-        "draw a", "make a", "generate an", "create an", "draw an", "make an"
+        "generate image",
+        "create image",
+        "draw",
+        "picture",
+        "generate picture",
+        "make image",
+        "image of",
+        "picture of",
+        "generate a",
+        "create a",
+        "draw a",
+        "make a",
+        "generate an",
+        "create an",
+        "draw an",
+        "make an",
     ]
     return any(keyword in message.lower() for keyword in image_keywords)
 
@@ -337,22 +345,36 @@ def _is_image_request(message: str) -> bool:
 def _extract_image_prompt(message: str) -> str:
     """Extract image prompt from chat message."""
     prefixes_to_remove = [
-        "generate an image of ", "create an image of ", "generate image of ",
-        "create image of ", "generate a ", "create a ", "draw a ", "make a ",
-        "generate an ", "create an ", "draw an ", "make an ", "draw ",
-        "generate image:", "create image:", "make an image of ",
-        "generate picture of ", "create picture of "
+        "generate an image of ",
+        "create an image of ",
+        "generate image of ",
+        "create image of ",
+        "generate a ",
+        "create a ",
+        "draw a ",
+        "make a ",
+        "generate an ",
+        "create an ",
+        "draw an ",
+        "make an ",
+        "draw ",
+        "generate image:",
+        "create image:",
+        "make an image of ",
+        "generate picture of ",
+        "create picture of ",
     ]
 
     prompt = message.lower()
     for prefix in prefixes_to_remove:
         if prompt.startswith(prefix):
-            return message[len(prefix):].strip()
+            return message[len(prefix) :].strip()
 
     return message.strip()
 
 
 # Background task functions
+
 
 async def _log_chat_request(
     model: str,

@@ -1,20 +1,21 @@
 """
 API v1 router with all endpoints organized by domain.
 """
+
 from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
-    auth,
-    chat,
-    health,
-    posts,
-    users,
     admin,
     analytics,
+    auth,
+    chat,
     files,
+    health,
+    posts,
     search,
     shop,
     tuition,
+    users,
 )
 
 # Create main API router

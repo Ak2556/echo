@@ -1,17 +1,19 @@
 """
 Health check endpoints for monitoring and load balancing.
 """
+
 import asyncio
 import time
-from typing import Dict, Any
+from typing import Any, Dict
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import get_db, health_check as db_health_check
-from app.core.redis import get_redis
 from app.core.config import get_settings
+from app.core.database import get_db
+from app.core.database import health_check as db_health_check
 from app.core.exceptions import create_success_response
+from app.core.redis import get_redis
 
 router = APIRouter()
 settings = get_settings()
@@ -34,12 +36,12 @@ async def health_check():
 @router.get("/ready")
 async def readiness_check(
     db: AsyncSession = Depends(get_db),
-    redis = Depends(get_redis),
+    redis=Depends(get_redis),
 ):
     """Comprehensive readiness check for Kubernetes."""
     checks = {}
     overall_status = "ready"
-    
+
     # Database check
     try:
         db_healthy = await db_health_check()
@@ -55,7 +57,7 @@ async def readiness_check(
             "error": str(e),
         }
         overall_status = "not_ready"
-    
+
     # Redis check
     try:
         redis_healthy = await redis.health_check()
@@ -71,7 +73,7 @@ async def readiness_check(
             "error": str(e),
         }
         overall_status = "not_ready"
-    
+
     # External services check (if enabled)
     if settings.feature_ai_chat and settings.openrouter_api_key:
         try:
@@ -85,7 +87,7 @@ async def readiness_check(
                 "status": "error",
                 "error": str(e),
             }
-    
+
     return create_success_response(
         data={
             "status": overall_status,
@@ -114,13 +116,13 @@ async def liveness_check():
 @router.get("/detailed")
 async def detailed_health_check(
     db: AsyncSession = Depends(get_db),
-    redis = Depends(get_redis),
+    redis=Depends(get_redis),
 ):
     """Detailed health check with performance metrics."""
     start_time = time.time()
-    
+
     checks = {}
-    
+
     # Database detailed check
     db_start = time.time()
     try:
@@ -137,13 +139,13 @@ async def detailed_health_check(
             "error": str(e),
             "response_time_ms": round((time.time() - db_start) * 1000, 2),
         }
-    
+
     # Redis detailed check
     redis_start = time.time()
     try:
         await redis.health_check()
         redis_duration = time.time() - redis_start
-        
+
         checks["redis"] = {
             "status": "healthy",
             "response_time_ms": round(redis_duration * 1000, 2),
@@ -156,7 +158,7 @@ async def detailed_health_check(
             "error": str(e),
             "response_time_ms": round((time.time() - redis_start) * 1000, 2),
         }
-    
+
     # AI service check (if enabled)
     try:
         if settings.feature_ai_chat and settings.openrouter_api_key:
@@ -173,10 +175,11 @@ async def detailed_health_check(
     # System metrics (basic)
     try:
         import psutil
+
         checks["system"] = {
             "cpu_percent": psutil.cpu_percent(),
             "memory_percent": psutil.virtual_memory().percent,
-            "disk_percent": psutil.disk_usage('/').percent,
+            "disk_percent": psutil.disk_usage("/").percent,
         }
     except ImportError:
         checks["system"] = {
@@ -184,7 +187,7 @@ async def detailed_health_check(
         }
 
     total_duration = time.time() - start_time
-    
+
     return create_success_response(
         data={
             "status": "healthy",

@@ -1,6 +1,7 @@
 """
 Production-grade middleware for security, performance, and monitoring.
 """
+
 import time
 import uuid
 from typing import Callable
@@ -96,7 +97,9 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         # SECURITY: HTTP Strict Transport Security (HSTS)
         # Force HTTPS for 1 year, including subdomains
         if not settings.debug:
-            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
+            response.headers["Strict-Transport-Security"] = (
+                "max-age=31536000; includeSubDomains; preload"
+            )
 
         # SECURITY: Additional headers
         response.headers["X-Download-Options"] = "noopen"  # IE download protection
@@ -112,19 +115,19 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
     """Log all requests with structured logging."""
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         # Generate request ID
         request_id = str(uuid.uuid4())
         request.state.request_id = request_id
-        
+
         # Start timing
         start_time = time.time()
-        
+
         # Get client info
         client_ip = request.client.host if request.client else "unknown"
         user_agent = request.headers.get("user-agent", "unknown")
-        
+
         # Log request start
         logger.info(
             "Request started",
@@ -135,14 +138,14 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
             client_ip=client_ip,
             user_agent=user_agent,
         )
-        
+
         try:
             # Process request
             response = await call_next(request)
-            
+
             # Calculate duration
             duration = time.time() - start_time
-            
+
             # Log response
             logger.info(
                 "Request completed",
@@ -153,15 +156,15 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
                 duration=f"{duration:.3f}s",
                 response_size=response.headers.get("content-length", "unknown"),
             )
-            
+
             # Add request ID to response headers
             response.headers["X-Request-ID"] = request_id
-            
+
             return response
-            
+
         except Exception as e:
             duration = time.time() - start_time
-            
+
             logger.error(
                 "Request failed",
                 request_id=request_id,
@@ -175,19 +178,19 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 
 class PerformanceMiddleware(BaseHTTPMiddleware):
     """Monitor and optimize request performance."""
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         start_time = time.time()
-        
+
         # Process request
         response = await call_next(request)
-        
+
         # Calculate metrics
         duration = time.time() - start_time
-        
+
         # Add performance headers
         response.headers["X-Response-Time"] = f"{duration:.3f}s"
-        
+
         # Log slow requests
         if duration > 1.0:  # Log requests taking more than 1 second
             logger.warning(
@@ -197,20 +200,20 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
                 duration=f"{duration:.3f}s",
                 status_code=response.status_code,
             )
-        
+
         return response
 
 
 class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
     """Limit request body size to prevent DoS attacks."""
-    
+
     def __init__(self, app, max_size: int = None):
         super().__init__(app)
         self.max_size = max_size or settings.api_max_request_size
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         content_length = request.headers.get("content-length")
-        
+
         if content_length and int(content_length) > self.max_size:
             return JSONResponse(
                 status_code=413,
@@ -226,27 +229,27 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
                     "success": False,
                 },
             )
-        
+
         return await call_next(request)
 
 
 class HealthCheckMiddleware(BaseHTTPMiddleware):
     """Add health check information to responses."""
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         response = await call_next(request)
-        
+
         # Add health indicators
         response.headers["X-Service-Name"] = settings.app_name
         response.headers["X-Service-Version"] = settings.app_version
         response.headers["X-Environment"] = settings.environment
-        
+
         return response
 
 
 class CORSMiddleware(BaseHTTPMiddleware):
     """Custom CORS middleware with advanced options."""
-    
+
     def __init__(
         self,
         app,
@@ -264,32 +267,32 @@ class CORSMiddleware(BaseHTTPMiddleware):
         self.allow_credentials = allow_credentials
         self.expose_headers = expose_headers or []
         self.max_age = max_age
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         origin = request.headers.get("origin")
-        
+
         # Handle preflight requests
         if request.method == "OPTIONS":
             response = Response()
             response.status_code = 200
         else:
             response = await call_next(request)
-        
+
         # Add CORS headers
         if origin and ("*" in self.allow_origins or origin in self.allow_origins):
             response.headers["Access-Control-Allow-Origin"] = origin
         elif "*" in self.allow_origins:
             response.headers["Access-Control-Allow-Origin"] = "*"
-        
+
         if self.allow_credentials:
             response.headers["Access-Control-Allow-Credentials"] = "true"
-        
+
         response.headers["Access-Control-Allow-Methods"] = ", ".join(self.allow_methods)
         response.headers["Access-Control-Allow-Headers"] = ", ".join(self.allow_headers)
-        
+
         if self.expose_headers:
             response.headers["Access-Control-Expose-Headers"] = ", ".join(self.expose_headers)
-        
+
         response.headers["Access-Control-Max-Age"] = str(self.max_age)
-        
+
         return response

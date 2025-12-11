@@ -2,18 +2,20 @@
 Unit tests for database compatibility utilities.
 """
 
-import pytest
 import json
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import MagicMock, Mock, patch
+
+import pytest
+
 from app.utils.database_compat import (
+    DatabaseCompatibilityError,
     VectorField,
-    get_vector_column,
     calculate_cosine_similarity,
     get_database_type,
+    get_vector_column,
     is_vector_search_supported,
-    DatabaseCompatibilityError,
-    validate_vector_dimensions,
     normalize_vector,
+    validate_vector_dimensions,
 )
 
 
@@ -34,10 +36,10 @@ class TestVectorField:
         """Test loading PostgreSQL implementation."""
         field = VectorField(dimensions=1536)
         mock_dialect = Mock()
-        mock_dialect.name = 'postgresql'
-        mock_dialect.type_descriptor = Mock(return_value='vector_type')
+        mock_dialect.name = "postgresql"
+        mock_dialect.type_descriptor = Mock(return_value="vector_type")
 
-        with patch('app.utils.database_compat.Vector', create=True):
+        with patch("app.utils.database_compat.Vector", create=True):
             result = field.load_dialect_impl(mock_dialect)
             mock_dialect.type_descriptor.assert_called_once()
 
@@ -45,12 +47,13 @@ class TestVectorField:
         """Test PostgreSQL fallback when pgvector not available."""
         field = VectorField(dimensions=1536)
         mock_dialect = Mock()
-        mock_dialect.name = 'postgresql'
-        mock_dialect.type_descriptor = Mock(return_value='json_type')
+        mock_dialect.name = "postgresql"
+        mock_dialect.type_descriptor = Mock(return_value="json_type")
 
         # Simulate ImportError for pgvector - patch the entire module import
         import sys
-        with patch.dict(sys.modules, {'pgvector': None, 'pgvector.sqlalchemy': None}):
+
+        with patch.dict(sys.modules, {"pgvector": None, "pgvector.sqlalchemy": None}):
             result = field.load_dialect_impl(mock_dialect)
             # Should fallback to JSON
             assert result is not None
@@ -59,8 +62,8 @@ class TestVectorField:
         """Test loading SQLite implementation."""
         field = VectorField(dimensions=1536)
         mock_dialect = Mock()
-        mock_dialect.name = 'sqlite'
-        mock_dialect.type_descriptor = Mock(return_value='json_type')
+        mock_dialect.name = "sqlite"
+        mock_dialect.type_descriptor = Mock(return_value="json_type")
 
         result = field.load_dialect_impl(mock_dialect)
         mock_dialect.type_descriptor.assert_called_once()
@@ -69,7 +72,7 @@ class TestVectorField:
         """Test processing None value."""
         field = VectorField()
         mock_dialect = Mock()
-        mock_dialect.name = 'sqlite'
+        mock_dialect.name = "sqlite"
 
         result = field.process_bind_param(None, mock_dialect)
         assert result is None
@@ -78,7 +81,7 @@ class TestVectorField:
         """Test processing bind param for SQLite."""
         field = VectorField()
         mock_dialect = Mock()
-        mock_dialect.name = 'sqlite'
+        mock_dialect.name = "sqlite"
 
         vector = [1.0, 2.0, 3.0]
         result = field.process_bind_param(vector, mock_dialect)
@@ -88,11 +91,11 @@ class TestVectorField:
         """Test processing bind param for PostgreSQL with pgvector."""
         field = VectorField()
         mock_dialect = Mock()
-        mock_dialect.name = 'postgresql'
+        mock_dialect.name = "postgresql"
 
         vector = [1.0, 2.0, 3.0]
 
-        with patch('app.utils.database_compat.Vector', create=True):
+        with patch("app.utils.database_compat.Vector", create=True):
             result = field.process_bind_param(vector, mock_dialect)
             assert result == vector
 
@@ -100,13 +103,14 @@ class TestVectorField:
         """Test processing bind param for PostgreSQL without pgvector."""
         field = VectorField()
         mock_dialect = Mock()
-        mock_dialect.name = 'postgresql'
+        mock_dialect.name = "postgresql"
 
         vector = [1.0, 2.0, 3.0]
 
         # When pgvector import fails, should fallback to JSON
         import sys
-        with patch.dict(sys.modules, {'pgvector': None, 'pgvector.sqlalchemy': None}):
+
+        with patch.dict(sys.modules, {"pgvector": None, "pgvector.sqlalchemy": None}):
             result = field.process_bind_param(vector, mock_dialect)
             assert result == json.dumps(vector) or result == vector
 
@@ -122,7 +126,7 @@ class TestVectorField:
         """Test processing SQLite result as string."""
         field = VectorField()
         mock_dialect = Mock()
-        mock_dialect.name = 'sqlite'
+        mock_dialect.name = "sqlite"
 
         vector = [1.0, 2.0, 3.0]
         json_string = json.dumps(vector)
@@ -134,7 +138,7 @@ class TestVectorField:
         """Test processing SQLite result as list."""
         field = VectorField()
         mock_dialect = Mock()
-        mock_dialect.name = 'sqlite'
+        mock_dialect.name = "sqlite"
 
         vector = [1.0, 2.0, 3.0]
         result = field.process_result_value(vector, mock_dialect)
@@ -144,11 +148,11 @@ class TestVectorField:
         """Test processing PostgreSQL result as list."""
         field = VectorField()
         mock_dialect = Mock()
-        mock_dialect.name = 'postgresql'
+        mock_dialect.name = "postgresql"
 
         vector = [1.0, 2.0, 3.0]
 
-        with patch('app.utils.database_compat.Vector', create=True):
+        with patch("app.utils.database_compat.Vector", create=True):
             result = field.process_result_value(vector, mock_dialect)
             assert result == vector
 
@@ -156,12 +160,12 @@ class TestVectorField:
         """Test processing PostgreSQL result as string."""
         field = VectorField()
         mock_dialect = Mock()
-        mock_dialect.name = 'postgresql'
+        mock_dialect.name = "postgresql"
 
         vector = [1.0, 2.0, 3.0]
         json_string = json.dumps(vector)
 
-        with patch('app.utils.database_compat.Vector', create=True):
+        with patch("app.utils.database_compat.Vector", create=True):
             result = field.process_result_value(json_string, mock_dialect)
             assert result == vector
 
@@ -169,18 +173,18 @@ class TestVectorField:
         """Test processing PostgreSQL result when pgvector import fails (string value)."""
         field = VectorField()
         mock_dialect = Mock()
-        mock_dialect.name = 'postgresql'
+        mock_dialect.name = "postgresql"
 
         vector = [1.0, 2.0, 3.0]
         json_string = json.dumps(vector)
 
         # Simulate ImportError when trying to import pgvector.sqlalchemy
         def mock_import(name, *args, **kwargs):
-            if 'pgvector' in name:
+            if "pgvector" in name:
                 raise ImportError("No module named 'pgvector'")
             return __import__(name, *args, **kwargs)
 
-        with patch('builtins.__import__', side_effect=mock_import):
+        with patch("builtins.__import__", side_effect=mock_import):
             result = field.process_result_value(json_string, mock_dialect)
             assert result == vector
 
@@ -188,17 +192,17 @@ class TestVectorField:
         """Test processing PostgreSQL result when pgvector import fails (direct value)."""
         field = VectorField()
         mock_dialect = Mock()
-        mock_dialect.name = 'postgresql'
+        mock_dialect.name = "postgresql"
 
         vector = [1.0, 2.0, 3.0]
 
         # Simulate ImportError when trying to import pgvector.sqlalchemy
         def mock_import(name, *args, **kwargs):
-            if 'pgvector' in name:
+            if "pgvector" in name:
                 raise ImportError("No module named 'pgvector'")
             return __import__(name, *args, **kwargs)
 
-        with patch('builtins.__import__', side_effect=mock_import):
+        with patch("builtins.__import__", side_effect=mock_import):
             result = field.process_result_value(vector, mock_dialect)
             assert result == vector
 
@@ -206,13 +210,13 @@ class TestVectorField:
         """Test processing PostgreSQL result with non-list, non-string type."""
         field = VectorField()
         mock_dialect = Mock()
-        mock_dialect.name = 'postgresql'
+        mock_dialect.name = "postgresql"
 
         # Test with tuple value (not a list or string, but still a sequence)
         # This should trigger the fallback return on line 67
         test_value = (1.0, 2.0, 3.0)  # tuple, not list or string
 
-        with patch('app.utils.database_compat.Vector', create=True):
+        with patch("app.utils.database_compat.Vector", create=True):
             result = field.process_result_value(test_value, mock_dialect)
             # Should return the value as-is since it's not list or string
             assert result == test_value
@@ -327,7 +331,7 @@ class TestIsVectorSearchSupported:
         """Test vector search support with PostgreSQL and pgvector."""
         url = "postgresql://localhost/db"
 
-        with patch('app.utils.database_compat.pgvector', create=True):
+        with patch("app.utils.database_compat.pgvector", create=True):
             result = is_vector_search_supported(url)
             assert result is True
 
@@ -336,10 +340,12 @@ class TestIsVectorSearchSupported:
         url = "postgresql://localhost/db"
 
         import sys
+
         # Ensure pgvector is not importable
-        with patch.dict(sys.modules, {'pgvector': None}):
+        with patch.dict(sys.modules, {"pgvector": None}):
             try:
                 import pgvector
+
                 result = True
             except:
                 result = False

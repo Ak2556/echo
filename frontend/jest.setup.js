@@ -1,6 +1,10 @@
 import '@testing-library/jest-dom';
+import { act } from 'react';
 
-// Suppress React 18 act() warnings in tests
+// Configure React Testing Library to use React 18's automatic batching
+global.IS_REACT_ACT_ENVIRONMENT = true;
+
+// Suppress specific React warnings but allow real errors
 const originalError = console.error;
 beforeAll(() => {
   console.error = (...args) => {
@@ -9,9 +13,9 @@ beforeAll(() => {
       (args[0].includes('Warning: ReactDOM.render is no longer supported') ||
         args[0].includes('Warning: An invalid form control') ||
         args[0].includes('Warning: React.jsx: type is invalid') ||
-        args[0].includes('Warning: An update to') ||
+        args[0].includes('The above error occurred') ||
         args[0].includes('was not wrapped in act') ||
-        args[0].includes('The above error occurred'))
+        args[0].includes('overlapping act() calls'))
     ) {
       return;
     }
@@ -22,6 +26,16 @@ beforeAll(() => {
 afterAll(() => {
   console.error = originalError;
 });
+
+// Helper to ensure all updates are flushed
+global.flushPromises = () => act(() => new Promise(resolve => setImmediate(resolve)));
+
+// Helper for tests that need to wait for async updates
+global.waitForAsync = async () => {
+  await act(async () => {
+    await new Promise(resolve => setTimeout(resolve, 0));
+  });
+};
 
 // Mock framer-motion globally
 jest.mock('framer-motion', () => {

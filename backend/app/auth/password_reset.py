@@ -1,28 +1,34 @@
 """
 Password reset flow: forgot password → email with token → reset with new password.
 """
+
+from datetime import datetime, timedelta, timezone
+
+import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, EmailStr
-from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime, timedelta, timezone
-import structlog
+from sqlmodel import select
 
-from ..config.database import get_session
-from .models import User, Credential, VerificationCode
-from .security import (
-    generate_secure_token, hash_token, hash_password,
-    verify_password, calculate_password_strength,
-    check_password_breach
-)
+from ..core.database import get_session
+from .models import Credential, User, VerificationCode
 from .redis_service import get_redis_service
 from .routes import log_audit_event
+from .security import (
+    calculate_password_strength,
+    check_password_breach,
+    generate_secure_token,
+    hash_password,
+    hash_token,
+    verify_password,
+)
 
 logger = structlog.get_logger(__name__)
 router = APIRouter(prefix="/api/auth/password", tags=["password"])
 
 
 # ==================== Schemas ====================
+
 
 class ForgotPasswordRequest(BaseModel):
     email: EmailStr
@@ -40,11 +46,10 @@ class ChangePasswordRequest(BaseModel):
 
 # ==================== Routes ====================
 
+
 @router.post("/forgot")
 async def forgot_password(
-    data: ForgotPasswordRequest,
-    request: Request,
-    db: AsyncSession = Depends(get_session)
+    data: ForgotPasswordRequest, request: Request, db: AsyncSession = Depends(get_session)
 ):
     """
     Request password reset email.
@@ -62,8 +67,7 @@ async def forgot_password(
 
     if not is_allowed:
         raise HTTPException(
-            status_code=429,
-            detail="Too many password reset requests. Please try again later."
+            status_code=429, detail="Too many password reset requests. Please try again later."
         )
 
     # Get user
@@ -71,23 +75,33 @@ async def forgot_password(
     user = result.scalar_one_or_none()
 
     # Always return success to prevent email enumeration
-    success_message = "If an account exists with this email, you will receive password reset instructions."
+    success_message = (
+        "If an account exists with this email, you will receive password reset instructions."
+    )
 
     if not user:
         # Log failed attempt
         await log_audit_event(
-            db, None, data.email,
-            "password_reset_request", "failure", request,
-            metadata={"reason": "user_not_found"}
+            db,
+            None,
+            data.email,
+            "password_reset_request",
+            "failure",
+            request,
+            metadata={"reason": "user_not_found"},
         )
         return {"message": success_message}
 
     # Check if account is locked
     if user.is_locked:
         await log_audit_event(
-            db, user.id, user.email,
-            "password_reset_request", "failure", request,
-            metadata={"reason": "account_locked"}
+            db,
+            user.id,
+            user.email,
+            "password_reset_request",
+            "failure",
+            request,
+            metadata={"reason": "account_locked"},
         )
         return {"message": success_message}
 
@@ -102,7 +116,7 @@ async def forgot_password(
         user_id=user.id,
         email=user.email,
         purpose="password_reset",
-        expires_at=datetime.now(timezone.utc) + timedelta(hours=1)
+        expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
     )
     db.add(verification_code)
     await db.commit()
@@ -111,23 +125,18 @@ async def forgot_password(
     await redis.cache_set(
         f"password_reset:{token_hash}",
         {"user_id": user.id, "email": user.email},
-        expires_in_seconds=3600
+        expires_in_seconds=3600,
     )
 
     # TODO: Send email with reset link
     reset_link = f"{request.base_url}auth/reset-password?token={reset_token}"
 
     logger.info(
-        "Password reset requested",
-        user_id=user.id,
-        reset_link=reset_link  # Remove in production
+        "Password reset requested", user_id=user.id, reset_link=reset_link  # Remove in production
     )
 
     # Log audit event
-    await log_audit_event(
-        db, user.id, user.email,
-        "password_reset_request", "success", request
-    )
+    await log_audit_event(db, user.id, user.email, "password_reset_request", "success", request)
 
     # TODO: In production, send email here
     # await send_email(
@@ -142,9 +151,7 @@ async def forgot_password(
 
 @router.post("/reset")
 async def reset_password(
-    data: ResetPasswordRequest,
-    request: Request,
-    db: AsyncSession = Depends(get_session)
+    data: ResetPasswordRequest, request: Request, db: AsyncSession = Depends(get_session)
 ):
     """
     Reset password with token from email.
@@ -169,14 +176,15 @@ async def reset_password(
 
     if not reset_token:
         await log_audit_event(
-            db, None, None,
-            "password_reset", "failure", request,
-            metadata={"reason": "invalid_token"}
+            db,
+            None,
+            None,
+            "password_reset",
+            "failure",
+            request,
+            metadata={"reason": "invalid_token"},
         )
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid or expired reset token"
-        )
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
 
     # Rate limiting by user
     user_rate_key = f"password_reset_attempts:{reset_token.user_id}"
@@ -186,19 +194,14 @@ async def reset_password(
 
     if not is_allowed:
         raise HTTPException(
-            status_code=429,
-            detail="Too many reset attempts. Please wait before trying again."
+            status_code=429, detail="Too many reset attempts. Please wait before trying again."
         )
 
     # Validate new password strength
     strength = calculate_password_strength(data.new_password)
     if strength["score"] < 40:
         raise HTTPException(
-            status_code=400,
-            detail={
-                "message": "Password too weak",
-                "strength": strength
-            }
+            status_code=400, detail={"message": "Password too weak", "strength": strength}
         )
 
     # Check password breach
@@ -206,7 +209,7 @@ async def reset_password(
     if is_breached and breach_count > 100:
         raise HTTPException(
             status_code=400,
-            detail="This password has been exposed in data breaches. Please choose a different one."
+            detail="This password has been exposed in data breaches. Please choose a different one.",
         )
 
     # Get user
@@ -217,9 +220,7 @@ async def reset_password(
         raise HTTPException(status_code=404, detail="User not found")
 
     # Get credential
-    cred_result = await db.execute(
-        select(Credential).where(Credential.user_id == user.id)
-    )
+    cred_result = await db.execute(select(Credential).where(Credential.user_id == user.id))
     credential = cred_result.scalar_one_or_none()
 
     if not credential:
@@ -247,10 +248,7 @@ async def reset_password(
     await redis.blacklist_user_tokens(user.id, expires_in_seconds=86400)
 
     # Log audit event
-    await log_audit_event(
-        db, user.id, user.email,
-        "password_reset", "success", request
-    )
+    await log_audit_event(db, user.id, user.email, "password_reset", "success", request)
 
     logger.info("Password reset successful", user_id=user.id)
 
@@ -262,16 +260,12 @@ async def reset_password(
     #     context={"user_name": user.full_name}
     # )
 
-    return {
-        "message": "Password reset successful. Please login with your new password."
-    }
+    return {"message": "Password reset successful. Please login with your new password."}
 
 
 @router.post("/change")
 async def change_password(
-    data: ChangePasswordRequest,
-    request: Request,
-    db: AsyncSession = Depends(get_session)
+    data: ChangePasswordRequest, request: Request, db: AsyncSession = Depends(get_session)
 ):
     """
     Change password for authenticated user (requires current password).
@@ -288,15 +282,10 @@ async def change_password(
     )
 
     if not is_allowed:
-        raise HTTPException(
-            status_code=429,
-            detail="Too many password change attempts"
-        )
+        raise HTTPException(status_code=429, detail="Too many password change attempts")
 
     # Get credential
-    cred_result = await db.execute(
-        select(Credential).where(Credential.user_id == user.id)
-    )
+    cred_result = await db.execute(select(Credential).where(Credential.user_id == user.id))
     credential = cred_result.scalar_one_or_none()
 
     if not credential:
@@ -305,28 +294,27 @@ async def change_password(
     # Verify current password
     if not verify_password(credential.password_hash, data.current_password):
         await log_audit_event(
-            db, user.id, user.email,
-            "password_change", "failure", request,
-            metadata={"reason": "invalid_current_password"}
+            db,
+            user.id,
+            user.email,
+            "password_change",
+            "failure",
+            request,
+            metadata={"reason": "invalid_current_password"},
         )
         raise HTTPException(status_code=401, detail="Invalid current password")
 
     # Validate new password
     if data.current_password == data.new_password:
         raise HTTPException(
-            status_code=400,
-            detail="New password must be different from current password"
+            status_code=400, detail="New password must be different from current password"
         )
 
     # Check password strength
     strength = calculate_password_strength(data.new_password)
     if strength["score"] < 40:
         raise HTTPException(
-            status_code=400,
-            detail={
-                "message": "Password too weak",
-                "strength": strength
-            }
+            status_code=400, detail={"message": "Password too weak", "strength": strength}
         )
 
     # Check password breach
@@ -334,7 +322,7 @@ async def change_password(
     if is_breached and breach_count > 100:
         raise HTTPException(
             status_code=400,
-            detail="This password has been exposed in data breaches. Please choose a different one."
+            detail="This password has been exposed in data breaches. Please choose a different one.",
         )
 
     # Update password
@@ -352,10 +340,7 @@ async def change_password(
     await redis.blacklist_user_tokens(user.id, expires_in_seconds=86400)
 
     # Log audit event
-    await log_audit_event(
-        db, user.id, user.email,
-        "password_change", "success", request
-    )
+    await log_audit_event(db, user.id, user.email, "password_change", "success", request)
 
     logger.info("Password changed", user_id=user.id)
 
@@ -367,16 +352,11 @@ async def change_password(
     #     context={"user_name": user.full_name}
     # )
 
-    return {
-        "message": "Password changed successfully. Please login again."
-    }
+    return {"message": "Password changed successfully. Please login again."}
 
 
 @router.post("/verify-reset-token")
-async def verify_reset_token(
-    token: str,
-    db: AsyncSession = Depends(get_session)
-):
+async def verify_reset_token(token: str, db: AsyncSession = Depends(get_session)):
     """
     Verify if a password reset token is valid (for frontend validation).
     """
@@ -397,5 +377,5 @@ async def verify_reset_token(
     return {
         "valid": True,
         "email": reset_token.email,
-        "expires_in": int((reset_token.expires_at - datetime.now(timezone.utc)).total_seconds())
+        "expires_in": int((reset_token.expires_at - datetime.now(timezone.utc)).total_seconds()),
     }

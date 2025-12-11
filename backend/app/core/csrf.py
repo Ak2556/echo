@@ -6,14 +6,16 @@ Implements Double-Submit Cookie pattern for CSRF protection.
 - Validates token on state-changing operations (POST, PUT, DELETE, PATCH)
 - Tokens are tied to user session
 """
-import secrets
-import hmac
+
 import hashlib
+import hmac
+import secrets
 from typing import Optional
-from fastapi import Request, HTTPException, status
+
+import structlog
+from fastapi import HTTPException, Request, status
 from fastapi.responses import Response
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
-import structlog
 
 logger = structlog.get_logger(__name__)
 
@@ -37,11 +39,7 @@ def generate_csrf_token() -> str:
 
 def create_csrf_hash(token: str, secret: str) -> str:
     """Create HMAC hash of CSRF token."""
-    return hmac.new(
-        secret.encode(),
-        token.encode(),
-        hashlib.sha256
-    ).hexdigest()
+    return hmac.new(secret.encode(), token.encode(), hashlib.sha256).hexdigest()
 
 
 def validate_csrf_token(token: str, expected_token: str, secret: str) -> bool:
@@ -87,9 +85,7 @@ class CSRFMiddleware(BaseHTTPMiddleware):
     4. Validate token matches cookie value
     """
 
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         # Skip CSRF check for safe methods (GET, HEAD, OPTIONS)
         if request.method not in PROTECTED_METHODS:
             response = await call_next(request)
@@ -124,29 +120,27 @@ class CSRFMiddleware(BaseHTTPMiddleware):
                 path=path,
                 method=request.method,
                 has_cookie=bool(csrf_cookie),
-                has_header=bool(csrf_header)
+                has_header=bool(csrf_header),
             )
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="CSRF validation failed: missing token"
+                detail="CSRF validation failed: missing token",
             )
 
         if not CSRF_SECRET_KEY:
             logger.error("CSRF secret key not configured")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="CSRF protection not properly configured"
+                detail="CSRF protection not properly configured",
             )
 
         if not validate_csrf_token(csrf_header, csrf_cookie, CSRF_SECRET_KEY):
             logger.warning(
-                "CSRF validation failed: invalid token",
-                path=path,
-                method=request.method
+                "CSRF validation failed: invalid token", path=path, method=request.method
             )
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="CSRF validation failed: invalid token"
+                detail="CSRF validation failed: invalid token",
             )
 
         # CSRF validation passed

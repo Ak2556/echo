@@ -1,15 +1,17 @@
 """
 JWT utilities with RS256 signing, key rotation, and JWKS support.
 """
-import jwt
+
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Dict, Any, List
 from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import jwt
+import structlog
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.backends import default_backend
-import structlog
 
 logger = structlog.get_logger(__name__)
 
@@ -44,9 +46,7 @@ class JWTManager:
             if self.private_key_path.exists():
                 with open(self.private_key_path, "rb") as f:
                     self._private_key = serialization.load_pem_private_key(
-                        f.read(),
-                        password=None,
-                        backend=default_backend()
+                        f.read(), password=None, backend=default_backend()
                     )
                 logger.info("Loaded private key", path=str(self.private_key_path))
 
@@ -54,8 +54,7 @@ class JWTManager:
             if self.public_key_path.exists():
                 with open(self.public_key_path, "rb") as f:
                     self._public_key = serialization.load_pem_public_key(
-                        f.read(),
-                        backend=default_backend()
+                        f.read(), backend=default_backend()
                     )
                 logger.info("Loaded public key", path=str(self.public_key_path))
 
@@ -73,9 +72,7 @@ class JWTManager:
 
         # Generate private key
         private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=2048,
-            backend=default_backend()
+            public_exponent=65537, key_size=2048, backend=default_backend()
         )
 
         # Ensure directory exists
@@ -84,20 +81,24 @@ class JWTManager:
 
         # Save private key
         with open(self.private_key_path, "wb") as f:
-            f.write(private_key.private_bytes(
-                encoding=serialization.Encoding.PEM,
-                format=serialization.PrivateFormat.PKCS8,
-                encryption_algorithm=serialization.NoEncryption()
-            ))
+            f.write(
+                private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.PKCS8,
+                    encryption_algorithm=serialization.NoEncryption(),
+                )
+            )
         self.private_key_path.chmod(0o600)
 
         # Save public key
         public_key = private_key.public_key()
         with open(self.public_key_path, "wb") as f:
-            f.write(public_key.public_bytes(
-                encoding=serialization.Encoding.PEM,
-                format=serialization.PublicFormat.SubjectPublicKeyInfo
-            ))
+            f.write(
+                public_key.public_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PublicFormat.SubjectPublicKeyInfo,
+                )
+            )
 
         self._private_key = private_key
         self._public_key = public_key
@@ -116,7 +117,9 @@ class JWTManager:
     ) -> str:
         """Create an access token."""
         now = datetime.now(timezone.utc)
-        exp = now + (expires_delta if expires_delta else timedelta(minutes=self.access_token_expires))
+        exp = now + (
+            expires_delta if expires_delta else timedelta(minutes=self.access_token_expires)
+        )
 
         payload = {
             "sub": user_id,
@@ -132,11 +135,7 @@ class JWTManager:
             "type": "access",
         }
 
-        token = jwt.encode(
-            payload,
-            self._private_key,
-            algorithm="RS256"
-        )
+        token = jwt.encode(payload, self._private_key, algorithm="RS256")
 
         return token
 
@@ -165,11 +164,7 @@ class JWTManager:
             "type": "refresh",
         }
 
-        token = jwt.encode(
-            payload,
-            self._private_key,
-            algorithm="RS256"
-        )
+        token = jwt.encode(payload, self._private_key, algorithm="RS256")
 
         return token, jti
 
@@ -188,7 +183,7 @@ class JWTManager:
                     "verify_iat": True,
                     "verify_iss": True,
                     "verify_aud": True,
-                }
+                },
             )
 
             # Verify token type
@@ -206,28 +201,29 @@ class JWTManager:
 
     def get_jwks(self) -> Dict[str, Any]:
         """Get JSON Web Key Set for token verification."""
-        from jwcrypto import jwk
         import json
+
+        from jwcrypto import jwk
 
         # Convert public key to JWK
         public_key_pem = self._public_key.public_bytes(
             encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
         )
 
         key = jwk.JWK.from_pem(public_key_pem)
         key_data = json.loads(key.export_public())
 
         # Add standard JWKS fields
-        key_data.update({
-            "use": "sig",
-            "alg": "RS256",
-            "kid": "echo-key-1",  # Key ID for rotation
-        })
+        key_data.update(
+            {
+                "use": "sig",
+                "alg": "RS256",
+                "kid": "echo-key-1",  # Key ID for rotation
+            }
+        )
 
-        return {
-            "keys": [key_data]
-        }
+        return {"keys": [key_data]}
 
     def decode_token_unsafe(self, token: str) -> Optional[Dict[str, Any]]:
         """Decode token without verification (for debugging/logging only)."""
@@ -268,8 +264,8 @@ def get_jwt_manager() -> JWTManager:
     global jwt_manager
     if jwt_manager is None:
         # Initialize with test settings - create temp keys
-        import tempfile
         import os
+        import tempfile
 
         # Create temp directory for test keys
         temp_dir = tempfile.mkdtemp()
@@ -283,6 +279,6 @@ def get_jwt_manager() -> JWTManager:
             access_token_expires=15,  # minutes
             refresh_token_expires=7,  # days
             issuer="echo-api-test",
-            audience="echo-app-test"
+            audience="echo-app-test",
         )
     return jwt_manager

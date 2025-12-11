@@ -1,13 +1,15 @@
 """
 Unit tests for File Service.
 """
-import pytest
-from unittest.mock import AsyncMock, MagicMock, patch, mock_open
-from pathlib import Path
-import io
 
-from app.services.file_service import FileService
+import io
+from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock, mock_open, patch
+
+import pytest
+
 from app.core.exceptions import ValidationException
+from app.services.file_service import FileService
 
 
 @pytest.fixture
@@ -19,6 +21,7 @@ def file_service():
 @pytest.fixture
 def mock_upload_file():
     """Create mock upload file"""
+
     def _create_mock(filename: str, content: bytes = b"test content", size: int = None):
         mock_file = MagicMock()
         mock_file.filename = filename
@@ -47,19 +50,19 @@ class TestFileServiceInitialization:
         """Test file service initialization"""
         assert file_service.upload_dir == Path("uploads")
         assert file_service.max_file_size == 50 * 1024 * 1024  # 50MB
-        assert 'images' in file_service.allowed_extensions
-        assert 'documents' in file_service.allowed_extensions
-        assert 'videos' in file_service.allowed_extensions
-        assert 'audio' in file_service.allowed_extensions
-        assert 'archives' in file_service.allowed_extensions
+        assert "images" in file_service.allowed_extensions
+        assert "documents" in file_service.allowed_extensions
+        assert "videos" in file_service.allowed_extensions
+        assert "audio" in file_service.allowed_extensions
+        assert "archives" in file_service.allowed_extensions
 
     def test_allowed_extensions_structure(self, file_service):
         """Test that allowed extensions are properly structured"""
-        assert '.jpg' in file_service.allowed_extensions['images']
-        assert '.pdf' in file_service.allowed_extensions['documents']
-        assert '.mp4' in file_service.allowed_extensions['videos']
-        assert '.mp3' in file_service.allowed_extensions['audio']
-        assert '.zip' in file_service.allowed_extensions['archives']
+        assert ".jpg" in file_service.allowed_extensions["images"]
+        assert ".pdf" in file_service.allowed_extensions["documents"]
+        assert ".mp4" in file_service.allowed_extensions["videos"]
+        assert ".mp3" in file_service.allowed_extensions["audio"]
+        assert ".zip" in file_service.allowed_extensions["archives"]
 
 
 class TestUploadFile:
@@ -70,17 +73,15 @@ class TestUploadFile:
         """Test uploading image file successfully"""
         mock_file = mock_upload_file("test.jpg", b"fake image content")
 
-        with patch('pathlib.Path.mkdir') as mock_mkdir:
-            with patch('aiofiles.open') as mock_aio_open:
+        with patch("pathlib.Path.mkdir") as mock_mkdir:
+            with patch("aiofiles.open") as mock_aio_open:
                 mock_file_handle = AsyncMock()
                 mock_file_handle.write = AsyncMock()
                 mock_aio_open.return_value.__aenter__ = AsyncMock(return_value=mock_file_handle)
                 mock_aio_open.return_value.__aexit__ = AsyncMock()
 
                 result = await file_service.upload_file(
-                    file=mock_file,
-                    folder="images",
-                    user_id=123
+                    file=mock_file, folder="images", user_id=123
                 )
 
         assert result.startswith("/uploads/images/123/")
@@ -92,17 +93,15 @@ class TestUploadFile:
         """Test uploading document file successfully"""
         mock_file = mock_upload_file("document.pdf", b"fake pdf content")
 
-        with patch('pathlib.Path.mkdir'):
-            with patch('aiofiles.open') as mock_aio_open:
+        with patch("pathlib.Path.mkdir"):
+            with patch("aiofiles.open") as mock_aio_open:
                 mock_file_handle = AsyncMock()
                 mock_file_handle.write = AsyncMock()
                 mock_aio_open.return_value.__aenter__ = AsyncMock(return_value=mock_file_handle)
                 mock_aio_open.return_value.__aexit__ = AsyncMock()
 
                 result = await file_service.upload_file(
-                    file=mock_file,
-                    folder="documents",
-                    user_id=456
+                    file=mock_file, folder="documents", user_id=456
                 )
 
         assert result.startswith("/uploads/documents/456/")
@@ -113,18 +112,15 @@ class TestUploadFile:
         """Test uploading file with specific allowed types"""
         mock_file = mock_upload_file("photo.png", b"fake image")
 
-        with patch('pathlib.Path.mkdir'):
-            with patch('aiofiles.open') as mock_aio_open:
+        with patch("pathlib.Path.mkdir"):
+            with patch("aiofiles.open") as mock_aio_open:
                 mock_file_handle = AsyncMock()
                 mock_file_handle.write = AsyncMock()
                 mock_aio_open.return_value.__aenter__ = AsyncMock(return_value=mock_file_handle)
                 mock_aio_open.return_value.__aexit__ = AsyncMock()
 
                 result = await file_service.upload_file(
-                    file=mock_file,
-                    folder="images",
-                    user_id=789,
-                    allowed_types=['images']
+                    file=mock_file, folder="images", user_id=789, allowed_types=["images"]
                 )
 
         assert result.startswith("/uploads/images/789/")
@@ -135,18 +131,14 @@ class TestUploadFile:
         """Test that upload creates proper directory structure"""
         mock_file = mock_upload_file("test.jpg", b"content")
 
-        with patch('pathlib.Path.mkdir') as mock_mkdir:
-            with patch('aiofiles.open') as mock_aio_open:
+        with patch("pathlib.Path.mkdir") as mock_mkdir:
+            with patch("aiofiles.open") as mock_aio_open:
                 mock_file_handle = AsyncMock()
                 mock_file_handle.write = AsyncMock()
                 mock_aio_open.return_value.__aenter__ = AsyncMock(return_value=mock_file_handle)
                 mock_aio_open.return_value.__aexit__ = AsyncMock()
 
-                await file_service.upload_file(
-                    file=mock_file,
-                    folder="test",
-                    user_id=1
-                )
+                await file_service.upload_file(file=mock_file, folder="test", user_id=1)
 
         mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)
 
@@ -156,8 +148,8 @@ class TestUploadFile:
         mock_file1 = mock_upload_file("test.jpg", b"content1")
         mock_file2 = mock_upload_file("test.jpg", b"content2")
 
-        with patch('pathlib.Path.mkdir'):
-            with patch('aiofiles.open') as mock_aio_open:
+        with patch("pathlib.Path.mkdir"):
+            with patch("aiofiles.open") as mock_aio_open:
                 mock_file_handle = AsyncMock()
                 mock_file_handle.write = AsyncMock()
                 mock_aio_open.return_value.__aenter__ = AsyncMock(return_value=mock_file_handle)
@@ -180,7 +172,7 @@ class TestDeleteFile:
         mock_path.exists.return_value = True
         mock_path.unlink = MagicMock()
 
-        with patch('app.services.file_service.Path', return_value=mock_path):
+        with patch("app.services.file_service.Path", return_value=mock_path):
             result = await file_service.delete_file("/uploads/test/file.jpg")
 
         assert result is True
@@ -192,7 +184,7 @@ class TestDeleteFile:
         mock_path = MagicMock(spec=Path)
         mock_path.exists.return_value = False
 
-        with patch('app.services.file_service.Path', return_value=mock_path):
+        with patch("app.services.file_service.Path", return_value=mock_path):
             result = await file_service.delete_file("/uploads/test/nonexistent.jpg")
 
         assert result is False
@@ -204,7 +196,7 @@ class TestDeleteFile:
         mock_path.exists.return_value = True
         mock_path.unlink.side_effect = Exception("Permission denied")
 
-        with patch('app.services.file_service.Path', return_value=mock_path):
+        with patch("app.services.file_service.Path", return_value=mock_path):
             result = await file_service.delete_file("/uploads/test/file.jpg")
 
         assert result is False
@@ -263,7 +255,7 @@ class TestValidateFile:
         mock_file = mock_upload_file("photo.jpg", b"content")
 
         # Should not raise
-        await file_service._validate_file(mock_file, allowed_types=['images'])
+        await file_service._validate_file(mock_file, allowed_types=["images"])
 
     @pytest.mark.asyncio
     async def test_validate_file_with_allowed_types_failure(self, file_service, mock_upload_file):
@@ -271,7 +263,7 @@ class TestValidateFile:
         mock_file = mock_upload_file("document.pdf", b"content")
 
         with pytest.raises(ValidationException, match="File type .pdf not allowed"):
-            await file_service._validate_file(mock_file, allowed_types=['images'])
+            await file_service._validate_file(mock_file, allowed_types=["images"])
 
     @pytest.mark.asyncio
     async def test_validate_file_multiple_allowed_types(self, file_service, mock_upload_file):
@@ -279,7 +271,7 @@ class TestValidateFile:
         mock_file1 = mock_upload_file("image.jpg", b"content")
         mock_file2 = mock_upload_file("doc.pdf", b"content")
 
-        allowed_types = ['images', 'documents']
+        allowed_types = ["images", "documents"]
 
         # Both should succeed
         await file_service._validate_file(mock_file1, allowed_types=allowed_types)
@@ -357,8 +349,8 @@ class TestFileServiceEdgeCases:
         """Test uploading file with special characters in name"""
         mock_file = mock_upload_file("test file (1).jpg", b"content")
 
-        with patch('pathlib.Path.mkdir'):
-            with patch('aiofiles.open') as mock_aio_open:
+        with patch("pathlib.Path.mkdir"):
+            with patch("aiofiles.open") as mock_aio_open:
                 mock_file_handle = AsyncMock()
                 mock_file_handle.write = AsyncMock()
                 mock_aio_open.return_value.__aenter__ = AsyncMock(return_value=mock_file_handle)
@@ -395,8 +387,8 @@ class TestFileServiceEdgeCases:
         mock_file1 = mock_upload_file("test.jpg", b"user1")
         mock_file2 = mock_upload_file("test.jpg", b"user2")
 
-        with patch('pathlib.Path.mkdir'):
-            with patch('aiofiles.open') as mock_aio_open:
+        with patch("pathlib.Path.mkdir"):
+            with patch("aiofiles.open") as mock_aio_open:
                 mock_file_handle = AsyncMock()
                 mock_file_handle.write = AsyncMock()
                 mock_aio_open.return_value.__aenter__ = AsyncMock(return_value=mock_file_handle)

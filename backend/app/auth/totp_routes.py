@@ -1,30 +1,38 @@
 """
 Two-factor authentication (2FA) setup, verification, and management.
 """
+
+from datetime import datetime, timezone
+from typing import List, Optional
+
+import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
-from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Optional
-from datetime import datetime, timezone
-import structlog
+from sqlmodel import select
 
-from ..config.database import get_session
-from .models import User, Credential
-from .security import (
-    generate_totp_secret, get_totp_provisioning_uri,
-    generate_qr_code, verify_totp, generate_backup_codes,
-    verify_backup_code, verify_password, encrypt_totp_secret,
-    decrypt_totp_secret
-)
+from ..core.database import get_session
+from .models import Credential, User
 from .redis_service import get_redis_service
 from .routes import log_audit_event
+from .security import (
+    decrypt_totp_secret,
+    encrypt_totp_secret,
+    generate_backup_codes,
+    generate_qr_code,
+    generate_totp_secret,
+    get_totp_provisioning_uri,
+    verify_backup_code,
+    verify_password,
+    verify_totp,
+)
 
 logger = structlog.get_logger(__name__)
 router = APIRouter(prefix="/api/auth/2fa", tags=["2fa"])
 
 
 # ==================== Schemas ====================
+
 
 class Setup2FAResponse(BaseModel):
     secret: str
@@ -54,6 +62,7 @@ class RegenerateBackupCodesRequest(BaseModel):
 
 
 # ==================== Helper to get current user ====================
+
 
 async def get_current_user_from_token(request: Request, db: AsyncSession) -> User:
     """
@@ -87,6 +96,7 @@ async def get_current_user_from_token(request: Request, db: AsyncSession) -> Use
 
 # ==================== Routes ====================
 
+
 @router.post("/setup", response_model=Setup2FAResponse)
 async def setup_2fa(
     request: Request,
@@ -108,8 +118,7 @@ async def setup_2fa(
     # Check if already enabled
     if user.totp_enabled:
         raise HTTPException(
-            status_code=400,
-            detail="2FA is already enabled. Disable it first to set up again."
+            status_code=400, detail="2FA is already enabled. Disable it first to set up again."
         )
 
     # Generate TOTP secret
@@ -130,11 +139,7 @@ async def setup_2fa(
         "secret": secret,
         "backup_codes": backup_codes,
     }
-    await redis.cache_set(
-        f"totp_setup:{user.id}",
-        setup_data,
-        expires_in_seconds=600  # 10 minutes
-    )
+    await redis.cache_set(f"totp_setup:{user.id}", setup_data, expires_in_seconds=600)  # 10 minutes
 
     logger.info("2FA setup initiated", user_id=user.id)
 
@@ -143,7 +148,7 @@ async def setup_2fa(
         qr_code=qr_code,
         provisioning_uri=provisioning_uri,
         backup_codes=backup_codes,
-        message="Scan QR code in your authenticator app and verify with a code"
+        message="Scan QR code in your authenticator app and verify with a code",
     )
 
 
@@ -164,8 +169,7 @@ async def verify_2fa_setup(
 
     if not setup_data:
         raise HTTPException(
-            status_code=400,
-            detail="No pending 2FA setup found. Please start setup again."
+            status_code=400, detail="No pending 2FA setup found. Please start setup again."
         )
 
     secret = setup_data["secret"]
@@ -173,10 +177,7 @@ async def verify_2fa_setup(
 
     # Verify TOTP code
     if not verify_totp(secret, data.code, window=1):
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid verification code. Please try again."
-        )
+        raise HTTPException(status_code=400, detail="Invalid verification code. Please try again.")
 
     # Enable 2FA with encrypted secret storage
     user.totp_secret = encrypt_totp_secret(secret)
@@ -190,17 +191,11 @@ async def verify_2fa_setup(
     await redis.cache_delete(f"totp_setup:{user.id}")
 
     # Log audit event
-    await log_audit_event(
-        db, user.id, user.email,
-        "2fa_enable", "success", request
-    )
+    await log_audit_event(db, user.id, user.email, "2fa_enable", "success", request)
 
     logger.info("2FA enabled", user_id=user.id)
 
-    return {
-        "message": "2FA enabled successfully",
-        "backup_codes": backup_codes
-    }
+    return {"message": "2FA enabled successfully", "backup_codes": backup_codes}
 
 
 @router.post("/verify-login")
@@ -215,12 +210,13 @@ async def verify_2fa_login(
     After successful password login, if 2FA is enabled,
     user must provide TOTP code or backup code.
     """
+    import uuid
+    from datetime import timedelta
+
     from .jwt_utils import get_jwt_manager
-    from .security import generate_device_fingerprint
     from .models import RefreshToken
     from .routes import create_session_record
-    from datetime import timedelta
-    import uuid
+    from .security import generate_device_fingerprint
 
     redis = get_redis_service()
     jwt_manager = get_jwt_manager()
@@ -230,8 +226,7 @@ async def verify_2fa_login(
 
     if not pending_data:
         raise HTTPException(
-            status_code=400,
-            detail="Invalid or expired 2FA session. Please login again."
+            status_code=400, detail="Invalid or expired 2FA session. Please login again."
         )
 
     user_id = pending_data["user_id"]
@@ -249,9 +244,7 @@ async def verify_2fa_login(
 
     # If TOTP fails, try backup codes
     if not is_valid:
-        is_backup_code_valid, remaining_codes = verify_backup_code(
-            user.backup_codes, data.code
-        )
+        is_backup_code_valid, remaining_codes = verify_backup_code(user.backup_codes, data.code)
 
         if is_backup_code_valid:
             # Update backup codes (remove used one)
@@ -266,10 +259,7 @@ async def verify_2fa_login(
 
             is_valid = True
         else:
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid 2FA code. Please try again."
-            )
+            raise HTTPException(status_code=400, detail="Invalid 2FA code. Please try again.")
 
     # Clear pending 2FA session
     await redis.cache_delete(f"2fa_pending:{data.temp_token}")
@@ -292,8 +282,7 @@ async def verify_2fa_login(
 
     # Store refresh token
     device_fp = generate_device_fingerprint(
-        request.headers.get("user-agent", ""),
-        request.client.host
+        request.headers.get("user-agent", ""), request.client.host
     )
 
     refresh_record = RefreshToken(
@@ -309,8 +298,7 @@ async def verify_2fa_login(
 
     # Create session
     session = await create_session_record(
-        db, user.id, jti, request,
-        datetime.now(timezone.utc) + timedelta(days=7)
+        db, user.id, jti, request, datetime.now(timezone.utc) + timedelta(days=7)
     )
 
     # Update last login
@@ -319,9 +307,7 @@ async def verify_2fa_login(
 
     # Log audit event
     await log_audit_event(
-        db, user.id, user.email,
-        "login_2fa", "success", request,
-        auth_method="totp"
+        db, user.id, user.email, "login_2fa", "success", request, auth_method="totp"
     )
 
     return {
@@ -334,7 +320,7 @@ async def verify_2fa_login(
             "email": user.email,
             "full_name": user.full_name,
             "avatar_url": user.avatar_url,
-        }
+        },
     }
 
 
@@ -353,9 +339,7 @@ async def disable_2fa(
         raise HTTPException(status_code=400, detail="2FA is not enabled")
 
     # Verify password
-    cred_result = await db.execute(
-        select(Credential).where(Credential.user_id == user.id)
-    )
+    cred_result = await db.execute(select(Credential).where(Credential.user_id == user.id))
     credential = cred_result.scalar_one_or_none()
 
     if not credential or not verify_password(credential.password_hash, data.password):
@@ -381,10 +365,7 @@ async def disable_2fa(
     await db.commit()
 
     # Log audit event
-    await log_audit_event(
-        db, user.id, user.email,
-        "2fa_disable", "success", request
-    )
+    await log_audit_event(db, user.id, user.email, "2fa_disable", "success", request)
 
     logger.info("2FA disabled", user_id=user.id)
 
@@ -406,9 +387,7 @@ async def regenerate_backup_codes(
         raise HTTPException(status_code=400, detail="2FA is not enabled")
 
     # Verify password
-    cred_result = await db.execute(
-        select(Credential).where(Credential.user_id == user.id)
-    )
+    cred_result = await db.execute(select(Credential).where(Credential.user_id == user.id))
     credential = cred_result.scalar_one_or_none()
 
     if not credential or not verify_password(credential.password_hash, data.password):
@@ -424,16 +403,12 @@ async def regenerate_backup_codes(
 
     # Log audit event
     await log_audit_event(
-        db, user.id, user.email,
-        "2fa_backup_codes_regenerated", "success", request
+        db, user.id, user.email, "2fa_backup_codes_regenerated", "success", request
     )
 
     logger.info("Backup codes regenerated", user_id=user.id)
 
-    return {
-        "message": "Backup codes regenerated successfully",
-        "backup_codes": new_backup_codes
-    }
+    return {"message": "Backup codes regenerated successfully", "backup_codes": new_backup_codes}
 
 
 @router.get("/status")
@@ -448,5 +423,5 @@ async def get_2fa_status(
 
     return {
         "enabled": user.totp_enabled,
-        "backup_codes_remaining": len(user.backup_codes) if user.totp_enabled else 0
+        "backup_codes_remaining": len(user.backup_codes) if user.totp_enabled else 0,
     }
