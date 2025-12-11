@@ -55,27 +55,40 @@ jobs:
 
       - name: Run ESLint with detailed output
         working-directory: ./frontend
-        continue-on-error: true
+        continue-on-error: false
         run: |
+          # Generate JSON report for later processing
           npm run lint -- \
             --format=json \
             --output-file=eslint-report.json || true
+
+          # Run ESLint and fail if errors found
           npm run lint -- \
             --format=stylish \
-            --max-warnings=0 || echo "ESLint warnings/errors found"
+            --max-warnings=10 || (echo "::error::ESLint found issues. Fix them before merging." && exit 1)
 
       - name: Run Prettier check
         working-directory: ./frontend
-        continue-on-error: true
+        continue-on-error: false
         run: |
-          npx prettier --check "src/**/*.{ts,tsx,js,jsx,json,css,scss}" || true
+          npx prettier --check "src/**/*.{ts,tsx,js,jsx,json,css,scss}" || \
+          (echo "::error::Prettier formatting issues found. Run 'npm run format' to fix." && exit 1)
 
       - name: TypeScript type coverage
         working-directory: ./frontend
-        continue-on-error: true
+        continue-on-error: false
         run: |
           echo "## TypeScript Type Coverage" >> $GITHUB_STEP_SUMMARY
-          npx tsc --noEmit --pretty 2>&1 | tee typescript-report.txt || true
+          npx tsc --noEmit --pretty 2>&1 | tee typescript-report.txt
+
+          # Count errors
+          ERROR_COUNT=$(grep -c "error TS" typescript-report.txt || echo "0")
+          echo "**Errors Found:** $ERROR_COUNT" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$ERROR_COUNT" -gt "0" ]; then
+            echo "::error::Found $ERROR_COUNT TypeScript errors"
+            exit 1
+          fi
 
       # =========================================================================
       # BACKEND CODE QUALITY
@@ -90,51 +103,100 @@ jobs:
       - name: Install backend dependencies
         working-directory: ./backend
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
+          pip install -e ".[dev]"
           pip install pylint bandit radon safety vulture
 
       - name: Run Pylint with scoring
         working-directory: ./backend
-        continue-on-error: true
+        continue-on-error: false
         run: |
           echo "## Python Code Quality (Pylint)" >> $GITHUB_STEP_SUMMARY
+
+          # Run pylint and get score
           pylint app \
             --output-format=json:pylint-report.json,text:pylint.txt \
-            --exit-zero
+            --fail-under=7.0 \
+            --max-line-length=100 \
+            --disable=C0111,R0903 || true
+
           cat pylint.txt >> $GITHUB_STEP_SUMMARY || true
+
+          # Extract and check score
+          SCORE=$(grep "Your code has been rated" pylint.txt | grep -oP '[\d.]+(?=/10)' || echo "0")
+          echo "**Pylint Score:** $SCORE/10" >> $GITHUB_STEP_SUMMARY
+
+          if (( $(echo "$SCORE < 7.0" | bc -l) )); then
+            echo "::warning::Pylint score ($SCORE) is below threshold (7.0)"
+          fi
 
       - name: Run Bandit security checks
         working-directory: ./backend
-        continue-on-error: true
+        continue-on-error: false
         run: |
-          echo "## Security Issues (Bandit)" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔒 Security Issues (Bandit)" >> $GITHUB_STEP_SUMMARY
+
+          # Run bandit and save results
           bandit -r app \
             -f json \
             -o bandit-report.json \
-            --exit-zero
-          bandit -r app --format=screen || echo "Security issues found" >> $GITHUB_STEP_SUMMARY
+            --severity-level medium \
+            --confidence-level medium || true
+
+          # Display results
+          bandit -r app --format=screen || true
+
+          # Check for high severity issues
+          HIGH_ISSUES=$(jq '[.results[] | select(.issue_severity == "HIGH")] | length' bandit-report.json)
+          echo "**High Severity Issues:** $HIGH_ISSUES" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$HIGH_ISSUES" -gt "0" ]; then
+            echo "::error::Found $HIGH_ISSUES high severity security issues"
+            exit 1
+          fi
 
       - name: Calculate code complexity
         working-directory: ./backend
-        continue-on-error: true
+        continue-on-error: false
         run: |
-          echo "## Code Complexity Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Code Complexity Analysis" >> $GITHUB_STEP_SUMMARY
           echo "### Cyclomatic Complexity" >> $GITHUB_STEP_SUMMARY
+
+          # Run complexity analysis
           radon cc app -a -s -j > complexity-cc.json || true
-          radon cc app -a -s >> $GITHUB_STEP_SUMMARY || true
+          radon cc app -a -s --total-average >> $GITHUB_STEP_SUMMARY || true
+
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Maintainability Index" >> $GITHUB_STEP_SUMMARY
           radon mi app -s -j > complexity-mi.json || true
           radon mi app -s >> $GITHUB_STEP_SUMMARY || true
 
+          # Check for high complexity functions
+          HIGH_COMPLEXITY=$(radon cc app -n C -j | jq 'length' || echo "0")
+          if [ "$HIGH_COMPLEXITY" -gt "5" ]; then
+            echo "::warning::Found $HIGH_COMPLEXITY functions with high complexity (C or worse)"
+          fi
+
       - name: Find dead code
         working-directory: ./backend
         continue-on-error: true
         run: |
-          echo "## Dead Code Analysis (Vulture)" >> $GITHUB_STEP_SUMMARY
-          vulture app --min-confidence 80 > vulture-report.txt || true
-          cat vulture-report.txt >> $GITHUB_STEP_SUMMARY || echo "No dead code found" >> $GITHUB_STEP_SUMMARY
+          echo "## 🧹 Dead Code Analysis (Vulture)" >> $GITHUB_STEP_SUMMARY
+          vulture app --min-confidence 90 > vulture-report.txt || true
+
+          if [ -s vulture-report.txt ]; then
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat vulture-report.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
+            LINE_COUNT=$(wc -l < vulture-report.txt)
+            if [ "$LINE_COUNT" -gt "20" ]; then
+              echo "::warning::Found $LINE_COUNT potential dead code instances"
+            fi
+          else
+            echo "✅ No dead code found!" >> $GITHUB_STEP_SUMMARY
+          fi
 
       # =========================================================================
       # SONARCLOUD ANALYSIS
@@ -164,9 +226,22 @@ jobs:
         working-directory: ./frontend
         continue-on-error: true
         run: |
+          echo "## 📋 Code Duplication (Frontend)" >> $GITHUB_STEP_SUMMARY
+
+          # Run duplication check
           npx jscpd src --min-lines 10 --min-tokens 50 --format json --output jscpd-report.json || true
-          echo "## Code Duplication (Frontend)" >> $GITHUB_STEP_SUMMARY
-          npx jscpd src --min-lines 10 --min-tokens 50 >> $GITHUB_STEP_SUMMARY || echo "Analysis complete" >> $GITHUB_STEP_SUMMARY
+
+          # Display summary
+          if [ -f "jscpd-report.json" ]; then
+            DUPLICATION=$(jq -r '.statistics.total.percentage' jscpd-report.json || echo "0")
+            echo "**Duplication Percentage:** $DUPLICATION%" >> $GITHUB_STEP_SUMMARY
+
+            if (( $(echo "$DUPLICATION > 5.0" | bc -l) )); then
+              echo "::warning::Code duplication ($DUPLICATION%) exceeds threshold (5%)"
+            fi
+          fi
+
+          npx jscpd src --min-lines 10 --min-tokens 50 >> $GITHUB_STEP_SUMMARY || echo "✅ No significant duplication found" >> $GITHUB_STEP_SUMMARY
 
       # =========================================================================
       # UPLOAD REPORTS
