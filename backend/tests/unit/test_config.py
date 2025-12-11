@@ -2,16 +2,20 @@
 Unit tests for configuration management.
 """
 
-import pytest
 import os
 from unittest.mock import patch
+
+import pytest
+
 from app.core.config import Settings, get_settings
 
 
 class TestSettings:
     """Tests for Settings class."""
 
-    @patch.dict(os.environ, {"ENVIRONMENT": "production", "DATABASE_URL": "", "DEBUG": "false"}, clear=False)
+    @patch.dict(
+        os.environ, {"ENVIRONMENT": "production", "DATABASE_URL": "", "DEBUG": "false"}, clear=False
+    )
     def test_default_settings(self):
         """Test default settings values."""
         settings = Settings()
@@ -188,9 +192,9 @@ class TestGetSettings:
         """Test get_settings reflects environment changes."""
         # This test verifies that settings are properly loaded
         settings = get_settings()
-        assert hasattr(settings, 'app_name')
-        assert hasattr(settings, 'environment')
-        assert hasattr(settings, 'database_url')
+        assert hasattr(settings, "app_name")
+        assert hasattr(settings, "environment")
+        assert hasattr(settings, "database_url")
 
     def test_cors_origins_validator_with_string(self):
         """Test cors_origins validator with comma-separated string."""
@@ -206,18 +210,94 @@ class TestGetSettings:
         result = Settings.assemble_cors_origins("")
         assert result == []
 
+    def test_cors_origins_validator_with_json_string(self):
+        """Test cors_origins validator with JSON array string - covers lines 156-161."""
+        from app.core.config import Settings
+
+        # Test valid JSON array - covers lines 156-159
+        result = Settings.assemble_cors_origins('["http://localhost:3000", "http://localhost:3001"]')
+        assert result == ["http://localhost:3000", "http://localhost:3001"]
+
+    def test_cors_origins_validator_with_invalid_json_string(self):
+        """Test cors_origins validator with invalid JSON falls back to comma-separated."""
+        from app.core.config import Settings
+
+        # Test invalid JSON (starts with [ but not valid JSON) - covers lines 160-161 (except clause)
+        result = Settings.assemble_cors_origins("[not-valid-json, still-not-valid")
+        # Should fall back to comma-separated parsing
+        assert result == ["[not-valid-json", "still-not-valid"]
+
+    def test_cors_origins_validator_with_non_string_non_list(self):
+        """Test cors_origins validator returns empty list for non-string/non-list - covers line 166."""
+        from app.core.config import Settings
+
+        # Test with None - should return empty list
+        result = Settings.assemble_cors_origins(None)
+        assert result == []
+
+        # Test with dict - should return empty list
+        result = Settings.assemble_cors_origins({})
+        assert result == []
+
+    def test_database_url_validator_postgresql_replacement(self):
+        """Test database_url validator replaces postgresql:// with postgresql+asyncpg:// - covers line 172."""
+        from app.core.config import Settings
+
+        # Test the validator method directly
+        result = Settings.assemble_db_connection("postgresql://user:pass@localhost/testdb")
+        assert result == "postgresql+asyncpg://user:pass@localhost/testdb"
+
+    def test_database_url_validator_non_postgresql(self):
+        """Test database_url validator doesn't modify non-postgresql URLs."""
+        from app.core.config import Settings
+
+        # Test with SQLite
+        result = Settings.assemble_db_connection("sqlite:///./test.db")
+        assert result == "sqlite:///./test.db"
+
+        # Test with already asyncpg
+        result = Settings.assemble_db_connection("postgresql+asyncpg://user:pass@localhost/testdb")
+        assert result == "postgresql+asyncpg://user:pass@localhost/testdb"
+
+    def test_settings_computed_properties(self):
+        """Test Settings computed properties - covers lines 178, 183, 188."""
+        from app.core.config import Settings
+
+        # Test is_production
+        with patch.dict(os.environ, {"ENVIRONMENT": "production"}, clear=False):
+            settings = Settings()
+            assert settings.is_production is True
+            assert settings.is_development is False
+            assert settings.is_testing is False
+
+        # Test is_development
+        with patch.dict(os.environ, {"ENVIRONMENT": "development"}, clear=False):
+            settings = Settings()
+            assert settings.is_production is False
+            assert settings.is_development is True
+            assert settings.is_testing is False
+
+        # Test is_testing
+        with patch.dict(os.environ, {"ENVIRONMENT": "test"}, clear=False):
+            settings = Settings()
+            assert settings.is_production is False
+            assert settings.is_development is False
+            assert settings.is_testing is True
+
     def test_get_settings_development_environment(self):
         """Test get_settings returns DevelopmentSettings for development env."""
         import os
         from unittest.mock import patch
 
-        with patch.dict(os.environ, {'ENVIRONMENT': 'development'}):
+        with patch.dict(os.environ, {"ENVIRONMENT": "development"}):
             # Clear the lru_cache to force new settings creation
             from app.core.config import get_settings
+
             get_settings.cache_clear()
 
             settings = get_settings()
             from app.core.config import DevelopmentSettings
+
             assert isinstance(settings, DevelopmentSettings)
 
     def test_get_settings_production_environment(self):
@@ -225,11 +305,13 @@ class TestGetSettings:
         import os
         from unittest.mock import patch
 
-        with patch.dict(os.environ, {'ENVIRONMENT': 'production'}):
+        with patch.dict(os.environ, {"ENVIRONMENT": "production"}):
             # Clear the lru_cache to force new settings creation
             from app.core.config import get_settings
+
             get_settings.cache_clear()
 
             settings = get_settings()
             from app.core.config import ProductionSettings
+
             assert isinstance(settings, ProductionSettings)

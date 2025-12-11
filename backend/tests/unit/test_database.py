@@ -2,19 +2,21 @@
 Unit tests for database utilities.
 """
 
+from unittest.mock import AsyncMock, Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, AsyncMock
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.database import (
-    get_db,
-    init_db,
-    close_db,
-    health_check,
-    get_db_session,
-    create_database_engine,
-    DatabaseManager,
-    db_manager,
     Base,
+    DatabaseManager,
+    close_db,
+    create_database_engine,
+    db_manager,
+    get_db,
+    get_db_session,
+    health_check,
+    init_db,
 )
 
 
@@ -26,18 +28,18 @@ class TestGetDb:
         """Test get_db yields database session."""
         # Mock the session factory and session
         mock_session = AsyncMock(spec=AsyncSession)
-        
-        with patch('app.core.database.async_session_factory') as mock_factory:
+
+        with patch("app.core.database.async_session_factory") as mock_factory:
             mock_factory.return_value.__aenter__.return_value = mock_session
             mock_factory.return_value.__aexit__.return_value = None
-            
+
             # Get the generator
             db_gen = get_db()
-            
+
             # Get the session
             session = await db_gen.__anext__()
             assert session is mock_session
-            
+
             # Clean up
             try:
                 await db_gen.__anext__()
@@ -49,20 +51,20 @@ class TestGetDb:
         """Test get_db handles exceptions properly."""
         mock_session = AsyncMock(spec=AsyncSession)
         mock_session.rollback = AsyncMock()
-        
-        with patch('app.core.database.async_session_factory') as mock_factory:
+
+        with patch("app.core.database.async_session_factory") as mock_factory:
             mock_factory.return_value.__aenter__.return_value = mock_session
             mock_factory.return_value.__aexit__.return_value = None
-            
+
             db_gen = get_db()
             session = await db_gen.__anext__()
-            
+
             # Simulate an exception
             try:
                 await db_gen.athrow(Exception("Test exception"))
             except Exception:
                 pass
-            
+
             # Verify rollback was called
             mock_session.rollback.assert_called_once()
 
@@ -73,8 +75,8 @@ class TestDatabaseManager:
     def test_database_manager_creation(self):
         """Test DatabaseManager creation."""
         manager = DatabaseManager()
-        assert hasattr(manager, 'engine')
-        assert hasattr(manager, 'session_factory')
+        assert hasattr(manager, "engine")
+        assert hasattr(manager, "session_factory")
 
     def test_global_db_manager_instance(self):
         """Test global db_manager instance."""
@@ -100,8 +102,8 @@ class TestInitDb:
         begin_context.__aexit__ = AsyncMock(return_value=None)
         mock_engine.begin = Mock(return_value=begin_context)
 
-        with patch('app.core.database.create_database_engine', return_value=mock_engine):
-            with patch('app.core.database.get_db_session') as mock_get_session:
+        with patch("app.core.database.create_database_engine", return_value=mock_engine):
+            with patch("app.core.database.get_db_session") as mock_get_session:
                 # Setup session context manager
                 session_context = AsyncMock()
                 session_context.__aenter__ = AsyncMock(return_value=mock_session)
@@ -126,7 +128,7 @@ class TestInitDb:
         begin_context.__aenter__ = AsyncMock(side_effect=Exception("Database connection failed"))
         mock_engine.begin = Mock(return_value=begin_context)
 
-        with patch('app.core.database.create_database_engine', return_value=mock_engine):
+        with patch("app.core.database.create_database_engine", return_value=mock_engine):
             with pytest.raises(Exception, match="Database connection failed"):
                 await init_db()
 
@@ -138,8 +140,8 @@ class TestCloseDb:
     async def test_close_db_success(self):
         """Test successful database closure."""
         mock_engine = AsyncMock()
-        
-        with patch('app.core.database.engine', mock_engine):
+
+        with patch("app.core.database.engine", mock_engine):
             await close_db()
             mock_engine.dispose.assert_called_once()
 
@@ -149,7 +151,7 @@ class TestCloseDb:
         mock_engine = AsyncMock()
         mock_engine.dispose.side_effect = Exception("Disposal failed")
 
-        with patch('app.core.database.engine', mock_engine):
+        with patch("app.core.database.engine", mock_engine):
             # Should raise exception since we don't handle it
             with pytest.raises(Exception, match="Disposal failed"):
                 await close_db()
@@ -166,8 +168,8 @@ class TestHealthCheck:
         mock_result.scalar.return_value = 1
         mock_session.execute = AsyncMock(return_value=mock_result)
 
-        with patch('app.core.database.engine', True):  # engine exists
-            with patch('app.core.database.get_db_session') as mock_get_session:
+        with patch("app.core.database.engine", True):  # engine exists
+            with patch("app.core.database.get_db_session") as mock_get_session:
                 # Setup session context manager
                 mock_get_session.return_value.__aenter__.return_value = mock_session
                 mock_get_session.return_value.__aexit__.return_value = None
@@ -181,7 +183,7 @@ class TestHealthCheck:
     @pytest.mark.asyncio
     async def test_health_check_failure(self):
         """Test health check failure - no engine."""
-        with patch('app.core.database.engine', None):
+        with patch("app.core.database.engine", None):
             result = await health_check()
             assert result is False
 
@@ -191,8 +193,8 @@ class TestHealthCheck:
         mock_session = AsyncMock()
         mock_session.execute.side_effect = Exception("Query failed")
 
-        with patch('app.core.database.engine', True):  # engine exists
-            with patch('app.core.database.get_db_session') as mock_get_session:
+        with patch("app.core.database.engine", True):  # engine exists
+            with patch("app.core.database.get_db_session") as mock_get_session:
                 # Setup session context manager
                 mock_get_session.return_value.__aenter__.return_value = mock_session
                 mock_get_session.return_value.__aexit__.return_value = None
@@ -204,8 +206,8 @@ class TestHealthCheck:
 class TestCreateDatabaseEngine:
     """Tests for create_database_engine function."""
 
-    @patch('app.core.database.get_settings')
-    @patch('app.core.database.event')
+    @patch("app.core.database.get_settings")
+    @patch("app.core.database.event")
     def test_create_database_engine(self, mock_event, mock_get_settings):
         """Test create_database_engine creates engine."""
         mock_settings = Mock()
@@ -218,7 +220,7 @@ class TestCreateDatabaseEngine:
         mock_settings.debug = False
         mock_get_settings.return_value = mock_settings
 
-        with patch('app.core.database.create_async_engine') as mock_create_engine:
+        with patch("app.core.database.create_async_engine") as mock_create_engine:
             mock_engine = Mock()
             mock_create_engine.return_value = mock_engine
 
@@ -234,14 +236,14 @@ class TestGetDbSession:
     async def test_get_db_session_success(self):
         """Test get_db_session context manager."""
         mock_session = AsyncMock(spec=AsyncSession)
-        
-        with patch('app.core.database.async_session_factory') as mock_factory:
+
+        with patch("app.core.database.async_session_factory") as mock_factory:
             mock_factory.return_value.__aenter__.return_value = mock_session
             mock_factory.return_value.__aexit__.return_value = None
-            
+
             async with get_db_session() as session:
                 assert session is mock_session
-            
+
             # Verify commit was called
             mock_session.commit.assert_called_once()
             mock_session.close.assert_called_once()
@@ -251,15 +253,15 @@ class TestGetDbSession:
         """Test get_db_session handles exceptions."""
         mock_session = AsyncMock(spec=AsyncSession)
         mock_session.commit.side_effect = Exception("Commit failed")
-        
-        with patch('app.core.database.async_session_factory') as mock_factory:
+
+        with patch("app.core.database.async_session_factory") as mock_factory:
             mock_factory.return_value.__aenter__.return_value = mock_session
             mock_factory.return_value.__aexit__.return_value = None
-            
+
             with pytest.raises(Exception, match="Commit failed"):
                 async with get_db_session() as session:
                     pass
-            
+
             # Verify rollback was called
             mock_session.rollback.assert_called_once()
             mock_session.close.assert_called_once()
@@ -267,7 +269,7 @@ class TestGetDbSession:
     @pytest.mark.asyncio
     async def test_get_db_session_not_initialized(self):
         """Test get_db_session when not initialized."""
-        with patch('app.core.database.async_session_factory', None):
+        with patch("app.core.database.async_session_factory", None):
             with pytest.raises(RuntimeError, match="Database not initialized"):
                 async with get_db_session():
                     pass
@@ -276,8 +278,8 @@ class TestGetDbSession:
 class TestDatabaseConfiguration:
     """Tests for database configuration."""
 
-    @patch('app.core.database.get_settings')
-    @patch('app.core.database.event')
+    @patch("app.core.database.get_settings")
+    @patch("app.core.database.event")
     def test_database_url_configuration(self, mock_event, mock_get_settings):
         """Test database URL configuration."""
         mock_settings = Mock()
@@ -290,17 +292,18 @@ class TestDatabaseConfiguration:
         mock_settings.debug = False
         mock_get_settings.return_value = mock_settings
 
-        with patch('app.core.database.create_async_engine') as mock_create:
+        with patch("app.core.database.create_async_engine") as mock_create:
             mock_engine = Mock()
             mock_create.return_value = mock_engine
 
             # Test that engine can be created with PostgreSQL URL
             from app.core.database import create_database_engine
+
             engine = create_database_engine()
             assert engine is not None
 
-    @patch('app.core.database.get_settings')
-    @patch('app.core.database.event')
+    @patch("app.core.database.get_settings")
+    @patch("app.core.database.event")
     def test_sqlite_database_configuration(self, mock_event, mock_get_settings):
         """Test SQLite database configuration."""
         mock_settings = Mock()
@@ -313,12 +316,13 @@ class TestDatabaseConfiguration:
         mock_settings.debug = False
         mock_get_settings.return_value = mock_settings
 
-        with patch('app.core.database.create_async_engine') as mock_create:
+        with patch("app.core.database.create_async_engine") as mock_create:
             mock_engine = Mock()
             mock_create.return_value = mock_engine
 
             # Test that engine can be created with SQLite URL
             from app.core.database import create_database_engine
+
             engine = create_database_engine()
             assert engine is not None
 
@@ -329,16 +333,17 @@ class TestDatabaseModels:
     def test_base_model_import(self):
         """Test Base model can be imported."""
         from app.core.database import Base
+
         assert Base is not None
 
     def test_models_are_registered(self):
         """Test that models are properly registered with Base."""
         from app.core.database import Base
-        
+
         # Check that Base has metadata
-        assert hasattr(Base, 'metadata')
+        assert hasattr(Base, "metadata")
         assert Base.metadata is not None
-        
+
         # Check that some tables are registered
         # (This will depend on which models are imported)
         table_names = list(Base.metadata.tables.keys())
@@ -353,15 +358,15 @@ class TestDatabaseUtilities:
         """Test database session as context manager."""
         mock_session = AsyncMock(spec=AsyncSession)
 
-        with patch('app.core.database.async_session_factory') as mock_factory:
+        with patch("app.core.database.async_session_factory") as mock_factory:
             mock_factory.return_value.__aenter__.return_value = mock_session
             mock_factory.return_value.__aexit__.return_value = None
 
             async with mock_factory() as session:
                 assert session is mock_session
 
-    @patch('app.core.database.event')
-    @patch('app.core.database.get_settings')
+    @patch("app.core.database.event")
+    @patch("app.core.database.get_settings")
     def test_database_engine_configuration(self, mock_get_settings, mock_event):
         """Test database engine configuration."""
         mock_settings = Mock()
@@ -374,8 +379,9 @@ class TestDatabaseUtilities:
         mock_settings.debug = False
         mock_get_settings.return_value = mock_settings
 
-        with patch('app.core.database.create_async_engine') as mock_create:
+        with patch("app.core.database.create_async_engine") as mock_create:
             from app.core.database import create_database_engine
+
             engine = create_database_engine()
 
             # Verify engine was created
@@ -385,6 +391,7 @@ class TestDatabaseUtilities:
         """Test session factory configuration."""
         # async_sessionmaker is a callable that creates session factories
         from sqlalchemy.ext.asyncio import async_sessionmaker
+
         assert callable(async_sessionmaker)
 
 
@@ -394,8 +401,8 @@ class TestDatabaseErrorHandling:
     @pytest.mark.asyncio
     async def test_connection_error_handling(self):
         """Test connection error handling."""
-        with patch('app.core.database.engine', True):  # engine exists
-            with patch('app.core.database.get_db_session') as mock_get_session:
+        with patch("app.core.database.engine", True):  # engine exists
+            with patch("app.core.database.get_db_session") as mock_get_session:
                 # Simulate connection error
                 mock_get_session.side_effect = Exception("Connection error")
 
@@ -408,15 +415,15 @@ class TestDatabaseErrorHandling:
         """Test session error handling."""
         mock_session = AsyncMock(spec=AsyncSession)
         mock_session.execute.side_effect = Exception("Query error")
-        
-        with patch('app.core.database.async_session_factory') as mock_factory:
+
+        with patch("app.core.database.async_session_factory") as mock_factory:
             mock_factory.return_value.__aenter__.return_value = mock_session
             mock_factory.return_value.__aexit__.return_value = None
-            
+
             # get_db should handle errors and rollback
             db_gen = get_db()
             session = await db_gen.__anext__()
-            
+
             # Simulate error during usage
             try:
                 await db_gen.athrow(Exception("Usage error"))
@@ -430,8 +437,8 @@ class TestDatabaseErrorHandling:
 class TestDatabaseEventListeners:
     """Tests for database event listeners."""
 
-    @patch('app.core.database.get_settings')
-    @patch('app.core.database.create_async_engine')
+    @patch("app.core.database.get_settings")
+    @patch("app.core.database.create_async_engine")
     def test_sqlite_pragma_setup(self, mock_create_engine, mock_get_settings):
         """Test SQLite pragma event listener."""
         from app.core.database import create_database_engine
@@ -455,7 +462,8 @@ class TestDatabaseEventListeners:
 
         # Import and call to register event listeners
         from sqlalchemy import event
-        with patch.object(event, 'listens_for') as mock_listen:
+
+        with patch.object(event, "listens_for") as mock_listen:
             engine = create_database_engine()
 
             # Verify event listeners were registered
@@ -463,8 +471,8 @@ class TestDatabaseEventListeners:
 
     def test_connection_event_listener(self):
         """Test database connection event listener."""
-        from app.core.database import create_database_engine
         import app.core.database as db_module
+        from app.core.database import create_database_engine
 
         # Mock cursor for SQLite
         mock_cursor = Mock()
@@ -475,14 +483,14 @@ class TestDatabaseEventListeners:
         # Test the event listener directly if it exists in module
         # Since event listeners are registered at module load, we can test them directly
         # For SQLite URL case
-        with patch.object(db_module, 'settings') as mock_settings:
+        with patch.object(db_module, "settings") as mock_settings:
             mock_settings.database_url = "sqlite:///:memory:"
 
             # The event listener function is defined inside create_database_engine
             # We need to trigger it by simulating the connection event
             # This would normally be done by the database engine itself
 
-    @patch('app.core.database.get_settings')
+    @patch("app.core.database.get_settings")
     def test_checkout_event_listener(self, mock_get_settings):
         """Test checkout event listener logs correctly."""
         # Setup mock settings
@@ -500,7 +508,7 @@ class TestDatabaseEventListeners:
         # and will be called by SQLAlchemy when connections are checked out
         # Testing this requires mocking the engine's event system
 
-    @patch('app.core.database.get_settings')
+    @patch("app.core.database.get_settings")
     def test_checkin_event_listener(self, mock_get_settings):
         """Test checkin event listener logs correctly."""
         # Setup mock settings
@@ -530,7 +538,7 @@ class TestDatabaseManagerMethods:
         mock_result = Mock()
         mock_session.execute = AsyncMock(return_value=mock_result)
 
-        with patch('app.core.database.get_db_session') as mock_get_session:
+        with patch("app.core.database.get_db_session") as mock_get_session:
             # Setup async context manager
             mock_get_session.return_value.__aenter__.return_value = mock_session
             mock_get_session.return_value.__aexit__.return_value = None
@@ -569,7 +577,7 @@ class TestDatabaseManagerMethods:
         mock_engine = Mock()
         mock_engine.pool = mock_pool
 
-        with patch.object(db_manager, 'engine', mock_engine):
+        with patch.object(db_manager, "engine", mock_engine):
             result = await db_manager.get_connection_info()
 
             assert result["status"] == "connected"
@@ -593,8 +601,8 @@ class TestDatabaseManagerMethods:
         mock_begin.__aexit__ = AsyncMock(return_value=None)
         mock_engine.begin.return_value = mock_begin
 
-        with patch.object(db_manager, 'engine', mock_engine):
-            with patch('app.core.database.settings') as mock_settings:
+        with patch.object(db_manager, "engine", mock_engine):
+            with patch("app.core.database.settings") as mock_settings:
                 mock_settings.database_url = "postgresql://localhost/test"
 
                 await db_manager.vacuum_analyze()
@@ -607,7 +615,7 @@ class TestDatabaseManagerMethods:
         """Test vacuum_analyze skipped for non-PostgreSQL databases."""
         from app.core.database import db_manager
 
-        with patch('app.core.database.settings') as mock_settings:
+        with patch("app.core.database.settings") as mock_settings:
             mock_settings.database_url = "sqlite:///test.db"
 
             # Should not raise error, just skip
