@@ -186,22 +186,26 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
-          cache-dependency-path: backend/requirements.txt
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/pyproject.toml
 
       - name: Cache Python packages
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('backend/requirements.txt') }}
+          key: ${{ runner.os }}-pip-v2-${{ matrix.python-version }}-${{ hashFiles('backend/requirements.txt') }}
           restore-keys: |
-            ${{ runner.os }}-pip-${{ matrix.python-version }}-
+            ${{ runner.os }}-pip-v2-${{ matrix.python-version }}-
 
       - name: Install dependencies
         working-directory: ./backend
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          pip install -r requirements.txt
-          pip install -e ".[dev]"
+          pip install --no-cache-dir -r requirements.txt
+          pip install --no-cache-dir -e ".[dev]"
+          echo "Verifying critical dependencies installed:"
+          pip list | grep -E "pyotp|qrcode|argon2|jinja2" || (echo "ERROR: Missing dependencies!" && exit 1)
 
       - name: Run Black formatter check
         working-directory: ./backend
