@@ -528,63 +528,297 @@ export default function DairyFarmManagerApp({
     },
   ]);
 
-  // Translations object
+  // Comprehensive Translations Object
   const translations = {
     english: {
+      // App Header
       appTitle: 'Dairy Farm Manager Pro',
       appSubtitle: 'Advanced farm management with AI insights',
+
+      // Navigation
       dashboard: 'Dashboard',
       cattle: 'Cattle',
       records: 'Records',
       health: 'Health',
       videos: 'Videos',
+
+      // Search & Common
       search: 'Search breeds, cattle, problems, records...',
+      close: 'Close',
+      cancel: 'Cancel',
+      save: 'Save',
+      delete: 'Delete',
+      edit: 'Edit',
+      add: 'Add',
+      view: 'View',
+
+      // Language
+      switchLanguage: 'Switch to Punjabi',
+      selectLanguage: 'Select Language',
+
+      // Dashboard Stats
       totalCattle: 'Total Cattle',
       healthyCattle: 'Healthy Cattle',
       milkProduction: 'Milk Production Today',
       avgMilkYield: 'Avg Milk/Cow',
       activeBreeding: 'Active Breeding',
       pendingVaccinations: 'Pending Vaccinations',
+      liters: 'liters',
+
+      // Quick Actions
+      quickActions: 'Quick Actions',
       healthMonitor: 'Health Monitor',
       manageCattle: 'Manage Cattle',
       viewRecords: 'View Records',
+
+      // Cattle Management
+      cattleManagement: 'Cattle Management',
+      addNewCattle: 'Add New Cattle',
+      cattleList: 'Cattle List',
+      breed: 'Breed',
+      tagNo: 'Tag No.',
+      age: 'Age',
+      milkYield: 'Milk Yield',
+      status: 'Status',
+      actions: 'Actions',
+      healthy: 'Healthy',
+      sick: 'Sick',
+      pregnant: 'Pregnant',
+      dry: 'Dry',
+      years: 'years',
+
+      // Records
+      breedingHealthRecords: 'Cattle Breeding & Health Records',
       addRecord: 'Add Record',
+      addNewRecord: 'Add New Record',
       editRecord: 'Edit Record',
       deleteRecord: 'Delete Record',
       viewDetails: 'View Details',
+      birthDate: 'Birth Date',
+      motherCode: 'Mother Code',
+      fatherName: 'Father Name',
+      lactation: 'Lactation',
+      aiLastCheckup: 'AI (Last Checkup)',
+      heatCycle: 'Heat Cycle',
+      deworming: 'Deworming',
+      semenDetail: 'Semen Detail',
+      totalRecords: 'Total Records',
+
+      // Health
+      healthStatus: 'Health Status',
+      activeAlerts: 'Active Alerts',
+      recentCheckups: 'Recent Checkups',
+      vaccinationsDue: 'Vaccinations Due',
+      healthScore: 'Health Score',
+      temperature: 'Temperature',
+      heartRate: 'Heart Rate',
+      respiratoryRate: 'Respiratory Rate',
+      lastCheckup: 'Last Checkup',
+      nextCheckup: 'Next Checkup',
+      veterinarian: 'Veterinarian',
+
+      // Videos
       uploadVideo: 'Upload Video',
       videoLibrary: 'Video Library',
-      switchLanguage: 'Switch to Punjabi',
-      selectLanguage: 'Select Language',
-      close: 'Close',
+      videoTitle: 'Video Title',
+      description: 'Description',
+      category: 'Category',
+      videoFile: 'Video File',
+      training: 'Training',
+      breeding: 'Breeding',
+      feeding: 'Feeding',
+      general: 'General',
+      uploadedBy: 'Uploaded By',
+      duration: 'Duration',
+      views: 'Views',
+      likes: 'Likes',
+
+      // Confirmations
+      deleteConfirm: 'Delete this record?',
+      saveSuccess: 'Saved successfully',
+      deleteSuccess: 'Deleted successfully',
+
+      // Dashboard Specific
+      farmDashboard: 'Farm Dashboard',
+      currentWeather: 'Current Weather',
+      humidity: 'Humidity',
+      conditions: 'Conditions',
+      wind: 'Wind',
+      dailyProduction: 'Daily Production',
+      activeAlerts: 'Active Alerts',
+      feedCompleted: 'Feed Completed',
+      recentAlerts: 'Recent Alerts',
+
+      // Cattle Table
+      name: 'Name',
+      lastMilked: 'Last Milked',
+      totalMilkToday: 'Total Milk Today',
+      cattleInventory: 'Cattle Inventory',
+      dailyYield: 'Daily Yield',
+      weight: 'Weight',
+      dueDate: 'Due Date',
+      registration: 'Registration',
+      sire: 'Sire',
+      dam: 'Dam',
+
+      // Months
+      january: 'January',
+      february: 'February',
+      march: 'March',
+      april: 'April',
+      may: 'May',
+      june: 'June',
+      july: 'July',
+      august: 'August',
+      september: 'September',
+      october: 'October',
+      november: 'November',
+      december: 'December',
     },
     punjabi: {
+      // App Header
       appTitle: 'ਡੇਅਰੀ ਫਾਰਮ ਮੈਨੇਜਰ ਪ੍ਰੋ',
       appSubtitle: 'AI ਨਾਲ ਉੱਨਤ ਫਾਰਮ ਪ੍ਰਬੰਧਨ',
+
+      // Navigation
       dashboard: 'ਡੈਸ਼ਬੋਰਡ',
       cattle: 'ਪਸ਼ੂ',
       records: 'ਰਿਕਾਰਡ',
       health: 'ਸਿਹਤ',
       videos: 'ਵੀਡੀਓ',
+
+      // Search & Common
       search: 'ਨਸਲ, ਪਸ਼ੂ, ਸਮੱਸਿਆਵਾਂ, ਰਿਕਾਰਡ ਖੋਜੋ...',
+      close: 'ਬੰਦ ਕਰੋ',
+      cancel: 'ਰੱਦ ਕਰੋ',
+      save: 'ਸੰਭਾਲੋ',
+      delete: 'ਮਿਟਾਓ',
+      edit: 'ਸੋਧੋ',
+      add: 'ਜੋੜੋ',
+      view: 'ਦੇਖੋ',
+
+      // Language
+      switchLanguage: 'ਅੰਗਰੇਜ਼ੀ ਵਿੱਚ ਬਦਲੋ',
+      selectLanguage: 'ਭਾਸ਼ਾ ਚੁਣੋ',
+
+      // Dashboard Stats
       totalCattle: 'ਕੁੱਲ ਪਸ਼ੂ',
       healthyCattle: 'ਤੰਦਰੁਸਤ ਪਸ਼ੂ',
       milkProduction: 'ਅੱਜ ਦੁੱਧ ਉਤਪਾਦਨ',
       avgMilkYield: 'ਔਸਤ ਦੁੱਧ/ਪਸ਼ੂ',
       activeBreeding: 'ਸਰਗਰਮ ਪ੍ਰਜਨਨ',
       pendingVaccinations: 'ਬਕਾਇਆ ਟੀਕੇ',
+      liters: 'ਲਿਟਰ',
+
+      // Quick Actions
+      quickActions: 'ਤੇਜ਼ ਕਾਰਵਾਈਆਂ',
       healthMonitor: 'ਸਿਹਤ ਮਾਨੀਟਰ',
       manageCattle: 'ਪਸ਼ੂ ਪ੍ਰਬੰਧਨ',
       viewRecords: 'ਰਿਕਾਰਡ ਦੇਖੋ',
+
+      // Cattle Management
+      cattleManagement: 'ਪਸ਼ੂ ਪ੍ਰਬੰਧਨ',
+      addNewCattle: 'ਨਵਾਂ ਪਸ਼ੂ ਜੋੜੋ',
+      cattleList: 'ਪਸ਼ੂ ਸੂਚੀ',
+      breed: 'ਨਸਲ',
+      tagNo: 'ਟੈਗ ਨੰਬਰ',
+      age: 'ਉਮਰ',
+      milkYield: 'ਦੁੱਧ ਉਤਪਾਦਨ',
+      status: 'ਸਥਿਤੀ',
+      actions: 'ਕਾਰਵਾਈਆਂ',
+      healthy: 'ਤੰਦਰੁਸਤ',
+      sick: 'ਬੀਮਾਰ',
+      pregnant: 'ਗਰਭਵਤੀ',
+      dry: 'ਸੁੱਕਾ',
+      years: 'ਸਾਲ',
+
+      // Records
+      breedingHealthRecords: 'ਪਸ਼ੂ ਪ੍ਰਜਨਨ ਅਤੇ ਸਿਹਤ ਰਿਕਾਰਡ',
       addRecord: 'ਰਿਕਾਰਡ ਜੋੜੋ',
+      addNewRecord: 'ਨਵਾਂ ਰਿਕਾਰਡ ਜੋੜੋ',
       editRecord: 'ਰਿਕਾਰਡ ਸੋਧੋ',
       deleteRecord: 'ਰਿਕਾਰਡ ਮਿਟਾਓ',
       viewDetails: 'ਵੇਰਵੇ ਦੇਖੋ',
+      birthDate: 'ਜਨਮ ਤਾਰੀਖ',
+      motherCode: 'ਮਾਂ ਕੋਡ',
+      fatherName: 'ਪਿਤਾ ਨਾਮ',
+      lactation: 'ਦੁੱਧ ਦੀ ਮਿਆਦ',
+      aiLastCheckup: 'AI (ਆਖਰੀ ਜਾਂਚ)',
+      heatCycle: 'ਗਰਮੀ ਚੱਕਰ',
+      deworming: 'ਕੀੜੇ ਮਾਰੂ ਦਵਾਈ',
+      semenDetail: 'ਵੀਰਜ ਵੇਰਵਾ',
+      totalRecords: 'ਕੁੱਲ ਰਿਕਾਰਡ',
+
+      // Health
+      healthStatus: 'ਸਿਹਤ ਸਥਿਤੀ',
+      activeAlerts: 'ਸਰਗਰਮ ਚੇਤਾਵਨੀਆਂ',
+      recentCheckups: 'ਹਾਲੀਆ ਜਾਂਚਾਂ',
+      vaccinationsDue: 'ਬਕਾਇਆ ਟੀਕੇ',
+      healthScore: 'ਸਿਹਤ ਸਕੋਰ',
+      temperature: 'ਤਾਪਮਾਨ',
+      heartRate: 'ਦਿਲ ਦੀ ਧੜਕਣ',
+      respiratoryRate: 'ਸਾਹ ਦਰ',
+      lastCheckup: 'ਆਖਰੀ ਜਾਂਚ',
+      nextCheckup: 'ਅਗਲੀ ਜਾਂਚ',
+      veterinarian: 'ਪਸ਼ੂ ਚਿਕਿਤਸਕ',
+
+      // Videos
       uploadVideo: 'ਵੀਡੀਓ ਅੱਪਲੋਡ ਕਰੋ',
       videoLibrary: 'ਵੀਡੀਓ ਲਾਇਬ੍ਰੇਰੀ',
-      switchLanguage: 'ਅੰਗਰੇਜ਼ੀ ਵਿੱਚ ਬਦਲੋ',
-      selectLanguage: 'ਭਾਸ਼ਾ ਚੁਣੋ',
-      close: 'ਬੰਦ ਕਰੋ',
+      videoTitle: 'ਵੀਡੀਓ ਸਿਰਲੇਖ',
+      description: 'ਵਰਣਨ',
+      category: 'ਸ਼੍ਰੇਣੀ',
+      videoFile: 'ਵੀਡੀਓ ਫ਼ਾਈਲ',
+      training: 'ਸਿਖਲਾਈ',
+      breeding: 'ਪ੍ਰਜਨਨ',
+      feeding: 'ਖੁਰਾਕ',
+      general: 'ਆਮ',
+      uploadedBy: 'ਅੱਪਲੋਡ ਕੀਤਾ',
+      duration: 'ਮਿਆਦ',
+      views: 'ਦੇਖੇ ਗਏ',
+      likes: 'ਪਸੰਦ',
+
+      // Confirmations
+      deleteConfirm: 'ਕੀ ਤੁਸੀਂ ਇਹ ਰਿਕਾਰਡ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?',
+      saveSuccess: 'ਸਫਲਤਾਪੂਰਵਕ ਸੰਭਾਲਿਆ ਗਿਆ',
+      deleteSuccess: 'ਸਫਲਤਾਪੂਰਵਕ ਮਿਟਾਇਆ ਗਿਆ',
+
+      // Dashboard Specific
+      farmDashboard: 'ਫਾਰਮ ਡੈਸ਼ਬੋਰਡ',
+      currentWeather: 'ਮੌਜੂਦਾ ਮੌਸਮ',
+      humidity: 'ਨਮੀ',
+      conditions: 'ਸਥਿਤੀ',
+      wind: 'ਹਵਾ',
+      dailyProduction: 'ਰੋਜ਼ਾਨਾ ਉਤਪਾਦਨ',
+      activeAlerts: 'ਸਰਗਰਮ ਚੇਤਾਵਨੀਆਂ',
+      feedCompleted: 'ਖੁਰਾਕ ਪੂਰੀ ਹੋਈ',
+      recentAlerts: 'ਹਾਲੀਆ ਚੇਤਾਵਨੀਆਂ',
+
+      // Cattle Table
+      name: 'ਨਾਮ',
+      lastMilked: 'ਆਖਰੀ ਦੁੱਧ ਕੱਢਿਆ',
+      totalMilkToday: 'ਅੱਜ ਕੁੱਲ ਦੁੱਧ',
+      cattleInventory: 'ਪਸ਼ੂ ਸੂਚੀ',
+      dailyYield: 'ਰੋਜ਼ਾਨਾ ਉਤਪਾਦਨ',
+      weight: 'ਭਾਰ',
+      dueDate: 'ਨਿਰਧਾਰਤ ਤਾਰੀਖ',
+      registration: 'ਰਜਿਸਟ੍ਰੇਸ਼ਨ',
+      sire: 'ਪਿਤਾ',
+      dam: 'ਮਾਂ',
+
+      // Months
+      january: 'ਜਨਵਰੀ',
+      february: 'ਫਰਵਰੀ',
+      march: 'ਮਾਰਚ',
+      april: 'ਅਪ੍ਰੈਲ',
+      may: 'ਮਈ',
+      june: 'ਜੂਨ',
+      july: 'ਜੁਲਾਈ',
+      august: 'ਅਗਸਤ',
+      september: 'ਸਤੰਬਰ',
+      october: 'ਅਕਤੂਬਰ',
+      november: 'ਨਵੰਬਰ',
+      december: 'ਦਸੰਬਰ',
     },
   };
 
@@ -2045,7 +2279,7 @@ export default function DairyFarmManagerApp({
   const renderDashboardTab = () => (
     <div style={{ padding: '1rem' }}>
       <h3 style={{ margin: '0 0 1rem 0', color: 'var(--fg)' }}>
-        📊 Farm Dashboard
+        📊 {t.farmDashboard}
       </h3>
 
       {/* Weather Widget */}
@@ -2059,7 +2293,7 @@ export default function DairyFarmManagerApp({
           }}
         >
           <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--fg)' }}>
-            🌤️ Current Weather
+            🌤️ {t.currentWeather}
           </h4>
           <div
             style={{
@@ -2070,16 +2304,16 @@ export default function DairyFarmManagerApp({
             }}
           >
             <div>
-              <strong>Temperature:</strong> {currentWeather?.temperature}°C
+              <strong>{t.temperature}:</strong> {currentWeather?.temperature}°C
             </div>
             <div>
-              <strong>Humidity:</strong> {currentWeather?.humidity}%
+              <strong>{t.humidity}:</strong> {currentWeather?.humidity}%
             </div>
             <div>
-              <strong>Conditions:</strong> {currentWeather?.conditions}
+              <strong>{t.conditions}:</strong> {currentWeather?.conditions}
             </div>
             <div>
-              <strong>Wind:</strong> {currentWeather?.windSpeed} km/h
+              <strong>{t.wind}:</strong> {currentWeather?.windSpeed} km/h
             </div>
           </div>
         </div>
@@ -2112,7 +2346,7 @@ export default function DairyFarmManagerApp({
             {totalDailyYield}L
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Daily Production
+            {t.dailyProduction}
           </div>
         </div>
         <div
@@ -2129,7 +2363,7 @@ export default function DairyFarmManagerApp({
             {unacknowledgedAlerts.length}
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Active Alerts
+            {t.activeAlerts}
           </div>
         </div>
         <div
@@ -2146,7 +2380,7 @@ export default function DairyFarmManagerApp({
             {todayFeedCompleted}/{todayFeedTotal}
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Feed Completed
+            {t.feedCompleted}
           </div>
         </div>
         <div
@@ -2163,7 +2397,7 @@ export default function DairyFarmManagerApp({
             {avgPerformance.avgHealth.toFixed(0)}%
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Health Score
+            {t.healthScore}
           </div>
         </div>
       </div>
@@ -2171,7 +2405,7 @@ export default function DairyFarmManagerApp({
       {/* Recent Alerts */}
       <div style={{ marginBottom: '1.5rem' }}>
         <h4 style={{ margin: '0 0 1rem 0', color: 'var(--fg)' }}>
-          🚨 Recent Alerts
+          🚨 {t.recentAlerts}
         </h4>
         <div
           style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
@@ -2253,7 +2487,7 @@ export default function DairyFarmManagerApp({
       {/* Quick Actions */}
       <div>
         <h4 style={{ margin: '0 0 1rem 0', color: 'var(--fg)' }}>
-          ⚡ Quick Actions
+          ⚡ {t.quickActions}
         </h4>
         <div
           style={{
@@ -2275,7 +2509,7 @@ export default function DairyFarmManagerApp({
             }}
             onClick={() => setActiveTab('health')}
           >
-            🏥 Health Monitor
+            🏥 {t.healthMonitor}
           </button>
           <button
             style={{
@@ -2290,7 +2524,7 @@ export default function DairyFarmManagerApp({
             }}
             onClick={() => setActiveTab('cows')}
           >
-            🐄 Manage Cattle
+            🐄 {t.manageCattle}
           </button>
           <button
             style={{
@@ -2305,7 +2539,7 @@ export default function DairyFarmManagerApp({
             }}
             onClick={() => setActiveTab('records')}
           >
-            📋 View Records
+            📋 {t.viewRecords}
           </button>
         </div>
       </div>
@@ -3070,7 +3304,7 @@ export default function DairyFarmManagerApp({
   const renderCowsTab = () => (
     <div style={{ padding: '1rem' }}>
       <h3 style={{ margin: '0 0 1rem 0', color: 'var(--fg)' }}>
-        🐄 Cattle Inventory
+        🐄 {t.cattleInventory}
       </h3>
 
       {/* Statistics Cards */}
@@ -3100,7 +3334,7 @@ export default function DairyFarmManagerApp({
             {totalCows}
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Total Cattle
+            {t.totalCattle}
           </div>
         </div>
         <div
@@ -3117,7 +3351,7 @@ export default function DairyFarmManagerApp({
             {pregnantCows}
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Pregnant
+            {t.pregnant}
           </div>
         </div>
         <div
@@ -3134,7 +3368,7 @@ export default function DairyFarmManagerApp({
             {healthyCows}
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Healthy
+            {t.healthy}
           </div>
         </div>
         <div
@@ -3155,7 +3389,7 @@ export default function DairyFarmManagerApp({
             {totalDailyYield}L
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Daily Yield
+            {t.dailyYield}
           </div>
         </div>
       </div>
