@@ -606,9 +606,11 @@ export default function DairyFarmManagerApp({
 
       // Health
       healthStatus: 'Health Status',
+      healthManagement: 'Health Management',
       activeAlerts: 'Active Alerts',
       recentCheckups: 'Recent Checkups',
       vaccinationsDue: 'Vaccinations Due',
+      vaccinationSchedule: 'Vaccination Schedule',
       healthScore: 'Health Score',
       temperature: 'Temperature',
       heartRate: 'Heart Rate',
@@ -616,6 +618,8 @@ export default function DairyFarmManagerApp({
       lastCheckup: 'Last Checkup',
       nextCheckup: 'Next Checkup',
       veterinarian: 'Veterinarian',
+      last: 'Last',
+      next: 'Next',
 
       // Videos
       uploadVideo: 'Upload Video',
@@ -751,9 +755,11 @@ export default function DairyFarmManagerApp({
 
       // Health
       healthStatus: 'ਸਿਹਤ ਸਥਿਤੀ',
+      healthManagement: 'ਸਿਹਤ ਪ੍ਰਬੰਧਨ',
       activeAlerts: 'ਸਰਗਰਮ ਚੇਤਾਵਨੀਆਂ',
       recentCheckups: 'ਹਾਲੀਆ ਜਾਂਚਾਂ',
       vaccinationsDue: 'ਬਕਾਇਆ ਟੀਕੇ',
+      vaccinationSchedule: 'ਟੀਕਾਕਰਣ ਸਮਾਂ-ਸਾਰਣੀ',
       healthScore: 'ਸਿਹਤ ਸਕੋਰ',
       temperature: 'ਤਾਪਮਾਨ',
       heartRate: 'ਦਿਲ ਦੀ ਧੜਕਣ',
@@ -761,6 +767,8 @@ export default function DairyFarmManagerApp({
       lastCheckup: 'ਆਖਰੀ ਜਾਂਚ',
       nextCheckup: 'ਅਗਲੀ ਜਾਂਚ',
       veterinarian: 'ਪਸ਼ੂ ਚਿਕਿਤਸਕ',
+      last: 'ਆਖਰੀ',
+      next: 'ਅਗਲਾ',
 
       // Videos
       uploadVideo: 'ਵੀਡੀਓ ਅੱਪਲੋਡ ਕਰੋ',
@@ -3443,23 +3451,23 @@ export default function DairyFarmManagerApp({
               }}
             >
               <div>
-                <strong>Breed:</strong> {cow.breed}
+                <strong>{t.breed}:</strong> {cow.breed}
               </div>
               <div>
-                <strong>Age:</strong> {cow.age} years
+                <strong>{t.age}:</strong> {cow.age} {t.years}
               </div>
               <div>
-                <strong>Weight:</strong> {cow.weight} kg
+                <strong>{t.weight}:</strong> {cow.weight} kg
               </div>
               <div>
-                <strong>Daily Yield:</strong> {cow.dailyMilkYield}L
+                <strong>{t.dailyYield}:</strong> {cow.dailyMilkYield}L
               </div>
               <div>
-                <strong>Last Checkup:</strong> {cow.lastCheckup}
+                <strong>{t.lastCheckup}:</strong> {cow.lastCheckup}
               </div>
               {cow.pregnancyStatus?.isPregnant && (
                 <div>
-                  <strong>Due Date:</strong> {cow.pregnancyStatus.dueDate}
+                  <strong>{t.dueDate}:</strong> {cow.pregnancyStatus.dueDate}
                 </div>
               )}
             </div>
@@ -3471,9 +3479,9 @@ export default function DairyFarmManagerApp({
                   color: 'var(--muted)',
                 }}
               >
-                <strong>Registration:</strong> {cow.pedigree.registrationNumber}{' '}
-                |<strong> Sire:</strong> {cow.pedigree.sireName} |
-                <strong> Dam:</strong> {cow.pedigree.damName}
+                <strong>{t.registration}:</strong> {cow.pedigree.registrationNumber}{' '}
+                |<strong> {t.sire}:</strong> {cow.pedigree.sireName} |
+                <strong> {t.dam}:</strong> {cow.pedigree.damName}
               </div>
             )}
           </div>
@@ -3970,7 +3978,7 @@ export default function DairyFarmManagerApp({
   const renderHealthTab = () => (
     <div style={{ padding: '1rem' }}>
       <h3 style={{ margin: '0 0 1rem 0', color: 'var(--fg)' }}>
-        🏥 Health Management
+        🏥 {t.healthManagement}
       </h3>
 
       {/* Health Status Overview */}
@@ -3996,7 +4004,7 @@ export default function DairyFarmManagerApp({
             {healthyCows}
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Healthy
+            {t.healthy}
           </div>
         </div>
         <div
@@ -4013,7 +4021,7 @@ export default function DairyFarmManagerApp({
             {pregnantCows}
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Pregnant
+            {t.pregnant}
           </div>
         </div>
         <div
@@ -4029,14 +4037,14 @@ export default function DairyFarmManagerApp({
           >
             {cows.filter((c) => c.healthStatus === 'dry').length}
           </div>
-          <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>Dry</div>
+          <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>{t.dry}</div>
         </div>
       </div>
 
       {/* Vaccination Schedule */}
       <div style={{ marginBottom: '1.5rem' }}>
         <h4 style={{ margin: '0 0 1rem 0', color: 'var(--fg)' }}>
-          📅 Vaccination Schedule
+          📅 {t.vaccinationSchedule}
         </h4>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {cows.map((cow) => (
@@ -4064,8 +4072,8 @@ export default function DairyFarmManagerApp({
                   <div>
                     <strong>{vaccination.name}:</strong>
                   </div>
-                  <div>Last: {vaccination.date}</div>
-                  <div>Next: {vaccination.nextDue}</div>
+                  <div>{t.last}: {vaccination.date}</div>
+                  <div>{t.next}: {vaccination.nextDue}</div>
                 </div>
               ))}
             </div>
