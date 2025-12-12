@@ -4,6 +4,7 @@ import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import EditRecordModal from './EditRecordModal';
 import ViewRecordModal from './ViewRecordModal';
 import { translations } from './translations';
+import Icon from '../Icon';
 
 interface Cow {
   id: string;
@@ -4374,8 +4375,9 @@ export default function DairyFarmManagerApp({
   const renderRecordsTab = () => (
     <div style={{ padding: '1rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h3 style={{ margin: 0, color: 'var(--fg)' }}>
-          📋 {language === 'english' ? 'Cattle Breeding & Health Records' : 'ਪਸ਼ੂ ਪ੍ਰਜਨਨ ਅਤੇ ਸਿਹਤ ਰਿਕਾਰਡ'}
+        <h3 style={{ margin: 0, color: 'var(--fg)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Icon name="ClipboardList" size={24} />
+          {language === 'english' ? 'Cattle Breeding & Health Records' : 'ਪਸ਼ੂ ਪ੍ਰਜਨਨ ਅਤੇ ਸਿਹਤ ਰਿਕਾਰਡ'}
         </h3>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           {/* View Toggle Buttons */}
@@ -4392,9 +4394,13 @@ export default function DairyFarmManagerApp({
                 fontSize: '0.85rem',
                 fontWeight: recordsViewMode === 'cards' ? 'bold' : 'normal',
                 transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
               }}
             >
-              📋 {language === 'english' ? 'Cards' : 'ਕਾਰਡ'}
+              <Icon name="LayoutGrid" size={16} />
+              {language === 'english' ? 'Cards' : 'ਕਾਰਡ'}
             </button>
             <button
               onClick={() => {
@@ -4411,9 +4417,13 @@ export default function DairyFarmManagerApp({
                 fontSize: '0.85rem',
                 fontWeight: recordsViewMode === 'table' ? 'bold' : 'normal',
                 transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
               }}
             >
-              📊 {language === 'english' ? 'Table' : 'ਸੂਚੀ'}
+              <Icon name="Table" size={16} />
+              {language === 'english' ? 'Table' : 'ਸੂਚੀ'}
             </button>
           </div>
 
@@ -4439,9 +4449,13 @@ export default function DairyFarmManagerApp({
               cursor: 'pointer',
               fontSize: '0.9rem',
               fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
             }}
           >
-            + {language === 'english' ? 'Add New Record' : 'ਨਵਾਂ ਰਿਕਾਰਡ ਜੋੜੋ'}
+            <Icon name="Plus" size={18} />
+            {language === 'english' ? 'Add New Record' : 'ਨਵਾਂ ਰਿਕਾਰਡ ਜੋੜੋ'}
           </button>
         </div>
       </div>
@@ -4745,7 +4759,8 @@ export default function DairyFarmManagerApp({
                   gap: '0.5rem',
                 }}
               >
-                👁️ {language === 'english' ? 'View Details' : 'ਵੇਰਵੇ ਦੇਖੋ'}
+                <Icon name="Eye" size={16} />
+                {language === 'english' ? 'View Details' : 'ਵੇਰਵੇ ਦੇਖੋ'}
               </button>
               <button
                 type="button"
@@ -4767,7 +4782,8 @@ export default function DairyFarmManagerApp({
                   gap: '0.5rem',
                 }}
               >
-                ✏️ {language === 'english' ? 'Edit' : 'ਸੋਧੋ'}
+                <Icon name="Pencil" size={16} />
+                {language === 'english' ? 'Edit' : 'ਸੋਧੋ'}
               </button>
               <button
                 type="button"
@@ -4790,7 +4806,8 @@ export default function DairyFarmManagerApp({
                   gap: '0.5rem',
                 }}
               >
-                🗑️ {language === 'english' ? 'Delete' : 'ਮਿਟਾਓ'}
+                <Icon name="Trash2" size={16} />
+                {language === 'english' ? 'Delete' : 'ਮਿਟਾਓ'}
               </button>
             </div>
           </div>
@@ -5026,9 +5043,13 @@ export default function DairyFarmManagerApp({
                                 cursor: 'pointer',
                                 fontSize: '0.8rem',
                                 fontWeight: 'bold',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
                               }}
                             >
-                              ✓ {language === 'english' ? 'Save' : 'ਸੇਵ'}
+                              <Icon name="Check" size={14} />
+                              {language === 'english' ? 'Save' : 'ਸੇਵ'}
                             </button>
                             <button
                               onClick={() => {
@@ -5044,9 +5065,13 @@ export default function DairyFarmManagerApp({
                                 cursor: 'pointer',
                                 fontSize: '0.8rem',
                                 fontWeight: 'bold',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
                               }}
                             >
-                              ✕ {language === 'english' ? 'Cancel' : 'ਰੱਦ'}
+                              <Icon name="X" size={14} />
+                              {language === 'english' ? 'Cancel' : 'ਰੱਦ'}
                             </button>
                           </>
                         ) : (
@@ -5067,7 +5092,8 @@ export default function DairyFarmManagerApp({
                                 fontWeight: 'bold',
                               }}
                             >
-                              ✏️ {language === 'english' ? 'Edit' : 'ਸੋਧੋ'}
+                              <Icon name="Pencil" size={16} />
+                {language === 'english' ? 'Edit' : 'ਸੋਧੋ'}
                             </button>
                             <button
                               onClick={() => {
@@ -5086,7 +5112,8 @@ export default function DairyFarmManagerApp({
                                 fontWeight: 'bold',
                               }}
                             >
-                              🗑️ {language === 'english' ? 'Delete' : 'ਮਿਟਾਓ'}
+                              <Icon name="Trash2" size={16} />
+                {language === 'english' ? 'Delete' : 'ਮਿਟਾਓ'}
                             </button>
                           </>
                         )}
