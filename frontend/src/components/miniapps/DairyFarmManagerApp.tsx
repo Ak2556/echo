@@ -336,6 +336,9 @@ export default function DairyFarmManagerApp({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<CattleRecord | null>(null);
   const [addForm, setAddForm] = useState<Partial<CattleRecord>>({});
+  const [recordsViewMode, setRecordsViewMode] = useState<'cards' | 'table'>('cards');
+  const [editingRecordId, setEditingRecordId] = useState<string | null>(null);
+  const [editingRecordData, setEditingRecordData] = useState<Partial<CattleRecord>>({});
   const addModalFirstRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -4370,37 +4373,77 @@ export default function DairyFarmManagerApp({
         <h3 style={{ margin: 0, color: 'var(--fg)' }}>
           📋 {language === 'english' ? 'Cattle Breeding & Health Records' : 'ਪਸ਼ੂ ਪ੍ਰਜਨਨ ਅਤੇ ਸਿਹਤ ਰਿਕਾਰਡ'}
         </h3>
-        <button
-          onClick={() => { setAddForm({
-            breed: 'Gir',
-            tagNo: '',
-            birthDate: new Date().toISOString().split('T')[0],
-            motherCode: '',
-            fatherName: '',
-            lactation: 1,
-            aiLastCheckup: '',
-            heatCycle: 'Regular - 21 days',
-            deworming: '',
-            semenDetail: '',
-          }); setShowModal('addRecord'); }}
-          style={{
-            background: 'var(--accent)',
-            color: 'white',
-            border: 'none',
-            padding: '0.75rem 1.5rem',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '0.9rem',
-            fontWeight: 'bold',
-          }}
-        >
-          + {language === 'english' ? 'Add New Record' : 'ਨਵਾਂ ਰਿਕਾਰਡ ਜੋੜੋ'}
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          {/* View Toggle Buttons */}
+          <div style={{ display: 'flex', background: 'var(--surface, #f0f0f0)', borderRadius: '8px', padding: '4px' }}>
+            <button
+              onClick={() => setRecordsViewMode('cards')}
+              style={{
+                background: recordsViewMode === 'cards' ? 'var(--accent)' : 'transparent',
+                color: recordsViewMode === 'cards' ? 'white' : 'var(--fg)',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: recordsViewMode === 'cards' ? 'bold' : 'normal',
+                transition: 'all 0.2s',
+              }}
+            >
+              📋 {language === 'english' ? 'Cards' : 'ਕਾਰਡ'}
+            </button>
+            <button
+              onClick={() => setRecordsViewMode('table')}
+              style={{
+                background: recordsViewMode === 'table' ? 'var(--accent)' : 'transparent',
+                color: recordsViewMode === 'table' ? 'white' : 'var(--fg)',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: recordsViewMode === 'table' ? 'bold' : 'normal',
+                transition: 'all 0.2s',
+              }}
+            >
+              📊 {language === 'english' ? 'Table' : 'ਸੂਚੀ'}
+            </button>
+          </div>
+
+          <button
+            onClick={() => { setAddForm({
+              breed: 'Gir',
+              tagNo: '',
+              birthDate: new Date().toISOString().split('T')[0],
+              motherCode: '',
+              fatherName: '',
+              lactation: 1,
+              aiLastCheckup: '',
+              heatCycle: 'Regular - 21 days',
+              deworming: '',
+              semenDetail: '',
+            }); setShowModal('addRecord'); }}
+            style={{
+              background: 'var(--accent)',
+              color: 'white',
+              border: 'none',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+            }}
+          >
+            + {language === 'english' ? 'Add New Record' : 'ਨਵਾਂ ਰਿਕਾਰਡ ਜੋੜੋ'}
+          </button>
+        </div>
       </div>
 
-      {/* Records Cards with Button-Style Cells */}
-      <div style={{ display: 'grid', gap: '1rem' }}>
-        {cattleRecords.map((record) => (
+      {/* Records View - Cards or Table */}
+      {recordsViewMode === 'cards' ? (
+        /* Cards View */
+        <div style={{ display: 'grid', gap: '1rem' }}>
+          {cattleRecords.map((record) => (
           <div
             key={record.id}
             style={{
@@ -4745,7 +4788,310 @@ export default function DairyFarmManagerApp({
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      ) : (
+        /* Table View with Inline Editing */
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            background: 'var(--bg)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            borderRadius: '8px',
+            overflow: 'hidden',
+          }}>
+            <thead>
+              <tr style={{ background: 'linear-gradient(135deg, var(--accent) 0%, #667eea 100%)', color: 'white' }}>
+                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.breed}</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.tagNo}</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.birthDate}</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.motherCode}</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.fatherName}</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.lactation}</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.aiLastCheckup}</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.heatCycle}</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.deworming}</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.semenDetail}</th>
+                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>{language === 'english' ? 'Actions' : 'ਕਾਰਵਾਈਆਂ'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cattleRecords.map((record, index) => {
+                const isEditing = editingRecordId === record.id;
+                const editData = isEditing ? editingRecordData : record;
+
+                return (
+                  <tr
+                    key={record.id}
+                    style={{
+                      background: index % 2 === 0 ? 'var(--bg)' : 'var(--surface, #f8f9fa)',
+                      borderBottom: '1px solid var(--border, #e0e0e0)',
+                      transition: 'background 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isEditing) e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isEditing) e.currentTarget.style.background = index % 2 === 0 ? 'var(--bg)' : 'var(--surface, #f8f9fa)';
+                    }}
+                  >
+                    {/* Breed */}
+                    <td style={{ padding: '0.75rem' }}>
+                      {isEditing ? (
+                        <select
+                          value={editData.breed || ''}
+                          onChange={(e) => setEditingRecordData({...editingRecordData, breed: e.target.value})}
+                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                        >
+                          <option value="Gir">Gir</option>
+                          <option value="Sahiwal">Sahiwal</option>
+                          <option value="Holstein Friesian">Holstein Friesian</option>
+                          <option value="Jersey">Jersey</option>
+                          <option value="Red Sindhi">Red Sindhi</option>
+                          <option value="Tharparkar">Tharparkar</option>
+                        </select>
+                      ) : (
+                        <span style={{ fontWeight: '500' }}>{record.breed}</span>
+                      )}
+                    </td>
+
+                    {/* Tag No */}
+                    <td style={{ padding: '0.75rem' }}>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={editData.tagNo || ''}
+                          onChange={(e) => setEditingRecordData({...editingRecordData, tagNo: e.target.value})}
+                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                        />
+                      ) : (
+                        <span style={{ fontFamily: 'monospace', fontSize: '0.9rem' }}>{record.tagNo}</span>
+                      )}
+                    </td>
+
+                    {/* Birth Date */}
+                    <td style={{ padding: '0.75rem' }}>
+                      {isEditing ? (
+                        <input
+                          type="date"
+                          value={editData.birthDate || ''}
+                          onChange={(e) => setEditingRecordData({...editingRecordData, birthDate: e.target.value})}
+                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                        />
+                      ) : (
+                        <span>{record.birthDate}</span>
+                      )}
+                    </td>
+
+                    {/* Mother Code */}
+                    <td style={{ padding: '0.75rem' }}>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={editData.motherCode || ''}
+                          onChange={(e) => setEditingRecordData({...editingRecordData, motherCode: e.target.value})}
+                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                        />
+                      ) : (
+                        <span style={{ fontFamily: 'monospace', fontSize: '0.9rem' }}>{record.motherCode}</span>
+                      )}
+                    </td>
+
+                    {/* Father Name */}
+                    <td style={{ padding: '0.75rem' }}>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={editData.fatherName || ''}
+                          onChange={(e) => setEditingRecordData({...editingRecordData, fatherName: e.target.value})}
+                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                        />
+                      ) : (
+                        <span>{record.fatherName}</span>
+                      )}
+                    </td>
+
+                    {/* Lactation */}
+                    <td style={{ padding: '0.75rem' }}>
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          min="1"
+                          value={editData.lactation || 1}
+                          onChange={(e) => setEditingRecordData({...editingRecordData, lactation: parseInt(e.target.value) || 1})}
+                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                        />
+                      ) : (
+                        <span style={{ fontWeight: '500', color: 'var(--accent)' }}>{record.lactation}</span>
+                      )}
+                    </td>
+
+                    {/* AI Last Checkup */}
+                    <td style={{ padding: '0.75rem' }}>
+                      {isEditing ? (
+                        <input
+                          type="date"
+                          value={editData.aiLastCheckup || ''}
+                          onChange={(e) => setEditingRecordData({...editingRecordData, aiLastCheckup: e.target.value})}
+                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                        />
+                      ) : (
+                        <span>{record.aiLastCheckup}</span>
+                      )}
+                    </td>
+
+                    {/* Heat Cycle */}
+                    <td style={{ padding: '0.75rem' }}>
+                      {isEditing ? (
+                        <select
+                          value={editData.heatCycle || ''}
+                          onChange={(e) => setEditingRecordData({...editingRecordData, heatCycle: e.target.value})}
+                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                        >
+                          <option value="Regular - 21 days">{t.regular21days}</option>
+                          <option value="Regular - 19 days">{t.regular19days}</option>
+                          <option value="Regular - 20 days">{t.regular20days}</option>
+                          <option value="Regular - 22 days">{t.regular22days}</option>
+                          <option value="Pregnant - Due 2024-04-15">{t.pregnantDue}</option>
+                          <option value="Dry period">{t.dryOption}</option>
+                          <option value="Irregular">{t.irregular}</option>
+                        </select>
+                      ) : (
+                        <span style={{
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: '4px',
+                          fontSize: '0.85rem',
+                          background: record.heatCycle.includes('Pregnant') ? '#ffe8e8' :
+                                     record.heatCycle.includes('Dry') ? '#f0f0f0' : '#e8f5e9',
+                          color: record.heatCycle.includes('Pregnant') ? '#c92a2a' :
+                                record.heatCycle.includes('Dry') ? '#495057' : '#2b8a3e',
+                        }}>
+                          {record.heatCycle}
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Deworming */}
+                    <td style={{ padding: '0.75rem' }}>
+                      {isEditing ? (
+                        <input
+                          type="date"
+                          value={editData.deworming || ''}
+                          onChange={(e) => setEditingRecordData({...editingRecordData, deworming: e.target.value})}
+                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                        />
+                      ) : (
+                        <span>{record.deworming}</span>
+                      )}
+                    </td>
+
+                    {/* Semen Detail */}
+                    <td style={{ padding: '0.75rem' }}>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={editData.semenDetail || ''}
+                          onChange={(e) => setEditingRecordData({...editingRecordData, semenDetail: e.target.value})}
+                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                        />
+                      ) : (
+                        <span style={{ fontSize: '0.85rem', fontFamily: 'monospace' }}>{record.semenDetail}</span>
+                      )}
+                    </td>
+
+                    {/* Actions */}
+                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                        {isEditing ? (
+                          <>
+                            <button
+                              onClick={() => {
+                                updateCattleRecord(record.id, editingRecordData);
+                                setEditingRecordId(null);
+                                setEditingRecordData({});
+                              }}
+                              style={{
+                                background: '#51cf66',
+                                color: 'white',
+                                border: 'none',
+                                padding: '0.4rem 0.8rem',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '0.8rem',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              ✓ {language === 'english' ? 'Save' : 'ਸੇਵ'}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingRecordId(null);
+                                setEditingRecordData({});
+                              }}
+                              style={{
+                                background: '#868e96',
+                                color: 'white',
+                                border: 'none',
+                                padding: '0.4rem 0.8rem',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '0.8rem',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              ✕ {language === 'english' ? 'Cancel' : 'ਰੱਦ'}
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => {
+                                setEditingRecordId(record.id);
+                                setEditingRecordData(record);
+                              }}
+                              style={{
+                                background: '#4dabf7',
+                                color: 'white',
+                                border: 'none',
+                                padding: '0.4rem 0.8rem',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '0.8rem',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              ✏️ {language === 'english' ? 'Edit' : 'ਸੋਧੋ'}
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (confirm(language === 'english' ? 'Delete this record?' : 'ਕੀ ਤੁਸੀਂ ਇਹ ਰਿਕਾਰਡ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?')) {
+                                  deleteCattleRecord(record.id);
+                                }
+                              }}
+                              style={{
+                                background: '#ff6b6b',
+                                color: 'white',
+                                border: 'none',
+                                padding: '0.4rem 0.8rem',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '0.8rem',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              🗑️ {language === 'english' ? 'Delete' : 'ਮਿਟਾਓ'}
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Summary Statistics */}
       <div
