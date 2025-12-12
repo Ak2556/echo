@@ -4393,7 +4393,10 @@ export default function DairyFarmManagerApp({
               📋 {language === 'english' ? 'Cards' : 'ਕਾਰਡ'}
             </button>
             <button
-              onClick={() => setRecordsViewMode('table')}
+              onClick={() => {
+                console.log('Switching to table view');
+                setRecordsViewMode('table');
+              }}
               style={{
                 background: recordsViewMode === 'table' ? 'var(--accent)' : 'transparent',
                 color: recordsViewMode === 'table' ? 'white' : 'var(--fg)',
@@ -4440,6 +4443,7 @@ export default function DairyFarmManagerApp({
       </div>
 
       {/* Records View - Cards or Table */}
+      {console.log('Current recordsViewMode:', recordsViewMode)}
       {recordsViewMode === 'cards' ? (
         /* Cards View */
         <div style={{ display: 'grid', gap: '1rem' }}>
