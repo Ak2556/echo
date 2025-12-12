@@ -239,7 +239,7 @@ interface FinancialRecord {
   date: string;
 }
 
-interface CattleRecord {
+export interface CattleRecord {
   id: string;
   breed: string;
   tagNo: string;
@@ -3443,26 +3443,6 @@ export default function DairyFarmManagerApp({
           </div>
         </div>
       )}
-
-      <ViewRecordModal
-        visible={showModal === 'viewRecord'}
-        record={selectedRecord}
-        language={language}
-        onClose={() => { setShowModal(null); setSelectedRecord(null); }}
-      />
-
-      <EditRecordModal
-        visible={showModal === 'editRecord'}
-        record={selectedRecord}
-        language={language}
-        onClose={() => { setShowModal(null); setSelectedRecord(null); }}
-        onSave={(updates) => {
-          if (!selectedRecord) return;
-          updateCattleRecord(selectedRecord.id, updates);
-          setShowModal(null);
-          setSelectedRecord(null);
-        }}
-      />
     </div>
   );
 
@@ -6330,6 +6310,27 @@ export default function DairyFarmManagerApp({
           opacity: 1;
         }
       `}</style>
+
+      {/* Record View and Edit Modals */}
+      <ViewRecordModal
+        visible={showModal === 'viewRecord'}
+        record={selectedRecord}
+        language={language}
+        onClose={() => { setShowModal(null); setSelectedRecord(null); }}
+      />
+
+      <EditRecordModal
+        visible={showModal === 'editRecord'}
+        record={selectedRecord}
+        language={language}
+        onClose={() => { setShowModal(null); setSelectedRecord(null); }}
+        onSave={(updates) => {
+          if (!selectedRecord) return;
+          updateCattleRecord(selectedRecord.id, updates);
+          setShowModal(null);
+          setSelectedRecord(null);
+        }}
+      />
     </div>
   );
 }
