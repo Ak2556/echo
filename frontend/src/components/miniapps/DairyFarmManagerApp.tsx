@@ -348,6 +348,10 @@ export default function DairyFarmManagerApp({
     }
   }, [showModal]);
 
+  useEffect(() => {
+    console.log('Records view mode changed to:', recordsViewMode);
+  }, [recordsViewMode]);
+
   const updateCattleRecord = useCallback((id: string, updates: Partial<CattleRecord>) => {
     setCattleRecords((prev) => prev.map((r) => (r.id === id ? { ...r, ...updates } : r)));
   }, []);
@@ -4443,7 +4447,6 @@ export default function DairyFarmManagerApp({
       </div>
 
       {/* Records View - Cards or Table */}
-      {console.log('Current recordsViewMode:', recordsViewMode)}
       {recordsViewMode === 'cards' ? (
         /* Cards View */
         <div style={{ display: 'grid', gap: '1rem' }}>
