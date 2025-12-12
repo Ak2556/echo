@@ -885,7 +885,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'sprint-planning',
     name: 'Sprint Planning',
-    icon: '📋',
+    icon: 'ClipboardList',
     type: 'meeting',
     category: 'Work',
     defaultDuration: 120,
@@ -901,7 +901,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'one-on-one',
     name: '1:1 Meeting',
-    icon: '💬',
+    icon: 'MessageCircle',
     type: 'meeting',
     category: 'Work',
     defaultDuration: 30,
@@ -912,7 +912,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'code-review',
     name: 'Code Review',
-    icon: '👨‍💻',
+    icon: 'Code',
     type: 'task',
     category: 'Work',
     defaultDuration: 60,
@@ -922,7 +922,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'deep-work',
     name: 'Deep Work Session',
-    icon: '🎯',
+    icon: 'Target',
     type: 'focus',
     category: 'Productivity',
     defaultDuration: 120,
@@ -997,7 +997,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'online-course',
     name: 'Online Course',
-    icon: '🎓',
+    icon: 'GraduationCap',
     type: 'task',
     category: 'Learning',
     defaultDuration: 60,
@@ -1007,7 +1007,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'language-practice',
     name: 'Language Practice',
-    icon: '🗣️',
+    icon: 'Languages',
     type: 'task',
     category: 'Learning',
     defaultDuration: 30,
@@ -1019,7 +1019,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'coffee-chat',
     name: 'Coffee Chat',
-    icon: '☕',
+    icon: 'Coffee',
     type: 'meeting',
     category: 'Social',
     defaultDuration: 30,
@@ -1029,7 +1029,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'dinner-party',
     name: 'Dinner Party',
-    icon: '🍽️',
+    icon: 'UtensilsCrossed',
     type: 'event',
     category: 'Social',
     defaultDuration: 180,
@@ -1045,7 +1045,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'birthday-celebration',
     name: 'Birthday Party',
-    icon: '🎂',
+    icon: 'Cake',
     type: 'birthday',
     category: 'Social',
     defaultDuration: 180,
@@ -1058,7 +1058,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'doctor-appointment',
     name: 'Doctor Appointment',
-    icon: '🏥',
+    icon: 'Hospital',
     type: 'reminder',
     category: 'Health',
     defaultDuration: 60,
@@ -1069,7 +1069,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'dental-checkup',
     name: 'Dental Checkup',
-    icon: '🦷',
+    icon: 'Smile',
     type: 'reminder',
     category: 'Health',
     defaultDuration: 60,
@@ -1081,7 +1081,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'flight',
     name: 'Flight',
-    icon: '✈️',
+    icon: 'Plane',
     type: 'event',
     category: 'Travel',
     defaultDuration: 240,
@@ -1097,7 +1097,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'hotel-checkin',
     name: 'Hotel Check-in',
-    icon: '🏨',
+    icon: 'Hotel',
     type: 'reminder',
     category: 'Travel',
     defaultDuration: 30,
@@ -1107,7 +1107,7 @@ export const EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: 'vacation',
     name: 'Vacation',
-    icon: '🏖️',
+    icon: 'Palmtree',
     type: 'event',
     category: 'Travel',
     defaultDuration: 10080, // 7 days

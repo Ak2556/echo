@@ -14,6 +14,7 @@ export const emojiToLucideMapping: Record<string, string> = {
   '➕': 'Plus',
   '✓': 'Check',
   '✕': 'X',
+  '×': 'X',
 
   // Health & Medical
   '🏥': 'Hospital',
@@ -32,6 +33,7 @@ export const emojiToLucideMapping: Record<string, string> = {
   '🔄': 'RefreshCw',
   '⬆️': 'ArrowUp',
   '⬇️': 'ArrowDown',
+  '⏱️': 'Timer',
 
   // Business & Finance
   '💰': 'DollarSign',
@@ -40,7 +42,7 @@ export const emojiToLucideMapping: Record<string, string> = {
   '📈': 'TrendingUp',
   '📉': 'TrendingDown',
 
-  // Communication
+  // Communication & Travel
   '📱': 'Smartphone',
   '✈️': 'Plane',
   '🏖️': 'Palmtree',
@@ -50,11 +52,38 @@ export const emojiToLucideMapping: Record<string, string> = {
   // Social
   '❤️': 'Heart',
   '✂️': 'Scissors',
+  '👍': 'ThumbsUp',
+  '👎': 'ThumbsDown',
 
-  // Status
+  // Status & Symbols
   '🖥️': 'Monitor',
   '⭐': 'Star',
   '🔥': 'Flame',
+  '✨': 'Sparkles',
+  '🎉': 'PartyPopper',
+  '👋': 'Hand',
+  '🔧': 'Wrench',
+
+  // Activities & Events
+  '🎓': 'GraduationCap',
+  '📚': 'BookOpen',
+  '💼': 'Briefcase',
+  '🎨': 'Palette',
+  '🎵': 'Music',
+  '⚽': 'Dumbbell',
+  '🏃': 'PersonStanding',
+  '🧘': 'Activity',
+  '☕': 'Coffee',
+  '🎂': 'Cake',
+  '🦷': 'Smile',
+  '👨‍💻': 'Code',
+  '🏨': 'Hotel',
+
+  // Fashion & Products
+  '👕': 'Shirt',
+  '💪': 'Dumbbell',
+  '🎒': 'Backpack',
+  '📲': 'Smartphone',
 };
 
 /**

@@ -8334,7 +8334,7 @@ export const categories: Category[] = [
   {
     id: 3,
     name: 'Languages',
-    icon: '🗣️',
+    icon: 'Languages',
     count: 3,
     subcategories: [
       'English',
@@ -8347,7 +8347,7 @@ export const categories: Category[] = [
   {
     id: 4,
     name: 'Business & Marketing',
-    icon: '📈',
+    icon: 'TrendingUp',
     count: 2,
     subcategories: [
       'Digital Marketing',
@@ -8361,7 +8361,7 @@ export const categories: Category[] = [
   {
     id: 5,
     name: 'Finance & Investment',
-    icon: '💰',
+    icon: 'DollarSign',
     count: 1,
     subcategories: [
       'Stock Trading',
@@ -8374,7 +8374,7 @@ export const categories: Category[] = [
   {
     id: 6,
     name: 'Health & Wellness',
-    icon: '🧘',
+    icon: 'Activity',
     count: 1,
     subcategories: [
       'Yoga',
