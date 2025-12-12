@@ -305,20 +305,10 @@ export default function DairyFarmManagerApp({
   }
 
   const [activeTab, setActiveTab] = useState<
-    | 'cows'
-    | 'breeds'
-    | 'problems'
-    | 'milk'
-    | 'health'
-    | 'finance'
-    | 'insights'
-    | 'breeding'
-    | 'genealogy'
-    | 'records'
     | 'dashboard'
-    | 'alerts'
-    | 'weather'
-    | 'analytics'
+    | 'cows'
+    | 'records'
+    | 'health'
   >('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState<string | null>(null);
@@ -2164,9 +2154,9 @@ export default function DairyFarmManagerApp({
               fontSize: '0.9rem',
               fontWeight: 'bold',
             }}
-            onClick={() => setActiveTab('alerts')}
+            onClick={() => setActiveTab('health')}
           >
-            📋 View All Alerts
+            🏥 Health Monitor
           </button>
           <button
             style={{
@@ -2194,24 +2184,9 @@ export default function DairyFarmManagerApp({
               fontSize: '0.9rem',
               fontWeight: 'bold',
             }}
-            onClick={() => setActiveTab('finance')}
+            onClick={() => setActiveTab('records')}
           >
-            💰 Financial Report
-          </button>
-          <button
-            style={{
-              background: '#ffd43b',
-              color: 'black',
-              border: 'none',
-              padding: '1rem',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              fontWeight: 'bold',
-            }}
-            onClick={() => setActiveTab('analytics')}
-          >
-            📊 Analytics
+            📋 View Records
           </button>
         </div>
       </div>
@@ -5060,18 +5035,8 @@ export default function DairyFarmManagerApp({
         {[
           { id: 'dashboard', label: '📊 Dashboard' },
           { id: 'cows', label: '🐄 Cattle' },
-          { id: 'breeds', label: '🧬 Breeds' },
-          { id: 'breeding', label: '🧬 Breeding' },
-          { id: 'genealogy', label: '📊 Genealogy' },
           { id: 'records', label: '📋 Records' },
-          { id: 'problems', label: '🏥 Solutions' },
-          { id: 'milk', label: '🥛 Milk' },
           { id: 'health', label: '🏥 Health' },
-          { id: 'finance', label: '💰 Finance' },
-          { id: 'insights', label: '📊 Insights' },
-          { id: 'alerts', label: '🚨 Alerts' },
-          { id: 'weather', label: '🌤️ Weather' },
-          { id: 'analytics', label: '📊 Analytics' },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -5099,18 +5064,8 @@ export default function DairyFarmManagerApp({
       <div style={{ height: 'calc(100% - 180px)', overflowY: 'auto' }}>
         {activeTab === 'dashboard' && renderDashboardTab()}
         {activeTab === 'cows' && renderCowsTab()}
-        {activeTab === 'breeds' && renderBreedsTab()}
-        {activeTab === 'breeding' && renderBreedingTab()}
-        {activeTab === 'genealogy' && renderGenealogyTab()}
         {activeTab === 'records' && renderRecordsTab()}
-        {activeTab === 'problems' && renderProblemsTab()}
-        {activeTab === 'milk' && renderMilkTab()}
         {activeTab === 'health' && renderHealthTab()}
-        {activeTab === 'finance' && renderFinanceTab()}
-        {activeTab === 'insights' && renderInsightsTab()}
-        {activeTab === 'alerts' && renderAlertsTab()}
-        {activeTab === 'weather' && renderWeatherTab()}
-        {activeTab === 'analytics' && renderAnalyticsTab()}
       </div>
 
       {/* Enhanced Modals */}
