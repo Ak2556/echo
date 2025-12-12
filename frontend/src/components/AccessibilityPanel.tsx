@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import Button from '@/components/ui/Button';
+import { X, RefreshCw, Search, Check, XCircle } from 'lucide-react';
 
 interface AccessibilityPanelProps {
   isOpen: boolean;
@@ -93,7 +94,7 @@ export default function AccessibilityPanel({
               aria-label="Close accessibility panel"
               className="h-8 w-8 p-0"
             >
-              ✕
+              <X size={18} />
             </Button>
           </div>
         </CardHeader>
@@ -347,7 +348,7 @@ export default function AccessibilityPanel({
                     disabled={isAnalyzing}
                     className="flex items-center gap-2"
                   >
-                    {isAnalyzing ? '🔄' : '🔍'}
+                    {isAnalyzing ? <RefreshCw size={18} className="animate-spin" /> : <Search size={18} />}
                     {isAnalyzing ? 'Analyzing...' : 'Run Analysis'}
                   </Button>
                 </div>
@@ -380,7 +381,7 @@ export default function AccessibilityPanel({
                               ),
                             }}
                           >
-                            {report.compliance.wcagA ? '✓' : '✗'}
+                            {report.compliance.wcagA ? <Check size={28} /> : <XCircle size={28} />}
                           </div>
                           <div className="text-sm text-muted">WCAG A</div>
                         </CardContent>
@@ -396,7 +397,7 @@ export default function AccessibilityPanel({
                               ),
                             }}
                           >
-                            {report.compliance.wcagAA ? '✓' : '✗'}
+                            {report.compliance.wcagAA ? <Check size={28} /> : <XCircle size={28} />}
                           </div>
                           <div className="text-sm text-muted">WCAG AA</div>
                         </CardContent>
@@ -412,7 +413,7 @@ export default function AccessibilityPanel({
                               ),
                             }}
                           >
-                            {report.compliance.wcagAAA ? '✓' : '✗'}
+                            {report.compliance.wcagAAA ? <Check size={28} /> : <XCircle size={28} />}
                           </div>
                           <div className="text-sm text-muted">WCAG AAA</div>
                         </CardContent>

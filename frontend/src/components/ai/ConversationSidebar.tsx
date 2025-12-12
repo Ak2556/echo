@@ -8,6 +8,7 @@ import {
   Conversation,
 } from '@/hooks/useConversationHistory';
 import { AISettings } from '@/services/api';
+import { MessageCircle, X } from 'lucide-react';
 
 interface ConversationSidebarProps {
   isOpen: boolean;
@@ -105,7 +106,7 @@ export default function ConversationSidebar({
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <span className="text-2xl">💬</span>
+                  <MessageCircle size={24} />
                   Conversations
                 </h2>
                 <button
@@ -113,19 +114,7 @@ export default function ConversationSidebar({
                   className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors lg:hidden"
                   aria-label="Close sidebar"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <X size={20} />
                 </button>
               </div>
 

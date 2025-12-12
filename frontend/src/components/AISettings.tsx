@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { apiService, AISettings, AIModel, AIPersonality } from '@/services/api';
+import { Settings, X } from 'lucide-react';
 
 interface AISettingsProps {
   isOpen: boolean;
@@ -120,7 +121,7 @@ export default function AISettingsComponent({
                 gap: '0.5rem',
               }}
             >
-              <span>⚙️</span>
+              <Settings size={24} />
               AI Assistant Settings
             </h2>
             <button
@@ -139,7 +140,7 @@ export default function AISettingsComponent({
                 justifyContent: 'center',
               }}
             >
-              ×
+              <X size={20} />
             </button>
           </div>
         </div>

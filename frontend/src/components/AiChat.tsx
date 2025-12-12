@@ -259,17 +259,17 @@ export default function AiChat() {
     }
     setMessages([]);
     setShowMenu(false);
-    toast.success('Chat cleared', { icon: '🗑️' });
+    toast.success('Chat cleared', { icon: <Trash2 size={20} /> });
   }, []);
 
   const startNewChat = () => {
     clearChat();
     const personalityGreetings = {
-      helpful: '👋 Welcome to Echo AI! I\'m here to assist you with anything you need.',
-      casual: "Hey! 🎉 I'm Echo AI, ready to chat and have some fun!",
+      helpful: 'Welcome to Echo AI! I\'m here to assist you with anything you need.',
+      casual: "Hey! I'm Echo AI, ready to chat and have some fun!",
       professional: 'Good day. I\'m Echo AI, your professional assistant.',
-      creative: '✨ Greetings! I\'m Echo AI, your creative companion!',
-      technical: '🔧 Hello! I\'m Echo AI, your technical expert.',
+      creative: 'Greetings! I\'m Echo AI, your creative companion!',
+      technical: 'Hello! I\'m Echo AI, your technical expert.',
     };
 
     const welcomeMessage: TypingMessage = {
@@ -283,21 +283,21 @@ export default function AiChat() {
       isTyping: false,
     };
     setMessages([welcomeMessage]);
-    toast.success('New conversation started', { icon: '✨' });
+    toast.success('New conversation started', { icon: <Sparkles size={20} /> });
   };
 
   const handleSettingsChange = useCallback((newSettings: AISettings) => {
     setAISettings(newSettings);
-    toast.success('Settings updated', { icon: '⚙️' });
+    toast.success('Settings updated', { icon: <Settings size={20} /> });
   }, []);
 
   const toggleFullscreen = useCallback(() => {
     setIsFullscreen((prev) => {
       if (!prev) {
         setIsOpen(true);
-        toast.success('Fullscreen mode', { icon: '🖥️', duration: 2000 });
+        toast.success('Fullscreen mode', { icon: <Maximize2 size={20} />, duration: 2000 });
       } else {
-        toast.success('Compact mode', { icon: '📱', duration: 2000 });
+        toast.success('Compact mode', { icon: <Minimize2 size={20} />, duration: 2000 });
       }
       return !prev;
     });
