@@ -269,6 +269,28 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   const [notifications, setNotifications] =
     useState<Notification[]>(mockNotifications);
 
+  // Cleanup localStorage on mount
+  useEffect(() => {
+    try {
+      // Check and clean up large items
+      const checkAndCleanItem = (key: string, maxSize: number = 1024 * 1024) => {
+        const item = localStorage.getItem(key);
+        if (item && item.length > maxSize) {
+          console.warn(`Removing oversized localStorage item: ${key} (${(item.length / 1024).toFixed(2)}KB)`);
+          localStorage.removeItem(key);
+        }
+      };
+
+      checkAndCleanItem('echo-user', 100 * 1024); // 100KB max for user
+      checkAndCleanItem('echo-notifications', 500 * 1024); // 500KB max for notifications
+      checkAndCleanItem('echo-following', 50 * 1024); // 50KB max
+      checkAndCleanItem('echo-blocked', 50 * 1024); // 50KB max
+      checkAndCleanItem('echo-muted', 50 * 1024); // 50KB max
+    } catch (error) {
+      console.error('Error during localStorage cleanup:', error);
+    }
+  }, []);
+
   // Load from localStorage
   useEffect(() => {
     const savedUser = localStorage.getItem('echo-user');
@@ -315,27 +337,73 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, []);
 
+  // Helper function to safely store data in localStorage
+  const safeLocalStorageSet = (key: string, value: any) => {
+    try {
+      const stringValue = JSON.stringify(value);
+      // Check if value is too large (> 2MB to leave room for other data)
+      if (stringValue.length > 2 * 1024 * 1024) {
+        console.warn(`localStorage: ${key} exceeds 2MB, skipping save`);
+        return false;
+      }
+      localStorage.setItem(key, stringValue);
+      return true;
+    } catch (error) {
+      if (error instanceof Error && error.name === 'QuotaExceededError') {
+        console.warn(`localStorage quota exceeded for ${key}, attempting cleanup`);
+        // Try to clear some space by removing old notifications
+        try {
+          localStorage.removeItem('echo-notifications');
+          localStorage.setItem(key, JSON.stringify(value));
+          return true;
+        } catch (retryError) {
+          console.error('Failed to save to localStorage even after cleanup:', retryError);
+          return false;
+        }
+      }
+      console.error(`Failed to save ${key} to localStorage:`, error);
+      return false;
+    }
+  };
+
   // Save to localStorage
   useEffect(() => {
     if (user) {
-      localStorage.setItem('echo-user', JSON.stringify(user));
+      // Only store essential user data to reduce size
+      const essentialUser = {
+        id: user.id,
+        username: user.username,
+        displayName: user.displayName,
+        email: user.email,
+        avatar: user.avatar,
+        bio: user.bio,
+        location: user.location,
+        website: user.website,
+        verified: user.verified,
+        createdAt: user.createdAt,
+        stats: user.stats,
+        preferences: user.preferences,
+      };
+      safeLocalStorageSet('echo-user', essentialUser);
     }
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('echo-following', JSON.stringify([...following]));
+    safeLocalStorageSet('echo-following', [...following]);
   }, [following]);
 
   useEffect(() => {
-    localStorage.setItem('echo-blocked', JSON.stringify([...blocked]));
+    safeLocalStorageSet('echo-blocked', [...blocked]);
   }, [blocked]);
 
   useEffect(() => {
-    localStorage.setItem('echo-muted', JSON.stringify([...muted]));
+    safeLocalStorageSet('echo-muted', [...muted]);
   }, [muted]);
 
   useEffect(() => {
-    localStorage.setItem('echo-notifications', JSON.stringify(notifications));
+    // Limit notifications to last 50 to prevent quota issues
+    const limitedNotifications = notifications.slice(-50);
+    safeLocalStorageSet('echo-notifications', limitedNotifications);
   }, [notifications]);
 
   // Social actions
