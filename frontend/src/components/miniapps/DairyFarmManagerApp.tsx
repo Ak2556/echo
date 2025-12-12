@@ -295,6 +295,20 @@ interface PerformanceMetrics {
   breedingSuccessRate: number;
 }
 
+interface CattleVideo {
+  id: string;
+  title: string;
+  description: string;
+  uploadedBy: string;
+  uploadDate: string;
+  category: 'training' | 'health' | 'breeding' | 'feeding' | 'general';
+  thumbnailUrl?: string;
+  videoUrl: string;
+  duration: string;
+  views: number;
+  likes: number;
+}
+
 export default function DairyFarmManagerApp({
   isVisible,
   onClose,
@@ -309,7 +323,10 @@ export default function DairyFarmManagerApp({
     | 'cows'
     | 'records'
     | 'health'
+    | 'videos'
   >('dashboard');
+  const [language, setLanguage] = useState<'english' | 'punjabi'>('english');
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState<string | null>(null);
   const [selectedBreed, setSelectedBreed] = useState<BreedInfo | null>(null);
@@ -470,6 +487,108 @@ export default function DairyFarmManagerApp({
       semenDetail: 'TH-KING-001 (Batch: TK-2023-10)',
     },
   ]);
+
+  // Videos state
+  const [cattleVideos, setCattleVideos] = useState<CattleVideo[]>([
+    {
+      id: 'V001',
+      title: 'Proper Milking Technique for Holstein',
+      description: 'Learn the correct way to milk cattle for maximum yield and hygiene',
+      uploadedBy: 'Farm Expert Punjab',
+      uploadDate: '2024-01-20',
+      category: 'training',
+      videoUrl: '#',
+      duration: '12:35',
+      views: 1250,
+      likes: 89,
+    },
+    {
+      id: 'V002',
+      title: 'Identifying Heat Signs in Sahiwal Cattle',
+      description: 'Essential guide to recognize breeding readiness in desi breeds',
+      uploadedBy: 'Vet Dr. Singh',
+      uploadDate: '2024-01-18',
+      category: 'breeding',
+      videoUrl: '#',
+      duration: '8:42',
+      views: 980,
+      likes: 67,
+    },
+    {
+      id: 'V003',
+      title: 'Common Health Issues in Dairy Cattle',
+      description: 'Prevention and treatment of mastitis, fever, and digestive problems',
+      uploadedBy: 'Dr. Kaur Veterinary',
+      uploadDate: '2024-01-15',
+      category: 'health',
+      videoUrl: '#',
+      duration: '15:20',
+      views: 1580,
+      likes: 125,
+    },
+  ]);
+
+  // Translations object
+  const translations = {
+    english: {
+      appTitle: 'Dairy Farm Manager Pro',
+      appSubtitle: 'Advanced farm management with AI insights',
+      dashboard: 'Dashboard',
+      cattle: 'Cattle',
+      records: 'Records',
+      health: 'Health',
+      videos: 'Videos',
+      search: 'Search breeds, cattle, problems, records...',
+      totalCattle: 'Total Cattle',
+      healthyCattle: 'Healthy Cattle',
+      milkProduction: 'Milk Production Today',
+      avgMilkYield: 'Avg Milk/Cow',
+      activeBreeding: 'Active Breeding',
+      pendingVaccinations: 'Pending Vaccinations',
+      healthMonitor: 'Health Monitor',
+      manageCattle: 'Manage Cattle',
+      viewRecords: 'View Records',
+      addRecord: 'Add Record',
+      editRecord: 'Edit Record',
+      deleteRecord: 'Delete Record',
+      viewDetails: 'View Details',
+      uploadVideo: 'Upload Video',
+      videoLibrary: 'Video Library',
+      switchLanguage: 'Switch to Punjabi',
+      selectLanguage: 'Select Language',
+      close: 'Close',
+    },
+    punjabi: {
+      appTitle: 'ਡੇਅਰੀ ਫਾਰਮ ਮੈਨੇਜਰ ਪ੍ਰੋ',
+      appSubtitle: 'AI ਨਾਲ ਉੱਨਤ ਫਾਰਮ ਪ੍ਰਬੰਧਨ',
+      dashboard: 'ਡੈਸ਼ਬੋਰਡ',
+      cattle: 'ਪਸ਼ੂ',
+      records: 'ਰਿਕਾਰਡ',
+      health: 'ਸਿਹਤ',
+      videos: 'ਵੀਡੀਓ',
+      search: 'ਨਸਲ, ਪਸ਼ੂ, ਸਮੱਸਿਆਵਾਂ, ਰਿਕਾਰਡ ਖੋਜੋ...',
+      totalCattle: 'ਕੁੱਲ ਪਸ਼ੂ',
+      healthyCattle: 'ਤੰਦਰੁਸਤ ਪਸ਼ੂ',
+      milkProduction: 'ਅੱਜ ਦੁੱਧ ਉਤਪਾਦਨ',
+      avgMilkYield: 'ਔਸਤ ਦੁੱਧ/ਪਸ਼ੂ',
+      activeBreeding: 'ਸਰਗਰਮ ਪ੍ਰਜਨਨ',
+      pendingVaccinations: 'ਬਕਾਇਆ ਟੀਕੇ',
+      healthMonitor: 'ਸਿਹਤ ਮਾਨੀਟਰ',
+      manageCattle: 'ਪਸ਼ੂ ਪ੍ਰਬੰਧਨ',
+      viewRecords: 'ਰਿਕਾਰਡ ਦੇਖੋ',
+      addRecord: 'ਰਿਕਾਰਡ ਜੋੜੋ',
+      editRecord: 'ਰਿਕਾਰਡ ਸੋਧੋ',
+      deleteRecord: 'ਰਿਕਾਰਡ ਮਿਟਾਓ',
+      viewDetails: 'ਵੇਰਵੇ ਦੇਖੋ',
+      uploadVideo: 'ਵੀਡੀਓ ਅੱਪਲੋਡ ਕਰੋ',
+      videoLibrary: 'ਵੀਡੀਓ ਲਾਇਬ੍ਰੇਰੀ',
+      switchLanguage: 'ਅੰਗਰੇਜ਼ੀ ਵਿੱਚ ਬਦਲੋ',
+      selectLanguage: 'ਭਾਸ਼ਾ ਚੁਣੋ',
+      close: 'ਬੰਦ ਕਰੋ',
+    },
+  };
+
+  const t = translations[language];
 
   const [performanceMetrics, setPerformanceMetrics] = useState<
     PerformanceMetrics[]
@@ -4285,12 +4404,10 @@ export default function DairyFarmManagerApp({
 
   const renderRecordsTab = () => (
     <div style={{ padding: '1rem' }}>
-      <h3 style={{ margin: '0 0 1rem 0', color: 'var(--fg)' }}>
-        📋 Cattle Breeding & Health Records
-      </h3>
-
-      {/* Add New Record Button */}
-      <div style={{ marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <h3 style={{ margin: 0, color: 'var(--fg)' }}>
+          📋 {language === 'english' ? 'Cattle Breeding & Health Records' : 'ਪਸ਼ੂ ਪ੍ਰਜਨਨ ਅਤੇ ਸਿਹਤ ਰਿਕਾਰਡ'}
+        </h3>
         <button
           onClick={() => setShowModal('addRecord')}
           style={{
@@ -4304,264 +4421,341 @@ export default function DairyFarmManagerApp({
             fontWeight: 'bold',
           }}
         >
-          + Add New Record
+          + {language === 'english' ? 'Add New Record' : 'ਨਵਾਂ ਰਿਕਾਰਡ ਜੋੜੋ'}
         </button>
       </div>
 
-      {/* Records Table */}
-      <div
-        style={{
-          overflowX: 'auto',
-          border: '1px solid var(--border, #e0e0e0)',
-          borderRadius: '8px',
-          background: 'var(--bg)',
-        }}
-      >
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            fontSize: '0.9rem',
-          }}
-        >
-          <thead>
-            <tr style={{ background: 'var(--surface, #f8f9fa)' }}>
-              <th
+      {/* Records Cards with Button-Style Cells */}
+      <div style={{ display: 'grid', gap: '1rem' }}>
+        {cattleRecords.map((record) => (
+          <div
+            key={record.id}
+            style={{
+              background: 'var(--surface, #f8f9fa)',
+              border: '2px solid var(--border, #e0e0e0)',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'var(--accent)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--border, #e0e0e0)';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            {/* Record Header */}
+            <div style={{
+              background: 'linear-gradient(135deg, var(--accent) 0%, #667eea 100%)',
+              padding: '1rem 1.5rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+              <div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white', marginBottom: '0.25rem' }}>
+                  🐄 {record.breed}
+                </div>
+                <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.9)', fontFamily: 'monospace' }}>
+                  {language === 'english' ? 'Tag:' : 'ਟੈਗ:'} {record.tagNo}
+                </div>
+              </div>
+              <div style={{
+                background: 'rgba(255,255,255,0.2)',
+                padding: '0.5rem 1rem',
+                borderRadius: '20px',
+                fontSize: '0.9rem',
+                fontWeight: 'bold',
+                color: 'white',
+              }}>
+                {language === 'english' ? 'Lactation' : 'ਦੁੱਧ ਦੀ ਮਿਆਦ'}: {record.lactation}
+              </div>
+            </div>
+
+            {/* Record Details - Button-Style Cells */}
+            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
+              {/* Birth Date Cell */}
+              <button
                 style={{
-                  padding: '1rem 0.75rem',
+                  background: 'var(--bg)',
+                  border: '2px solid var(--border)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  cursor: 'pointer',
                   textAlign: 'left',
-                  borderBottom: '2px solid var(--border, #e0e0e0)',
-                  fontWeight: 'bold',
-                  color: 'var(--fg)',
-                  minWidth: '100px',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent)';
+                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.background = 'var(--bg)';
                 }}
               >
-                BREED
-              </th>
-              <th
-                style={{
-                  padding: '1rem 0.75rem',
-                  textAlign: 'left',
-                  borderBottom: '2px solid var(--border, #e0e0e0)',
-                  fontWeight: 'bold',
-                  color: 'var(--fg)',
-                  minWidth: '120px',
-                }}
-              >
-                TAG NO.
-              </th>
-              <th
-                style={{
-                  padding: '1rem 0.75rem',
-                  textAlign: 'left',
-                  borderBottom: '2px solid var(--border, #e0e0e0)',
-                  fontWeight: 'bold',
-                  color: 'var(--fg)',
-                  minWidth: '110px',
-                }}
-              >
-                BIRTH DATE
-              </th>
-              <th
-                style={{
-                  padding: '1rem 0.75rem',
-                  textAlign: 'left',
-                  borderBottom: '2px solid var(--border, #e0e0e0)',
-                  fontWeight: 'bold',
-                  color: 'var(--fg)',
-                  minWidth: '130px',
-                }}
-              >
-                MOTHER CODE
-              </th>
-              <th
-                style={{
-                  padding: '1rem 0.75rem',
-                  textAlign: 'left',
-                  borderBottom: '2px solid var(--border, #e0e0e0)',
-                  fontWeight: 'bold',
-                  color: 'var(--fg)',
-                  minWidth: '130px',
-                }}
-              >
-                FATHER NAME
-              </th>
-              <th
-                style={{
-                  padding: '1rem 0.75rem',
-                  textAlign: 'center',
-                  borderBottom: '2px solid var(--border, #e0e0e0)',
-                  fontWeight: 'bold',
-                  color: 'var(--fg)',
-                  minWidth: '100px',
-                }}
-              >
-                LACTATION
-              </th>
-              <th
-                style={{
-                  padding: '1rem 0.75rem',
-                  textAlign: 'left',
-                  borderBottom: '2px solid var(--border, #e0e0e0)',
-                  fontWeight: 'bold',
-                  color: 'var(--fg)',
-                  minWidth: '140px',
-                }}
-              >
-                AI (Last Checkup)
-              </th>
-              <th
-                style={{
-                  padding: '1rem 0.75rem',
-                  textAlign: 'left',
-                  borderBottom: '2px solid var(--border, #e0e0e0)',
-                  fontWeight: 'bold',
-                  color: 'var(--fg)',
-                  minWidth: '150px',
-                }}
-              >
-                HEAT CYCLE
-              </th>
-              <th
-                style={{
-                  padding: '1rem 0.75rem',
-                  textAlign: 'left',
-                  borderBottom: '2px solid var(--border, #e0e0e0)',
-                  fontWeight: 'bold',
-                  color: 'var(--fg)',
-                  minWidth: '120px',
-                }}
-              >
-                DEWORMING
-              </th>
-              <th
-                style={{
-                  padding: '1rem 0.75rem',
-                  textAlign: 'left',
-                  borderBottom: '2px solid var(--border, #e0e0e0)',
-                  fontWeight: 'bold',
-                  color: 'var(--fg)',
-                  minWidth: '180px',
-                }}
-              >
-                SEMEN DETAIL
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {cattleRecords.map((record, index) => (
-              <tr
-                key={record.id}
-                style={{
-                  borderBottom: '1px solid var(--border, #e0e0e0)',
-                  background:
-                    index % 2 === 0 ? 'var(--bg)' : 'var(--surface, #f8f9fa)',
-                }}
-              >
-                <td
-                  style={{
-                    padding: '0.75rem',
-                    borderRight: '1px solid var(--border, #e0e0e0)',
-                    fontWeight: 'bold',
-                    color: 'var(--accent)',
-                  }}
-                >
-                  {record.breed}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem',
-                    borderRight: '1px solid var(--border, #e0e0e0)',
-                    fontFamily: 'monospace',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  {record.tagNo}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem',
-                    borderRight: '1px solid var(--border, #e0e0e0)',
-                  }}
-                >
+                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                  🎂 {language === 'english' ? 'BIRTH DATE' : 'ਜਨਮ ਤਾਰੀਖ'}
+                </div>
+                <div style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--fg)' }}>
                   {record.birthDate}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem',
-                    borderRight: '1px solid var(--border, #e0e0e0)',
-                    fontFamily: 'monospace',
-                    fontSize: '0.8rem',
-                  }}
-                >
+                </div>
+              </button>
+
+              {/* Mother Code Cell */}
+              <button
+                style={{
+                  background: 'var(--bg)',
+                  border: '2px solid var(--border)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent)';
+                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.background = 'var(--bg)';
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                  👩 {language === 'english' ? 'MOTHER CODE' : 'ਮਾਂ ਕੋਡ'}
+                </div>
+                <div style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--fg)', fontFamily: 'monospace' }}>
                   {record.motherCode}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem',
-                    borderRight: '1px solid var(--border, #e0e0e0)',
-                  }}
-                >
+                </div>
+              </button>
+
+              {/* Father Name Cell */}
+              <button
+                style={{
+                  background: 'var(--bg)',
+                  border: '2px solid var(--border)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent)';
+                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.background = 'var(--bg)';
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                  👨 {language === 'english' ? 'FATHER NAME' : 'ਪਿਤਾ ਨਾਮ'}
+                </div>
+                <div style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--fg)' }}>
                   {record.fatherName}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem',
-                    borderRight: '1px solid var(--border, #e0e0e0)',
-                    textAlign: 'center',
-                    fontWeight: 'bold',
-                    color:
-                      record.lactation <= 2
-                        ? '#51cf66'
-                        : record.lactation <= 4
-                          ? '#ffd43b'
-                          : '#ff6b6b',
-                  }}
-                >
-                  {record.lactation}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem',
-                    borderRight: '1px solid var(--border, #e0e0e0)',
-                  }}
-                >
+                </div>
+              </button>
+
+              {/* AI Checkup Cell */}
+              <button
+                style={{
+                  background: 'var(--bg)',
+                  border: '2px solid var(--border)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent)';
+                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.background = 'var(--bg)';
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                  💉 {language === 'english' ? 'AI (LAST CHECKUP)' : 'AI (ਆਖਰੀ ਜਾਂਚ)'}
+                </div>
+                <div style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--fg)' }}>
                   {record.aiLastCheckup}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem',
-                    borderRight: '1px solid var(--border, #e0e0e0)',
-                    color: record.heatCycle.includes('Pregnant')
-                      ? '#ff6b6b'
-                      : record.heatCycle.includes('Dry')
-                        ? '#868e96'
-                        : '#51cf66',
-                  }}
-                >
+                </div>
+              </button>
+
+              {/* Heat Cycle Cell */}
+              <button
+                style={{
+                  background: 'var(--bg)',
+                  border: '2px solid var(--border)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent)';
+                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.background = 'var(--bg)';
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                  🔄 {language === 'english' ? 'HEAT CYCLE' : 'ਗਰਮੀ ਚੱਕਰ'}
+                </div>
+                <div style={{
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  color: record.heatCycle.includes('Pregnant') ? '#ff6b6b' :
+                         record.heatCycle.includes('Dry') ? '#868e96' : '#51cf66',
+                }}>
                   {record.heatCycle}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem',
-                    borderRight: '1px solid var(--border, #e0e0e0)',
-                  }}
-                >
+                </div>
+              </button>
+
+              {/* Deworming Cell */}
+              <button
+                style={{
+                  background: 'var(--bg)',
+                  border: '2px solid var(--border)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent)';
+                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.background = 'var(--bg)';
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                  💊 {language === 'english' ? 'DEWORMING' : 'ਕੀੜੇ ਮਾਰੂ ਦਵਾਈ'}
+                </div>
+                <div style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--fg)' }}>
                   {record.deworming}
-                </td>
-                <td
-                  style={{
-                    padding: '0.75rem',
-                    fontSize: '0.8rem',
-                    fontFamily: 'monospace',
-                  }}
-                >
+                </div>
+              </button>
+
+              {/* Semen Detail Cell */}
+              <button
+                style={{
+                  background: 'var(--bg)',
+                  border: '2px solid var(--border)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.2s',
+                  gridColumn: 'span 1',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent)';
+                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.background = 'var(--bg)';
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                  🧬 {language === 'english' ? 'SEMEN DETAIL' : 'ਵੀਰਜ ਵੇਰਵਾ'}
+                </div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--fg)', fontFamily: 'monospace' }}>
                   {record.semenDetail}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </button>
+            </div>
+
+            {/* Action Buttons */}
+            <div style={{
+              padding: '1rem 1.5rem',
+              borderTop: '1px solid var(--border)',
+              background: 'var(--bg)',
+              display: 'flex',
+              gap: '0.75rem',
+              justifyContent: 'flex-end',
+            }}>
+              <button
+                onClick={() => {
+                  // View details logic
+                }}
+                style={{
+                  background: 'var(--accent)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.6rem 1.25rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                👁️ {language === 'english' ? 'View Details' : 'ਵੇਰਵੇ ਦੇਖੋ'}
+              </button>
+              <button
+                onClick={() => {
+                  // Edit logic
+                }}
+                style={{
+                  background: '#4dabf7',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.6rem 1.25rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                ✏️ {language === 'english' ? 'Edit' : 'ਸੋਧੋ'}
+              </button>
+              <button
+                onClick={() => {
+                  // Delete logic
+                  if (confirm(language === 'english' ? 'Delete this record?' : 'ਕੀ ਤੁਸੀਂ ਇਹ ਰਿਕਾਰਡ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?')) {
+                    // Delete
+                  }
+                }}
+                style={{
+                  background: '#ff6b6b',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.6rem 1.25rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                🗑️ {language === 'english' ? 'Delete' : 'ਮਿਟਾਓ'}
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Summary Statistics */}
@@ -4937,6 +5131,85 @@ export default function DairyFarmManagerApp({
     </div>
   );
 
+  // Render Videos Tab
+  const renderVideosTab = () => (
+    <div style={{ padding: '1rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h3 style={{ margin: 0, color: 'var(--fg)' }}>
+          🎥 {t.videoLibrary}
+        </h3>
+        <button
+          onClick={() => setShowModal('uploadVideo')}
+          style={{
+            background: 'var(--accent)',
+            color: 'white',
+            border: 'none',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+            fontWeight: 'bold',
+          }}
+        >
+          + {t.uploadVideo}
+        </button>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+        {cattleVideos.map((video) => (
+          <div
+            key={video.id}
+            style={{
+              background: 'var(--surface, #f8f9fa)',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              border: '1px solid var(--border, #e0e0e0)',
+              cursor: 'pointer',
+              transition: 'transform 0.2s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-4px)')}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+          >
+            <div style={{ background: '#ddd', height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>
+              🎥
+            </div>
+            <div style={{ padding: '1rem' }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--fg)', marginBottom: '0.5rem' }}>
+                {video.title}
+              </div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--muted)', marginBottom: '0.75rem' }}>
+                {video.description}
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>
+                <span>⏱️ {video.duration}</span>
+                <span>👁️ {video.views}</span>
+                <span>👍 {video.likes}</span>
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
+                By {video.uploadedBy} • {video.uploadDate}
+              </div>
+              <div style={{ marginTop: '0.75rem' }}>
+                <span style={{
+                  background: video.category === 'health' ? '#ff6b6b' :
+                    video.category === 'breeding' ? '#51cf66' :
+                    video.category === 'training' ? '#4dabf7' :
+                    video.category === 'feeding' ? '#ffd43b' : '#868e96',
+                  color: 'white',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '12px',
+                  fontSize: '0.75rem',
+                  fontWeight: 'bold',
+                }}>
+                  {video.category.toUpperCase()}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div
       className="dairy-farm-manager miniapp-integration"
@@ -4985,13 +5258,29 @@ export default function DairyFarmManagerApp({
       >
         <div>
           <h2 style={{ margin: 0, color: 'var(--fg)' }}>
-            🐄 Dairy Farm Manager Pro
+            🐄 {t.appTitle}
           </h2>
           <div style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>
-            Advanced farm management with AI insights
+            {t.appSubtitle}
           </div>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button
+            onClick={() => setShowLanguageModal(true)}
+            style={{
+              background: 'var(--accent)',
+              color: 'white',
+              border: 'none',
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '0.85rem',
+              fontWeight: 'bold',
+            }}
+            title={t.switchLanguage}
+          >
+            {language === 'english' ? 'ਪੰਜਾਬੀ' : 'English'}
+          </button>
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
             style={{
@@ -5016,7 +5305,7 @@ export default function DairyFarmManagerApp({
               cursor: 'pointer',
               fontSize: '1rem',
             }}
-            title="Close"
+            title={t.close}
           >
             ×
           </button>
@@ -5033,10 +5322,11 @@ export default function DairyFarmManagerApp({
         }}
       >
         {[
-          { id: 'dashboard', label: '📊 Dashboard' },
-          { id: 'cows', label: '🐄 Cattle' },
-          { id: 'records', label: '📋 Records' },
-          { id: 'health', label: '🏥 Health' },
+          { id: 'dashboard', label: `📊 ${t.dashboard}` },
+          { id: 'cows', label: `🐄 ${t.cattle}` },
+          { id: 'records', label: `📋 ${t.records}` },
+          { id: 'health', label: `🏥 ${t.health}` },
+          { id: 'videos', label: `🎥 ${t.videos}` },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -5066,6 +5356,7 @@ export default function DairyFarmManagerApp({
         {activeTab === 'cows' && renderCowsTab()}
         {activeTab === 'records' && renderRecordsTab()}
         {activeTab === 'health' && renderHealthTab()}
+        {activeTab === 'videos' && renderVideosTab()}
       </div>
 
       {/* Enhanced Modals */}
@@ -5615,6 +5906,279 @@ export default function DairyFarmManagerApp({
                   }}
                 >
                   Add Alert
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Language Selection Modal */}
+      {showLanguageModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+          onClick={() => setShowLanguageModal(false)}
+        >
+          <div
+            style={{
+              background: 'var(--bg)',
+              padding: '2rem',
+              borderRadius: '12px',
+              maxWidth: '400px',
+              width: '90%',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ margin: '0 0 1.5rem 0', color: 'var(--fg)' }}>{t.selectLanguage}</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <button
+                onClick={() => {
+                  setLanguage('english');
+                  setShowLanguageModal(false);
+                }}
+                style={{
+                  background: language === 'english' ? 'var(--accent)' : 'var(--surface)',
+                  color: language === 'english' ? 'white' : 'var(--fg)',
+                  border: `2px solid ${language === 'english' ? 'var(--accent)' : 'var(--border)'}`,
+                  padding: '1rem 1.5rem',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  transition: 'all 0.2s',
+                }}
+              >
+                🇬🇧 English
+              </button>
+              <button
+                onClick={() => {
+                  setLanguage('punjabi');
+                  setShowLanguageModal(false);
+                }}
+                style={{
+                  background: language === 'punjabi' ? 'var(--accent)' : 'var(--surface)',
+                  color: language === 'punjabi' ? 'white' : 'var(--fg)',
+                  border: `2px solid ${language === 'punjabi' ? 'var(--accent)' : 'var(--border)'}`,
+                  padding: '1rem 1.5rem',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  transition: 'all 0.2s',
+                }}
+              >
+                🇮🇳 ਪੰਜਾਬੀ (Punjabi)
+              </button>
+            </div>
+            <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowLanguageModal(false)}
+                style={{
+                  background: 'transparent',
+                  color: 'var(--fg)',
+                  border: '1px solid var(--border)',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                }}
+              >
+                {t.close}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Upload Video Modal */}
+      {showModal === 'uploadVideo' && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+          onClick={() => setShowModal(null)}
+        >
+          <div
+            style={{
+              background: 'var(--bg)',
+              padding: '2rem',
+              borderRadius: '12px',
+              maxWidth: '600px',
+              width: '90%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ margin: '0 0 1.5rem 0', color: 'var(--fg)' }}>🎥 {t.uploadVideo}</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    fontWeight: 'bold',
+                    color: 'var(--fg)',
+                  }}
+                >
+                  {language === 'english' ? 'Video Title' : 'ਵੀਡੀਓ ਸਿਰਲੇਖ'}
+                </label>
+                <input
+                  type="text"
+                  placeholder={language === 'english' ? 'e.g., Milking Techniques for Sahiwal' : 'ਉਦਾਹਰਨ: ਸਾਹੀਵਾਲ ਲਈ ਦੁੱਧ ਕੱਢਣ ਦੀਆਂ ਤਕਨੀਕਾਂ'}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid var(--border)',
+                    borderRadius: '6px',
+                    background: 'var(--bg)',
+                    color: 'var(--fg)',
+                  }}
+                />
+              </div>
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    fontWeight: 'bold',
+                    color: 'var(--fg)',
+                  }}
+                >
+                  {language === 'english' ? 'Description' : 'ਵਰਣਨ'}
+                </label>
+                <textarea
+                  placeholder={language === 'english' ? 'Describe what your video covers...' : 'ਆਪਣੇ ਵੀਡੀਓ ਵਿੱਚ ਕੀ ਹੈ ਦੱਸੋ...'}
+                  rows={4}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid var(--border)',
+                    borderRadius: '6px',
+                    background: 'var(--bg)',
+                    color: 'var(--fg)',
+                    resize: 'vertical',
+                  }}
+                />
+              </div>
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    fontWeight: 'bold',
+                    color: 'var(--fg)',
+                  }}
+                >
+                  {language === 'english' ? 'Category' : 'ਸ਼੍ਰੇਣੀ'}
+                </label>
+                <select
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid var(--border)',
+                    borderRadius: '6px',
+                    background: 'var(--bg)',
+                    color: 'var(--fg)',
+                  }}
+                >
+                  <option value="training">{language === 'english' ? 'Training' : 'ਸਿਖਲਾਈ'}</option>
+                  <option value="health">{language === 'english' ? 'Health' : 'ਸਿਹਤ'}</option>
+                  <option value="breeding">{language === 'english' ? 'Breeding' : 'ਪ੍ਰਜਨਨ'}</option>
+                  <option value="feeding">{language === 'english' ? 'Feeding' : 'ਖੁਰਾਕ'}</option>
+                  <option value="general">{language === 'english' ? 'General' : 'ਆਮ'}</option>
+                </select>
+              </div>
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    fontWeight: 'bold',
+                    color: 'var(--fg)',
+                  }}
+                >
+                  {language === 'english' ? 'Video File' : 'ਵੀਡੀਓ ਫ਼ਾਈਲ'}
+                </label>
+                <div
+                  style={{
+                    border: '2px dashed var(--border)',
+                    borderRadius: '8px',
+                    padding: '2rem',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    background: 'var(--surface)',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--accent)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
+                >
+                  <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📹</div>
+                  <div style={{ color: 'var(--fg)', fontWeight: 'bold', marginBottom: '0.25rem' }}>
+                    {language === 'english' ? 'Click to upload or drag and drop' : 'ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ'}
+                  </div>
+                  <div style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
+                    {language === 'english' ? 'MP4, MOV, AVI (Max 500MB)' : 'MP4, MOV, AVI (ਵੱਧ ਤੋਂ ਵੱਧ 500MB)'}
+                  </div>
+                  <input type="file" accept="video/*" style={{ display: 'none' }} />
+                </div>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '1rem',
+                  justifyContent: 'flex-end',
+                  marginTop: '1rem',
+                }}
+              >
+                <button
+                  onClick={() => setShowModal(null)}
+                  style={{
+                    background: 'transparent',
+                    color: 'var(--fg)',
+                    border: '1px solid var(--border)',
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {language === 'english' ? 'Cancel' : 'ਰੱਦ ਕਰੋ'}
+                </button>
+                <button
+                  onClick={() => {
+                    // Video upload logic here
+                    setShowModal(null);
+                  }}
+                  style={{
+                    background: 'var(--accent)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {language === 'english' ? '📤 Upload Video' : '📤 ਵੀਡੀਓ ਅੱਪਲੋਡ ਕਰੋ'}
                 </button>
               </div>
             </div>
