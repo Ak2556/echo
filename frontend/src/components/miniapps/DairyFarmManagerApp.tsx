@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import EditRecordModal from './EditRecordModal';
+import ViewRecordModal from './ViewRecordModal';
+import { translations } from './translations';
 
 interface Cow {
   id: string;
@@ -331,6 +334,26 @@ export default function DairyFarmManagerApp({
   const [showModal, setShowModal] = useState<string | null>(null);
   const [selectedBreed, setSelectedBreed] = useState<BreedInfo | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<CattleRecord | null>(null);
+  const [addForm, setAddForm] = useState<Partial<CattleRecord>>({});
+  const addModalFirstRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (showModal === 'addRecord') {
+      // focus the first input/select in the add modal when it opens
+      setTimeout(() => addModalFirstRef.current?.focus(), 0);
+    }
+  }, [showModal]);
+
+  const updateCattleRecord = useCallback((id: string, updates: Partial<CattleRecord>) => {
+    setCattleRecords((prev) => prev.map((r) => (r.id === id ? { ...r, ...updates } : r)));
+  }, []);
+
+  const deleteCattleRecord = useCallback((id: string) => {
+    setCattleRecords((prev) => prev.filter((r) => r.id !== id));
+    setSelectedRecord((prev) => (prev && prev.id === id ? null : prev));
+    setShowModal((prev) => (prev === 'viewRecord' || prev === 'editRecord' ? null : prev));
+  }, []);
 
   // Enhanced state management
   const [weatherData, setWeatherData] = useState<WeatherData[]>([
@@ -527,308 +550,6 @@ export default function DairyFarmManagerApp({
       likes: 125,
     },
   ]);
-
-  // Comprehensive Translations Object
-  const translations = {
-    english: {
-      // App Header
-      appTitle: 'Dairy Farm Manager Pro',
-      appSubtitle: 'Advanced farm management with AI insights',
-
-      // Navigation
-      dashboard: 'Dashboard',
-      cattle: 'Cattle',
-      records: 'Records',
-      health: 'Health',
-      videos: 'Videos',
-
-      // Search & Common
-      search: 'Search breeds, cattle, problems, records...',
-      close: 'Close',
-      cancel: 'Cancel',
-      save: 'Save',
-      delete: 'Delete',
-      edit: 'Edit',
-      add: 'Add',
-      view: 'View',
-
-      // Language
-      switchLanguage: 'Switch to Punjabi',
-      selectLanguage: 'Select Language',
-
-      // Dashboard Stats
-      totalCattle: 'Total Cattle',
-      healthyCattle: 'Healthy Cattle',
-      milkProduction: 'Milk Production Today',
-      avgMilkYield: 'Avg Milk/Cow',
-      activeBreeding: 'Active Breeding',
-      pendingVaccinations: 'Pending Vaccinations',
-      liters: 'liters',
-
-      // Quick Actions
-      quickActions: 'Quick Actions',
-      healthMonitor: 'Health Monitor',
-      manageCattle: 'Manage Cattle',
-      viewRecords: 'View Records',
-
-      // Cattle Management
-      cattleManagement: 'Cattle Management',
-      addNewCattle: 'Add New Cattle',
-      cattleList: 'Cattle List',
-      breed: 'Breed',
-      tagNo: 'Tag No.',
-      age: 'Age',
-      milkYield: 'Milk Yield',
-      status: 'Status',
-      actions: 'Actions',
-      healthy: 'Healthy',
-      sick: 'Sick',
-      pregnant: 'Pregnant',
-      dry: 'Dry',
-      years: 'years',
-
-      // Records
-      breedingHealthRecords: 'Cattle Breeding & Health Records',
-      addRecord: 'Add Record',
-      addNewRecord: 'Add New Record',
-      editRecord: 'Edit Record',
-      deleteRecord: 'Delete Record',
-      viewDetails: 'View Details',
-      birthDate: 'Birth Date',
-      motherCode: 'Mother Code',
-      fatherName: 'Father Name',
-      lactation: 'Lactation',
-      aiLastCheckup: 'AI (Last Checkup)',
-      heatCycle: 'Heat Cycle',
-      deworming: 'Deworming',
-      semenDetail: 'Semen Detail',
-      totalRecords: 'Total Records',
-
-      // Health
-      healthStatus: 'Health Status',
-      healthManagement: 'Health Management',
-      activeAlerts: 'Active Alerts',
-      recentCheckups: 'Recent Checkups',
-      vaccinationsDue: 'Vaccinations Due',
-      vaccinationSchedule: 'Vaccination Schedule',
-      healthScore: 'Health Score',
-      temperature: 'Temperature',
-      heartRate: 'Heart Rate',
-      respiratoryRate: 'Respiratory Rate',
-      lastCheckup: 'Last Checkup',
-      nextCheckup: 'Next Checkup',
-      veterinarian: 'Veterinarian',
-      last: 'Last',
-      next: 'Next',
-
-      // Videos
-      uploadVideo: 'Upload Video',
-      videoLibrary: 'Video Library',
-      videoTitle: 'Video Title',
-      description: 'Description',
-      category: 'Category',
-      videoFile: 'Video File',
-      training: 'Training',
-      breeding: 'Breeding',
-      feeding: 'Feeding',
-      general: 'General',
-      uploadedBy: 'Uploaded By',
-      duration: 'Duration',
-      views: 'Views',
-      likes: 'Likes',
-
-      // Confirmations
-      deleteConfirm: 'Delete this record?',
-      saveSuccess: 'Saved successfully',
-      deleteSuccess: 'Deleted successfully',
-
-      // Dashboard Specific
-      farmDashboard: 'Farm Dashboard',
-      currentWeather: 'Current Weather',
-      humidity: 'Humidity',
-      conditions: 'Conditions',
-      wind: 'Wind',
-      dailyProduction: 'Daily Production',
-      activeAlerts: 'Active Alerts',
-      feedCompleted: 'Feed Completed',
-      recentAlerts: 'Recent Alerts',
-
-      // Cattle Table
-      name: 'Name',
-      lastMilked: 'Last Milked',
-      totalMilkToday: 'Total Milk Today',
-      cattleInventory: 'Cattle Inventory',
-      dailyYield: 'Daily Yield',
-      weight: 'Weight',
-      dueDate: 'Due Date',
-      registration: 'Registration',
-      sire: 'Sire',
-      dam: 'Dam',
-
-      // Months
-      january: 'January',
-      february: 'February',
-      march: 'March',
-      april: 'April',
-      may: 'May',
-      june: 'June',
-      july: 'July',
-      august: 'August',
-      september: 'September',
-      october: 'October',
-      november: 'November',
-      december: 'December',
-    },
-    punjabi: {
-      // App Header
-      appTitle: 'ਡੇਅਰੀ ਫਾਰਮ ਮੈਨੇਜਰ ਪ੍ਰੋ',
-      appSubtitle: 'AI ਨਾਲ ਉੱਨਤ ਫਾਰਮ ਪ੍ਰਬੰਧਨ',
-
-      // Navigation
-      dashboard: 'ਡੈਸ਼ਬੋਰਡ',
-      cattle: 'ਪਸ਼ੂ',
-      records: 'ਰਿਕਾਰਡ',
-      health: 'ਸਿਹਤ',
-      videos: 'ਵੀਡੀਓ',
-
-      // Search & Common
-      search: 'ਨਸਲ, ਪਸ਼ੂ, ਸਮੱਸਿਆਵਾਂ, ਰਿਕਾਰਡ ਖੋਜੋ...',
-      close: 'ਬੰਦ ਕਰੋ',
-      cancel: 'ਰੱਦ ਕਰੋ',
-      save: 'ਸੰਭਾਲੋ',
-      delete: 'ਮਿਟਾਓ',
-      edit: 'ਸੋਧੋ',
-      add: 'ਜੋੜੋ',
-      view: 'ਦੇਖੋ',
-
-      // Language
-      switchLanguage: 'ਅੰਗਰੇਜ਼ੀ ਵਿੱਚ ਬਦਲੋ',
-      selectLanguage: 'ਭਾਸ਼ਾ ਚੁਣੋ',
-
-      // Dashboard Stats
-      totalCattle: 'ਕੁੱਲ ਪਸ਼ੂ',
-      healthyCattle: 'ਤੰਦਰੁਸਤ ਪਸ਼ੂ',
-      milkProduction: 'ਅੱਜ ਦੁੱਧ ਉਤਪਾਦਨ',
-      avgMilkYield: 'ਔਸਤ ਦੁੱਧ/ਪਸ਼ੂ',
-      activeBreeding: 'ਸਰਗਰਮ ਪ੍ਰਜਨਨ',
-      pendingVaccinations: 'ਬਕਾਇਆ ਟੀਕੇ',
-      liters: 'ਲਿਟਰ',
-
-      // Quick Actions
-      quickActions: 'ਤੇਜ਼ ਕਾਰਵਾਈਆਂ',
-      healthMonitor: 'ਸਿਹਤ ਮਾਨੀਟਰ',
-      manageCattle: 'ਪਸ਼ੂ ਪ੍ਰਬੰਧਨ',
-      viewRecords: 'ਰਿਕਾਰਡ ਦੇਖੋ',
-
-      // Cattle Management
-      cattleManagement: 'ਪਸ਼ੂ ਪ੍ਰਬੰਧਨ',
-      addNewCattle: 'ਨਵਾਂ ਪਸ਼ੂ ਜੋੜੋ',
-      cattleList: 'ਪਸ਼ੂ ਸੂਚੀ',
-      breed: 'ਨਸਲ',
-      tagNo: 'ਟੈਗ ਨੰਬਰ',
-      age: 'ਉਮਰ',
-      milkYield: 'ਦੁੱਧ ਉਤਪਾਦਨ',
-      status: 'ਸਥਿਤੀ',
-      actions: 'ਕਾਰਵਾਈਆਂ',
-      healthy: 'ਤੰਦਰੁਸਤ',
-      sick: 'ਬੀਮਾਰ',
-      pregnant: 'ਗਰਭਵਤੀ',
-      dry: 'ਸੁੱਕਾ',
-      years: 'ਸਾਲ',
-
-      // Records
-      breedingHealthRecords: 'ਪਸ਼ੂ ਪ੍ਰਜਨਨ ਅਤੇ ਸਿਹਤ ਰਿਕਾਰਡ',
-      addRecord: 'ਰਿਕਾਰਡ ਜੋੜੋ',
-      addNewRecord: 'ਨਵਾਂ ਰਿਕਾਰਡ ਜੋੜੋ',
-      editRecord: 'ਰਿਕਾਰਡ ਸੋਧੋ',
-      deleteRecord: 'ਰਿਕਾਰਡ ਮਿਟਾਓ',
-      viewDetails: 'ਵੇਰਵੇ ਦੇਖੋ',
-      birthDate: 'ਜਨਮ ਤਾਰੀਖ',
-      motherCode: 'ਮਾਂ ਕੋਡ',
-      fatherName: 'ਪਿਤਾ ਨਾਮ',
-      lactation: 'ਦੁੱਧ ਦੀ ਮਿਆਦ',
-      aiLastCheckup: 'AI (ਆਖਰੀ ਜਾਂਚ)',
-      heatCycle: 'ਗਰਮੀ ਚੱਕਰ',
-      deworming: 'ਕੀੜੇ ਮਾਰੂ ਦਵਾਈ',
-      semenDetail: 'ਵੀਰਜ ਵੇਰਵਾ',
-      totalRecords: 'ਕੁੱਲ ਰਿਕਾਰਡ',
-
-      // Health
-      healthStatus: 'ਸਿਹਤ ਸਥਿਤੀ',
-      healthManagement: 'ਸਿਹਤ ਪ੍ਰਬੰਧਨ',
-      activeAlerts: 'ਸਰਗਰਮ ਚੇਤਾਵਨੀਆਂ',
-      recentCheckups: 'ਹਾਲੀਆ ਜਾਂਚਾਂ',
-      vaccinationsDue: 'ਬਕਾਇਆ ਟੀਕੇ',
-      vaccinationSchedule: 'ਟੀਕਾਕਰਣ ਸਮਾਂ-ਸਾਰਣੀ',
-      healthScore: 'ਸਿਹਤ ਸਕੋਰ',
-      temperature: 'ਤਾਪਮਾਨ',
-      heartRate: 'ਦਿਲ ਦੀ ਧੜਕਣ',
-      respiratoryRate: 'ਸਾਹ ਦਰ',
-      lastCheckup: 'ਆਖਰੀ ਜਾਂਚ',
-      nextCheckup: 'ਅਗਲੀ ਜਾਂਚ',
-      veterinarian: 'ਪਸ਼ੂ ਚਿਕਿਤਸਕ',
-      last: 'ਆਖਰੀ',
-      next: 'ਅਗਲਾ',
-
-      // Videos
-      uploadVideo: 'ਵੀਡੀਓ ਅੱਪਲੋਡ ਕਰੋ',
-      videoLibrary: 'ਵੀਡੀਓ ਲਾਇਬ੍ਰੇਰੀ',
-      videoTitle: 'ਵੀਡੀਓ ਸਿਰਲੇਖ',
-      description: 'ਵਰਣਨ',
-      category: 'ਸ਼੍ਰੇਣੀ',
-      videoFile: 'ਵੀਡੀਓ ਫ਼ਾਈਲ',
-      training: 'ਸਿਖਲਾਈ',
-      breeding: 'ਪ੍ਰਜਨਨ',
-      feeding: 'ਖੁਰਾਕ',
-      general: 'ਆਮ',
-      uploadedBy: 'ਅੱਪਲੋਡ ਕੀਤਾ',
-      duration: 'ਮਿਆਦ',
-      views: 'ਦੇਖੇ ਗਏ',
-      likes: 'ਪਸੰਦ',
-
-      // Confirmations
-      deleteConfirm: 'ਕੀ ਤੁਸੀਂ ਇਹ ਰਿਕਾਰਡ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?',
-      saveSuccess: 'ਸਫਲਤਾਪੂਰਵਕ ਸੰਭਾਲਿਆ ਗਿਆ',
-      deleteSuccess: 'ਸਫਲਤਾਪੂਰਵਕ ਮਿਟਾਇਆ ਗਿਆ',
-
-      // Dashboard Specific
-      farmDashboard: 'ਫਾਰਮ ਡੈਸ਼ਬੋਰਡ',
-      currentWeather: 'ਮੌਜੂਦਾ ਮੌਸਮ',
-      humidity: 'ਨਮੀ',
-      conditions: 'ਸਥਿਤੀ',
-      wind: 'ਹਵਾ',
-      dailyProduction: 'ਰੋਜ਼ਾਨਾ ਉਤਪਾਦਨ',
-      activeAlerts: 'ਸਰਗਰਮ ਚੇਤਾਵਨੀਆਂ',
-      feedCompleted: 'ਖੁਰਾਕ ਪੂਰੀ ਹੋਈ',
-      recentAlerts: 'ਹਾਲੀਆ ਚੇਤਾਵਨੀਆਂ',
-
-      // Cattle Table
-      name: 'ਨਾਮ',
-      lastMilked: 'ਆਖਰੀ ਦੁੱਧ ਕੱਢਿਆ',
-      totalMilkToday: 'ਅੱਜ ਕੁੱਲ ਦੁੱਧ',
-      cattleInventory: 'ਪਸ਼ੂ ਸੂਚੀ',
-      dailyYield: 'ਰੋਜ਼ਾਨਾ ਉਤਪਾਦਨ',
-      weight: 'ਭਾਰ',
-      dueDate: 'ਨਿਰਧਾਰਤ ਤਾਰੀਖ',
-      registration: 'ਰਜਿਸਟ੍ਰੇਸ਼ਨ',
-      sire: 'ਪਿਤਾ',
-      dam: 'ਮਾਂ',
-
-      // Months
-      january: 'ਜਨਵਰੀ',
-      february: 'ਫਰਵਰੀ',
-      march: 'ਮਾਰਚ',
-      april: 'ਅਪ੍ਰੈਲ',
-      may: 'ਮਈ',
-      june: 'ਜੂਨ',
-      july: 'ਜੁਲਾਈ',
-      august: 'ਅਗਸਤ',
-      september: 'ਸਤੰਬਰ',
-      october: 'ਅਕਤੂਬਰ',
-      november: 'ਨਵੰਬਰ',
-      december: 'ਦਸੰਬਰ',
-    },
-  };
 
   const t = translations[language];
 
@@ -3722,6 +3443,26 @@ export default function DairyFarmManagerApp({
           </div>
         </div>
       )}
+
+      <ViewRecordModal
+        visible={showModal === 'viewRecord'}
+        record={selectedRecord}
+        language={language}
+        onClose={() => { setShowModal(null); setSelectedRecord(null); }}
+      />
+
+      <EditRecordModal
+        visible={showModal === 'editRecord'}
+        record={selectedRecord}
+        language={language}
+        onClose={() => { setShowModal(null); setSelectedRecord(null); }}
+        onSave={(updates) => {
+          if (!selectedRecord) return;
+          updateCattleRecord(selectedRecord.id, updates);
+          setShowModal(null);
+          setSelectedRecord(null);
+        }}
+      />
     </div>
   );
 
@@ -4281,13 +4022,13 @@ export default function DairyFarmManagerApp({
             }}
           >
             <div>
-              <strong>Pregnant cows:</strong> {pregnantCows}
+              <strong>{t.pregnantCows}</strong> {pregnantCows}
             </div>
             <div>
-              <strong>Expected calves (next 3 months):</strong> {pregnantCows}
+              <strong>{t.expectedCalves}</strong> {pregnantCows}
             </div>
             <div>
-              <strong>Active sires:</strong>{' '}
+              <strong>{t.activeSires}</strong>{' '}
               {sireDatabase.filter((s) => s.activeStatus === 'active').length}
             </div>
           </div>
@@ -4300,8 +4041,7 @@ export default function DairyFarmManagerApp({
               fontSize: '0.9rem',
             }}
           >
-            <strong>Recommendation:</strong> Plan for increased feed
-            requirements and calving facilities for pregnant cows.
+            <strong>{t.recommendation}</strong> {t.recommendationText}
           </div>
         </div>
 
@@ -4315,7 +4055,7 @@ export default function DairyFarmManagerApp({
           }}
         >
           <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--fg)' }}>
-            🏥 Health Status
+            🏥 {t.healthStatus}
           </h4>
           <div
             style={{
@@ -4325,13 +4065,13 @@ export default function DairyFarmManagerApp({
             }}
           >
             <div>
-              <strong>Healthy cows:</strong> {healthyCows}/{totalCows}
+              <strong>{t.healthyCows}</strong> {healthyCows}/{totalCows}
             </div>
             <div>
-              <strong>Due for checkup:</strong> 2
+              <strong>{t.dueForCheckup}</strong> 2
             </div>
             <div>
-              <strong>Health rate:</strong>{' '}
+              <strong>{t.healthRate}</strong>{' '}
               {((healthyCows / totalCows) * 100).toFixed(1)}%
             </div>
           </div>
@@ -4646,12 +4386,23 @@ export default function DairyFarmManagerApp({
 
   const renderRecordsTab = () => (
     <div style={{ padding: '1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h3 style={{ margin: 0, color: 'var(--fg)' }}>
           📋 {language === 'english' ? 'Cattle Breeding & Health Records' : 'ਪਸ਼ੂ ਪ੍ਰਜਨਨ ਅਤੇ ਸਿਹਤ ਰਿਕਾਰਡ'}
         </h3>
         <button
-          onClick={() => setShowModal('addRecord')}
+          onClick={() => { setAddForm({
+            breed: 'Gir',
+            tagNo: '',
+            birthDate: new Date().toISOString().split('T')[0],
+            motherCode: '',
+            fatherName: '',
+            lactation: 1,
+            aiLastCheckup: '',
+            heatCycle: 'Regular - 21 days',
+            deworming: '',
+            semenDetail: '',
+          }); setShowModal('addRecord'); }}
           style={{
             background: 'var(--accent)',
             color: 'white',
@@ -4722,6 +4473,7 @@ export default function DairyFarmManagerApp({
             <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
               {/* Birth Date Cell */}
               <button
+                type="button"
                 style={{
                   background: 'var(--bg)',
                   border: '2px solid var(--border)',
@@ -4731,6 +4483,7 @@ export default function DairyFarmManagerApp({
                   textAlign: 'left',
                   transition: 'all 0.2s',
                 }}
+                onClick={() => { setSelectedRecord(record); setShowModal('viewRecord'); }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = 'var(--accent)';
                   e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
@@ -4750,6 +4503,7 @@ export default function DairyFarmManagerApp({
 
               {/* Mother Code Cell */}
               <button
+                type="button"
                 style={{
                   background: 'var(--bg)',
                   border: '2px solid var(--border)',
@@ -4759,6 +4513,7 @@ export default function DairyFarmManagerApp({
                   textAlign: 'left',
                   transition: 'all 0.2s',
                 }}
+                onClick={() => { setSelectedRecord(record); setShowModal('viewRecord'); }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = 'var(--accent)';
                   e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
@@ -4778,6 +4533,7 @@ export default function DairyFarmManagerApp({
 
               {/* Father Name Cell */}
               <button
+                type="button"
                 style={{
                   background: 'var(--bg)',
                   border: '2px solid var(--border)',
@@ -4787,6 +4543,7 @@ export default function DairyFarmManagerApp({
                   textAlign: 'left',
                   transition: 'all 0.2s',
                 }}
+                onClick={() => { setSelectedRecord(record); setShowModal('viewRecord'); }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = 'var(--accent)';
                   e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
@@ -4806,6 +4563,7 @@ export default function DairyFarmManagerApp({
 
               {/* AI Checkup Cell */}
               <button
+                type="button"
                 style={{
                   background: 'var(--bg)',
                   border: '2px solid var(--border)',
@@ -4815,6 +4573,7 @@ export default function DairyFarmManagerApp({
                   textAlign: 'left',
                   transition: 'all 0.2s',
                 }}
+                onClick={() => { setSelectedRecord(record); setShowModal('viewRecord'); }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = 'var(--accent)';
                   e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
@@ -4834,6 +4593,7 @@ export default function DairyFarmManagerApp({
 
               {/* Heat Cycle Cell */}
               <button
+                type="button"
                 style={{
                   background: 'var(--bg)',
                   border: '2px solid var(--border)',
@@ -4843,6 +4603,7 @@ export default function DairyFarmManagerApp({
                   textAlign: 'left',
                   transition: 'all 0.2s',
                 }}
+                onClick={() => { setSelectedRecord(record); setShowModal('viewRecord'); }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = 'var(--accent)';
                   e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
@@ -4895,6 +4656,7 @@ export default function DairyFarmManagerApp({
 
               {/* Semen Detail Cell */}
               <button
+                type="button"
                 style={{
                   background: 'var(--bg)',
                   border: '2px solid var(--border)',
@@ -4905,6 +4667,7 @@ export default function DairyFarmManagerApp({
                   transition: 'all 0.2s',
                   gridColumn: 'span 1',
                 }}
+                onClick={() => { setSelectedRecord(record); setShowModal('viewRecord'); }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = 'var(--accent)';
                   e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
@@ -4933,8 +4696,10 @@ export default function DairyFarmManagerApp({
               justifyContent: 'flex-end',
             }}>
               <button
+                type="button"
                 onClick={() => {
-                  // View details logic
+                  setSelectedRecord(record);
+                  setShowModal('viewRecord');
                 }}
                 style={{
                   background: 'var(--accent)',
@@ -4953,8 +4718,10 @@ export default function DairyFarmManagerApp({
                 👁️ {language === 'english' ? 'View Details' : 'ਵੇਰਵੇ ਦੇਖੋ'}
               </button>
               <button
+                type="button"
                 onClick={() => {
-                  // Edit logic
+                  setSelectedRecord(record);
+                  setShowModal('editRecord');
                 }}
                 style={{
                   background: '#4dabf7',
@@ -4973,10 +4740,10 @@ export default function DairyFarmManagerApp({
                 ✏️ {language === 'english' ? 'Edit' : 'ਸੋਧੋ'}
               </button>
               <button
+                type="button"
                 onClick={() => {
-                  // Delete logic
                   if (confirm(language === 'english' ? 'Delete this record?' : 'ਕੀ ਤੁਸੀਂ ਇਹ ਰਿਕਾਰਡ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?')) {
-                    // Delete
+                    deleteCattleRecord(record.id);
                   }
                 }}
                 style={{
@@ -5047,7 +4814,7 @@ export default function DairyFarmManagerApp({
             }
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Pregnant
+            {t.pregnant}
           </div>
         </div>
         <div
@@ -5067,7 +4834,7 @@ export default function DairyFarmManagerApp({
             }
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Regular Cycle
+            {t.regularCycle}
           </div>
         </div>
         <div
@@ -5087,7 +4854,7 @@ export default function DairyFarmManagerApp({
             ).toFixed(1)}
           </div>
           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-            Avg Lactation
+            {t.avgLactation}
           </div>
         </div>
       </div>
@@ -5101,7 +4868,7 @@ export default function DairyFarmManagerApp({
           borderRadius: '8px',
         }}
       >
-        <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>Legend:</h4>
+        <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>{t.legend}</h4>
         <div
           style={{
             display: 'flex',
@@ -5112,27 +4879,27 @@ export default function DairyFarmManagerApp({
         >
           <div>
             <span style={{ color: '#51cf66', fontWeight: 'bold' }}>●</span>{' '}
-            Lactation 1-2 (Young)
+            {t.lactation12Young}
           </div>
           <div>
             <span style={{ color: '#ffd43b', fontWeight: 'bold' }}>●</span>{' '}
-            Lactation 3-4 (Mature)
+            {t.lactation34Mature}
           </div>
           <div>
             <span style={{ color: '#ff6b6b', fontWeight: 'bold' }}>●</span>{' '}
-            Lactation 5+ (Senior)
+            {t.lactation5Senior}
           </div>
           <div>
             <span style={{ color: '#ff6b6b', fontWeight: 'bold' }}>●</span>{' '}
-            Pregnant
+            {t.pregnant}
           </div>
           <div>
             <span style={{ color: '#51cf66', fontWeight: 'bold' }}>●</span>{' '}
-            Regular Heat Cycle
+            {t.regularHeatCycle}
           </div>
           <div>
-            <span style={{ color: '#868e96', fontWeight: 'bold' }}>●</span> Dry
-            Period
+            <span style={{ color: '#868e96', fontWeight: 'bold' }}>●</span>{' '}
+            {t.dryPeriod}
           </div>
         </div>
       </div>
@@ -5618,7 +5385,7 @@ export default function DairyFarmManagerApp({
           }}
           onClick={() => setShowModal(null)}
         >
-          <div
+              <div
             style={{
               background: 'var(--bg)',
               padding: '2rem',
@@ -5628,9 +5395,12 @@ export default function DairyFarmManagerApp({
               maxHeight: '90vh',
               overflowY: 'auto',
             }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="addRecordHeading"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ margin: '0 0 1rem 0' }}>Add New Cattle Record</h3>
+            <h3 id="addRecordHeading" style={{ margin: '0 0 1rem 0' }}>{t.addNewRecord}</h3>
             <div
               style={{
                 display: 'grid',
@@ -5646,9 +5416,12 @@ export default function DairyFarmManagerApp({
                     fontWeight: 'bold',
                   }}
                 >
-                  Breed
+                  {t.breed}
                 </label>
                 <select
+                  ref={(el) => { addModalFirstRef.current = el; }}
+                  value={addForm.breed || ''}
+                  onChange={(e) => setAddForm((p) => ({ ...p, breed: e.target.value }))}
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5674,11 +5447,13 @@ export default function DairyFarmManagerApp({
                     fontWeight: 'bold',
                   }}
                 >
-                  Tag Number
+                  {t.tagNo}
                 </label>
                 <input
                   type="text"
                   placeholder="e.g., 007-NEW-2024"
+                  value={addForm.tagNo || ''}
+                  onChange={(e) => setAddForm((p) => ({ ...p, tagNo: e.target.value }))}
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5697,10 +5472,12 @@ export default function DairyFarmManagerApp({
                     fontWeight: 'bold',
                   }}
                 >
-                  Birth Date
+                  {t.birthDate}
                 </label>
                 <input
                   type="date"
+                  value={addForm.birthDate || ''}
+                  onChange={(e) => setAddForm((p) => ({ ...p, birthDate: e.target.value }))}
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5719,11 +5496,13 @@ export default function DairyFarmManagerApp({
                     fontWeight: 'bold',
                   }}
                 >
-                  Mother Code
+                  {t.motherCode}
                 </label>
                 <input
                   type="text"
                   placeholder="e.g., MOTHER-CODE-001"
+                  value={addForm.motherCode || ''}
+                  onChange={(e) => setAddForm((p) => ({ ...p, motherCode: e.target.value }))}
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5742,11 +5521,13 @@ export default function DairyFarmManagerApp({
                     fontWeight: 'bold',
                   }}
                 >
-                  Father Name
+                  {t.fatherName}
                 </label>
                 <input
                   type="text"
                   placeholder="e.g., Elite Bull-001"
+                  value={addForm.fatherName || ''}
+                  onChange={(e) => setAddForm((p) => ({ ...p, fatherName: e.target.value }))}
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5765,13 +5546,15 @@ export default function DairyFarmManagerApp({
                     fontWeight: 'bold',
                   }}
                 >
-                  Lactation Number
+                  {t.lactation}
                 </label>
                 <input
                   type="number"
                   min="1"
                   max="10"
                   placeholder="1"
+                  value={addForm.lactation ?? ''}
+                  onChange={(e) => setAddForm((p) => ({ ...p, lactation: parseInt(e.target.value || '0') || 0 }))}
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5790,10 +5573,12 @@ export default function DairyFarmManagerApp({
                     fontWeight: 'bold',
                   }}
                 >
-                  AI Last Checkup
+                  {t.aiLastCheckup}
                 </label>
                 <input
                   type="date"
+                  value={addForm.aiLastCheckup || ''}
+                  onChange={(e) => setAddForm((p) => ({ ...p, aiLastCheckup: e.target.value }))}
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5812,9 +5597,11 @@ export default function DairyFarmManagerApp({
                     fontWeight: 'bold',
                   }}
                 >
-                  Heat Cycle Status
+                  {t.heatCycle}
                 </label>
                 <select
+                  value={addForm.heatCycle || ''}
+                  onChange={(e) => setAddForm((p) => ({ ...p, heatCycle: e.target.value }))}
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5822,15 +5609,15 @@ export default function DairyFarmManagerApp({
                     borderRadius: '6px',
                   }}
                 >
-                  <option value="Regular - 21 days">Regular - 21 days</option>
-                  <option value="Regular - 19 days">Regular - 19 days</option>
-                  <option value="Regular - 20 days">Regular - 20 days</option>
-                  <option value="Regular - 22 days">Regular - 22 days</option>
+                  <option value="Regular - 21 days">{t.regular21days}</option>
+                  <option value="Regular - 19 days">{t.regular19days}</option>
+                  <option value="Regular - 20 days">{t.regular20days}</option>
+                  <option value="Regular - 22 days">{t.regular22days}</option>
                   <option value="Pregnant - Due 2024-04-15">
-                    Pregnant - Due 2024-04-15
+                    {t.pregnantDue}
                   </option>
-                  <option value="Dry period">Dry period</option>
-                  <option value="Irregular">Irregular</option>
+                  <option value="Dry period">{t.dryOption}</option>
+                  <option value="Irregular">{t.irregular}</option>
                 </select>
               </div>
               <div>
@@ -5841,10 +5628,12 @@ export default function DairyFarmManagerApp({
                     fontWeight: 'bold',
                   }}
                 >
-                  Last Deworming Date
+                  {t.deworming}
                 </label>
                 <input
                   type="date"
+                  value={addForm.deworming || ''}
+                  onChange={(e) => setAddForm((p) => ({ ...p, deworming: e.target.value }))}
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5863,11 +5652,13 @@ export default function DairyFarmManagerApp({
                     fontWeight: 'bold',
                   }}
                 >
-                  Semen Details
+                  {t.semenDetail}
                 </label>
                 <input
                   type="text"
                   placeholder="e.g., ELITE-001 (Batch: E-2024-01)"
+                  value={addForm.semenDetail || ''}
+                  onChange={(e) => setAddForm((p) => ({ ...p, semenDetail: e.target.value }))}
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5888,6 +5679,7 @@ export default function DairyFarmManagerApp({
               }}
             >
               <button
+                type="button"
                 onClick={() => setShowModal(null)}
                 style={{
                   background: 'transparent',
@@ -5898,81 +5690,25 @@ export default function DairyFarmManagerApp({
                   cursor: 'pointer',
                 }}
               >
-                Cancel
+                {t.cancel}
               </button>
               <button
+                type="button"
                 onClick={() => {
-                  // Get form data and add new record
-                  const form = document.querySelector('form') || document;
-                  const breed =
-                    (form.querySelector('select') as HTMLSelectElement)
-                      ?.value || 'Gir';
-                  const tagNo =
-                    (
-                      form.querySelector(
-                        'input[placeholder*="Tag"]'
-                      ) as HTMLInputElement
-                    )?.value || 'NEW-TAG-001';
-                  const birthDate =
-                    (
-                      form.querySelector(
-                        'input[type="date"]'
-                      ) as HTMLInputElement
-                    )?.value || new Date().toISOString().split('T')[0];
-                  const motherCode =
-                    (
-                      form.querySelector(
-                        'input[placeholder*="Mother"]'
-                      ) as HTMLInputElement
-                    )?.value || 'MOTHER-CODE-001';
-                  const fatherName =
-                    (
-                      form.querySelector(
-                        'input[placeholder*="Father"]'
-                      ) as HTMLInputElement
-                    )?.value || 'Elite Bull-001';
-                  const lactation = parseInt(
-                    (
-                      form.querySelector(
-                        'input[type="number"]'
-                      ) as HTMLInputElement
-                    )?.value || '1'
-                  );
-                  const aiLastCheckup =
-                    (
-                      form.querySelectorAll(
-                        'input[type="date"]'
-                      )[1] as HTMLInputElement
-                    )?.value || new Date().toISOString().split('T')[0];
-                  const heatCycle =
-                    (form.querySelectorAll('select')[1] as HTMLSelectElement)
-                      ?.value || 'Regular - 21 days';
-                  const deworming =
-                    (
-                      form.querySelectorAll(
-                        'input[type="date"]'
-                      )[2] as HTMLInputElement
-                    )?.value || new Date().toISOString().split('T')[0];
-                  const semenDetail =
-                    (
-                      form.querySelector(
-                        'input[placeholder*="Semen"]'
-                      ) as HTMLInputElement
-                    )?.value || 'ELITE-001 (Batch: E-2024-01)';
+                  const record = {
+                    breed: addForm.breed || 'Gir',
+                    tagNo: addForm.tagNo || `NEW-TAG-${Date.now()}`,
+                    birthDate: addForm.birthDate || new Date().toISOString().split('T')[0],
+                    motherCode: addForm.motherCode || 'MOTHER-CODE-001',
+                    fatherName: addForm.fatherName || 'Elite Bull-001',
+                    lactation: addForm.lactation ?? 1,
+                    aiLastCheckup: addForm.aiLastCheckup || new Date().toISOString().split('T')[0],
+                    heatCycle: addForm.heatCycle || 'Regular - 21 days',
+                    deworming: addForm.deworming || new Date().toISOString().split('T')[0],
+                    semenDetail: addForm.semenDetail || 'ELITE-001 (Batch: E-2024-01)',
+                  };
 
-                  addCattleRecord({
-                    breed,
-                    tagNo,
-                    birthDate,
-                    motherCode,
-                    fatherName,
-                    lactation,
-                    aiLastCheckup,
-                    heatCycle,
-                    deworming,
-                    semenDetail,
-                  });
-
+                  addCattleRecord(record);
                   setShowModal(null);
                 }}
                 style={{
@@ -5984,7 +5720,7 @@ export default function DairyFarmManagerApp({
                   cursor: 'pointer',
                 }}
               >
-                Add Record
+                {t.addRecord}
               </button>
             </div>
           </div>

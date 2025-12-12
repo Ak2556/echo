@@ -1,0 +1,356 @@
+export const translations = {
+  english: {
+    // App Header
+    appTitle: 'Dairy Farm Manager Pro',
+    appSubtitle: 'Advanced farm management with AI insights',
+
+    // Navigation
+    dashboard: 'Dashboard',
+    cattle: 'Cattle',
+    records: 'Records',
+    health: 'Health',
+    videos: 'Videos',
+
+    // Search & Common
+    search: 'Search breeds, cattle, problems, records...',
+    close: 'Close',
+    cancel: 'Cancel',
+    save: 'Save',
+    delete: 'Delete',
+    edit: 'Edit',
+    add: 'Add',
+    view: 'View',
+
+    // Language
+    switchLanguage: 'Switch to Punjabi',
+    selectLanguage: 'Select Language',
+
+    // Dashboard Stats
+    totalCattle: 'Total Cattle',
+    healthyCattle: 'Healthy Cattle',
+    milkProduction: 'Milk Production Today',
+    avgMilkYield: 'Avg Milk/Cow',
+    activeBreeding: 'Active Breeding',
+    pendingVaccinations: 'Pending Vaccinations',
+    liters: 'liters',
+
+    // Quick Actions
+    quickActions: 'Quick Actions',
+    healthMonitor: 'Health Monitor',
+    manageCattle: 'Manage Cattle',
+    viewRecords: 'View Records',
+
+    // Cattle Management
+    cattleManagement: 'Cattle Management',
+    addNewCattle: 'Add New Cattle',
+    cattleList: 'Cattle List',
+    breed: 'Breed',
+    tagNo: 'Tag No.',
+    age: 'Age',
+    milkYield: 'Milk Yield',
+    status: 'Status',
+    actions: 'Actions',
+    healthy: 'Healthy',
+    sick: 'Sick',
+    pregnant: 'Pregnant',
+    dry: 'Dry',
+    years: 'years',
+
+    // Records
+    breedingHealthRecords: 'Cattle Breeding & Health Records',
+    addRecord: 'Add Record',
+    addNewRecord: 'Add New Record',
+    editRecord: 'Edit Record',
+    deleteRecord: 'Delete Record',
+    viewDetails: 'View Details',
+    birthDate: 'Birth Date',
+    motherCode: 'Mother Code',
+    fatherName: 'Father Name',
+    lactation: 'Lactation',
+    aiLastCheckup: 'AI (Last Checkup)',
+    heatCycle: 'Heat Cycle',
+    deworming: 'Deworming',
+    semenDetail: 'Semen Detail',
+    totalRecords: 'Total Records',
+
+    // Health
+    healthStatus: 'Health Status',
+    healthManagement: 'Health Management',
+    activeAlerts: 'Active Alerts',
+    recentCheckups: 'Recent Checkups',
+    vaccinationsDue: 'Vaccinations Due',
+    vaccinationSchedule: 'Vaccination Schedule',
+    healthScore: 'Health Score',
+    temperature: 'Temperature',
+    heartRate: 'Heart Rate',
+    respiratoryRate: 'Respiratory Rate',
+    lastCheckup: 'Last Checkup',
+    nextCheckup: 'Next Checkup',
+    veterinarian: 'Veterinarian',
+    last: 'Last',
+    next: 'Next',
+
+    // Videos
+    uploadVideo: 'Upload Video',
+    videoLibrary: 'Video Library',
+    videoTitle: 'Video Title',
+    description: 'Description',
+    category: 'Category',
+    videoFile: 'Video File',
+    training: 'Training',
+    breeding: 'Breeding',
+    feeding: 'Feeding',
+    general: 'General',
+    uploadedBy: 'Uploaded By',
+    duration: 'Duration',
+    views: 'Views',
+    likes: 'Likes',
+
+    // Confirmations
+    deleteConfirm: 'Delete this record?',
+    saveSuccess: 'Saved successfully',
+    deleteSuccess: 'Deleted successfully',
+
+    // Dashboard Specific
+    farmDashboard: 'Farm Dashboard',
+    currentWeather: 'Current Weather',
+    humidity: 'Humidity',
+    conditions: 'Conditions',
+    wind: 'Wind',
+    dailyProduction: 'Daily Production',
+    feedCompleted: 'Feed Completed',
+    recentAlerts: 'Recent Alerts',
+
+    // Cattle Table
+    name: 'Name',
+    lastMilked: 'Last Milked',
+    totalMilkToday: 'Total Milk Today',
+    cattleInventory: 'Cattle Inventory',
+    dailyYield: 'Daily Yield',
+    weight: 'Weight',
+    dueDate: 'Due Date',
+    registration: 'Registration',
+    sire: 'Sire',
+    dam: 'Dam',
+
+    // Months
+    january: 'January',
+    february: 'February',
+    march: 'March',
+    april: 'April',
+    may: 'May',
+    june: 'June',
+    july: 'July',
+    august: 'August',
+    september: 'September',
+    october: 'October',
+    november: 'November',
+    december: 'December',
+
+    // Health Tab Details
+    pregnantCows: 'Pregnant cows:',
+    expectedCalves: 'Expected calves (next 3 months):',
+    activeSires: 'Active sires:',
+    recommendation: 'Recommendation:',
+    recommendationText: 'Plan for increased feed requirements and calving facilities for pregnant cows.',
+    healthyCows: 'Healthy cows:',
+    dueForCheckup: 'Due for checkup:',
+    healthRate: 'Health rate:',
+
+    // Records Tab Details
+    regularCycle: 'Regular Cycle',
+    avgLactation: 'Avg Lactation',
+    legend: 'Legend:',
+    lactation12Young: 'Lactation 1-2 (Young)',
+    lactation34Mature: 'Lactation 3-4 (Mature)',
+    lactation5Senior: 'Lactation 5+ (Senior)',
+    regularHeatCycle: 'Regular Heat Cycle',
+    dryPeriod: 'Dry Period',
+
+    // Heat Cycle Options
+    regular19days: 'Regular - 19 days',
+    regular20days: 'Regular - 20 days',
+    regular21days: 'Regular - 21 days',
+    regular22days: 'Regular - 22 days',
+    pregnantDue: 'Pregnant - Due 2024-04-15',
+    dryOption: 'Dry period',
+    irregular: 'Irregular',
+  },
+  punjabi: {
+    // App Header
+    appTitle: 'ਡੇਅਰੀ ਫਾਰਮ ਮੈਨੇਜਰ ਪ੍ਰੋ',
+    appSubtitle: 'AI ਨਾਲ ਉੱਨਤ ਫਾਰਮ ਪ੍ਰਬੰਧਨ',
+
+    // Navigation
+    dashboard: 'ਡੈਸ਼ਬੋਰਡ',
+    cattle: 'ਪਸ਼ੂ',
+    records: 'ਰਿਕਾਰਡ',
+    health: 'ਸਿਹਤ',
+    videos: 'ਵੀਡੀਓ',
+
+    // Search & Common
+    search: 'ਨਸਲ, ਪਸ਼ੂ, ਸਮੱਸਿਆਵਾਂ, ਰਿਕਾਰਡ ਖੋਜੋ...',
+    close: 'ਬੰਦ ਕਰੋ',
+    cancel: 'ਰੱਦ ਕਰੋ',
+    save: 'ਸੰਭਾਲੋ',
+    delete: 'ਮਿਟਾਓ',
+    edit: 'ਸੋਧੋ',
+    add: 'ਜੋੜੋ',
+    view: 'ਦੇਖੋ',
+
+    // Language
+    switchLanguage: 'ਅੰਗਰੇਜ਼ੀ ਵਿੱਚ ਬਦਲੋ',
+    selectLanguage: 'ਭਾਸ਼ਾ ਚੁਣੋ',
+
+    // Dashboard Stats
+    totalCattle: 'ਕੁੱਲ ਪਸ਼ੂ',
+    healthyCattle: 'ਤੰਦਰੁਸਤ ਪਸ਼ੂ',
+    milkProduction: 'ਅੱਜ ਦੁੱਧ ਉਤਪਾਦਨ',
+    avgMilkYield: 'ਔਸਤ ਦੁੱਧ/ਪਸ਼ੂ',
+    activeBreeding: 'ਸਰਗਰਮ ਪ੍ਰਜਨਨ',
+    pendingVaccinations: 'ਬਕਾਇਆ ਟੀਕੇ',
+    liters: 'ਲਿਟਰ',
+
+    // Quick Actions
+    quickActions: 'ਤੇਜ਼ ਕਾਰਵਾਈਆਂ',
+    healthMonitor: 'ਸਿਹਤ ਮਾਨੀਟਰ',
+    manageCattle: 'ਪਸ਼ੂ ਪ੍ਰਬੰਧਨ',
+    viewRecords: 'ਰਿਕਾਰਡ ਦੇਖੋ',
+
+    // Cattle Management
+    cattleManagement: 'ਪਸ਼ੂ ਪ੍ਰਬੰਧਨ',
+    addNewCattle: 'ਨਵਾਂ ਪਸ਼ੂ ਜੋੜੋ',
+    cattleList: 'ਪਸ਼ੂ ਸੂਚੀ',
+    breed: 'ਨਸਲ',
+    tagNo: 'ਟੈਗ ਨੰਬਰ',
+    age: 'ਉਮਰ',
+    milkYield: 'ਦੁੱਧ ਉਤਪਾਦਨ',
+    status: 'ਸਥਿਤੀ',
+    actions: 'ਕਾਰਵਾਈਆਂ',
+    healthy: 'ਤੰਦਰੁਸਤ',
+    sick: 'ਬੀਮਾਰ',
+    pregnant: 'ਗਰਭਵਤੀ',
+    dry: 'ਸੁੱਕਾ',
+    years: 'ਸਾਲ',
+
+    // Records
+    breedingHealthRecords: 'ਪਸ਼ੂ ਪ੍ਰਜਨਨ ਅਤੇ ਸਿਹਤ ਰਿਕਾਰਡ',
+    addRecord: 'ਰਿਕਾਰਡ ਜੋੜੋ',
+    addNewRecord: 'ਨਵਾਂ ਰਿਕਾਰਡ ਜੋੜੋ',
+    editRecord: 'ਰਿਕਾਰਡ ਸੋਧੋ',
+    deleteRecord: 'ਰਿਕਾਰਡ ਮਿਟਾਓ',
+    viewDetails: 'ਵੇਰਵੇ ਦੇਖੋ',
+    birthDate: 'ਜਨਮ ਤਾਰੀਖ',
+    motherCode: 'ਮਾਂ ਕੋਡ',
+    fatherName: 'ਪਿਤਾ ਨਾਮ',
+    lactation: 'ਦੁੱਧ ਦੀ ਮਿਆਦ',
+    aiLastCheckup: 'AI (ਆਖਰੀ ਜਾਂਚ)',
+    heatCycle: 'ਗਰਮੀ ਚੱਕਰ',
+    deworming: 'ਕੀੜੇ ਮਾਰੂ ਦਵਾਈ',
+    semenDetail: 'ਵੀਰਜ ਵੇਰਵਾ',
+    totalRecords: 'ਕੁੱਲ ਰਿਕਾਰਡ',
+
+    // Health
+    healthStatus: 'ਸਿਹਤ ਸਥਿਤੀ',
+    healthManagement: 'ਸਿਹਤ ਪ੍ਰਬੰਧਨ',
+    activeAlerts: 'ਸਰਗਰਮ ਚੇਤਾਵਨੀਆਂ',
+    recentCheckups: 'ਹਾਲੀਆ ਜਾਂਚਾਂ',
+    vaccinationsDue: 'ਬਕਾਇਆ ਟੀਕੇ',
+    vaccinationSchedule: 'ਟੀਕਾਕਰਣ ਸਮਾਂ-ਸਾਰਣੀ',
+    healthScore: 'ਸਿਹਤ ਸਕੋਰ',
+    temperature: 'ਤਾਪਮਾਨ',
+    heartRate: 'ਦਿਲ ਦੀ ਧੜਕਣ',
+    respiratoryRate: 'ਸਾਹ ਦਰ',
+    lastCheckup: 'ਆਖਰੀ ਜਾਂਚ',
+    nextCheckup: 'ਅਗਲੀ ਜਾਂਚ',
+    veterinarian: 'ਪਸ਼ੂ ਚਿਕਿਤਸਕ',
+    last: 'ਆਖਰੀ',
+    next: 'ਅगਲਾ',
+
+    // Videos
+    uploadVideo: 'ਵੀਡੀਓ ਅੱਪਲੋਡ ਕਰੋ',
+    videoLibrary: 'ਵੀਡੀਓ ਲਾਇਬ੍ਰੇਰੀ',
+    videoTitle: 'ਵੀਡੀਓ ਸਿਰਲੇਖ',
+    description: 'ਵਰਣਨ',
+    category: 'ਸ਼੍ਰੇਣੀ',
+    videoFile: 'ਵੀਡੀਓ ਫ਼ਾਈਲ',
+    training: 'ਸਿਖਲਾਈ',
+    breeding: 'ਪ੍ਰਜਨਨ',
+    feeding: 'ਖੁਰਾਕ',
+    general: 'ਆਮ',
+    uploadedBy: 'ਅੱਪਲੋਡ ਕੀਤਾ',
+    duration: 'ਮਿਆਦ',
+    views: 'ਦੇਖੇ ਗਏ',
+    likes: 'ਪਸੰਦ',
+
+    // Confirmations
+    deleteConfirm: 'ਕੀ ਤੁਸੀਂ ਇਹ ਰਿਕਾਰਡ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?',
+    saveSuccess: 'ਸਫਲਤਾਪੂਰਵਕ ਸੰਭਾਲਿਆ ਗਿਆ',
+    deleteSuccess: 'ਸਫਲਤਾਪੂਰਵਕ ਮਿਟਾਇਆ ਗਿਆ',
+
+    // Dashboard Specific
+    farmDashboard: 'ਫਾਰਮ ਡੈਸ਼ਬੋਰਡ',
+    currentWeather: 'ਮੌਜੂਦਾ ਮੌਸਮ',
+    humidity: 'ਨਮੀ',
+    conditions: 'ਸਥਿਤੀ',
+    wind: 'ਹਵਾ',
+    dailyProduction: 'ਰੋਜ਼ਾਨਾ ਉਤਪਾਦਨ',
+    feedCompleted: 'ਖੁਰਾਕ ਪੂਰੀ ਹੋਈ',
+    recentAlerts: 'ਹਾਲੀਆ ਚੇਤਾਵਨੀਆਂ',
+
+    // Cattle Table
+    name: 'ਨਾਮ',
+    lastMilked: 'ਆਖਰੀ ਦੁੱਧ ਕੱਢਿਆ',
+    totalMilkToday: 'ਅੱਜ ਕੁੱਲ ਦੁੱਧ',
+    cattleInventory: 'ਪਸ਼ੂ ਸੂਚੀ',
+    dailyYield: 'ਰੋਜ਼ਾਨਾ ਉਤਪਾਦਨ',
+    weight: 'ਭਾਰ',
+    dueDate: 'ਨਿਰਧਾਰਤ ਤਾਰੀਖ',
+    registration: 'ਰਜਿਸਟਰੇਸ਼ਨ',
+    sire: 'ਪਿਤਾ',
+    dam: 'ਮਾਂ',
+
+    // Months
+    january: 'ਜਨਵਰੀ',
+    february: 'ਫਰਵਰੀ',
+    march: 'ਮਾਰਚ',
+    april: 'ਅਪ੍ਰੈਲ',
+    may: 'ਮਈ',
+    june: 'ਜੂਨ',
+    july: 'ਜੁਲਾਈ',
+    august: 'ਅਗਸਤ',
+    september: 'ਸਤੰਬਰ',
+    october: 'ਅਕਤੂਬਰ',
+    november: 'ਨਵੰਬਰ',
+    december: 'ਦਸੰਬਰ',
+
+    // Health Tab Details
+    pregnantCows: 'ਗਰਭਵਤੀ ਪਸ਼ੂ:',
+    expectedCalves: 'ਅਗਲੇ 3 ਮਹੀਨਿਆਂ ਵਿੱਚ ਵੱਛੇ:',
+    activeSires: 'ਸਰਗਰਮ ਸਾਂਡ:',
+    recommendation: 'ਸਿਫਾਰਸ਼:',
+    recommendationText: 'ਗਰਭਵਤੀ ਪਸ਼ੂਆਂ ਲਈ ਵਧੇ ਹੋਏ ਖੁਰਾਕ ਦੀਆਂ ਲੋੜਾਂ ਅਤੇ ਵਿਆਉਣ ਦੀਆਂ ਸਹੂਲਤਾਂ ਦੀ ਯੋਜਨਾ ਬਣਾਓ।',
+    healthyCows: 'ਤੰਦਰੁਸਤ ਪਸ਼ੂ:',
+    dueForCheckup: 'ਜਾਂਚ ਲਈ ਬਕਾਇਆ:',
+    healthRate: 'ਸਿਹਤ ਦਰ:',
+
+    // Records Tab Details
+    regularCycle: 'ਨਿਯਮਤ ਚੱਕਰ',
+    avgLactation: 'ਔਸਤ ਦੁੱਧ ਮਿਆਦ',
+    legend: 'ਲੀਜੰਡ:',
+    lactation12Young: 'ਦੁੱਧ ਮਿਆਦ 1-2 (ਨੌਜਵਾਨ)',
+    lactation34Mature: 'ਦੁੱਧ ਮਿਆਦ 3-4 (ਪਰਿਪੱਕ)',
+    lactation5Senior: 'ਦੁੱਧ ਮਿਆਦ 5+ (ਸੀਨੀਅਰ)',
+    regularHeatCycle: 'ਨਿਯਮਤ ਗਰਮੀ ਚੱਕਰ',
+    dryPeriod: 'ਸੁੱਕੀ ਮਿਆਦ',
+
+    // Heat Cycle Options
+    regular19days: 'ਨਿਯਮਤ - 19 ਦਿਨ',
+    regular20days: 'ਨਿਯਮਤ - 20 ਦਿਨ',
+    regular21days: 'ਨਿਯਮਤ - 21 ਦਿਨ',
+    regular22days: 'ਨਿਯਮਤ - 22 ਦਿਨ',
+    pregnantDue: 'ਗਰਭਵਤੀ - 2024-04-15 ਨੂੰ',
+    dryOption: 'ਸੁੱਕੀ ਮਿਆਦ',
+    irregular: 'ਅਨਿਯਮਿਤ',
+  },
+};

@@ -37,7 +37,12 @@
       "Bash(sort:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(gh run:*)",
+      "Bash(curl:*)",
+      "Bash(paste:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(PYTHONDONTWRITEBYTECODE=1 python -m pytest:*)"
     ],
     "deny": [],
     "ask": []
