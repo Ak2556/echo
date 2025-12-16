@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect, useRef, useCallback, memo } from 'react';
+import { useState, useEffect, useRef, useCallback, memo, useMemo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useResponsive } from '@/hooks/useResponsive';
 import { spacing, borderRadius } from '@/lib/design-system';
@@ -164,8 +164,13 @@ const PostCard = memo(function PostCard({
   return (
     <div
       ref={ref as React.RefObject<HTMLDivElement>}
-      className="nothing-widget modern-card hover-lift transition-smooth"
+      className="modern-card transition-smooth"
       style={{
+        background: 'rgba(var(--bg-rgb,17,24,39),0.72)',
+        border: `1px solid ${colors.border}`,
+        borderRadius: '16px',
+        padding: '1.25rem',
+        boxShadow: '0 14px 45px rgba(0,0,0,0.28)',
         opacity: hasBeenInView ? 1 : 0,
         transform: hasBeenInView ? 'translateY(0)' : 'translateY(20px)',
         transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
@@ -320,9 +325,20 @@ const PostCard = memo(function PostCard({
         )}
 
         {/* Tags */}
-        <div className="post-tags">
+        <div className="post-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {post.tags.map((tag: string, tagIndex: number) => (
-            <span key={tagIndex} className="tag">
+            <span
+              key={tagIndex}
+              className="tag"
+              style={{
+                padding: '6px 10px',
+                borderRadius: '999px',
+                background: 'rgba(var(--accent-rgb,99,102,241),0.12)',
+                color: 'var(--accent,#8b5cf6)',
+                fontWeight: 600,
+                border: `1px solid ${colors.border}`,
+              }}
+            >
               {tag}
             </span>
           ))}
@@ -330,10 +346,17 @@ const PostCard = memo(function PostCard({
       </div>
 
       {/* Feed Stats */}
-      <div className="feed-stats">
-        <span className="stat">
-          ❤️ {post.stats.likes.toLocaleString()} likes
-        </span>
+      <div
+        className="feed-stats"
+        style={{
+          display: 'flex',
+          gap: '1rem',
+          color: 'var(--muted)',
+          fontWeight: 600,
+          marginTop: '0.75rem',
+        }}
+      >
+        <span className="stat">❤️ {post.stats.likes.toLocaleString()} likes</span>
         <span className="stat">💬 {post.stats.comments} comments</span>
         <span className="stat">🔄 {post.stats.shares} shares</span>
       </div>
@@ -342,7 +365,8 @@ const PostCard = memo(function PostCard({
       <div
         className="feed-actions"
         style={{
-          display: 'flex',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, minmax(0,1fr))',
           gap: '0.75rem',
           paddingTop: '1rem',
           borderTop: `1px solid ${colors.border}`,
@@ -352,25 +376,23 @@ const PostCard = memo(function PostCard({
           className={`action-btn transition-smooth hover-scale focus-ring ${post.liked ? 'liked' : ''}`}
           onClick={handleLike}
           style={{
-            flex: 1,
             padding: '0.75rem',
-            borderRadius: 'var(--radius-md)',
-            background: post.liked
-              ? colors.bgSecondary
-              : colors.bgSecondary,
+            borderRadius: '12px',
+            background: post.liked ? 'rgba(239,68,68,0.12)' : 'rgba(255,255,255,0.03)',
             border: post.liked
-              ? `2px solid ${colors.status.error}`
-              : '2px solid transparent',
+              ? `1px solid ${colors.status.error}`
+              : `1px solid ${colors.border}`,
             color: post.liked ? colors.status.error : 'var(--fg)',
-            fontWeight: 600,
+            fontWeight: 700,
             position: 'relative',
             overflow: 'hidden',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
           }}
         >
           {likeRippleElements}
           ❤️ Like
         </button>
-        <div style={{ position: 'relative', flex: 1 }}>
+        <div style={{ position: 'relative' }}>
           <button
             ref={commentButtonRef}
             className="action-btn transition-smooth hover-scale focus-ring"
@@ -378,12 +400,13 @@ const PostCard = memo(function PostCard({
             style={{
               width: '100%',
               padding: '0.75rem',
-              borderRadius: 'var(--radius-md)',
-              background: 'var(--bg-secondary)',
-              border: '2px solid transparent',
-              fontWeight: 600,
+              borderRadius: '12px',
+              background: 'rgba(255,255,255,0.03)',
+              border: `1px solid ${colors.border}`,
+              fontWeight: 700,
               position: 'relative',
               overflow: 'hidden',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
             }}
           >
             {commentRippleElements}
@@ -402,14 +425,14 @@ const PostCard = memo(function PostCard({
           className="action-btn transition-smooth hover-scale focus-ring"
           onClick={handleShare}
           style={{
-            flex: 1,
             padding: '0.75rem',
-            borderRadius: 'var(--radius-md)',
-            background: 'var(--bg-secondary)',
-            border: '2px solid transparent',
-            fontWeight: 600,
+            borderRadius: '12px',
+            background: 'rgba(255,255,255,0.03)',
+            border: `1px solid ${colors.border}`,
+            fontWeight: 700,
             position: 'relative',
             overflow: 'hidden',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
           }}
         >
           {shareRippleElements}
@@ -787,6 +810,12 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const sentinelRef = useRef<HTMLDivElement>(null);
+
+  // Client-side filters and sorting
+  const [filter, setFilter] = useState<'all' | 'photos' | 'videos' | 'polls'>(
+    'all'
+  );
+  const [sort, setSort] = useState<'latest' | 'popular'>('latest');
 
   // Interaction hooks
   const haptic = useHaptic();
@@ -1373,27 +1402,32 @@ export default function FeedPage() {
     [isPulling]
   );
 
+  const refreshFeed = useCallback(async () => {
+    setIsRefreshing(true);
+    haptic('medium');
+
+    // Simulate refresh
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    // Reload posts (in real app, fetch from API)
+    setPosts([...feedPosts]);
+    setPage(1);
+    setHasMore(true);
+
+    setIsRefreshing(false);
+    haptic('light');
+    setPullDistance(0);
+  }, [haptic]);
+
   const handleTouchEnd = useCallback(async () => {
     setIsPulling(false);
 
     if (pullDistance > 80) {
-      setIsRefreshing(true);
-      haptic('medium');
-
-      // Simulate refresh
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Reload posts (in real app, fetch from API)
-      setPosts([...feedPosts]);
-      setPage(1);
-      setHasMore(true);
-
-      setIsRefreshing(false);
-      haptic('light');
+      await refreshFeed();
     }
 
     setPullDistance(0);
-  }, [pullDistance, haptic]);
+  }, [pullDistance, refreshFeed]);
 
   // Infinite scroll handler
   const loadMorePosts = useCallback(async () => {
@@ -1440,6 +1474,40 @@ export default function FeedPage() {
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [hasMore, isLoadingMore, loadMorePosts]);
+
+  // Filter and sort posts without mutating original state
+  const filteredPosts = useMemo(() => {
+    const matchesFilter = (post: any) => {
+      if (filter === 'photos') {
+        return (
+          post.media &&
+          (post.media.type === 'image' ||
+            post.media.type === 'carousel' ||
+            post.media.type === 'carousel' // carousel
+          )
+        );
+      }
+      if (filter === 'videos') {
+        return post.media && post.media.type === 'video';
+      }
+      if (filter === 'polls') {
+        return !!post.poll;
+      }
+      return true;
+    };
+
+    const sorted = posts
+      .filter(matchesFilter)
+      .slice()
+      .sort((a, b) => {
+        if (sort === 'popular') {
+          return (b.stats?.likes || 0) - (a.stats?.likes || 0);
+        }
+        return b.id - a.id; // latest by id
+      });
+
+    return sorted;
+  }, [posts, filter, sort]);
 
   const containerPadding = isMobile ? spacing[3] : spacing[6];
   const titleSize = isMobile ? '1.5rem' : '2rem';
@@ -1507,6 +1575,80 @@ export default function FeedPage() {
         >
           {t('feed.yourFeed')}
         </h2>
+
+        {/* Quick filters */}
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '0.5rem',
+            marginBottom: spacing[4],
+            padding: isMobile ? `0 ${spacing[2]}` : 0,
+          }}
+        >
+          {[
+            { key: 'all', label: 'All' },
+            { key: 'photos', label: 'Photos' },
+            { key: 'videos', label: 'Videos' },
+            { key: 'polls', label: 'Polls' },
+          ].map((item) => (
+            <button
+              key={item.key}
+              onClick={() =>
+                setFilter(item.key as 'all' | 'photos' | 'videos' | 'polls')
+              }
+              className="nothing-button"
+              style={{
+                padding: '0.4rem 0.75rem',
+                borderRadius: '999px',
+                border:
+                  filter === item.key
+                    ? `2px solid ${colors.accent}`
+                    : '1px solid var(--border)',
+                background:
+                  filter === item.key ? 'var(--bg-secondary)' : 'var(--bg)',
+                fontWeight: 600,
+                fontSize: '0.85rem',
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
+
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem' }}>
+            {[
+              { key: 'latest', label: 'Latest' },
+              { key: 'popular', label: 'Popular' },
+            ].map((item) => (
+              <button
+                key={item.key}
+                onClick={() => setSort(item.key as 'latest' | 'popular')}
+                className="nothing-button"
+                style={{
+                  padding: '0.4rem 0.75rem',
+                  borderRadius: '999px',
+                  border:
+                    sort === item.key
+                      ? `2px solid ${colors.accent}`
+                      : '1px solid var(--border)',
+                  background:
+                    sort === item.key ? 'var(--bg-secondary)' : 'var(--bg)',
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                }}
+              >
+                {item.label}
+              </button>
+            ))}
+            <button
+              onClick={refreshFeed}
+              className="nothing-button"
+              style={{ padding: '0.4rem 0.75rem', fontWeight: 600 }}
+            >
+              ⟳ Refresh
+            </button>
+          </div>
+        </div>
 
         {/* Stories Carousel */}
         <div
@@ -2182,7 +2324,7 @@ export default function FeedPage() {
           className="nothing-grid custom-scrollbar"
           style={{ gridTemplateColumns: '1fr', gap: '1.5rem' }}
         >
-          {posts.map((post, index) => (
+          {filteredPosts.map((post, index) => (
             <PostCard
               key={post.id}
               post={post}
@@ -2222,7 +2364,7 @@ export default function FeedPage() {
           )}
 
           {/* End of Feed */}
-          {!hasMore && posts.length > 0 && (
+          {!hasMore && filteredPosts.length > 0 && (
             <div
               style={{
                 padding: '2rem',
@@ -2236,6 +2378,13 @@ export default function FeedPage() {
                 Come back later for more updates
               </p>
             </div>
+          )}
+
+          {filteredPosts.length === 0 && (
+            <NoPostsEmptyState
+              title="No posts match this filter"
+              description="Try changing filters or refresh the feed."
+            />
           )}
         </div>
       </div>

@@ -24,6 +24,9 @@ import { useResponsive } from '@/hooks/useResponsive';
 import { MobileNav } from './navigation/MobileNav';
 import { FeedSkeleton, PageSkeleton } from './ui/Skeleton';
 import { NavigationRail } from './navigation/NavigationRail';
+import MessagesPage from './ProductionMessagesPage';
+import FloatingShapes from './3d/FloatingShapes';
+import { FloatingCube } from './3d/Micro3D';
 
 // Dynamic imports for better performance
 const SocialMediaHub = dynamic(() => import('./SocialMediaHub'), {
@@ -38,7 +41,6 @@ const DiscoverPage = dynamic(() => import('./DiscoverPage'));
 const ShopPage = dynamic(() => import('./ShopPage'));
 const TuitionPage = dynamic(() => import('./TuitionPage'));
 const LivePage = dynamic(() => import('./LivePage'));
-const MessagesPage = dynamic(() => import('./ProductionMessagesPage'));
 const SettingsPage = dynamic(() => import('./SettingsPage'));
 const ProfilePage = dynamic(() => import('./ProfilePage'));
 const AiChat = dynamic(() => import('./AiChat'), {
@@ -149,9 +151,13 @@ function MainAppContent({ onOpenMiniApp }: MainAppProps) {
           background: 'linear-gradient(135deg, var(--accent), #9c44ff)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
         }}
       >
-        📱 Echo Social
+        <FloatingCube size={32} color="#4dabf7" speed={0.8} />
+        Echo Social
       </h1>
       <div style={{ display: 'flex', gap: '0.5rem' }}>
         <NotificationBell />
@@ -160,11 +166,36 @@ function MainAppContent({ onOpenMiniApp }: MainAppProps) {
     </header>
   );
 
+  const shellBackground = {
+    background:
+      'radial-gradient(circle at 20% 20%, rgba(99,102,241,0.08), transparent 35%), radial-gradient(circle at 80% 0%, rgba(14,165,233,0.08), transparent 30%), var(--echo-bg-primary)',
+  };
+
   return (
-    <div className="flex h-screen overflow-hidden bg-[var(--echo-bg-primary)]">
+    <div
+      className="flex h-screen overflow-hidden"
+      style={{ ...shellBackground, position: 'relative' }}
+      data-shell="app-shell"
+    >
+      {/* Floating 3D Shapes Background */}
+      <FloatingShapes
+        count={12}
+        colors={['#4dabf7', '#51cf66', '#845ef7', '#ffd43b']}
+        speed={0.3}
+        size={0.25}
+        opacity={0.15}
+      />
+
       {/* Desktop Navigation Rail - Hidden on Mobile/Tablet */}
       {!isMobile && !isTablet && (
-        <div className="flex-shrink-0">
+        <div
+          className="flex-shrink-0"
+          style={{
+            borderRight: '1px solid var(--border)',
+            backdropFilter: 'blur(12px)',
+            backgroundColor: 'rgba(var(--bg-rgb, 17,24,39), 0.6)',
+          }}
+        >
           <NavigationRail
             activeRoute={currentRoute}
             onNavigate={navigate}
@@ -180,13 +211,29 @@ function MainAppContent({ onOpenMiniApp }: MainAppProps) {
         {(isMobile || isTablet) && mobileHeader}
 
         {/* Page Content with Wave Animation */}
-        <main className="flex-1 overflow-y-auto">
-          <div
-            className={`echo-animate-wave-in ${
-              currentRoute === 'feed' || currentRoute === 'messages' ? '' : 'p-6'
-            }`}
-          >
-            {renderContent()}
+        <main
+          className="flex-1 overflow-y-auto"
+          style={{
+            backdropFilter: 'blur(6px)',
+          }}
+        >
+          <div className="max-w-6xl mx-auto w-full px-4 md:px-8 py-6">
+            <div
+              className={`echo-animate-wave-in ${
+                currentRoute === 'feed' || currentRoute === 'messages'
+                  ? ''
+                  : 'p-4 md:p-6'
+              }`}
+              style={{
+                background: 'rgba(var(--bg-rgb, 17,24,39), 0.6)',
+                borderRadius: '16px',
+                border: '1px solid var(--border)',
+                boxShadow:
+                  '0 10px 40px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.04)',
+              }}
+            >
+              {renderContent()}
+            </div>
           </div>
         </main>
       </div>

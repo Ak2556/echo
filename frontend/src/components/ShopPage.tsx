@@ -19,6 +19,7 @@ import CartSidebar from './CartSidebar';
 import CheckoutPage from './CheckoutPage';
 import ProductDetailPage from './ProductDetailPage';
 import { PRODUCTS as SAMPLE_PRODUCTS, CATEGORIES } from '@/data/products';
+import HoverCard3D from './3d/HoverCard3D';
 
 /* OLD PRODUCT DATA REMOVED - NOW IMPORTED FROM /src/data/products.ts */
 
@@ -520,18 +521,23 @@ export default function ShopPage() {
           }}
         >
           {sortedProducts.map((product, index) => (
-            <div
+            <HoverCard3D
               key={product.id}
-              onClick={() => setSelectedProduct(product)}
-              className="modern-card hover-lift transition-smooth focus-ring animate-fade-in-up"
-              style={{
-                overflow: 'hidden',
-                cursor: 'pointer',
-                animationDelay: `${index * 0.05}s`,
-                animationFillMode: 'backwards',
-                position: 'relative',
-              }}
+              intensity={10}
+              glowColor="rgba(77, 171, 247, 0.2)"
+              enableGlow
             >
+              <div
+                onClick={() => setSelectedProduct(product)}
+                className="modern-card hover-lift transition-smooth focus-ring animate-fade-in-up"
+                style={{
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  animationDelay: `${index * 0.05}s`,
+                  animationFillMode: 'backwards',
+                  position: 'relative',
+                }}
+              >
               {/* Product Image */}
               <div
                 style={{
@@ -802,6 +808,7 @@ export default function ShopPage() {
                 </button>
               </div>
             </div>
+            </HoverCard3D>
           ))}
         </div>
 
