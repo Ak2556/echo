@@ -1,0 +1,12 @@
+{
+  "name": "echo-main",
+  "version": "1.0.0",
+  "description": "A simple echo application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["echo"],
+  "author": "",
+  "license": "MIT"
+}
