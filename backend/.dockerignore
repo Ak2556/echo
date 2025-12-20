@@ -1,0 +1,87 @@
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info
+dist
+build
+eggs
+.eggs
+lib
+lib64
+parts
+sdist
+var
+wheels
+pip-wheel-metadata
+*.manifest
+*.spec
+
+# Virtual environments
+venv
+env
+ENV
+.venv
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov
+.tox
+.hypothesis
+coverage.xml
+*.cover
+.cache
+nosetests.xml
+
+# Environment files
+.env
+.env.local
+.env.test
+.env.production
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+azure-pipelines.yml
+
+# Documentation
+README.md
+CHANGELOG.md
+docs
+*.md
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs
+
+# Misc
+.pylintrc
+.flake8
+.mypy_cache
+.bandit
+setup.py
+requirements-dev.txt
+Makefile

@@ -1,0 +1,427 @@
+name: Code Quality
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  push:
+    branches: [ main, develop ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  workflow_dispatch:
+
+# Cancel in-progress runs for the same workflow and ref
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20.x'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  code-quality:
+    name: Code Quality Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for SonarCloud
+
+      # =========================================================================
+      # FRONTEND CODE QUALITY
+      # =========================================================================
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Run ESLint with detailed output
+        working-directory: ./frontend
+        continue-on-error: false
+        run: |
+          # Generate JSON report for later processing
+          npm run lint -- \
+            --format=json \
+            --output-file=eslint-report.json || true
+
+          # Run ESLint and fail if errors found
+          npm run lint -- \
+            --format=stylish \
+            --max-warnings=10 || (echo "::error::ESLint found issues. Fix them before merging." && exit 1)
+
+      - name: Run Prettier check
+        working-directory: ./frontend
+        continue-on-error: false
+        run: |
+          npx prettier --check "src/**/*.{ts,tsx,js,jsx,json,css,scss}" || \
+          (echo "::error::Prettier formatting issues found. Run 'npm run format' to fix." && exit 1)
+
+      - name: TypeScript type coverage
+        working-directory: ./frontend
+        continue-on-error: false
+        run: |
+          echo "## TypeScript Type Coverage" >> $GITHUB_STEP_SUMMARY
+          npx tsc --noEmit --pretty 2>&1 | tee typescript-report.txt
+
+          # Count errors
+          ERROR_COUNT=$(grep -c "error TS" typescript-report.txt || echo "0")
+          echo "**Errors Found:** $ERROR_COUNT" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$ERROR_COUNT" -gt "0" ]; then
+            echo "::error::Found $ERROR_COUNT TypeScript errors"
+            exit 1
+          fi
+
+      # =========================================================================
+      # BACKEND CODE QUALITY
+      # =========================================================================
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/pyproject.toml
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install --no-cache-dir -r requirements.txt
+          # Install dev dependencies
+          pip install --no-cache-dir pytest>=7.4.3 pytest-asyncio>=0.21.1 pytest-anyio>=4.0.0 pytest-cov>=4.1.0 pytest-mock>=3.12.0 pytest-timeout>=2.2.0 black>=23.11.0 isort>=5.12.0 flake8>=6.1.0 mypy>=1.7.1
+          pip install --no-cache-dir pylint bandit radon safety vulture
+          # Install package (non-editable) for proper imports
+          pip install --no-cache-dir --no-deps .
+
+      - name: Run Pylint with scoring
+        working-directory: ./backend
+        continue-on-error: false
+        run: |
+          echo "## Python Code Quality (Pylint)" >> $GITHUB_STEP_SUMMARY
+
+          # Run pylint and get score
+          pylint app \
+            --output-format=json:pylint-report.json,text:pylint.txt \
+            --fail-under=7.0 \
+            --max-line-length=100 \
+            --disable=C0111,R0903 || true
+
+          cat pylint.txt >> $GITHUB_STEP_SUMMARY || true
+
+          # Extract and check score
+          SCORE=$(grep "Your code has been rated" pylint.txt | grep -oP '[\d.]+(?=/10)' || echo "0")
+          echo "**Pylint Score:** $SCORE/10" >> $GITHUB_STEP_SUMMARY
+
+          if (( $(echo "$SCORE < 7.0" | bc -l) )); then
+            echo "::warning::Pylint score ($SCORE) is below threshold (7.0)"
+          fi
+
+      - name: Run Bandit security checks
+        working-directory: ./backend
+        continue-on-error: false
+        run: |
+          echo "## 🔒 Security Issues (Bandit)" >> $GITHUB_STEP_SUMMARY
+
+          # Run bandit and save results
+          bandit -r app \
+            -f json \
+            -o bandit-report.json \
+            --severity-level medium \
+            --confidence-level medium || true
+
+          # Display results
+          bandit -r app --format=screen || true
+
+          # Check for high severity issues
+          HIGH_ISSUES=$(jq '[.results[] | select(.issue_severity == "HIGH")] | length' bandit-report.json)
+          echo "**High Severity Issues:** $HIGH_ISSUES" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$HIGH_ISSUES" -gt "0" ]; then
+            echo "::error::Found $HIGH_ISSUES high severity security issues"
+            exit 1
+          fi
+
+      - name: Calculate code complexity
+        working-directory: ./backend
+        continue-on-error: false
+        run: |
+          echo "## 📊 Code Complexity Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "### Cyclomatic Complexity" >> $GITHUB_STEP_SUMMARY
+
+          # Run complexity analysis
+          radon cc app -a -s -j > complexity-cc.json || true
+          radon cc app -a -s --total-average >> $GITHUB_STEP_SUMMARY || true
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Maintainability Index" >> $GITHUB_STEP_SUMMARY
+          radon mi app -s -j > complexity-mi.json || true
+          radon mi app -s >> $GITHUB_STEP_SUMMARY || true
+
+          # Check for high complexity functions
+          HIGH_COMPLEXITY=$(radon cc app -n C -j | jq 'length' || echo "0")
+          if [ "$HIGH_COMPLEXITY" -gt "5" ]; then
+            echo "::warning::Found $HIGH_COMPLEXITY functions with high complexity (C or worse)"
+          fi
+
+      - name: Find dead code
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          echo "## 🧹 Dead Code Analysis (Vulture)" >> $GITHUB_STEP_SUMMARY
+          vulture app --min-confidence 90 > vulture-report.txt || true
+
+          if [ -s vulture-report.txt ]; then
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat vulture-report.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
+            LINE_COUNT=$(wc -l < vulture-report.txt)
+            if [ "$LINE_COUNT" -gt "20" ]; then
+              echo "::warning::Found $LINE_COUNT potential dead code instances"
+            fi
+          else
+            echo "✅ No dead code found!" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      # =========================================================================
+      # SONARCLOUD ANALYSIS
+      # =========================================================================
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=ak2556
+            -Dsonar.projectKey=echo-social-platform
+            -Dsonar.sources=frontend/src,backend/app
+            -Dsonar.tests=frontend/src/__tests__,backend/tests
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/.next/**,**/migrations/**
+            -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
+            -Dsonar.python.coverage.reportPaths=backend/coverage.xml
+            -Dsonar.python.version=3.11,3.12
+            -Dsonar.typescript.tsconfigPath=frontend/tsconfig.json
+
+      # =========================================================================
+      # CODE DUPLICATION ANALYSIS
+      # =========================================================================
+      - name: Check code duplication (Frontend)
+        working-directory: ./frontend
+        continue-on-error: true
+        run: |
+          echo "## 📋 Code Duplication (Frontend)" >> $GITHUB_STEP_SUMMARY
+
+          # Run duplication check
+          npx jscpd src --min-lines 10 --min-tokens 50 --format json --output jscpd-report.json || true
+
+          # Display summary
+          if [ -f "jscpd-report.json" ]; then
+            DUPLICATION=$(jq -r '.statistics.total.percentage' jscpd-report.json || echo "0")
+            echo "**Duplication Percentage:** $DUPLICATION%" >> $GITHUB_STEP_SUMMARY
+
+            if (( $(echo "$DUPLICATION > 5.0" | bc -l) )); then
+              echo "::warning::Code duplication ($DUPLICATION%) exceeds threshold (5%)"
+            fi
+          fi
+
+          npx jscpd src --min-lines 10 --min-tokens 50 >> $GITHUB_STEP_SUMMARY || echo "✅ No significant duplication found" >> $GITHUB_STEP_SUMMARY
+
+      # =========================================================================
+      # UPLOAD REPORTS
+      # =========================================================================
+      - name: Upload code quality reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: code-quality-reports-${{ github.sha }}
+          path: |
+            frontend/eslint-report.json
+            frontend/typescript-report.txt
+            frontend/jscpd-report.json
+            backend/pylint-report.json
+            backend/pylint.txt
+            backend/bandit-report.json
+            backend/complexity-cc.json
+            backend/complexity-mi.json
+            backend/vulture-report.txt
+          retention-days: 30
+
+      # =========================================================================
+      # COMMENT ON PR
+      # =========================================================================
+      - name: Comment PR with quality report
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        continue-on-error: true
+        with:
+          script: |
+            const fs = require('fs');
+            let comment = '## 📊 Code Quality Report\n\n';
+
+            // Add ESLint results
+            try {
+              const eslint = JSON.parse(fs.readFileSync('frontend/eslint-report.json', 'utf8'));
+              const errors = eslint.reduce((sum, file) => sum + file.errorCount, 0);
+              const warnings = eslint.reduce((sum, file) => sum + file.warningCount, 0);
+              comment += `### Frontend (ESLint)\n`;
+              comment += `- ❌ Errors: ${errors}\n`;
+              comment += `- ⚠️ Warnings: ${warnings}\n\n`;
+            } catch (e) {}
+
+            // Add Pylint results
+            try {
+              const pylint = fs.readFileSync('backend/pylint.txt', 'utf8');
+              const scoreMatch = pylint.match(/Your code has been rated at ([\d.]+)\/10/);
+              if (scoreMatch) {
+                const score = parseFloat(scoreMatch[1]);
+                const emoji = score >= 8 ? '✅' : score >= 6 ? '⚠️' : '❌';
+                comment += `### Backend (Pylint)\n`;
+                comment += `${emoji} Score: ${score}/10\n\n`;
+              }
+            } catch (e) {}
+
+            comment += '---\n*Detailed reports are available in the workflow artifacts.*';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  # ===========================================================================
+  # DEPENDENCY SECURITY AUDIT
+  # ===========================================================================
+  dependency-audit:
+    name: Dependency Security Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Audit npm dependencies
+        working-directory: ./frontend
+        continue-on-error: true
+        run: |
+          echo "## NPM Audit Results" >> $GITHUB_STEP_SUMMARY
+          npm audit --production --json > npm-audit.json || true
+          npm audit --production || echo "Vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: |
+          pip install -r requirements.txt
+          pip install safety pip-audit
+
+      - name: Audit Python dependencies with Safety
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          echo "## Python Safety Audit" >> $GITHUB_STEP_SUMMARY
+          safety check --json > safety-report.json || true
+          safety check --full-report || echo "Vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+
+      - name: Audit Python dependencies with pip-audit
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          echo "## Pip Audit Results" >> $GITHUB_STEP_SUMMARY
+          pip-audit --format=json > pip-audit.json || true
+          pip-audit || echo "Vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload audit reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-audit-reports-${{ github.sha }}
+          path: |
+            frontend/npm-audit.json
+            backend/safety-report.json
+            backend/pip-audit.json
+          retention-days: 30
+
+  # ===========================================================================
+  # LICENSE COMPLIANCE
+  # ===========================================================================
+  license-check:
+    name: License Compliance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install license-checker
+        run: npm install -g license-checker
+
+      - name: Check Frontend licenses
+        working-directory: ./frontend
+        continue-on-error: true
+        run: |
+          npm ci --prefer-offline
+          echo "## Frontend License Compliance" >> $GITHUB_STEP_SUMMARY
+          license-checker --json > licenses.json || true
+          license-checker --summary >> $GITHUB_STEP_SUMMARY || true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Check Backend licenses
+        working-directory: ./backend
+        continue-on-error: true
+        run: |
+          pip install pip-licenses
+          echo "## Backend License Compliance" >> $GITHUB_STEP_SUMMARY
+          pip-licenses --format=json > licenses.json || true
+          pip-licenses --summary >> $GITHUB_STEP_SUMMARY || true
+
+      - name: Upload license reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-reports-${{ github.sha }}
+          path: |
+            frontend/licenses.json
+            backend/licenses.json
+          retention-days: 90

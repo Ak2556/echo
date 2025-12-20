@@ -1,0 +1,164 @@
+/* Global Accessibility Styles */
+
+/* Apply global font size from appearance settings */
+:root {
+  --global-font-size: 16px;
+  --animation-duration: 300ms;
+  --transition-duration: 200ms;
+}
+
+/* Apply font size scaling globally */
+body {
+  font-size: var(--global-font-size);
+  font-weight: 500; /* Ensure minimum medium weight for readability */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scale all text elements proportionally */
+h1 { font-size: calc(var(--global-font-size) * 2.5); font-weight: 800; }
+h2 { font-size: calc(var(--global-font-size) * 2); font-weight: 700; }
+h3 { font-size: calc(var(--global-font-size) * 1.75); font-weight: 700; }
+h4 { font-size: calc(var(--global-font-size) * 1.5); font-weight: 600; }
+h5 { font-size: calc(var(--global-font-size) * 1.25); font-weight: 600; }
+h6 { font-size: calc(var(--global-font-size) * 1.1); font-weight: 600; }
+
+/* Ensure readable font weights for all elements */
+p, span, div, a, button, input, textarea, select, label {
+  font-size: inherit;
+  font-weight: 500; /* Minimum medium weight for better readability */
+}
+
+/* Enforce minimum font sizes for critical UI elements */
+button,
+.btn,
+input,
+select,
+textarea {
+  min-height: 36px; /* Touch-friendly size */
+  font-size: max(14px, var(--global-font-size)); /* Never smaller than 14px */
+  font-weight: 500;
+}
+
+/* Ensure labels are always readable */
+label {
+  font-size: max(14px, var(--global-font-size));
+  font-weight: 600;
+  color: var(--theme-text);
+}
+
+/* Navigation text must be readable */
+nav,
+nav a,
+nav button,
+nav span {
+  font-weight: 600;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Apply reduced motion when enabled in settings */
+[data-reduced-motion="true"] *,
+[data-reduced-motion="true"] *::before,
+[data-reduced-motion="true"] *::after {
+  animation-duration: var(--animation-duration) !important;
+  transition-duration: var(--transition-duration) !important;
+}
+
+/* High Contrast Mode */
+[data-high-contrast="true"] {
+  --contrast-multiplier: 1.5;
+}
+
+[data-high-contrast="true"] body {
+  filter: contrast(1.2);
+}
+
+[data-high-contrast="true"] * {
+  border-width: 2px !important;
+}
+
+[data-high-contrast="true"] button:focus,
+[data-high-contrast="true"] a:focus,
+[data-high-contrast="true"] input:focus,
+[data-high-contrast="true"] textarea:focus,
+[data-high-contrast="true"] select:focus {
+  outline: 3px solid currentColor !important;
+  outline-offset: 3px !important;
+}
+
+/* Enhanced focus indicators for accessibility */
+:focus-visible {
+  outline: 2px solid var(--theme-primary, #3b82f6);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Improve text readability */
+[data-high-contrast="true"] p,
+[data-high-contrast="true"] span,
+[data-high-contrast="true"] div,
+[data-high-contrast="true"] label {
+  font-weight: 600 !important; /* Increased to semibold for high contrast */
+}
+
+[data-high-contrast="true"] h1,
+[data-high-contrast="true"] h2,
+[data-high-contrast="true"] h3,
+[data-high-contrast="true"] h4,
+[data-high-contrast="true"] h5,
+[data-high-contrast="true"] h6 {
+  font-weight: 900 !important; /* Extra bold for headings */
+}
+
+/* Ensure sufficient color contrast */
+[data-high-contrast="true"] a {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  font-weight: 600;
+}
+
+/* Better button visibility in high contrast */
+[data-high-contrast="true"] button {
+  font-weight: 700 !important; /* Bold for buttons */
+  border: 2px solid currentColor !important;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip to main content link */
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--theme-primary, #3b82f6);
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  z-index: 100;
+}
+
+.skip-to-main:focus {
+  top: 0;
+}

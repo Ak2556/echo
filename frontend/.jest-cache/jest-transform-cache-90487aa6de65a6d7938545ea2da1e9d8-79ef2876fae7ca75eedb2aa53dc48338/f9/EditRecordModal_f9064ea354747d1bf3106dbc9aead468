@@ -1,0 +1,314 @@
+0dbcefa22b166c3d1b2642cabe8eed45
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return EditRecordModal;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const _react = /*#__PURE__*/ _interop_require_wildcard(require("react"));
+function _getRequireWildcardCache(nodeInterop) {
+    if (typeof WeakMap !== "function") return null;
+    var cacheBabelInterop = new WeakMap();
+    var cacheNodeInterop = new WeakMap();
+    return (_getRequireWildcardCache = function(nodeInterop) {
+        return nodeInterop ? cacheNodeInterop : cacheBabelInterop;
+    })(nodeInterop);
+}
+function _interop_require_wildcard(obj, nodeInterop) {
+    if (!nodeInterop && obj && obj.__esModule) {
+        return obj;
+    }
+    if (obj === null || typeof obj !== "object" && typeof obj !== "function") {
+        return {
+            default: obj
+        };
+    }
+    var cache = _getRequireWildcardCache(nodeInterop);
+    if (cache && cache.has(obj)) {
+        return cache.get(obj);
+    }
+    var newObj = {
+        __proto__: null
+    };
+    var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+    for(var key in obj){
+        if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+            var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+            if (desc && (desc.get || desc.set)) {
+                Object.defineProperty(newObj, key, desc);
+            } else {
+                newObj[key] = obj[key];
+            }
+        }
+    }
+    newObj.default = obj;
+    if (cache) {
+        cache.set(obj, newObj);
+    }
+    return newObj;
+}
+function EditRecordModal({ visible, record, language, onClose, onSave }) {
+    const [form, setForm] = (0, _react.useState)({});
+    (0, _react.useEffect)(()=>{
+        if (visible && record) {
+            setForm(record);
+        } else if (!visible) {
+            setForm({});
+        }
+    }, [
+        visible,
+        record
+    ]);
+    if (!visible) return null;
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)("div", {
+        style: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+        },
+        onClick: onClose,
+        children: /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+            style: {
+                background: 'var(--bg)',
+                padding: '1.5rem',
+                borderRadius: 12,
+                maxWidth: 700,
+                width: '95%'
+            },
+            onClick: (e)=>e.stopPropagation(),
+            children: [
+                /*#__PURE__*/ (0, _jsxruntime.jsx)("h3", {
+                    style: {
+                        margin: '0 0 1rem 0'
+                    },
+                    children: language === 'english' ? 'Edit Cattle Record' : 'ਰਿਕਾਰਡ ਸੋਧੋ'
+                }),
+                !record ? /*#__PURE__*/ (0, _jsxruntime.jsx)("div", {
+                    children: language === 'english' ? 'Loading record...' : 'ਰਿਕਾਰਡ ਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...'
+                }) : /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                    style: {
+                        display: 'grid',
+                        gap: '0.75rem'
+                    },
+                    children: [
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            style: {
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '0.5rem'
+                            },
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)("input", {
+                                    value: form.breed ?? '',
+                                    onChange: (e)=>setForm((p)=>({
+                                                ...p,
+                                                breed: e.target.value
+                                            })),
+                                    placeholder: language === 'english' ? 'Breed' : 'ਨਸਲ',
+                                    style: {
+                                        padding: '0.5rem'
+                                    }
+                                }),
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)("input", {
+                                    value: form.tagNo ?? '',
+                                    onChange: (e)=>setForm((p)=>({
+                                                ...p,
+                                                tagNo: e.target.value
+                                            })),
+                                    placeholder: language === 'english' ? 'Tag No.' : 'ਟੈਗ ਨੰਬਰ',
+                                    style: {
+                                        padding: '0.5rem'
+                                    }
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            style: {
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '0.5rem'
+                            },
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)("input", {
+                                    value: form.birthDate ?? '',
+                                    onChange: (e)=>setForm((p)=>({
+                                                ...p,
+                                                birthDate: e.target.value
+                                            })),
+                                    type: "date",
+                                    style: {
+                                        padding: '0.5rem'
+                                    }
+                                }),
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)("input", {
+                                    value: form.motherCode ?? '',
+                                    onChange: (e)=>setForm((p)=>({
+                                                ...p,
+                                                motherCode: e.target.value
+                                            })),
+                                    placeholder: language === 'english' ? 'Mother Code' : 'ਮਾਂ ਕੋਡ',
+                                    style: {
+                                        padding: '0.5rem'
+                                    }
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            style: {
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '0.5rem'
+                            },
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)("input", {
+                                    value: form.fatherName ?? '',
+                                    onChange: (e)=>setForm((p)=>({
+                                                ...p,
+                                                fatherName: e.target.value
+                                            })),
+                                    placeholder: language === 'english' ? 'Father Name' : 'ਪਿਤਾ ਨਾਮ',
+                                    style: {
+                                        padding: '0.5rem'
+                                    }
+                                }),
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)("input", {
+                                    value: form.lactation ? String(form.lactation) : '',
+                                    onChange: (e)=>setForm((p)=>({
+                                                ...p,
+                                                lactation: e.target.value === '' ? undefined : parseInt(e.target.value)
+                                            })),
+                                    type: "number",
+                                    min: 1,
+                                    placeholder: language === 'english' ? 'Lactation' : 'ਦੁੱਧ',
+                                    style: {
+                                        padding: '0.5rem'
+                                    }
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            style: {
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '0.5rem'
+                            },
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)("input", {
+                                    value: form.aiLastCheckup ?? '',
+                                    onChange: (e)=>setForm((p)=>({
+                                                ...p,
+                                                aiLastCheckup: e.target.value
+                                            })),
+                                    type: "date",
+                                    style: {
+                                        padding: '0.5rem'
+                                    }
+                                }),
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)("input", {
+                                    value: form.heatCycle ?? '',
+                                    onChange: (e)=>setForm((p)=>({
+                                                ...p,
+                                                heatCycle: e.target.value
+                                            })),
+                                    placeholder: language === 'english' ? 'Heat Cycle' : 'ਗਰਮੀ ਚੱਕਰ',
+                                    style: {
+                                        padding: '0.5rem'
+                                    }
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            style: {
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '0.5rem'
+                            },
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)("input", {
+                                    value: form.deworming ?? '',
+                                    onChange: (e)=>setForm((p)=>({
+                                                ...p,
+                                                deworming: e.target.value
+                                            })),
+                                    type: "date",
+                                    style: {
+                                        padding: '0.5rem'
+                                    }
+                                }),
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)("input", {
+                                    value: form.semenDetail ?? '',
+                                    onChange: (e)=>setForm((p)=>({
+                                                ...p,
+                                                semenDetail: e.target.value
+                                            })),
+                                    placeholder: language === 'english' ? 'Semen Detail' : 'ਵੀਰਜ ਵੇਰਵਾ',
+                                    style: {
+                                        padding: '0.5rem'
+                                    }
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            style: {
+                                display: 'flex',
+                                justifyContent: 'flex-end',
+                                gap: '0.5rem',
+                                marginTop: '0.5rem'
+                            },
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)("button", {
+                                    type: "button",
+                                    onClick: onClose,
+                                    style: {
+                                        padding: '0.5rem 1rem'
+                                    },
+                                    children: language === 'english' ? 'Cancel' : 'ਰੱਦ ਕਰੋ'
+                                }),
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)("button", {
+                                    type: "button",
+                                    onClick: ()=>{
+                                        if (!record) return;
+                                        const updates = {
+                                            breed: form.breed ?? record.breed,
+                                            tagNo: form.tagNo ?? record.tagNo,
+                                            birthDate: form.birthDate ?? record.birthDate,
+                                            motherCode: form.motherCode ?? record.motherCode,
+                                            fatherName: form.fatherName ?? record.fatherName,
+                                            lactation: typeof form.lactation === 'number' ? form.lactation : form.lactation ? parseInt(String(form.lactation)) : record.lactation,
+                                            aiLastCheckup: form.aiLastCheckup ?? record.aiLastCheckup,
+                                            heatCycle: form.heatCycle ?? record.heatCycle,
+                                            deworming: form.deworming ?? record.deworming,
+                                            semenDetail: form.semenDetail ?? record.semenDetail
+                                        };
+                                        onSave(updates);
+                                    },
+                                    style: {
+                                        padding: '0.5rem 1rem',
+                                        background: 'var(--accent)',
+                                        color: 'white',
+                                        border: 'none'
+                                    },
+                                    children: language === 'english' ? 'Save' : 'ਸੇਵ'
+                                })
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    });
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkM6XFxVc2Vyc1xcQS5QXFxPbmVEcml2ZVxcRGVza3RvcFxcZWNoby1tYWluXFxmcm9udGVuZFxcc3JjXFxjb21wb25lbnRzXFxtaW5pYXBwc1xcRWRpdFJlY29yZE1vZGFsLnRzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgUmVhY3QsIHsgdXNlRWZmZWN0LCB1c2VTdGF0ZSB9IGZyb20gJ3JlYWN0JztcclxuXHJcbmltcG9ydCB0eXBlIHsgQ2F0dGxlUmVjb3JkIH0gZnJvbSAnLi9EYWlyeUZhcm1NYW5hZ2VyQXBwJztcclxuXHJcbnR5cGUgUHJvcHMgPSB7XHJcbiAgdmlzaWJsZTogYm9vbGVhbjtcclxuICByZWNvcmQ6IENhdHRsZVJlY29yZCB8IG51bGw7XHJcbiAgbGFuZ3VhZ2U6ICdlbmdsaXNoJyB8ICdwdW5qYWJpJztcclxuICBvbkNsb3NlOiAoKSA9PiB2b2lkO1xyXG4gIG9uU2F2ZTogKHVwZGF0ZXM6IFBhcnRpYWw8Q2F0dGxlUmVjb3JkPikgPT4gdm9pZDtcclxufTtcclxuXHJcbmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIEVkaXRSZWNvcmRNb2RhbCh7IHZpc2libGUsIHJlY29yZCwgbGFuZ3VhZ2UsIG9uQ2xvc2UsIG9uU2F2ZSB9OiBQcm9wcykge1xyXG4gIGNvbnN0IFtmb3JtLCBzZXRGb3JtXSA9IHVzZVN0YXRlPFBhcnRpYWw8Q2F0dGxlUmVjb3JkPj4oe30pO1xyXG5cclxuICB1c2VFZmZlY3QoKCkgPT4ge1xyXG4gICAgaWYgKHZpc2libGUgJiYgcmVjb3JkKSB7XHJcbiAgICAgIHNldEZvcm0ocmVjb3JkKTtcclxuICAgIH0gZWxzZSBpZiAoIXZpc2libGUpIHtcclxuICAgICAgc2V0Rm9ybSh7fSk7XHJcbiAgICB9XHJcbiAgfSwgW3Zpc2libGUsIHJlY29yZF0pO1xyXG5cclxuICBpZiAoIXZpc2libGUpIHJldHVybiBudWxsO1xyXG5cclxuICByZXR1cm4gKFxyXG4gICAgPGRpdlxyXG4gICAgICBzdHlsZT17e1xyXG4gICAgICAgIHBvc2l0aW9uOiAnZml4ZWQnLFxyXG4gICAgICAgIHRvcDogMCxcclxuICAgICAgICBsZWZ0OiAwLFxyXG4gICAgICAgIHJpZ2h0OiAwLFxyXG4gICAgICAgIGJvdHRvbTogMCxcclxuICAgICAgICBiYWNrZ3JvdW5kOiAncmdiYSgwLCAwLCAwLCAwLjUpJyxcclxuICAgICAgICBkaXNwbGF5OiAnZmxleCcsXHJcbiAgICAgICAgYWxpZ25JdGVtczogJ2NlbnRlcicsXHJcbiAgICAgICAganVzdGlmeUNvbnRlbnQ6ICdjZW50ZXInLFxyXG4gICAgICAgIHpJbmRleDogMTAwMCxcclxuICAgICAgfX1cclxuICAgICAgb25DbGljaz17b25DbG9zZX1cclxuICAgID5cclxuICAgICAgPGRpdiBzdHlsZT17eyBiYWNrZ3JvdW5kOiAndmFyKC0tYmcpJywgcGFkZGluZzogJzEuNXJlbScsIGJvcmRlclJhZGl1czogMTIsIG1heFdpZHRoOiA3MDAsIHdpZHRoOiAnOTUlJyB9fSBvbkNsaWNrPXsoZSkgPT4gZS5zdG9wUHJvcGFnYXRpb24oKX0+XHJcbiAgICAgICAgPGgzIHN0eWxlPXt7IG1hcmdpbjogJzAgMCAxcmVtIDAnIH19PntsYW5ndWFnZSA9PT0gJ2VuZ2xpc2gnID8gJ0VkaXQgQ2F0dGxlIFJlY29yZCcgOiAn4Kiw4Ki/4KiV4Ki+4Kiw4KihIOCouOCpi+Cop+Cpiyd9PC9oMz5cclxuICAgICAgICB7IXJlY29yZCA/IChcclxuICAgICAgICAgIDxkaXY+e2xhbmd1YWdlID09PSAnZW5nbGlzaCcgPyAnTG9hZGluZyByZWNvcmQuLi4nIDogJ+CosOCov+ColeCovuCosOCooSDgqLLgqYvgqKEg4KiV4KmA4Kik4Ki+IOConOCoviDgqLDgqL/gqLngqL4g4Ki54KmILi4uJ308L2Rpdj5cclxuICAgICAgICApIDogKFxyXG4gICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAnZ3JpZCcsIGdhcDogJzAuNzVyZW0nIH19PlxyXG4gICAgICAgICAgICA8ZGl2IHN0eWxlPXt7IGRpc3BsYXk6ICdncmlkJywgZ3JpZFRlbXBsYXRlQ29sdW1uczogJzFmciAxZnInLCBnYXA6ICcwLjVyZW0nIH19PlxyXG4gICAgICAgICAgICAgIDxpbnB1dCB2YWx1ZT17Zm9ybS5icmVlZCA/PyAnJ30gb25DaGFuZ2U9eyhlKSA9PiBzZXRGb3JtKChwKSA9PiAoeyAuLi5wLCBicmVlZDogZS50YXJnZXQudmFsdWUgfSkpfSBwbGFjZWhvbGRlcj17bGFuZ3VhZ2UgPT09ICdlbmdsaXNoJyA/ICdCcmVlZCcgOiAn4Kio4Ki44KiyJ30gc3R5bGU9e3sgcGFkZGluZzogJzAuNXJlbScgfX0gLz5cclxuICAgICAgICAgICAgICA8aW5wdXQgdmFsdWU9e2Zvcm0udGFnTm8gPz8gJyd9IG9uQ2hhbmdlPXsoZSkgPT4gc2V0Rm9ybSgocCkgPT4gKHsgLi4ucCwgdGFnTm86IGUudGFyZ2V0LnZhbHVlIH0pKX0gcGxhY2Vob2xkZXI9e2xhbmd1YWdlID09PSAnZW5nbGlzaCcgPyAnVGFnIE5vLicgOiAn4Kif4KmI4KiXIOCoqOCpsOCorOCosCd9IHN0eWxlPXt7IHBhZGRpbmc6ICcwLjVyZW0nIH19IC8+XHJcbiAgICAgICAgICAgIDwvZGl2PlxyXG5cclxuICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAnZ3JpZCcsIGdyaWRUZW1wbGF0ZUNvbHVtbnM6ICcxZnIgMWZyJywgZ2FwOiAnMC41cmVtJyB9fT5cclxuICAgICAgICAgICAgICA8aW5wdXQgdmFsdWU9e2Zvcm0uYmlydGhEYXRlID8/ICcnfSBvbkNoYW5nZT17KGUpID0+IHNldEZvcm0oKHApID0+ICh7IC4uLnAsIGJpcnRoRGF0ZTogZS50YXJnZXQudmFsdWUgfSkpfSB0eXBlPVwiZGF0ZVwiIHN0eWxlPXt7IHBhZGRpbmc6ICcwLjVyZW0nIH19IC8+XHJcbiAgICAgICAgICAgICAgPGlucHV0IHZhbHVlPXtmb3JtLm1vdGhlckNvZGUgPz8gJyd9IG9uQ2hhbmdlPXsoZSkgPT4gc2V0Rm9ybSgocCkgPT4gKHsgLi4ucCwgbW90aGVyQ29kZTogZS50YXJnZXQudmFsdWUgfSkpfSBwbGFjZWhvbGRlcj17bGFuZ3VhZ2UgPT09ICdlbmdsaXNoJyA/ICdNb3RoZXIgQ29kZScgOiAn4Kiu4Ki+4KiCIOColeCpi+CooSd9IHN0eWxlPXt7IHBhZGRpbmc6ICcwLjVyZW0nIH19IC8+XHJcbiAgICAgICAgICAgIDwvZGl2PlxyXG5cclxuICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAnZ3JpZCcsIGdyaWRUZW1wbGF0ZUNvbHVtbnM6ICcxZnIgMWZyJywgZ2FwOiAnMC41cmVtJyB9fT5cclxuICAgICAgICAgICAgICA8aW5wdXQgdmFsdWU9e2Zvcm0uZmF0aGVyTmFtZSA/PyAnJ30gb25DaGFuZ2U9eyhlKSA9PiBzZXRGb3JtKChwKSA9PiAoeyAuLi5wLCBmYXRoZXJOYW1lOiBlLnRhcmdldC52YWx1ZSB9KSl9IHBsYWNlaG9sZGVyPXtsYW5ndWFnZSA9PT0gJ2VuZ2xpc2gnID8gJ0ZhdGhlciBOYW1lJyA6ICfgqKrgqL/gqKTgqL4g4Kio4Ki+4KiuJ30gc3R5bGU9e3sgcGFkZGluZzogJzAuNXJlbScgfX0gLz5cclxuICAgICAgICAgICAgICA8aW5wdXQgdmFsdWU9e2Zvcm0ubGFjdGF0aW9uID8gU3RyaW5nKGZvcm0ubGFjdGF0aW9uKSA6ICcnfSBvbkNoYW5nZT17KGUpID0+IHNldEZvcm0oKHApID0+ICh7IC4uLnAsIGxhY3RhdGlvbjogZS50YXJnZXQudmFsdWUgPT09ICcnID8gdW5kZWZpbmVkIDogcGFyc2VJbnQoZS50YXJnZXQudmFsdWUpIH0pKX0gdHlwZT1cIm51bWJlclwiIG1pbj17MX0gcGxhY2Vob2xkZXI9e2xhbmd1YWdlID09PSAnZW5nbGlzaCcgPyAnTGFjdGF0aW9uJyA6ICfgqKbgqYHgqbHgqKcnfSBzdHlsZT17eyBwYWRkaW5nOiAnMC41cmVtJyB9fSAvPlxyXG4gICAgICAgICAgICA8L2Rpdj5cclxuXHJcbiAgICAgICAgICAgIDxkaXYgc3R5bGU9e3sgZGlzcGxheTogJ2dyaWQnLCBncmlkVGVtcGxhdGVDb2x1bW5zOiAnMWZyIDFmcicsIGdhcDogJzAuNXJlbScgfX0+XHJcbiAgICAgICAgICAgICAgPGlucHV0IHZhbHVlPXtmb3JtLmFpTGFzdENoZWNrdXAgPz8gJyd9IG9uQ2hhbmdlPXsoZSkgPT4gc2V0Rm9ybSgocCkgPT4gKHsgLi4ucCwgYWlMYXN0Q2hlY2t1cDogZS50YXJnZXQudmFsdWUgfSkpfSB0eXBlPVwiZGF0ZVwiIHN0eWxlPXt7IHBhZGRpbmc6ICcwLjVyZW0nIH19IC8+XHJcbiAgICAgICAgICAgICAgPGlucHV0IHZhbHVlPXtmb3JtLmhlYXRDeWNsZSA/PyAnJ30gb25DaGFuZ2U9eyhlKSA9PiBzZXRGb3JtKChwKSA9PiAoeyAuLi5wLCBoZWF0Q3ljbGU6IGUudGFyZ2V0LnZhbHVlIH0pKX0gcGxhY2Vob2xkZXI9e2xhbmd1YWdlID09PSAnZW5nbGlzaCcgPyAnSGVhdCBDeWNsZScgOiAn4KiX4Kiw4Kiu4KmAIOComuCpseColeCosCd9IHN0eWxlPXt7IHBhZGRpbmc6ICcwLjVyZW0nIH19IC8+XHJcbiAgICAgICAgICAgIDwvZGl2PlxyXG5cclxuICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAnZ3JpZCcsIGdyaWRUZW1wbGF0ZUNvbHVtbnM6ICcxZnIgMWZyJywgZ2FwOiAnMC41cmVtJyB9fT5cclxuICAgICAgICAgICAgICA8aW5wdXQgdmFsdWU9e2Zvcm0uZGV3b3JtaW5nID8/ICcnfSBvbkNoYW5nZT17KGUpID0+IHNldEZvcm0oKHApID0+ICh7IC4uLnAsIGRld29ybWluZzogZS50YXJnZXQudmFsdWUgfSkpfSB0eXBlPVwiZGF0ZVwiIHN0eWxlPXt7IHBhZGRpbmc6ICcwLjVyZW0nIH19IC8+XHJcbiAgICAgICAgICAgICAgPGlucHV0IHZhbHVlPXtmb3JtLnNlbWVuRGV0YWlsID8/ICcnfSBvbkNoYW5nZT17KGUpID0+IHNldEZvcm0oKHApID0+ICh7IC4uLnAsIHNlbWVuRGV0YWlsOiBlLnRhcmdldC52YWx1ZSB9KSl9IHBsYWNlaG9sZGVyPXtsYW5ndWFnZSA9PT0gJ2VuZ2xpc2gnID8gJ1NlbWVuIERldGFpbCcgOiAn4Ki14KmA4Kiw4KicIOCoteCph+CosOCoteCovid9IHN0eWxlPXt7IHBhZGRpbmc6ICcwLjVyZW0nIH19IC8+XHJcbiAgICAgICAgICAgIDwvZGl2PlxyXG5cclxuICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBkaXNwbGF5OiAnZmxleCcsIGp1c3RpZnlDb250ZW50OiAnZmxleC1lbmQnLCBnYXA6ICcwLjVyZW0nLCBtYXJnaW5Ub3A6ICcwLjVyZW0nIH19PlxyXG4gICAgICAgICAgICAgIDxidXR0b24gdHlwZT1cImJ1dHRvblwiIG9uQ2xpY2s9e29uQ2xvc2V9IHN0eWxlPXt7IHBhZGRpbmc6ICcwLjVyZW0gMXJlbScgfX0+e2xhbmd1YWdlID09PSAnZW5nbGlzaCcgPyAnQ2FuY2VsJyA6ICfgqLDgqbHgqKYg4KiV4Kiw4KmLJ308L2J1dHRvbj5cclxuICAgICAgICAgICAgICA8YnV0dG9uXHJcbiAgICAgICAgICAgICAgICB0eXBlPVwiYnV0dG9uXCJcclxuICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHtcclxuICAgICAgICAgICAgICAgICAgaWYgKCFyZWNvcmQpIHJldHVybjtcclxuICAgICAgICAgICAgICAgICAgY29uc3QgdXBkYXRlczogUGFydGlhbDxDYXR0bGVSZWNvcmQ+ID0ge1xyXG4gICAgICAgICAgICAgICAgICAgIGJyZWVkOiBmb3JtLmJyZWVkID8/IHJlY29yZC5icmVlZCxcclxuICAgICAgICAgICAgICAgICAgICB0YWdObzogZm9ybS50YWdObyA/PyByZWNvcmQudGFnTm8sXHJcbiAgICAgICAgICAgICAgICAgICAgYmlydGhEYXRlOiBmb3JtLmJpcnRoRGF0ZSA/PyByZWNvcmQuYmlydGhEYXRlLFxyXG4gICAgICAgICAgICAgICAgICAgIG1vdGhlckNvZGU6IGZvcm0ubW90aGVyQ29kZSA/PyByZWNvcmQubW90aGVyQ29kZSxcclxuICAgICAgICAgICAgICAgICAgICBmYXRoZXJOYW1lOiBmb3JtLmZhdGhlck5hbWUgPz8gcmVjb3JkLmZhdGhlck5hbWUsXHJcbiAgICAgICAgICAgICAgICAgICAgbGFjdGF0aW9uOiB0eXBlb2YgZm9ybS5sYWN0YXRpb24gPT09ICdudW1iZXInID8gZm9ybS5sYWN0YXRpb24gOiAoZm9ybS5sYWN0YXRpb24gPyBwYXJzZUludChTdHJpbmcoZm9ybS5sYWN0YXRpb24pKSA6IHJlY29yZC5sYWN0YXRpb24pLFxyXG4gICAgICAgICAgICAgICAgICAgIGFpTGFzdENoZWNrdXA6IGZvcm0uYWlMYXN0Q2hlY2t1cCA/PyByZWNvcmQuYWlMYXN0Q2hlY2t1cCxcclxuICAgICAgICAgICAgICAgICAgICBoZWF0Q3ljbGU6IGZvcm0uaGVhdEN5Y2xlID8/IHJlY29yZC5oZWF0Q3ljbGUsXHJcbiAgICAgICAgICAgICAgICAgICAgZGV3b3JtaW5nOiBmb3JtLmRld29ybWluZyA/PyByZWNvcmQuZGV3b3JtaW5nLFxyXG4gICAgICAgICAgICAgICAgICAgIHNlbWVuRGV0YWlsOiBmb3JtLnNlbWVuRGV0YWlsID8/IHJlY29yZC5zZW1lbkRldGFpbCxcclxuICAgICAgICAgICAgICAgICAgfTtcclxuICAgICAgICAgICAgICAgICAgb25TYXZlKHVwZGF0ZXMpO1xyXG4gICAgICAgICAgICAgICAgfX1cclxuICAgICAgICAgICAgICAgIHN0eWxlPXt7IHBhZGRpbmc6ICcwLjVyZW0gMXJlbScsIGJhY2tncm91bmQ6ICd2YXIoLS1hY2NlbnQpJywgY29sb3I6ICd3aGl0ZScsIGJvcmRlcjogJ25vbmUnIH19XHJcbiAgICAgICAgICAgICAgPlxyXG4gICAgICAgICAgICAgICAge2xhbmd1YWdlID09PSAnZW5nbGlzaCcgPyAnU2F2ZScgOiAn4Ki44KmH4Ki1J31cclxuICAgICAgICAgICAgICA8L2J1dHRvbj5cclxuICAgICAgICAgICAgPC9kaXY+XHJcbiAgICAgICAgICA8L2Rpdj5cclxuICAgICAgICApfVxyXG4gICAgICA8L2Rpdj5cclxuICAgIDwvZGl2PlxyXG4gICk7XHJcbn1cclxuIl0sIm5hbWVzIjpbIkVkaXRSZWNvcmRNb2RhbCIsInZpc2libGUiLCJyZWNvcmQiLCJsYW5ndWFnZSIsIm9uQ2xvc2UiLCJvblNhdmUiLCJmb3JtIiwic2V0Rm9ybSIsInVzZVN0YXRlIiwidXNlRWZmZWN0IiwiZGl2Iiwic3R5bGUiLCJwb3NpdGlvbiIsInRvcCIsImxlZnQiLCJyaWdodCIsImJvdHRvbSIsImJhY2tncm91bmQiLCJkaXNwbGF5IiwiYWxpZ25JdGVtcyIsImp1c3RpZnlDb250ZW50IiwiekluZGV4Iiwib25DbGljayIsInBhZGRpbmciLCJib3JkZXJSYWRpdXMiLCJtYXhXaWR0aCIsIndpZHRoIiwiZSIsInN0b3BQcm9wYWdhdGlvbiIsImgzIiwibWFyZ2luIiwiZ2FwIiwiZ3JpZFRlbXBsYXRlQ29sdW1ucyIsImlucHV0IiwidmFsdWUiLCJicmVlZCIsIm9uQ2hhbmdlIiwicCIsInRhcmdldCIsInBsYWNlaG9sZGVyIiwidGFnTm8iLCJiaXJ0aERhdGUiLCJ0eXBlIiwibW90aGVyQ29kZSIsImZhdGhlck5hbWUiLCJsYWN0YXRpb24iLCJTdHJpbmciLCJ1bmRlZmluZWQiLCJwYXJzZUludCIsIm1pbiIsImFpTGFzdENoZWNrdXAiLCJoZWF0Q3ljbGUiLCJkZXdvcm1pbmciLCJzZW1lbkRldGFpbCIsIm1hcmdpblRvcCIsImJ1dHRvbiIsInVwZGF0ZXMiLCJjb2xvciIsImJvcmRlciJdLCJtYXBwaW5ncyI6Ijs7OzsrQkFZQTs7O2VBQXdCQTs7OzsrREFabUI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQVk1QixTQUFTQSxnQkFBZ0IsRUFBRUMsT0FBTyxFQUFFQyxNQUFNLEVBQUVDLFFBQVEsRUFBRUMsT0FBTyxFQUFFQyxNQUFNLEVBQVM7SUFDM0YsTUFBTSxDQUFDQyxNQUFNQyxRQUFRLEdBQUdDLElBQUFBLGVBQVEsRUFBd0IsQ0FBQztJQUV6REMsSUFBQUEsZ0JBQVMsRUFBQztRQUNSLElBQUlSLFdBQVdDLFFBQVE7WUFDckJLLFFB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

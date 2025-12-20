@@ -1,0 +1,355 @@
+name: Container Security & Optimization
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - '**/Dockerfile'
+      - 'docker-compose.yml'
+      - '.github/workflows/container-security.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/Dockerfile'
+      - 'docker-compose.yml'
+  schedule:
+    # Run weekly on Mondays at 3 AM UTC
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ===========================================================================
+  # DOCKERFILE LINTING
+  # ===========================================================================
+  dockerfile-lint:
+    name: Lint Dockerfiles
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    strategy:
+      matrix:
+        service: [frontend, backend]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./${{ matrix.service }}/Dockerfile
+          failure-threshold: warning
+          format: sarif
+          output-file: hadolint-${{ matrix.service }}.sarif
+
+      - name: Upload Hadolint results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: hadolint-${{ matrix.service }}.sarif
+
+      - name: Display results
+        if: always()
+        run: |
+          echo "## 🐋 Dockerfile Linting (${{ matrix.service }})" >> $GITHUB_STEP_SUMMARY
+          docker run --rm -i hadolint/hadolint < ./${{ matrix.service }}/Dockerfile >> $GITHUB_STEP_SUMMARY || echo "Issues found" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # BUILD AND SCAN IMAGES
+  # ===========================================================================
+  build-and-scan:
+    name: Build & Security Scan
+    runs-on: ubuntu-latest
+    needs: dockerfile-lint
+    timeout-minutes: 30
+
+    permissions:
+      contents: read
+      security-events: write
+
+    strategy:
+      matrix:
+        service: [frontend, backend]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./${{ matrix.service }}
+          push: false
+          load: true
+          tags: echo-${{ matrix.service }}:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: echo-${{ matrix.service }}:test
+          format: 'sarif'
+          output: 'trivy-${{ matrix.service }}.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+          timeout: '15m'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-${{ matrix.service }}.sarif
+          category: trivy-${{ matrix.service }}
+
+      - name: Run Grype vulnerability scanner
+        continue-on-error: true
+        run: |
+          # Install Grype
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+
+          # Scan image
+          grype echo-${{ matrix.service }}:test \
+            --output table \
+            --fail-on critical \
+            > grype-${{ matrix.service }}.txt || true
+
+          echo "## 🔍 Grype Scan Results (${{ matrix.service }})" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat grype-${{ matrix.service }}.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Run Syft SBOM generator
+        continue-on-error: true
+        run: |
+          # Install Syft
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
+          # Generate SBOM
+          syft packages echo-${{ matrix.service }}:test \
+            --output json \
+            --file sbom-${{ matrix.service }}.json
+
+          syft packages echo-${{ matrix.service }}:test \
+            --output table \
+            > sbom-${{ matrix.service }}.txt
+
+          echo "## 📦 SBOM Summary (${{ matrix.service }})" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          head -50 sbom-${{ matrix.service }}.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Analyze image size
+        run: |
+          echo "## 📏 Image Size Analysis (${{ matrix.service }})" >> $GITHUB_STEP_SUMMARY
+
+          # Get image size
+          IMAGE_SIZE=$(docker images echo-${{ matrix.service }}:test --format "{{.Size}}")
+          echo "**Image Size:** $IMAGE_SIZE" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Show layer sizes
+          echo "### Layer Breakdown" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          docker history echo-${{ matrix.service }}:test --no-trunc --format "{{.Size}}\t{{.CreatedBy}}" | head -20 >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Run Dive for layer analysis
+        continue-on-error: true
+        run: |
+          # Install Dive
+          wget https://github.com/wagoodman/dive/releases/download/v0.11.0/dive_0.11.0_linux_amd64.deb
+          sudo dpkg -i dive_0.11.0_linux_amd64.deb
+
+          # Analyze image
+          CI=true dive echo-${{ matrix.service }}:test \
+            --ci-config <(echo '{"rules": [{"trigger": "inefficientImage", "level": "warn", "message": "Image efficiency score should be above 95%"}]}') \
+            > dive-${{ matrix.service }}.txt || true
+
+          echo "## 🔬 Dive Analysis (${{ matrix.service }})" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat dive-${{ matrix.service }}.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload scan results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: container-scan-${{ matrix.service }}-${{ github.sha }}
+          path: |
+            trivy-${{ matrix.service }}.sarif
+            grype-${{ matrix.service }}.txt
+            sbom-${{ matrix.service }}.json
+            sbom-${{ matrix.service }}.txt
+            dive-${{ matrix.service }}.txt
+          retention-days: 30
+
+  # ===========================================================================
+  # DOCKER COMPOSE VALIDATION
+  # ===========================================================================
+  compose-validation:
+    name: Validate Docker Compose
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate docker-compose.yml
+        run: |
+          echo "## 🐳 Docker Compose Validation" >> $GITHUB_STEP_SUMMARY
+
+          # Validate syntax
+          docker compose config > /dev/null 2>&1 && \
+            echo "✅ **Syntax:** Valid" >> $GITHUB_STEP_SUMMARY || \
+            echo "❌ **Syntax:** Invalid" >> $GITHUB_STEP_SUMMARY
+
+          # Check for health checks
+          HEALTH_CHECKS=$(docker compose config | grep -c "healthcheck:" || echo "0")
+          echo "**Health Checks:** $HEALTH_CHECKS services configured" >> $GITHUB_STEP_SUMMARY
+
+          # Check for resource limits
+          RESOURCE_LIMITS=$(docker compose config | grep -c "limits:" || echo "0")
+          echo "**Resource Limits:** $RESOURCE_LIMITS services configured" >> $GITHUB_STEP_SUMMARY
+
+          # Display rendered config
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Rendered Configuration" >> $GITHUB_STEP_SUMMARY
+          echo '```yaml' >> $GITHUB_STEP_SUMMARY
+          docker compose config >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Test compose up
+        timeout-minutes: 5
+        run: |
+          echo "Testing docker compose startup..."
+
+          # Try to start services
+          docker compose up -d
+
+          # Wait for health checks
+          sleep 30
+
+          # Check service status
+          docker compose ps
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Service Status" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          docker compose ps >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          # Check logs for errors
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Service Logs (Last 50 lines)" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          docker compose logs --tail=50 >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v --remove-orphans
+
+  # ===========================================================================
+  # BEST PRACTICES CHECK
+  # ===========================================================================
+  best-practices:
+    name: Container Best Practices
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    strategy:
+      matrix:
+        service: [frontend, backend]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check Dockerfile best practices
+        run: |
+          echo "## 📋 Best Practices Check (${{ matrix.service }})" >> $GITHUB_STEP_SUMMARY
+
+          DOCKERFILE="./${{ matrix.service }}/Dockerfile"
+
+          # Check for USER instruction
+          if grep -q "^USER " "$DOCKERFILE"; then
+            echo "✅ Non-root user specified" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No USER instruction found (running as root)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Check for HEALTHCHECK
+          if grep -q "^HEALTHCHECK " "$DOCKERFILE"; then
+            echo "✅ HEALTHCHECK instruction present" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No HEALTHCHECK instruction" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Check for .dockerignore
+          if [ -f "./${{ matrix.service }}/.dockerignore" ]; then
+            echo "✅ .dockerignore file exists" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No .dockerignore file found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Check for layer optimization
+          LAYERS=$(grep -c "^RUN " "$DOCKERFILE" || echo "0")
+          if [ "$LAYERS" -lt "10" ]; then
+            echo "✅ Good layer count ($LAYERS RUN instructions)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Consider consolidating RUN instructions ($LAYERS found)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Check for COPY vs ADD
+          ADD_COUNT=$(grep -c "^ADD " "$DOCKERFILE" || echo "0")
+          if [ "$ADD_COUNT" -eq "0" ]; then
+            echo "✅ Using COPY instead of ADD" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Found $ADD_COUNT ADD instructions (prefer COPY)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Check for version pinning
+          if grep -q "FROM.*:latest" "$DOCKERFILE"; then
+            echo "⚠️ Using :latest tag (prefer specific versions)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ Base image versions are pinned" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ===========================================================================
+  # SECURITY RECOMMENDATIONS
+  # ===========================================================================
+  security-recommendations:
+    name: Security Recommendations
+    runs-on: ubuntu-latest
+    needs: [build-and-scan]
+    if: always()
+    timeout-minutes: 5
+
+    steps:
+      - name: Generate security report
+        run: |
+          echo "## 🔒 Security Recommendations" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Best Practices" >> $GITHUB_STEP_SUMMARY
+          echo "1. ✅ Use minimal base images (Alpine, Distroless)" >> $GITHUB_STEP_SUMMARY
+          echo "2. ✅ Run containers as non-root users" >> $GITHUB_STEP_SUMMARY
+          echo "3. ✅ Implement health checks" >> $GITHUB_STEP_SUMMARY
+          echo "4. ✅ Set resource limits" >> $GITHUB_STEP_SUMMARY
+          echo "5. ✅ Scan images regularly" >> $GITHUB_STEP_SUMMARY
+          echo "6. ✅ Pin dependency versions" >> $GITHUB_STEP_SUMMARY
+          echo "7. ✅ Use multi-stage builds" >> $GITHUB_STEP_SUMMARY
+          echo "8. ✅ Remove unnecessary packages" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "- Review vulnerability scan results" >> $GITHUB_STEP_SUMMARY
+          echo "- Update base images to latest secure versions" >> $GITHUB_STEP_SUMMARY
+          echo "- Implement image signing and verification" >> $GITHUB_STEP_SUMMARY
+          echo "- Set up automated security scanning" >> $GITHUB_STEP_SUMMARY

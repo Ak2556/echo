@@ -1,0 +1,223 @@
+/* RTL (Right-to-Left) Support for Arabic, Hebrew, etc. */
+
+[dir='rtl'] {
+  /* Global RTL overrides */
+  --reading-direction: rtl;
+}
+
+/* Layout adjustments for RTL */
+[dir='rtl'] .language-selector {
+  direction: rtl;
+}
+
+[dir='rtl'] .language-dropdown {
+  left: auto;
+  right: 0;
+}
+
+[dir='rtl'] .ai-chat-container {
+  right: auto;
+  left: 2rem;
+}
+
+[dir='rtl'] .ai-chat-container.fullscreen {
+  left: 0;
+  right: 0;
+}
+
+/* Navigation adjustments */
+[dir='rtl'] .nav-item {
+  text-align: right;
+}
+
+[dir='rtl'] .tooltip {
+  left: 80px;
+  right: auto;
+}
+
+/* Message bubbles for RTL */
+[dir='rtl'] .user-message {
+  flex-direction: row;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir='rtl'] .ai-message {
+  flex-direction: row-reverse;
+  margin-right: 0;
+  margin-left: auto;
+}
+
+[dir='rtl'] .user-message .message-bubble {
+  border-radius: 20px 4px 20px 20px;
+  margin-left: 0;
+  margin-right: 0.75rem;
+}
+
+[dir='rtl'] .ai-message .message-bubble {
+  border-radius: 4px 20px 20px 20px;
+  margin-right: 0;
+  margin-left: 0.75rem;
+}
+
+/* Form elements for RTL */
+[dir='rtl'] input,
+[dir='rtl'] textarea,
+[dir='rtl'] select {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir='rtl'] input::placeholder,
+[dir='rtl'] textarea::placeholder {
+  text-align: right;
+}
+
+/* Button positioning */
+[dir='rtl'] .send-button {
+  left: 0.75rem;
+  right: auto;
+}
+
+[dir='rtl'] .close-button {
+  left: 1rem;
+  right: auto;
+}
+
+/* Settings panel adjustments */
+[dir='rtl'] .settings-panel {
+  text-align: right;
+}
+
+[dir='rtl'] .settings-item {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .settings-item label {
+  text-align: right;
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+/* Sidebar for fullscreen mode */
+[dir='rtl'] .ai-chat-sidebar {
+  border-right: none;
+  border-left: 1px solid var(--border);
+  order: 2;
+}
+
+[dir='rtl'] .ai-chat-main {
+  order: 1;
+}
+
+/* Dropdown menus */
+[dir='rtl'] .dropdown-menu {
+  left: auto;
+  right: 0;
+  text-align: right;
+}
+
+[dir='rtl'] .dropdown-item {
+  text-align: right;
+  padding-left: 2rem;
+  padding-right: 1rem;
+}
+
+/* Icon positioning */
+[dir='rtl'] .icon-left {
+  margin-left: 0.5rem;
+  margin-right: 0;
+  order: 2;
+}
+
+[dir='rtl'] .icon-right {
+  margin-right: 0.5rem;
+  margin-left: 0;
+  order: -1;
+}
+
+/* Progress indicators */
+[dir='rtl'] .progress-bar {
+  transform: scaleX(-1);
+}
+
+/* Typography adjustments for Arabic */
+[dir='rtl'][lang='ar'] {
+  font-family:
+    'Noto Sans Arabic',
+    'Amiri',
+    'Tajawal',
+    'Cairo',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+  line-height: 1.6;
+}
+
+[dir='rtl'][lang='ar'] h1,
+[dir='rtl'][lang='ar'] h2,
+[dir='rtl'][lang='ar'] h3,
+[dir='rtl'][lang='ar'] h4,
+[dir='rtl'][lang='ar'] h5,
+[dir='rtl'][lang='ar'] h6 {
+  font-weight: 600;
+}
+
+/* Typography adjustments for Hebrew */
+[dir='rtl'][lang='he'] {
+  font-family:
+    'Noto Sans Hebrew',
+    'Assistant',
+    'Rubik',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+  line-height: 1.5;
+}
+
+/* Animations that need RTL adjustments */
+[dir='rtl'] .slide-in-left {
+  animation-name: slideInRight;
+}
+
+[dir='rtl'] .slide-in-right {
+  animation-name: slideInLeft;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive adjustments for RTL */
+@media (max-width: 768px) {
+  [dir='rtl'] .mobile-nav {
+    flex-direction: row-reverse;
+  }
+
+  [dir='rtl'] .mobile-menu {
+    right: auto;
+    left: 0;
+  }
+}

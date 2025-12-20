@@ -1,0 +1,32 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="64" fill="#3b82f6"/>
+
+  <!-- Echo wave pattern -->
+  <g opacity="0.2">
+    <circle cx="256" cy="256" r="200" stroke="#ffffff" stroke-width="2" fill="none"/>
+    <circle cx="256" cy="256" r="150" stroke="#ffffff" stroke-width="2" fill="none"/>
+    <circle cx="256" cy="256" r="100" stroke="#ffffff" stroke-width="2" fill="none"/>
+  </g>
+
+  <!-- Main Echo symbol -->
+  <g transform="translate(256, 256)">
+    <!-- Central dot -->
+    <circle cx="0" cy="0" r="16" fill="#ffffff"/>
+
+    <!-- Sound waves -->
+    <path d="M-40 -20 Q-60 0 -40 20 Q-20 0 -40 -20 Z" fill="#ffffff"/>
+    <path d="M40 -20 Q60 0 40 20 Q20 0 40 -20 Z" fill="#ffffff"/>
+
+    <!-- Letter E integrated design -->
+    <g transform="translate(-80, -60)">
+      <rect x="0" y="0" width="8" height="120" fill="#ffffff"/>
+      <rect x="0" y="0" width="60" height="8" fill="#ffffff"/>
+      <rect x="0" y="56" width="40" height="8" fill="#ffffff"/>
+      <rect x="0" y="112" width="60" height="8" fill="#ffffff"/>
+    </g>
+  </g>
+
+  <!-- App name -->
+  <text x="256" y="420" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="600" fill="#ffffff">Echo</text>
+</svg>

@@ -1,0 +1,36 @@
+# Docker Compose Override for Local Development
+# This file is automatically loaded by docker-compose
+# Use this for development-specific configurations
+
+services:
+  backend:
+    volumes:
+      # Mount source code for hot reload
+      - ./backend/app:/app/app:ro
+      # Mount for logs
+      - ./backend/logs:/app/logs
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=debug
+      - ENVIRONMENT=development
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    volumes:
+      # Mount source code for hot reload
+      - ./frontend/src:/app/src:ro
+      - ./frontend/public:/app/public:ro
+    environment:
+      - NEXT_TELEMETRY_DISABLED=1
+
+  postgres:
+    # Expose PostgreSQL for local database tools
+    ports:
+      - "5432:5432"
+    # Additional logging for development
+    command: postgres -c log_statement=all -c log_destination=stderr
+
+  redis:
+    # Expose Redis for local tools
+    ports:
+      - "6379:6379"
