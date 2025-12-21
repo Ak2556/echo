@@ -72,3 +72,5 @@ sentence-transformers==2.2.2
 # Monitoring
 sentry-sdk[fastapi]==1.38.0
 aiofiles==23.2.1
+
+greenlet>=3.0
