@@ -1,5 +1,16 @@
-.claude/
-node_modules/
-*.log
+# venvs
+.venv/
+backend/.venv/
+
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# env
 .env
-.DS_Store
+.env.*
