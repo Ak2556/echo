@@ -68,7 +68,7 @@ class TestValidationException:
         """Test ValidationException with default values."""
         exc = ValidationException()
         assert exc.message == "Validation failed"
-        assert exc.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
+        assert exc.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         assert exc.error_code == "VALIDATION_ERROR"
         assert exc.details["field_errors"] == {}
 
