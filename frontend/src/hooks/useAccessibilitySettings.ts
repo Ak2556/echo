@@ -240,8 +240,9 @@ export function useAccessibilitySettings() {
       if (!settings.audioFeedback) return;
 
       // Create audio context for UI sounds
-      const audioContext = new (window.AudioContext ||
-        (window as any).webkitAudioContext)();
+      const audioContext = new (
+        window.AudioContext || (window as any).webkitAudioContext
+      )();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 

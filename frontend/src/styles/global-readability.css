@@ -17,19 +17,35 @@ body * {
 }
 
 /* Headings should be bold */
-h1, h2, h3, h4, h5, h6,
-.h1, .h2, .h3, .h4, .h5, .h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
   font-weight: 700 !important;
 }
 
-h1, .h1 { font-weight: 800 !important; }
-h2, .h2 { font-weight: 700 !important; }
+h1,
+.h1 {
+  font-weight: 800 !important;
+}
+h2,
+.h2 {
+  font-weight: 700 !important;
+}
 
 /* Buttons and interactive elements */
 button,
 .btn,
-[role="button"],
-a[role="button"] {
+[role='button'],
+a[role='button'] {
   font-weight: 600 !important;
   min-height: 36px;
 }
@@ -215,38 +231,38 @@ blockquote {
 }
 
 /* Ensure contrast in dark mode */
-[data-theme="dark"] *,
+[data-theme='dark'] *,
 .dark * {
   font-weight: 500 !important;
 }
 
-[data-theme="dark"] h1,
-[data-theme="dark"] h2,
-[data-theme="dark"] h3,
-[data-theme="dark"] h4,
-[data-theme="dark"] h5,
-[data-theme="dark"] h6 {
+[data-theme='dark'] h1,
+[data-theme='dark'] h2,
+[data-theme='dark'] h3,
+[data-theme='dark'] h4,
+[data-theme='dark'] h5,
+[data-theme='dark'] h6 {
   font-weight: 800 !important;
 }
 
-[data-theme="dark"] button,
-[data-theme="dark"] a,
-[data-theme="dark"] label {
+[data-theme='dark'] button,
+[data-theme='dark'] a,
+[data-theme='dark'] label {
   font-weight: 600 !important;
 }
 
 /* Minimum sizes for touch targets */
 button,
 a,
-[role="button"],
+[role='button'],
 .clickable {
   min-width: 36px;
   min-height: 36px;
 }
 
 /* Override any font-weight: 300 or 400 */
-[style*="font-weight: 300"],
-[style*="font-weight: 400"] {
+[style*='font-weight: 300'],
+[style*='font-weight: 400'] {
   font-weight: 500 !important;
 }
 
@@ -267,7 +283,12 @@ a,
     font-weight: 500 !important;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-weight: 700 !important;
   }
 }

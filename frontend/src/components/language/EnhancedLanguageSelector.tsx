@@ -51,7 +51,7 @@ export default function EnhancedLanguageSelector({
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Filter languages based on search query
-  const filteredLanguages = supportedLanguages.filter(lang => {
+  const filteredLanguages = supportedLanguages.filter((lang) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -64,7 +64,7 @@ export default function EnhancedLanguageSelector({
   // Handle language selection
   const handleLanguageSelect = async (langCode: string) => {
     if (langCode === language || isChangingLanguage) return;
-    
+
     try {
       await setLanguage(langCode as any);
       onLanguageChange?.(langCode);
@@ -93,13 +93,13 @@ export default function EnhancedLanguageSelector({
         break;
       case 'ArrowDown':
         e.preventDefault();
-        setFocusedIndex(prev => 
+        setFocusedIndex((prev) =>
           prev < filteredLanguages.length - 1 ? prev + 1 : 0
         );
         break;
       case 'ArrowUp':
         e.preventDefault();
-        setFocusedIndex(prev => 
+        setFocusedIndex((prev) =>
           prev > 0 ? prev - 1 : filteredLanguages.length - 1
         );
         break;
@@ -135,7 +135,8 @@ export default function EnhancedLanguageSelector({
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      return () =>
+        document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen]);
 
@@ -173,9 +174,10 @@ export default function EnhancedLanguageSelector({
             disabled={disabled || isChangingLanguage}
             className={`
               inline-flex items-center gap-2 px-3 py-1 rounded-full border transition-all
-              ${language === lang.code
-                ? 'bg-blue-100 border-blue-300 text-blue-700 dark:bg-blue-900/30 dark:border-blue-600 dark:text-blue-300'
-                : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700'
+              ${
+                language === lang.code
+                  ? 'bg-blue-100 border-blue-300 text-blue-700 dark:bg-blue-900/30 dark:border-blue-600 dark:text-blue-300'
+                  : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700'
               }
               ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
             `}
@@ -202,7 +204,9 @@ export default function EnhancedLanguageSelector({
         ref={triggerRef}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         onMouseEnter={() => trigger === 'hover' && !disabled && setIsOpen(true)}
-        onMouseLeave={() => trigger === 'hover' && !disabled && setIsOpen(false)}
+        onMouseLeave={() =>
+          trigger === 'hover' && !disabled && setIsOpen(false)
+        }
         onKeyDown={handleKeyDown}
         disabled={disabled || isChangingLanguage}
         aria-expanded={isOpen}
@@ -211,13 +215,15 @@ export default function EnhancedLanguageSelector({
         className={`
           inline-flex items-center gap-2 border rounded-lg transition-all
           ${sizeClasses[size]}
-          ${disabled || isChangingLanguage
-            ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-800'
-            : 'cursor-pointer bg-white hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800'
+          ${
+            disabled || isChangingLanguage
+              ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-800'
+              : 'cursor-pointer bg-white hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800'
           }
-          ${isOpen
-            ? 'border-blue-300 ring-2 ring-blue-100 dark:border-blue-600 dark:ring-blue-900/30'
-            : 'border-gray-300 dark:border-gray-600'
+          ${
+            isOpen
+              ? 'border-blue-300 ring-2 ring-blue-100 dark:border-blue-600 dark:ring-blue-900/30'
+              : 'border-gray-300 dark:border-gray-600'
           }
           ${isRTL ? 'flex-row-reverse' : ''}
         `}
@@ -225,23 +231,23 @@ export default function EnhancedLanguageSelector({
         {showFlag && (
           <span className="text-lg flex-shrink-0">{languageInfo.flag}</span>
         )}
-        
+
         <span className="font-medium text-gray-900 dark:text-gray-100">
           {showNativeName ? languageInfo.nativeName : languageInfo.name}
         </span>
-        
+
         {showCompletion && (
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {getLanguageCompletion()}%
           </span>
         )}
-        
-        <ChevronDownIcon 
+
+        <ChevronDownIcon
           className={`w-4 h-4 text-gray-500 transition-transform ${
             isOpen ? 'rotate-180' : ''
-          }`} 
+          }`}
         />
-        
+
         {isChangingLanguage && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-900/80 rounded-lg">
             <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
@@ -299,13 +305,15 @@ export default function EnhancedLanguageSelector({
                   onClick={() => handleLanguageSelect(lang.code)}
                   className={`
                     w-full px-3 py-2 text-left flex items-center gap-3 transition-colors
-                    ${language === lang.code
-                      ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                      : 'text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800'
+                    ${
+                      language === lang.code
+                        ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                        : 'text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800'
                     }
-                    ${index === focusedIndex
-                      ? 'bg-gray-100 dark:bg-gray-700'
-                      : ''
+                    ${
+                      index === focusedIndex
+                        ? 'bg-gray-100 dark:bg-gray-700'
+                        : ''
                     }
                   `}
                   role="option"
@@ -314,7 +322,7 @@ export default function EnhancedLanguageSelector({
                   {showFlag && (
                     <span className="text-lg flex-shrink-0">{lang.flag}</span>
                   )}
-                  
+
                   <div className="flex-1 min-w-0">
                     <div className="font-medium">
                       {showNativeName ? lang.nativeName : lang.name}
@@ -325,13 +333,13 @@ export default function EnhancedLanguageSelector({
                       </div>
                     )}
                   </div>
-                  
+
                   {showCompletion && (
                     <div className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">
                       {getLanguageCompletion()}%
                     </div>
                   )}
-                  
+
                   {language === lang.code && (
                     <CheckIcon className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                   )}
@@ -343,10 +351,16 @@ export default function EnhancedLanguageSelector({
           {/* Footer */}
           <div className="px-3 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
             <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-              <span>{t('common.languages_available', { count: supportedLanguages.length })}</span>
+              <span>
+                {t('common.languages_available', {
+                  count: supportedLanguages.length,
+                })}
+              </span>
               <div className="flex items-center gap-1">
                 <GlobeIcon className="w-3 h-3" />
-                <span>{getLanguageCompletion()}% {t('common.complete')}</span>
+                <span>
+                  {getLanguageCompletion()}% {t('common.complete')}
+                </span>
               </div>
             </div>
           </div>

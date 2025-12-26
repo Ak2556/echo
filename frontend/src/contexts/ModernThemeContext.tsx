@@ -12,7 +12,13 @@ import React, {
 
 // Modern Theme Types
 type ColorMode = 'light' | 'dark' | 'auto';
-type ThemeVariant = 'default' | 'ocean' | 'sunset' | 'forest' | 'lavender' | 'rose';
+type ThemeVariant =
+  | 'default'
+  | 'ocean'
+  | 'sunset'
+  | 'forest'
+  | 'lavender'
+  | 'rose';
 
 interface ThemeColors {
   // Primary palette
@@ -96,7 +102,10 @@ interface ModernThemeContextType {
 }
 
 // Theme Variants with Light and Dark Modes
-const THEME_VARIANTS: Record<ThemeVariant, { light: ThemeColors; dark: ThemeColors }> = {
+const THEME_VARIANTS: Record<
+  ThemeVariant,
+  { light: ThemeColors; dark: ThemeColors }
+> = {
   // Default - Modern Blue/Purple
   default: {
     light: {
@@ -530,7 +539,9 @@ const THEME_VARIANTS: Record<ThemeVariant, { light: ThemeColors; dark: ThemeColo
   },
 };
 
-const ModernThemeContext = createContext<ModernThemeContextType | undefined>(undefined);
+const ModernThemeContext = createContext<ModernThemeContextType | undefined>(
+  undefined
+);
 
 export function ModernThemeProvider({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
@@ -546,7 +557,9 @@ export function ModernThemeProvider({ children }: { children: ReactNode }) {
   // Get system preference
   const getSystemPreference = useCallback((): 'light' | 'dark' => {
     if (typeof window === 'undefined') return 'light';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
   }, []);
 
   // Calculate actual mode
@@ -559,7 +572,8 @@ export function ModernThemeProvider({ children }: { children: ReactNode }) {
 
   // Get current colors (with fallback for safety)
   const colors = useMemo(() => {
-    const safeVariant = variant && THEME_VARIANTS[variant] ? variant : 'default';
+    const safeVariant =
+      variant && THEME_VARIANTS[variant] ? variant : 'default';
     const safeMode = actualMode === 'dark' ? 'dark' : 'light';
     return THEME_VARIANTS[safeVariant][safeMode];
   }, [variant, actualMode]);
@@ -572,36 +586,54 @@ export function ModernThemeProvider({ children }: { children: ReactNode }) {
   // Load saved preferences
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const savedMode = localStorage.getItem('echo-modern-color-mode') as ColorMode | null;
-      const savedVariant = localStorage.getItem('echo-modern-variant') as ThemeVariant | null;
-      const savedAccessibility = localStorage.getItem('echo-modern-accessibility');
+      const savedMode = localStorage.getItem(
+        'echo-modern-color-mode'
+      ) as ColorMode | null;
+      const savedVariant = localStorage.getItem(
+        'echo-modern-variant'
+      ) as ThemeVariant | null;
+      const savedAccessibility = localStorage.getItem(
+        'echo-modern-accessibility'
+      );
 
       if (savedMode && ['light', 'dark', 'auto'].includes(savedMode)) {
         setColorMode(savedMode);
       }
 
-      if (savedVariant && ['default', 'ocean', 'sunset', 'forest', 'lavender', 'rose'].includes(savedVariant)) {
+      if (
+        savedVariant &&
+        ['default', 'ocean', 'sunset', 'forest', 'lavender', 'rose'].includes(
+          savedVariant
+        )
+      ) {
         setVariant(savedVariant);
       } else if (savedVariant) {
         // Clean up invalid old theme from localStorage
         localStorage.removeItem('echo-modern-variant');
-        console.info('Cleared invalid theme variant from localStorage:', savedVariant);
+        console.info(
+          'Cleared invalid theme variant from localStorage:',
+          savedVariant
+        );
       }
 
       if (savedAccessibility) {
         try {
           const prefs = JSON.parse(savedAccessibility);
-          setAccessibility(prev => ({ ...prev, ...prefs }));
+          setAccessibility((prev) => ({ ...prev, ...prefs }));
         } catch (error) {
           console.warn('Failed to parse accessibility settings:', error);
         }
       }
 
       // Detect system accessibility preferences
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const highContrast = window.matchMedia('(prefers-contrast: high)').matches;
+      const reducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
+      const highContrast = window.matchMedia(
+        '(prefers-contrast: high)'
+      ).matches;
 
-      setAccessibility(prev => ({ ...prev, reducedMotion, highContrast }));
+      setAccessibility((prev) => ({ ...prev, reducedMotion, highContrast }));
     }
     setMounted(true);
   }, []);
@@ -627,8 +659,14 @@ export function ModernThemeProvider({ children }: { children: ReactNode }) {
     }
 
     // Apply accessibility
-    root.setAttribute('data-reduced-motion', accessibility.reducedMotion.toString());
-    root.setAttribute('data-high-contrast', accessibility.highContrast.toString());
+    root.setAttribute(
+      'data-reduced-motion',
+      accessibility.reducedMotion.toString()
+    );
+    root.setAttribute(
+      'data-high-contrast',
+      accessibility.highContrast.toString()
+    );
     root.setAttribute('data-font-size', String(accessibility.fontSize));
 
     // Apply CSS custom properties
@@ -655,7 +693,10 @@ export function ModernThemeProvider({ children }: { children: ReactNode }) {
     // Save preferences
     localStorage.setItem('echo-modern-color-mode', colorMode);
     localStorage.setItem('echo-modern-variant', variant);
-    localStorage.setItem('echo-modern-accessibility', JSON.stringify(accessibility));
+    localStorage.setItem(
+      'echo-modern-accessibility',
+      JSON.stringify(accessibility)
+    );
   }, [colorMode, variant, actualMode, colors, accessibility, mounted]);
 
   // Listen for system preference changes
@@ -674,7 +715,7 @@ export function ModernThemeProvider({ children }: { children: ReactNode }) {
 
   // Toggle mode
   const toggleMode = useCallback(() => {
-    setColorMode(prev => {
+    setColorMode((prev) => {
       if (prev === 'auto') return 'light';
       if (prev === 'light') return 'dark';
       return 'auto';
@@ -682,37 +723,43 @@ export function ModernThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Update accessibility
-  const updateAccessibility = useCallback((settings: Partial<AccessibilitySettings>) => {
-    setAccessibility(prev => ({ ...prev, ...settings }));
-  }, []);
+  const updateAccessibility = useCallback(
+    (settings: Partial<AccessibilitySettings>) => {
+      setAccessibility((prev) => ({ ...prev, ...settings }));
+    },
+    []
+  );
 
-  const value = useMemo(() => ({
-    colorMode,
-    actualMode,
-    variant,
-    colors,
-    accessibility,
-    isTransitioning,
-    setColorMode,
-    setVariant,
-    toggleMode,
-    setAccessibility: updateAccessibility,
-    isDark,
-    isLight,
-    isAuto,
-  }), [
-    colorMode,
-    actualMode,
-    variant,
-    colors,
-    accessibility,
-    isTransitioning,
-    toggleMode,
-    updateAccessibility,
-    isDark,
-    isLight,
-    isAuto,
-  ]);
+  const value = useMemo(
+    () => ({
+      colorMode,
+      actualMode,
+      variant,
+      colors,
+      accessibility,
+      isTransitioning,
+      setColorMode,
+      setVariant,
+      toggleMode,
+      setAccessibility: updateAccessibility,
+      isDark,
+      isLight,
+      isAuto,
+    }),
+    [
+      colorMode,
+      actualMode,
+      variant,
+      colors,
+      accessibility,
+      isTransitioning,
+      toggleMode,
+      updateAccessibility,
+      isDark,
+      isLight,
+      isAuto,
+    ]
+  );
 
   return (
     <ModernThemeContext.Provider value={value}>

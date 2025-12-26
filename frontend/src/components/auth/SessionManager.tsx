@@ -142,7 +142,9 @@ interface SessionCardProps {
 
 function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps) {
   const deviceIcon = getDeviceIcon(session.device_type || 'unknown');
-  const lastActive = formatLastActive(session.last_activity || session.last_active);
+  const lastActive = formatLastActive(
+    session.last_activity || session.last_active
+  );
 
   return (
     <motion.div

@@ -172,8 +172,13 @@ export default function PerformanceDashboard({
     else if (metrics.renderTime > 16) score -= 10;
 
     // Memory impact
-    if (metrics.memoryUsage?.percentage && metrics.memoryUsage.percentage > 85) score -= 15;
-    else if (metrics.memoryUsage?.percentage && metrics.memoryUsage.percentage > 70) score -= 8;
+    if (metrics.memoryUsage?.percentage && metrics.memoryUsage.percentage > 85)
+      score -= 15;
+    else if (
+      metrics.memoryUsage?.percentage &&
+      metrics.memoryUsage.percentage > 70
+    )
+      score -= 8;
 
     // Interaction time impact
     if (metrics.interactionTime > 300) score -= 15;

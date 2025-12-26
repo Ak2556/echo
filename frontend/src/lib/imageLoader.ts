@@ -14,7 +14,11 @@ export interface ImageLoaderProps {
  * In production, this would route images through a CDN
  * In development, it uses the default Next.js image optimization
  */
-export default function imageLoader({ src, width, quality }: ImageLoaderProps): string {
+export default function imageLoader({
+  src,
+  width,
+  quality,
+}: ImageLoaderProps): string {
   // If the image is already a full URL (external), return as-is
   if (src.startsWith('http://') || src.startsWith('https://')) {
     return src;

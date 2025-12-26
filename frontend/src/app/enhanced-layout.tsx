@@ -29,12 +29,10 @@ export default function EnhancedLayout({ children }: EnhancedLayoutProps) {
       <div className="enhanced-app">
         {/* Enhanced Navigation */}
         <EnhancedNavigation onOpenMiniApp={handleOpenMiniApp} />
-        
+
         {/* Main Content */}
-        <main className="enhanced-main">
-          {children}
-        </main>
-        
+        <main className="enhanced-main">{children}</main>
+
         {/* Enhanced Footer */}
         <EnhancedFooter onNavigate={handleNavigation} />
 
@@ -83,7 +81,8 @@ export default function EnhancedLayout({ children }: EnhancedLayoutProps) {
           }
 
           :global(@keyframes float) {
-            0%, 100% {
+            0%,
+            100% {
               transform: translateY(0px);
             }
             50% {
@@ -92,7 +91,8 @@ export default function EnhancedLayout({ children }: EnhancedLayoutProps) {
           }
 
           :global(@keyframes pulse) {
-            0%, 100% {
+            0%,
+            100% {
               opacity: 1;
               transform: scale(1);
             }
@@ -103,7 +103,8 @@ export default function EnhancedLayout({ children }: EnhancedLayoutProps) {
           }
 
           :global(@keyframes glow) {
-            0%, 100% {
+            0%,
+            100% {
               box-shadow: var(--shadow-md);
             }
             50% {
@@ -113,14 +114,14 @@ export default function EnhancedLayout({ children }: EnhancedLayoutProps) {
 
           /* Theme transition class */
           :global(.theme-transitioning) {
-            transition: 
+            transition:
               background-color var(--duration-slow) var(--ease-out),
               color var(--duration-slow) var(--ease-out),
               border-color var(--duration-slow) var(--ease-out);
           }
 
           :global(.theme-transitioning *) {
-            transition: 
+            transition:
               background-color var(--duration-slow) var(--ease-out),
               color var(--duration-slow) var(--ease-out),
               border-color var(--duration-slow) var(--ease-out);

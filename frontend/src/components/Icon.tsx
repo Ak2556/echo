@@ -24,7 +24,9 @@ export default function Icon({
   strokeWidth = 2,
   'aria-label': ariaLabel,
 }: IconProps) {
-  const LucideIcon = LucideIcons[name] as React.ComponentType<LucideIcons.LucideProps>;
+  const LucideIcon = LucideIcons[
+    name
+  ] as React.ComponentType<LucideIcons.LucideProps>;
 
   if (!LucideIcon) {
     console.warn(`Icon "${name}" not found in lucide-react`);

@@ -279,7 +279,14 @@ export default function MiniAppManager({
             background: `linear-gradient(135deg, ${colors.surfaceElevated}, ${colors.surface})`,
           }}
         >
-          <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600, color: colors.text }}>
+          <h3
+            style={{
+              margin: 0,
+              fontSize: '1.125rem',
+              fontWeight: 600,
+              color: colors.text,
+            }}
+          >
             {getAppTitle(activeApp)}
           </h3>
 
@@ -304,7 +311,11 @@ export default function MiniAppManager({
                 justifyContent: 'center',
               }}
             >
-              {colorMode === 'dark' ? '🌙' : colorMode === 'light' ? '☀️' : '🌍'}
+              {colorMode === 'dark'
+                ? '🌙'
+                : colorMode === 'light'
+                  ? '☀️'
+                  : '🌍'}
             </button>
 
             {/* Fullscreen Toggle */}

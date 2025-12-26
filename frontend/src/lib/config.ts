@@ -86,7 +86,10 @@ class ConfigManager {
   }
 
   private loadConfig(): AppConfig {
-    const environment = process.env.NODE_ENV as 'development' | 'staging' | 'production';
+    const environment = process.env.NODE_ENV as
+      | 'development'
+      | 'staging'
+      | 'production';
 
     // Base configuration
     const baseConfig: AppConfig = {
@@ -114,8 +117,8 @@ class ConfigManager {
         sampleRate: environment === 'production' ? 0.1 : 1.0,
         thresholds: {
           pageLoad: 3000, // 3 seconds
-          api: 5000,      // 5 seconds
-          render: 100,    // 100ms
+          api: 5000, // 5 seconds
+          render: 100, // 100ms
         },
       },
 
@@ -275,11 +278,17 @@ class ConfigManager {
   }
 
   // Runtime feature flag updates (for A/B testing, etc.)
-  public updateFeatureFlag(feature: keyof AppConfig['features'], enabled: boolean): void {
+  public updateFeatureFlag(
+    feature: keyof AppConfig['features'],
+    enabled: boolean
+  ): void {
     this.config.features[feature] = enabled;
 
     // Persist to localStorage for session consistency
-    localStorage.setItem('echo_feature_flags', JSON.stringify(this.config.features));
+    localStorage.setItem(
+      'echo_feature_flags',
+      JSON.stringify(this.config.features)
+    );
   }
 
   // Load feature flags from localStorage (for persistent overrides)
@@ -297,14 +306,10 @@ class ConfigManager {
     return {
       enabled: this.config.environment !== 'development',
       interval: 60000, // 1 minute
-      endpoints: [
-        '/api/health',
-        '/api/analytics',
-        '/api/errors',
-      ],
+      endpoints: ['/api/health', '/api/analytics', '/api/errors'],
       thresholds: {
         responseTime: 1000, // 1 second
-        successRate: 0.95,  // 95%
+        successRate: 0.95, // 95%
       },
     };
   }

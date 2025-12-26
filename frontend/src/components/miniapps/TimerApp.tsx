@@ -382,8 +382,9 @@ export default function TimerApp({ isVisible, onClose }: TimerAppProps) {
   const playNotificationSound = () => {
     try {
       // Create a simple beep using Web Audio API
-      const audioContext = new (window.AudioContext ||
-        (window as any).webkitAudioContext)();
+      const audioContext = new (
+        window.AudioContext || (window as any).webkitAudioContext
+      )();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 

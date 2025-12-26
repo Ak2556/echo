@@ -11,11 +11,11 @@ export const ANIMATION = {
    * Keep animations snappy and responsive (140-260ms range)
    */
   duration: {
-    instant: 100,   // 0.1s - Immediate feedback
-    fast: 150,      // 0.15s - Quick interactions
-    normal: 200,    // 0.2s - Standard transitions
-    slow: 300,      // 0.3s - Deliberate animations
-    slower: 400,    // 0.4s - Emphasized movements
+    instant: 100, // 0.1s - Immediate feedback
+    fast: 150, // 0.15s - Quick interactions
+    normal: 200, // 0.2s - Standard transitions
+    slow: 300, // 0.3s - Deliberate animations
+    slower: 400, // 0.4s - Emphasized movements
   },
 
   /**
@@ -44,9 +44,9 @@ export const ANIMATION = {
    * Subtle lift and scale for premium feel
    */
   hover: {
-    scale: 1.02,      // 2% scale increase
-    y: -2,            // 2px lift
-    duration: 0.15,   // 150ms
+    scale: 1.02, // 2% scale increase
+    y: -2, // 2px lift
+    duration: 0.15, // 150ms
   },
 
   /**
@@ -54,8 +54,8 @@ export const ANIMATION = {
    * Quick scale down for tactile feel
    */
   tap: {
-    scale: 0.98,      // 2% scale decrease
-    duration: 0.1,    // 100ms
+    scale: 0.98, // 2% scale decrease
+    duration: 0.1, // 100ms
   },
 
   /**
@@ -63,9 +63,9 @@ export const ANIMATION = {
    * For fade-in and slide-up animations
    */
   scrollReveal: {
-    threshold: 0.1,   // Trigger when 10% visible
-    stagger: 0.05,    // 50ms between elements
-    distance: 30,     // 30px slide distance
+    threshold: 0.1, // Trigger when 10% visible
+    stagger: 0.05, // 50ms between elements
+    distance: 30, // 30px slide distance
   },
 
   /**
@@ -80,9 +80,9 @@ export const ANIMATION = {
    * Scale transitions
    */
   scale: {
-    from: 0.96,       // Starting scale
-    to: 1,            // Ending scale
-    duration: 0.25,   // 250ms
+    from: 0.96, // Starting scale
+    to: 1, // Ending scale
+    duration: 0.25, // 250ms
   },
 
   /**
@@ -137,7 +137,9 @@ export const getDuration = (key: AnimationDuration): number => {
 /**
  * Utility to get easing curve
  */
-export const getEasing = (key: AnimationEasing): string | { tension: number; friction: number } => {
+export const getEasing = (
+  key: AnimationEasing
+): string | { tension: number; friction: number } => {
   return ANIMATION.easing[key];
 };
 

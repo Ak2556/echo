@@ -32,7 +32,10 @@ export default function ProductViewer3D({
 
   // Mouse interaction state
   const [isDragging, setIsDragging] = useState(false);
-  const [previousMousePosition, setPreviousMousePosition] = useState({ x: 0, y: 0 });
+  const [previousMousePosition, setPreviousMousePosition] = useState({
+    x: 0,
+    y: 0,
+  });
   const rotationRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -55,7 +58,10 @@ export default function ProductViewer3D({
 
     // Renderer setup
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
+    renderer.setSize(
+      containerRef.current.clientWidth,
+      containerRef.current.clientHeight
+    );
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -102,7 +108,13 @@ export default function ProductViewer3D({
 
     // Animation loop
     const animate = () => {
-      if (!sceneRef.current || !cameraRef.current || !rendererRef.current || !meshRef.current) return;
+      if (
+        !sceneRef.current ||
+        !cameraRef.current ||
+        !rendererRef.current ||
+        !meshRef.current
+      )
+        return;
 
       animationIdRef.current = requestAnimationFrame(animate);
 
@@ -122,7 +134,8 @@ export default function ProductViewer3D({
 
     // Handle window resize
     const handleResize = () => {
-      if (!containerRef.current || !cameraRef.current || !rendererRef.current) return;
+      if (!containerRef.current || !cameraRef.current || !rendererRef.current)
+        return;
 
       const width = containerRef.current.clientWidth;
       const height = containerRef.current.clientHeight;
@@ -282,7 +295,9 @@ export default function ProductViewer3D({
               transition: 'background 0.2s',
             }}
             onMouseEnter={(e) => (e.currentTarget.style.background = '#f0f0f0')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = 'transparent')
+            }
             title="Reset view"
           >
             <RotateCcw size={20} color="#333" />
@@ -302,7 +317,9 @@ export default function ProductViewer3D({
               transition: 'background 0.2s',
             }}
             onMouseEnter={(e) => (e.currentTarget.style.background = '#f0f0f0')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = 'transparent')
+            }
             title="Zoom in"
           >
             <ZoomIn size={20} color="#333" />
@@ -322,7 +339,9 @@ export default function ProductViewer3D({
               transition: 'background 0.2s',
             }}
             onMouseEnter={(e) => (e.currentTarget.style.background = '#f0f0f0')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = 'transparent')
+            }
             title="Zoom out"
           >
             <ZoomOut size={20} color="#333" />

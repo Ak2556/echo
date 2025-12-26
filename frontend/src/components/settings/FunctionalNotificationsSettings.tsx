@@ -3,14 +3,7 @@
 import React, { useState } from 'react';
 import { SettingsSubPage, SettingsSection } from './SettingsSubPage';
 import { useSettings } from '@/contexts/SettingsContext';
-import {
-  Bell,
-  BellOff,
-  Volume2,
-  VolumeX,
-  Mail,
-  Check,
-} from 'lucide-react';
+import { Bell, BellOff, Volume2, VolumeX, Mail, Check } from 'lucide-react';
 
 interface ChannelCardProps {
   icon: React.ReactNode;
@@ -20,14 +13,22 @@ interface ChannelCardProps {
   onClick: () => void;
 }
 
-function ChannelCard({ icon, iconOff, title, enabled, onClick }: ChannelCardProps) {
+function ChannelCard({
+  icon,
+  iconOff,
+  title,
+  enabled,
+  onClick,
+}: ChannelCardProps) {
   return (
     <button
       onClick={onClick}
       style={{
         padding: 'var(--settings-space-6)',
         borderRadius: 'var(--settings-radius-lg)',
-        border: enabled ? '2px solid var(--echo-primary)' : '1px solid var(--echo-border-light)',
+        border: enabled
+          ? '2px solid var(--echo-primary)'
+          : '1px solid var(--echo-border-light)',
         background: enabled
           ? 'linear-gradient(135deg, rgba(0, 102, 255, 0.08), rgba(0, 102, 255, 0.03))'
           : 'var(--echo-bg-primary)',
@@ -52,7 +53,9 @@ function ChannelCard({ icon, iconOff, title, enabled, onClick }: ChannelCardProp
           width: '48px',
           height: '48px',
           borderRadius: 'var(--settings-radius-md)',
-          background: enabled ? 'rgba(0, 102, 255, 0.12)' : 'var(--echo-bg-secondary)',
+          background: enabled
+            ? 'rgba(0, 102, 255, 0.12)'
+            : 'var(--echo-bg-secondary)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -84,9 +87,18 @@ function ChannelCard({ icon, iconOff, title, enabled, onClick }: ChannelCardProp
   );
 }
 
-function Toast({ message, type = 'success', onClose }: { message: string; type?: 'success' | 'error'; onClose: () => void }) {
+function Toast({
+  message,
+  type = 'success',
+  onClose,
+}: {
+  message: string;
+  type?: 'success' | 'error';
+  onClose: () => void;
+}) {
   const color = type === 'success' ? 'rgb(34, 197, 94)' : 'rgb(239, 68, 68)';
-  const bg = type === 'success' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+  const bg =
+    type === 'success' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)';
 
   React.useEffect(() => {
     const timer = setTimeout(onClose, 3000);
@@ -113,14 +125,23 @@ function Toast({ message, type = 'success', onClose }: { message: string; type?:
       }}
     >
       <Check size={20} />
-      <div style={{ flex: 1, fontSize: '15px', fontWeight: 500 }}>{message}</div>
+      <div style={{ flex: 1, fontSize: '15px', fontWeight: 500 }}>
+        {message}
+      </div>
     </div>
   );
 }
 
-export function FunctionalNotificationsSettings({ onBack }: { onBack?: () => void }) {
+export function FunctionalNotificationsSettings({
+  onBack,
+}: {
+  onBack?: () => void;
+}) {
   const { settings, updateSetting } = useSettings();
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: 'success' | 'error';
+  } | null>(null);
 
   const handleSave = () => {
     setToast({ message: 'Settings saved successfully!', type: 'success' });
@@ -159,21 +180,30 @@ export function FunctionalNotificationsSettings({ onBack }: { onBack?: () => voi
               iconOff={<BellOff size={24} color="var(--echo-text-secondary)" />}
               title="Push Notifications"
               enabled={settings.pushNotifications}
-              onClick={() => updateSetting('pushNotifications', !settings.pushNotifications)}
+              onClick={() =>
+                updateSetting('pushNotifications', !settings.pushNotifications)
+              }
             />
             <ChannelCard
               icon={<Mail size={24} color="var(--echo-primary)" />}
               iconOff={<Mail size={24} color="var(--echo-text-secondary)" />}
               title="Email Notifications"
               enabled={settings.emailNotifications}
-              onClick={() => updateSetting('emailNotifications', !settings.emailNotifications)}
+              onClick={() =>
+                updateSetting(
+                  'emailNotifications',
+                  !settings.emailNotifications
+                )
+              }
             />
             <ChannelCard
               icon={<Volume2 size={24} color="var(--echo-primary)" />}
               iconOff={<VolumeX size={24} color="var(--echo-text-secondary)" />}
               title="Notification Sounds"
               enabled={settings.soundEffects}
-              onClick={() => updateSetting('soundEffects', !settings.soundEffects)}
+              onClick={() =>
+                updateSetting('soundEffects', !settings.soundEffects)
+              }
             />
           </div>
         </SettingsSection>
@@ -188,9 +218,16 @@ export function FunctionalNotificationsSettings({ onBack }: { onBack?: () => voi
             marginTop: 'var(--settings-space-6)',
           }}
         >
-          <div style={{ fontSize: 'var(--settings-text-sm)', color: 'var(--echo-text-secondary)', lineHeight: '1.6' }}>
-            💡 <strong>Tip:</strong> Settings are automatically saved when you make changes.
-            All preferences are stored locally and persist across sessions.
+          <div
+            style={{
+              fontSize: 'var(--settings-text-sm)',
+              color: 'var(--echo-text-secondary)',
+              lineHeight: '1.6',
+            }}
+          >
+            💡 <strong>Tip:</strong> Settings are automatically saved when you
+            make changes. All preferences are stored locally and persist across
+            sessions.
           </div>
         </div>
 
@@ -237,7 +274,8 @@ export function FunctionalNotificationsSettings({ onBack }: { onBack?: () => voi
               fontWeight: 'var(--settings-weight-semibold)',
               borderRadius: 'var(--settings-radius-lg)',
               border: 'none',
-              background: 'linear-gradient(135deg, var(--echo-primary), var(--echo-accent))',
+              background:
+                'linear-gradient(135deg, var(--echo-primary), var(--echo-accent))',
               color: 'white',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
@@ -246,18 +284,26 @@ export function FunctionalNotificationsSettings({ onBack }: { onBack?: () => voi
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-1px)';
-              e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 102, 255, 0.35)';
+              e.currentTarget.style.boxShadow =
+                '0 6px 16px rgba(0, 102, 255, 0.35)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 102, 255, 0.25)';
+              e.currentTarget.style.boxShadow =
+                '0 4px 12px rgba(0, 102, 255, 0.25)';
             }}
           >
             Confirm Settings
           </button>
         </div>
       </SettingsSubPage>
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
       <style jsx global>{`
         @keyframes slideIn {
           from {

@@ -17,9 +17,7 @@ interface RippleOptions {
   size?: number;
 }
 
-export function useIntersectionAnimation(
-  options: AnimationOptions = {}
-) {
+export function useIntersectionAnimation(options: AnimationOptions = {}) {
   const { accessibility } = useEnhancedTheme();
   const elementRef = useRef<HTMLElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -60,7 +58,14 @@ export function useIntersectionAnimation(
     return () => {
       observerRef.current?.disconnect();
     };
-  }, [duration, delay, easing, threshold, rootMargin, accessibility.reducedMotion]);
+  }, [
+    duration,
+    delay,
+    easing,
+    threshold,
+    rootMargin,
+    accessibility.reducedMotion,
+  ]);
 
   return elementRef;
 }
@@ -85,7 +90,7 @@ export function useStaggeredAnimation(
     if (!container || accessibility.reducedMotion) return;
 
     const items = container.children;
-    
+
     // Set initial state for all items
     Array.from(items).forEach((item, index) => {
       const element = item as HTMLElement;
@@ -116,7 +121,14 @@ export function useStaggeredAnimation(
     return () => {
       observerRef.current?.disconnect();
     };
-  }, [itemCount, duration, delay, easing, threshold, accessibility.reducedMotion]);
+  }, [
+    itemCount,
+    duration,
+    delay,
+    easing,
+    threshold,
+    accessibility.reducedMotion,
+  ]);
 
   return containerRef;
 }
@@ -318,10 +330,7 @@ export function useParallaxEffect(speed: number = 0.5) {
   return elementRef;
 }
 
-export function useTypewriterEffect(
-  text: string,
-  speed: number = 50
-) {
+export function useTypewriterEffect(text: string, speed: number = 50) {
   const { accessibility } = useEnhancedTheme();
   const elementRef = useRef<HTMLElement>(null);
 
@@ -375,11 +384,11 @@ export function useCountUpAnimation(
     const updateCount = (currentTime: number) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       // Easing function
       const easeOutQuart = 1 - Math.pow(1 - progress, 4);
       const currentValue = Math.floor(startValue + range * easeOutQuart);
-      
+
       element.textContent = currentValue.toString();
 
       if (progress < 1) {

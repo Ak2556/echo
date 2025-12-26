@@ -17,7 +17,7 @@ import {
   MessageCircle,
   Zap,
   Brain,
-  Cpu
+  Cpu,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -52,7 +52,8 @@ export default function AiChat() {
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { mutate: sendChatMessage, isPending: isSendingMessage } = useSendMessage();
+  const { mutate: sendChatMessage, isPending: isSendingMessage } =
+    useSendMessage();
 
   // Utility function to decode HTML entities
   const decodeHtmlEntities = (text: string): string => {
@@ -104,7 +105,8 @@ export default function AiChat() {
 
   useEffect(() => {
     window.addEventListener('openAiChat' as any, handleOpenAiChat);
-    return () => window.removeEventListener('openAiChat' as any, handleOpenAiChat);
+    return () =>
+      window.removeEventListener('openAiChat' as any, handleOpenAiChat);
   }, [handleOpenAiChat]);
 
   const handleEscape = useCallback((event: KeyboardEvent) => {
@@ -162,7 +164,9 @@ export default function AiChat() {
 
       const displayedWords = words.slice(0, currentWordIndex);
       if (currentCharInWord > 0 && currentWordIndex < words.length) {
-        displayedWords.push(words[currentWordIndex].slice(0, currentCharInWord));
+        displayedWords.push(
+          words[currentWordIndex].slice(0, currentCharInWord)
+        );
       }
       const displayedText = displayedWords.join(' ');
 
@@ -223,7 +227,10 @@ export default function AiChat() {
           setMessages((prev) => {
             const newMessages = [...prev, aiMessage];
             setTimeout(() => {
-              animatedTypewriterEffect(response.response, newMessages.length - 1);
+              animatedTypewriterEffect(
+                response.response,
+                newMessages.length - 1
+              );
             }, 100);
             return newMessages;
           });
@@ -232,9 +239,11 @@ export default function AiChat() {
         },
         onError: (error) => {
           const errorMessage: TypingMessage = {
-            content: 'I encountered an unexpected error. Please try refreshing the page.',
+            content:
+              'I encountered an unexpected error. Please try refreshing the page.',
             role: 'assistant',
-            displayedContent: 'I encountered an unexpected error. Please try refreshing the page.',
+            displayedContent:
+              'I encountered an unexpected error. Please try refreshing the page.',
             isTyping: false,
           };
           setMessages((prev) => [...prev, errorMessage]);
@@ -245,12 +254,15 @@ export default function AiChat() {
     );
   };
 
-  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  }, [inputValue, isLoading]);
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    },
+    [inputValue, isLoading]
+  );
 
   const clearChat = useCallback(() => {
     if (typingIntervalRef.current) {
@@ -265,21 +277,24 @@ export default function AiChat() {
   const startNewChat = () => {
     clearChat();
     const personalityGreetings = {
-      helpful: 'Welcome to Echo AI! I\'m here to assist you with anything you need.',
+      helpful:
+        "Welcome to Echo AI! I'm here to assist you with anything you need.",
       casual: "Hey! I'm Echo AI, ready to chat and have some fun!",
-      professional: 'Good day. I\'m Echo AI, your professional assistant.',
-      creative: 'Greetings! I\'m Echo AI, your creative companion!',
-      technical: 'Hello! I\'m Echo AI, your technical expert.',
+      professional: "Good day. I'm Echo AI, your professional assistant.",
+      creative: "Greetings! I'm Echo AI, your creative companion!",
+      technical: "Hello! I'm Echo AI, your technical expert.",
     };
 
     const welcomeMessage: TypingMessage = {
       content:
-        personalityGreetings[aiSettings.personality as keyof typeof personalityGreetings] ||
-        personalityGreetings.helpful,
+        personalityGreetings[
+          aiSettings.personality as keyof typeof personalityGreetings
+        ] || personalityGreetings.helpful,
       role: 'assistant',
       displayedContent:
-        personalityGreetings[aiSettings.personality as keyof typeof personalityGreetings] ||
-        personalityGreetings.helpful,
+        personalityGreetings[
+          aiSettings.personality as keyof typeof personalityGreetings
+        ] || personalityGreetings.helpful,
       isTyping: false,
     };
     setMessages([welcomeMessage]);
@@ -295,9 +310,15 @@ export default function AiChat() {
     setIsFullscreen((prev) => {
       if (!prev) {
         setIsOpen(true);
-        toast.success('Fullscreen mode', { icon: <Maximize2 size={20} />, duration: 2000 });
+        toast.success('Fullscreen mode', {
+          icon: <Maximize2 size={20} />,
+          duration: 2000,
+        });
       } else {
-        toast.success('Compact mode', { icon: <Minimize2 size={20} />, duration: 2000 });
+        toast.success('Compact mode', {
+          icon: <Minimize2 size={20} />,
+          duration: 2000,
+        });
       }
       return !prev;
     });
@@ -344,7 +365,6 @@ export default function AiChat() {
           ${isMinimized && !isFullscreen ? 'h-20' : isFullscreen ? 'h-full' : 'h-[680px]'}
         `}
       >
-
         {/* Clean Header */}
         <div className="relative px-6 py-4 border-b border-gray-200 dark:border-gray-800">
           <div className="relative flex items-center justify-between">
@@ -358,7 +378,9 @@ export default function AiChat() {
                 </h3>
                 <div className="flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">Online</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    Online
+                  </span>
                 </div>
               </div>
             </div>
@@ -435,7 +457,9 @@ export default function AiChat() {
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 title={isMinimized ? 'Expand' : 'Minimize'}
               >
-                <Minimize2 className={`w-4 h-4 text-gray-600 dark:text-gray-400 transition-transform ${isMinimized ? 'rotate-180' : ''}`} />
+                <Minimize2
+                  className={`w-4 h-4 text-gray-600 dark:text-gray-400 transition-transform ${isMinimized ? 'rotate-180' : ''}`}
+                />
               </button>
               <button
                 onClick={() => {
@@ -459,7 +483,10 @@ export default function AiChat() {
                 {/* Minimal Icon */}
                 <div className="relative mb-8">
                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg">
-                    <Sparkles className="w-8 h-8 text-white" strokeWidth={2.5} />
+                    <Sparkles
+                      className="w-8 h-8 text-white"
+                      strokeWidth={2.5}
+                    />
                   </div>
                 </div>
 
@@ -474,16 +501,32 @@ export default function AiChat() {
                 {/* Minimal Action Cards */}
                 <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
                   {[
-                    { icon: '💡', title: 'Get Started', gradient: 'from-purple-500 to-purple-600' },
-                    { icon: '🎨', title: 'Explore', gradient: 'from-blue-500 to-blue-600' },
+                    {
+                      icon: '💡',
+                      title: 'Get Started',
+                      gradient: 'from-purple-500 to-purple-600',
+                    },
+                    {
+                      icon: '🎨',
+                      title: 'Explore',
+                      gradient: 'from-blue-500 to-blue-600',
+                    },
                   ].map((item, index) => (
                     <button
                       key={index}
-                      onClick={() => setInputValue(item.title === 'Get Started' ? 'What can you do?' : 'Tell me about Echo')}
+                      onClick={() =>
+                        setInputValue(
+                          item.title === 'Get Started'
+                            ? 'What can you do?'
+                            : 'Tell me about Echo'
+                        )
+                      }
                       className={`group relative p-6 rounded-2xl bg-gradient-to-br ${item.gradient} hover:shadow-lg transition-all duration-200 hover:scale-[1.02]`}
                     >
                       <div className="text-3xl mb-2">{item.icon}</div>
-                      <div className="text-white font-semibold text-sm">{item.title}</div>
+                      <div className="text-white font-semibold text-sm">
+                        {item.title}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -510,7 +553,10 @@ export default function AiChat() {
                   {message.role === 'user' ? (
                     <div className="w-4 h-4 rounded-full bg-white/40" />
                   ) : (
-                    <Sparkles className="w-4 h-4 text-gray-600 dark:text-gray-400" strokeWidth={2.5} />
+                    <Sparkles
+                      className="w-4 h-4 text-gray-600 dark:text-gray-400"
+                      strokeWidth={2.5}
+                    />
                   )}
                 </div>
                 <div
@@ -521,7 +567,9 @@ export default function AiChat() {
                   } px-4 py-3`}
                 >
                   <div className="text-sm leading-relaxed">
-                    {decodeHtmlEntities(message.displayedContent || message.content)}
+                    {decodeHtmlEntities(
+                      message.displayedContent || message.content
+                    )}
                     {message.isTyping && (
                       <span className="inline-flex items-center ml-2">
                         <span className="w-1 h-3 bg-current animate-pulse"></span>
@@ -542,7 +590,10 @@ export default function AiChat() {
             {isLoading && (
               <div className="flex gap-3">
                 <div className="w-8 h-8 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-gray-600 dark:text-gray-400" strokeWidth={2.5} />
+                  <Sparkles
+                    className="w-4 h-4 text-gray-600 dark:text-gray-400"
+                    strokeWidth={2.5}
+                  />
                 </div>
                 <div className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-tl-md px-4 py-3">
                   <div className="flex gap-1.5">

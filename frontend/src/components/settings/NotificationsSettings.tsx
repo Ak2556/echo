@@ -28,7 +28,13 @@ interface ToggleSwitchProps {
   icon?: React.ReactNode;
 }
 
-function ToggleSwitch({ checked, onChange, label, description, icon }: ToggleSwitchProps) {
+function ToggleSwitch({
+  checked,
+  onChange,
+  label,
+  description,
+  icon,
+}: ToggleSwitchProps) {
   return (
     <div
       style={{
@@ -37,15 +43,26 @@ function ToggleSwitch({ checked, onChange, label, description, icon }: ToggleSwi
         justifyContent: 'space-between',
         padding: 'var(--settings-space-5)',
         borderRadius: 'var(--settings-radius-lg)',
-        border: checked ? '1.5px solid var(--echo-primary)' : '1px solid var(--echo-border-light)',
-        background: checked ? 'rgba(0, 102, 255, 0.03)' : 'var(--echo-bg-primary)',
+        border: checked
+          ? '1.5px solid var(--echo-primary)'
+          : '1px solid var(--echo-border-light)',
+        background: checked
+          ? 'rgba(0, 102, 255, 0.03)'
+          : 'var(--echo-bg-primary)',
         marginBottom: 'var(--settings-space-3)',
         transition: 'all 0.2s ease',
         cursor: 'pointer',
       }}
       onClick={() => onChange(!checked)}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--settings-space-4)', flex: 1 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 'var(--settings-space-4)',
+          flex: 1,
+        }}
+      >
         {icon && (
           <div
             style={{
@@ -55,8 +72,12 @@ function ToggleSwitch({ checked, onChange, label, description, icon }: ToggleSwi
               width: '40px',
               height: '40px',
               borderRadius: 'var(--settings-radius-md)',
-              background: checked ? 'rgba(0, 102, 255, 0.1)' : 'var(--echo-bg-secondary)',
-              color: checked ? 'var(--echo-primary)' : 'var(--echo-text-secondary)',
+              background: checked
+                ? 'rgba(0, 102, 255, 0.1)'
+                : 'var(--echo-bg-secondary)',
+              color: checked
+                ? 'var(--echo-primary)'
+                : 'var(--echo-text-secondary)',
               transition: 'all 0.2s ease',
             }}
           >
@@ -96,14 +117,18 @@ function ToggleSwitch({ checked, onChange, label, description, icon }: ToggleSwi
           width: '48px',
           height: '28px',
           borderRadius: '14px',
-          background: checked ? 'var(--echo-primary)' : 'var(--echo-border-medium)',
+          background: checked
+            ? 'var(--echo-primary)'
+            : 'var(--echo-border-medium)',
           border: 'none',
           cursor: 'pointer',
           position: 'relative',
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           flexShrink: 0,
           marginLeft: 'var(--settings-space-4)',
-          boxShadow: checked ? '0 2px 8px rgba(0, 102, 255, 0.3)' : 'inset 0 1px 3px rgba(0,0,0,0.1)',
+          boxShadow: checked
+            ? '0 2px 8px rgba(0, 102, 255, 0.3)'
+            : 'inset 0 1px 3px rgba(0,0,0,0.1)',
         }}
       >
         <div
@@ -126,12 +151,19 @@ function ToggleSwitch({ checked, onChange, label, description, icon }: ToggleSwi
 
 export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
   const { settings, updateSetting, resetSettings } = useSettings();
-  const [showToast, setShowToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [showToast, setShowToast] = useState<{
+    message: string;
+    type: 'success' | 'error';
+  } | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
 
   // Notification preferences state
-  const [emailEnabled, setEmailEnabled] = useState(settings.emailNotifications ?? true);
-  const [soundEnabled, setSoundEnabled] = useState(settings.soundEffects ?? true);
+  const [emailEnabled, setEmailEnabled] = useState(
+    settings.emailNotifications ?? true
+  );
+  const [soundEnabled, setSoundEnabled] = useState(
+    settings.soundEffects ?? true
+  );
   const [mentions, setMentions] = useState(true);
   const [comments, setComments] = useState(true);
   const [likes, setLikes] = useState(true);
@@ -143,10 +175,18 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
   // Track if settings have changed
   useEffect(() => {
     setHasChanges(true);
-  }, [settings.pushNotifications, settings.emailNotifications, settings.soundEffects]);
+  }, [
+    settings.pushNotifications,
+    settings.emailNotifications,
+    settings.soundEffects,
+  ]);
 
   const handleReset = () => {
-    if (confirm('Are you sure you want to reset all notification settings to defaults?')) {
+    if (
+      confirm(
+        'Are you sure you want to reset all notification settings to defaults?'
+      )
+    ) {
       // Reset only notification-related settings
       updateSetting('pushNotifications', false);
       updateSetting('emailNotifications', true);
@@ -181,11 +221,15 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
           }}
         >
           <button
-            onClick={() => updateSetting('pushNotifications', !settings.pushNotifications)}
+            onClick={() =>
+              updateSetting('pushNotifications', !settings.pushNotifications)
+            }
             style={{
               padding: 'var(--settings-space-6)',
               borderRadius: 'var(--settings-radius-lg)',
-              border: settings.pushNotifications ? '2px solid var(--echo-primary)' : '1px solid var(--echo-border-light)',
+              border: settings.pushNotifications
+                ? '2px solid var(--echo-primary)'
+                : '1px solid var(--echo-border-light)',
               background: settings.pushNotifications
                 ? 'linear-gradient(135deg, rgba(0, 102, 255, 0.08), rgba(0, 102, 255, 0.03))'
                 : 'var(--echo-bg-primary)',
@@ -211,14 +255,20 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
                 width: '48px',
                 height: '48px',
                 borderRadius: 'var(--settings-radius-md)',
-                background: settings.pushNotifications ? 'rgba(0, 102, 255, 0.12)' : 'var(--echo-bg-secondary)',
+                background: settings.pushNotifications
+                  ? 'rgba(0, 102, 255, 0.12)'
+                  : 'var(--echo-bg-secondary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: 'var(--settings-space-4)',
               }}
             >
-              {settings.pushNotifications ? <Bell size={24} color="var(--echo-primary)" /> : <BellOff size={24} color="var(--echo-text-secondary)" />}
+              {settings.pushNotifications ? (
+                <Bell size={24} color="var(--echo-primary)" />
+              ) : (
+                <BellOff size={24} color="var(--echo-text-secondary)" />
+              )}
             </div>
             <div
               style={{
@@ -233,7 +283,9 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
             <div
               style={{
                 fontSize: 'var(--settings-text-sm)',
-                color: settings.pushNotifications ? 'var(--echo-primary)' : 'var(--echo-text-secondary)',
+                color: settings.pushNotifications
+                  ? 'var(--echo-primary)'
+                  : 'var(--echo-text-secondary)',
                 fontWeight: 'var(--settings-weight-medium)',
               }}
             >
@@ -246,7 +298,9 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
             style={{
               padding: 'var(--settings-space-6)',
               borderRadius: 'var(--settings-radius-lg)',
-              border: emailEnabled ? '2px solid var(--echo-primary)' : '1px solid var(--echo-border-light)',
+              border: emailEnabled
+                ? '2px solid var(--echo-primary)'
+                : '1px solid var(--echo-border-light)',
               background: emailEnabled
                 ? 'linear-gradient(135deg, rgba(0, 102, 255, 0.08), rgba(0, 102, 255, 0.03))'
                 : 'var(--echo-bg-primary)',
@@ -272,14 +326,23 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
                 width: '48px',
                 height: '48px',
                 borderRadius: 'var(--settings-radius-md)',
-                background: emailEnabled ? 'rgba(0, 102, 255, 0.12)' : 'var(--echo-bg-secondary)',
+                background: emailEnabled
+                  ? 'rgba(0, 102, 255, 0.12)'
+                  : 'var(--echo-bg-secondary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: 'var(--settings-space-4)',
               }}
             >
-              <Mail size={24} color={emailEnabled ? 'var(--echo-primary)' : 'var(--echo-text-secondary)'} />
+              <Mail
+                size={24}
+                color={
+                  emailEnabled
+                    ? 'var(--echo-primary)'
+                    : 'var(--echo-text-secondary)'
+                }
+              />
             </div>
             <div
               style={{
@@ -294,7 +357,9 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
             <div
               style={{
                 fontSize: 'var(--settings-text-sm)',
-                color: emailEnabled ? 'var(--echo-primary)' : 'var(--echo-text-secondary)',
+                color: emailEnabled
+                  ? 'var(--echo-primary)'
+                  : 'var(--echo-text-secondary)',
                 fontWeight: 'var(--settings-weight-medium)',
               }}
             >
@@ -307,7 +372,9 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
             style={{
               padding: 'var(--settings-space-6)',
               borderRadius: 'var(--settings-radius-lg)',
-              border: soundEnabled ? '2px solid var(--echo-primary)' : '1px solid var(--echo-border-light)',
+              border: soundEnabled
+                ? '2px solid var(--echo-primary)'
+                : '1px solid var(--echo-border-light)',
               background: soundEnabled
                 ? 'linear-gradient(135deg, rgba(0, 102, 255, 0.08), rgba(0, 102, 255, 0.03))'
                 : 'var(--echo-bg-primary)',
@@ -333,14 +400,20 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
                 width: '48px',
                 height: '48px',
                 borderRadius: 'var(--settings-radius-md)',
-                background: soundEnabled ? 'rgba(0, 102, 255, 0.12)' : 'var(--echo-bg-secondary)',
+                background: soundEnabled
+                  ? 'rgba(0, 102, 255, 0.12)'
+                  : 'var(--echo-bg-secondary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: 'var(--settings-space-4)',
               }}
             >
-              {soundEnabled ? <Volume2 size={24} color="var(--echo-primary)" /> : <VolumeX size={24} color="var(--echo-text-secondary)" />}
+              {soundEnabled ? (
+                <Volume2 size={24} color="var(--echo-primary)" />
+              ) : (
+                <VolumeX size={24} color="var(--echo-text-secondary)" />
+              )}
             </div>
             <div
               style={{
@@ -355,7 +428,9 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
             <div
               style={{
                 fontSize: 'var(--settings-text-sm)',
-                color: soundEnabled ? 'var(--echo-primary)' : 'var(--echo-text-secondary)',
+                color: soundEnabled
+                  ? 'var(--echo-primary)'
+                  : 'var(--echo-text-secondary)',
                 fontWeight: 'var(--settings-weight-medium)',
               }}
             >
@@ -469,7 +544,8 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
             fontWeight: 'var(--settings-weight-semibold)',
             borderRadius: 'var(--settings-radius-lg)',
             border: 'none',
-            background: 'linear-gradient(135deg, var(--echo-primary), var(--echo-accent))',
+            background:
+              'linear-gradient(135deg, var(--echo-primary), var(--echo-accent))',
             color: 'white',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
@@ -478,11 +554,13 @@ export function NotificationsSettings({ onBack }: { onBack?: () => void }) {
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-1px)';
-            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 102, 255, 0.35)';
+            e.currentTarget.style.boxShadow =
+              '0 6px 16px rgba(0, 102, 255, 0.35)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 102, 255, 0.25)';
+            e.currentTarget.style.boxShadow =
+              '0 4px 12px rgba(0, 102, 255, 0.25)';
           }}
         >
           Save Changes

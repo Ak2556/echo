@@ -10,7 +10,7 @@ export const storage = {
   get: (key: string, defaultValue?: string): string | null => {
     if (typeof window === 'undefined') return defaultValue || null;
     const value = localStorage.getItem(key);
-    return value !== null ? value : (defaultValue || null);
+    return value !== null ? value : defaultValue || null;
   },
   set: (key: string, value: string): void => {
     if (typeof window === 'undefined') return;
@@ -19,7 +19,7 @@ export const storage = {
   remove: (key: string): void => {
     if (typeof window === 'undefined') return;
     localStorage.removeItem(key);
-  }
+  },
 };
 
 export function debounce<T extends (...args: any[]) => any>(

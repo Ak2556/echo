@@ -9,10 +9,22 @@ import { useGSAP, gsap } from '@/hooks/useGSAP';
 import { ANIMATION } from '@/lib/animation-constants';
 
 export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
-  const { colors, colorMode, setColorMode, variant, setVariant, accessibility, setAccessibility } = useModernTheme();
+  const {
+    colors,
+    colorMode,
+    setColorMode,
+    variant,
+    setVariant,
+    accessibility,
+    setAccessibility,
+  } = useModernTheme();
   const [textSize, setTextSize] = useState(accessibility?.fontSize || 16);
-  const [reducedMotion, setReducedMotion] = useState(accessibility?.reducedMotion || false);
-  const [highContrast, setHighContrast] = useState(accessibility?.highContrast || false);
+  const [reducedMotion, setReducedMotion] = useState(
+    accessibility?.reducedMotion || false
+  );
+  const [highContrast, setHighContrast] = useState(
+    accessibility?.highContrast || false
+  );
 
   const reducedMotionToggleRef = useRef<HTMLButtonElement>(null);
   const highContrastToggleRef = useRef<HTMLButtonElement>(null);
@@ -29,18 +41,33 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
 
   // Apply text size globally whenever it changes
   useEffect(() => {
-    document.documentElement.style.setProperty('--global-font-size', `${textSize}px`);
+    document.documentElement.style.setProperty(
+      '--global-font-size',
+      `${textSize}px`
+    );
     setAccessibility({ ...accessibility, fontSize: textSize });
   }, [textSize]);
 
   // Apply reduced motion globally
   useEffect(() => {
     if (reducedMotion) {
-      document.documentElement.style.setProperty('--animation-duration', '0.01ms');
-      document.documentElement.style.setProperty('--transition-duration', '0.01ms');
+      document.documentElement.style.setProperty(
+        '--animation-duration',
+        '0.01ms'
+      );
+      document.documentElement.style.setProperty(
+        '--transition-duration',
+        '0.01ms'
+      );
     } else {
-      document.documentElement.style.setProperty('--animation-duration', '300ms');
-      document.documentElement.style.setProperty('--transition-duration', '200ms');
+      document.documentElement.style.setProperty(
+        '--animation-duration',
+        '300ms'
+      );
+      document.documentElement.style.setProperty(
+        '--transition-duration',
+        '200ms'
+      );
     }
     setAccessibility({ ...accessibility, reducedMotion });
   }, [reducedMotion]);
@@ -87,11 +114,36 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
   ];
 
   const themeVariants = [
-    { id: 'default', name: 'Default Blue', primary: '#3b82f6', secondary: '#8b5cf6' },
-    { id: 'ocean', name: 'Ocean Teal', primary: '#14b8a6', secondary: '#06b6d4' },
-    { id: 'sunset', name: 'Sunset Orange', primary: '#f97316', secondary: '#ec4899' },
-    { id: 'forest', name: 'Forest Green', primary: '#10b981', secondary: '#84cc16' },
-    { id: 'lavender', name: 'Lavender Purple', primary: '#a855f7', secondary: '#ec4899' },
+    {
+      id: 'default',
+      name: 'Default Blue',
+      primary: '#3b82f6',
+      secondary: '#8b5cf6',
+    },
+    {
+      id: 'ocean',
+      name: 'Ocean Teal',
+      primary: '#14b8a6',
+      secondary: '#06b6d4',
+    },
+    {
+      id: 'sunset',
+      name: 'Sunset Orange',
+      primary: '#f97316',
+      secondary: '#ec4899',
+    },
+    {
+      id: 'forest',
+      name: 'Forest Green',
+      primary: '#10b981',
+      secondary: '#84cc16',
+    },
+    {
+      id: 'lavender',
+      name: 'Lavender Purple',
+      primary: '#a855f7',
+      secondary: '#ec4899',
+    },
     { id: 'rose', name: 'Rose Pink', primary: '#f43f5e', secondary: '#fb923c' },
   ];
 
@@ -130,9 +182,7 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
                   border: isActive
                     ? `2px solid ${colors.primary}`
                     : `1px solid ${colors.border}`,
-                  background: isActive
-                    ? `${colors.primary}10`
-                    : colors.surface,
+                  background: isActive ? `${colors.primary}10` : colors.surface,
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   textAlign: 'left',
@@ -263,11 +313,13 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
                   {themeVariant.name}
                 </div>
                 {isActive && (
-                  <div style={{
-                    fontSize: 'var(--settings-text-xs)',
-                    color: colors.primary,
-                    marginTop: '4px',
-                  }}>
+                  <div
+                    style={{
+                      fontSize: 'var(--settings-text-xs)',
+                      color: colors.primary,
+                      marginTop: '4px',
+                    }}
+                  >
                     ✓ Active
                   </div>
                 )}
@@ -291,7 +343,12 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
               marginBottom: 'var(--settings-space-4)',
             }}
           >
-            <span style={{ fontSize: 'var(--settings-text-sm)', color: colors.textSecondary }}>
+            <span
+              style={{
+                fontSize: 'var(--settings-text-sm)',
+                color: colors.textSecondary,
+              }}
+            >
               Small (14px)
             </span>
             <span
@@ -303,7 +360,12 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
             >
               Aa
             </span>
-            <span style={{ fontSize: 'var(--settings-text-sm)', color: colors.textSecondary }}>
+            <span
+              style={{
+                fontSize: 'var(--settings-text-sm)',
+                color: colors.textSecondary,
+              }}
+            >
               Large (20px)
             </span>
           </div>
@@ -335,8 +397,15 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
               border: `1px solid ${colors.border}`,
             }}
           >
-            <p style={{ fontSize: `${textSize}px`, lineHeight: '1.6', color: colors.text }}>
-              The quick brown fox jumps over the lazy dog. This is a preview of how text will appear at your selected size.
+            <p
+              style={{
+                fontSize: `${textSize}px`,
+                lineHeight: '1.6',
+                color: colors.text,
+              }}
+            >
+              The quick brown fox jumps over the lazy dog. This is a preview of
+              how text will appear at your selected size.
             </p>
           </div>
         </div>
@@ -347,22 +416,42 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
         title="Accessibility"
         description="Additional accessibility preferences"
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--settings-space-4)' }}>
-          {/* Reduced Motion Toggle */}
-          <div style={{
+        <div
+          style={{
             display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: 'var(--settings-space-4)',
-            background: colors.surface,
-            borderRadius: 'var(--settings-radius-md)',
-            border: `1px solid ${colors.border}`,
-          }}>
+            flexDirection: 'column',
+            gap: 'var(--settings-space-4)',
+          }}
+        >
+          {/* Reduced Motion Toggle */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: 'var(--settings-space-4)',
+              background: colors.surface,
+              borderRadius: 'var(--settings-radius-md)',
+              border: `1px solid ${colors.border}`,
+            }}
+          >
             <div>
-              <div style={{ fontSize: 'var(--settings-text-base)', fontWeight: 'var(--settings-weight-medium)', color: colors.text, marginBottom: '4px' }}>
+              <div
+                style={{
+                  fontSize: 'var(--settings-text-base)',
+                  fontWeight: 'var(--settings-weight-medium)',
+                  color: colors.text,
+                  marginBottom: '4px',
+                }}
+              >
                 Reduced Motion
               </div>
-              <div style={{ fontSize: 'var(--settings-text-sm)', color: colors.textSecondary }}>
+              <div
+                style={{
+                  fontSize: 'var(--settings-text-sm)',
+                  color: colors.textSecondary,
+                }}
+              >
                 Minimize animations and transitions
               </div>
             </div>
@@ -370,7 +459,9 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
               ref={reducedMotionToggleRef}
               onClick={() => setReducedMotion(!reducedMotion)}
               className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-              style={{ background: reducedMotion ? colors.primary : colors.border }}
+              style={{
+                background: reducedMotion ? colors.primary : colors.border,
+              }}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${reducedMotion ? 'translate-x-6' : 'translate-x-1'}`}
@@ -379,20 +470,34 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
           </div>
 
           {/* High Contrast Toggle */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: 'var(--settings-space-4)',
-            background: colors.surface,
-            borderRadius: 'var(--settings-radius-md)',
-            border: `1px solid ${colors.border}`,
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: 'var(--settings-space-4)',
+              background: colors.surface,
+              borderRadius: 'var(--settings-radius-md)',
+              border: `1px solid ${colors.border}`,
+            }}
+          >
             <div>
-              <div style={{ fontSize: 'var(--settings-text-base)', fontWeight: 'var(--settings-weight-medium)', color: colors.text, marginBottom: '4px' }}>
+              <div
+                style={{
+                  fontSize: 'var(--settings-text-base)',
+                  fontWeight: 'var(--settings-weight-medium)',
+                  color: colors.text,
+                  marginBottom: '4px',
+                }}
+              >
                 High Contrast
               </div>
-              <div style={{ fontSize: 'var(--settings-text-sm)', color: colors.textSecondary }}>
+              <div
+                style={{
+                  fontSize: 'var(--settings-text-sm)',
+                  color: colors.textSecondary,
+                }}
+              >
                 Increase contrast for better readability
               </div>
             </div>
@@ -400,7 +505,9 @@ export function AppearanceSettings({ onBack }: { onBack?: () => void }) {
               ref={highContrastToggleRef}
               onClick={() => setHighContrast(!highContrast)}
               className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-              style={{ background: highContrast ? colors.primary : colors.border }}
+              style={{
+                background: highContrast ? colors.primary : colors.border,
+              }}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${highContrast ? 'translate-x-6' : 'translate-x-1'}`}

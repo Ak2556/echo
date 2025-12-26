@@ -6,13 +6,22 @@ import { useGSAP, gsap } from '@/hooks/useGSAP';
 import { ANIMATION } from '@/lib/animation-constants';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'modern' | 'glass' | 'gradient' | 'elevated' | 'bordered';
+  variant?:
+    | 'default'
+    | 'modern'
+    | 'glass'
+    | 'gradient'
+    | 'elevated'
+    | 'bordered';
   hover?: boolean;
   animated?: boolean;
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant = 'default', hover = true, animated = true, ...props }, ref) => {
+  (
+    { className, variant = 'default', hover = true, animated = true, ...props },
+    ref
+  ) => {
     const cardRef = React.useRef<HTMLDivElement>(null);
 
     // Merge refs
@@ -34,7 +43,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         cardRef.current,
         {
           opacity: 0,
-          y: ANIMATION.scrollReveal.distance
+          y: ANIMATION.scrollReveal.distance,
         },
         {
           opacity: 1,
@@ -147,4 +156,11 @@ const CardFooter = React.forwardRef<
 ));
 CardFooter.displayName = 'CardFooter';
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+};

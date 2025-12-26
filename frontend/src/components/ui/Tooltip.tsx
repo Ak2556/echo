@@ -220,7 +220,8 @@ const Tooltip = memo(function Tooltip({
             top: tooltipPosition.top,
             left: tooltipPosition.left,
             '--tooltip-bg': '#1f2937',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.10)',
+            boxShadow:
+              '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.10)',
           } as React.CSSProperties
         }
       >

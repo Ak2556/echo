@@ -32,14 +32,18 @@ async function apiCall<T>(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.detail || `Request failed with status ${response.status}`);
+    throw new Error(
+      error.detail || `Request failed with status ${response.status}`
+    );
   }
 
   return response.json();
 }
 
 // Password change
-export async function changePassword(data: PasswordChangeRequest): Promise<void> {
+export async function changePassword(
+  data: PasswordChangeRequest
+): Promise<void> {
   try {
     await apiCall('/api/auth/change-password', {
       method: 'POST',

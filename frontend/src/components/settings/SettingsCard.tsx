@@ -19,11 +19,7 @@ export function SettingsCard({
   badge,
 }: SettingsCardProps) {
   return (
-    <button
-      onClick={onClick}
-      className="echo-settings-card-v2"
-      type="button"
-    >
+    <button onClick={onClick} className="echo-settings-card-v2" type="button">
       {/* Icon Circle */}
       <div className="icon-circle">
         <Icon />
@@ -35,9 +31,7 @@ export function SettingsCard({
           <h3 className="card-title">{title}</h3>
           {badge && <span className="card-badge">{badge}</span>}
         </div>
-        {description && (
-          <p className="card-description">{description}</p>
-        )}
+        {description && <p className="card-description">{description}</p>}
       </div>
 
       {/* Arrow */}

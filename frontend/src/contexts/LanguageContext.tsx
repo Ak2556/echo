@@ -1,10 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import {
-  SUPPORTED_LANGUAGES,
-  type SupportedLanguageCode,
-} from '@/lib/i18n';
+import { SUPPORTED_LANGUAGES, type SupportedLanguageCode } from '@/lib/i18n';
 
 type LanguageContextType = {
   language: SupportedLanguageCode;
@@ -19,10 +16,13 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 );
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguageCode>('en');
+  const [currentLanguage, setCurrentLanguage] =
+    useState<SupportedLanguageCode>('en');
   const [isI18nReady, setIsI18nReady] = useState(false);
   const [i18nInstance, setI18nInstance] = useState<any>(null);
-  const [tFunction, setTFunction] = useState<(key: string) => string>(() => (key: string) => key);
+  const [tFunction, setTFunction] = useState<(key: string) => string>(
+    () => (key: string) => key
+  );
 
   // Initialize i18n and translation function
   useEffect(() => {
@@ -31,25 +31,31 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         // Dynamic import to avoid SSR issues
         const { useTranslation } = await import('react-i18next');
         const i18nModule = await import('@/i18n/index');
-        
+
         setI18nInstance(i18nModule.default);
-        
+
         // Get stored language or use default
-        const storedLanguage = typeof localStorage !== 'undefined' 
-          ? localStorage.getItem('echo-language') as SupportedLanguageCode
-          : null;
-        
-        const initialLanguage = storedLanguage && SUPPORTED_LANGUAGES.find(lang => lang.code === storedLanguage)
-          ? storedLanguage
-          : 'en';
-        
+        const storedLanguage =
+          typeof localStorage !== 'undefined'
+            ? (localStorage.getItem('echo-language') as SupportedLanguageCode)
+            : null;
+
+        const initialLanguage =
+          storedLanguage &&
+          SUPPORTED_LANGUAGES.find((lang) => lang.code === storedLanguage)
+            ? storedLanguage
+            : 'en';
+
         setCurrentLanguage(initialLanguage);
-        
+
         // Set language in i18n if available
-        if (i18nModule.default && typeof i18nModule.default.changeLanguage === 'function') {
+        if (
+          i18nModule.default &&
+          typeof i18nModule.default.changeLanguage === 'function'
+        ) {
           await i18nModule.default.changeLanguage(initialLanguage);
         }
-        
+
         setIsI18nReady(true);
         console.log('i18n initialized in LanguageProvider');
       } catch (error) {
@@ -87,15 +93,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const setLanguage = async (newLanguage: SupportedLanguageCode) => {
     try {
       console.log('Attempting to change language to:', newLanguage);
-      
+
       // Update local state immediately
       setCurrentLanguage(newLanguage);
-      
+
       // Save to localStorage
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem('echo-language', newLanguage);
       }
-      
+
       // Update i18n instance if available
       if (i18nInstance && typeof i18nInstance.changeLanguage === 'function') {
         await i18nInstance.changeLanguage(newLanguage);
@@ -104,7 +110,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         // Fallback: try to import and use i18n directly
         try {
           const { default: i18nFallback } = await import('@/i18n/index');
-          if (i18nFallback && typeof i18nFallback.changeLanguage === 'function') {
+          if (
+            i18nFallback &&
+            typeof i18nFallback.changeLanguage === 'function'
+          ) {
             await i18nFallback.changeLanguage(newLanguage);
             console.log('Language changed via fallback to:', newLanguage);
           }
@@ -112,14 +121,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
           console.error('Fallback language change failed:', fallbackError);
         }
       }
-      
+
       // Update document attributes
       const isRTL = ['ar', 'he', 'fa', 'ur'].includes(newLanguage);
       if (typeof document !== 'undefined') {
         document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
         document.documentElement.lang = newLanguage;
       }
-      
     } catch (error) {
       console.error('Failed to change language:', error);
     }
@@ -155,8 +163,10 @@ export function useLanguage(): LanguageContextType {
   const context = useContext(LanguageContext);
   if (context === undefined) {
     // Provide a fallback context instead of throwing an error
-    console.warn('useLanguage called outside of LanguageProvider, using fallback');
-    
+    console.warn(
+      'useLanguage called outside of LanguageProvider, using fallback'
+    );
+
     // Create a fallback setLanguage that tries to change the language directly via i18n
     const fallbackSetLanguage = async (newLanguage: SupportedLanguageCode) => {
       try {
@@ -174,7 +184,7 @@ export function useLanguage(): LanguageContextType {
         console.error('Failed to change language in fallback:', error);
       }
     };
-    
+
     return {
       language: 'en',
       setLanguage: fallbackSetLanguage,

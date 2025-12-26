@@ -2,7 +2,15 @@
 
 import React, { useState, FormEvent, useEffect } from 'react';
 import Link from 'next/link';
-import { Twitter, Github, Linkedin, Mail, Loader2, CheckCircle2, ArrowUp } from 'lucide-react';
+import {
+  Twitter,
+  Github,
+  Linkedin,
+  Mail,
+  Loader2,
+  CheckCircle2,
+  ArrowUp,
+} from 'lucide-react';
 import { FooterColumn } from './FooterColumn';
 import toast from 'react-hot-toast';
 
@@ -71,7 +79,7 @@ export function ImprovedFooter() {
 
     try {
       // Simulate API call - replace with actual API endpoint
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // TODO: Replace with actual API call
       // const response = await fetch('/api/newsletter/subscribe', {
@@ -124,7 +132,8 @@ export function ImprovedFooter() {
               Stay Updated
             </h3>
             <p className="text-sm text-white/80 mb-4">
-              Get the latest updates, features, and news delivered to your inbox.
+              Get the latest updates, features, and news delivered to your
+              inbox.
             </p>
             <form onSubmit={handleSubscribe} className="flex gap-2">
               <input
@@ -140,7 +149,13 @@ export function ImprovedFooter() {
                 type="submit"
                 disabled={isSubscribing || isSubscribed}
                 className="px-6 py-2 rounded-lg bg-white text-[var(--echo-primary)] font-semibold hover:bg-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 min-w-[120px] justify-center"
-                aria-label={isSubscribing ? 'Subscribing...' : isSubscribed ? 'Subscribed!' : 'Subscribe to newsletter'}
+                aria-label={
+                  isSubscribing
+                    ? 'Subscribing...'
+                    : isSubscribed
+                      ? 'Subscribed!'
+                      : 'Subscribe to newsletter'
+                }
               >
                 {isSubscribing ? (
                   <>
@@ -166,7 +181,11 @@ export function ImprovedFooter() {
             <button
               onClick={() => {
                 handleSocialClick('Twitter');
-                window.open('https://twitter.com', '_blank', 'noopener,noreferrer');
+                window.open(
+                  'https://twitter.com',
+                  '_blank',
+                  'noopener,noreferrer'
+                );
               }}
               className="w-10 h-10 rounded-lg bg-[var(--echo-bg-tertiary)] hover:bg-[var(--echo-primary)] text-[var(--echo-text-secondary)] hover:text-white transition-all flex items-center justify-center hover:scale-110 active:scale-95"
               aria-label="Follow us on Twitter"
@@ -177,7 +196,11 @@ export function ImprovedFooter() {
             <button
               onClick={() => {
                 handleSocialClick('GitHub');
-                window.open('https://github.com/Ak2556/echo', '_blank', 'noopener,noreferrer');
+                window.open(
+                  'https://github.com/Ak2556/echo',
+                  '_blank',
+                  'noopener,noreferrer'
+                );
               }}
               className="w-10 h-10 rounded-lg bg-[var(--echo-bg-tertiary)] hover:bg-[var(--echo-primary)] text-[var(--echo-text-secondary)] hover:text-white transition-all flex items-center justify-center hover:scale-110 active:scale-95"
               aria-label="Visit our GitHub"
@@ -188,7 +211,11 @@ export function ImprovedFooter() {
             <button
               onClick={() => {
                 handleSocialClick('LinkedIn');
-                window.open('https://linkedin.com', '_blank', 'noopener,noreferrer');
+                window.open(
+                  'https://linkedin.com',
+                  '_blank',
+                  'noopener,noreferrer'
+                );
               }}
               className="w-10 h-10 rounded-lg bg-[var(--echo-bg-tertiary)] hover:bg-[var(--echo-primary)] text-[var(--echo-text-secondary)] hover:text-white transition-all flex items-center justify-center hover:scale-110 active:scale-95"
               aria-label="Connect on LinkedIn"

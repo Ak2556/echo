@@ -9,13 +9,12 @@ interface ThemeSettingsProps {
 }
 
 export default function ThemeSettings({ className = '' }: ThemeSettingsProps) {
-  const {
-    colorMode,
-    setColorMode,
-  } = useTheme();
+  const { colorMode, setColorMode } = useTheme();
 
   const toast = useToast();
-  const [activeTab, setActiveTab] = useState<'appearance' | 'accessibility' | 'schedule' | 'advanced'>('appearance');
+  const [activeTab, setActiveTab] = useState<
+    'appearance' | 'accessibility' | 'schedule' | 'advanced'
+  >('appearance');
 
   const handleThemeChange = (mode: 'auto' | 'light' | 'dark') => {
     setColorMode(mode);
@@ -35,8 +34,8 @@ export default function ThemeSettings({ className = '' }: ThemeSettingsProps) {
           { id: 'appearance', label: 'Appearance', icon: '🎨' },
           { id: 'accessibility', label: 'Accessibility', icon: '♿' },
           { id: 'schedule', label: 'Schedule', icon: '⏰' },
-          { id: 'advanced', label: 'Advanced', icon: '⚙️' }
-        ].map(tab => (
+          { id: 'advanced', label: 'Advanced', icon: '⚙️' },
+        ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
@@ -59,10 +58,22 @@ export default function ThemeSettings({ className = '' }: ThemeSettingsProps) {
 
               <div className="theme-mode-selector">
                 {[
-                  { value: 'auto', label: 'Auto', description: 'Follow system preference' },
-                  { value: 'light', label: 'Light', description: 'Always use light mode' },
-                  { value: 'dark', label: 'Dark', description: 'Always use dark mode' }
-                ].map(mode => (
+                  {
+                    value: 'auto',
+                    label: 'Auto',
+                    description: 'Follow system preference',
+                  },
+                  {
+                    value: 'light',
+                    label: 'Light',
+                    description: 'Always use light mode',
+                  },
+                  {
+                    value: 'dark',
+                    label: 'Dark',
+                    description: 'Always use dark mode',
+                  },
+                ].map((mode) => (
                   <button
                     key={mode.value}
                     onClick={() => handleThemeChange(mode.value as any)}
@@ -73,7 +84,9 @@ export default function ThemeSettings({ className = '' }: ThemeSettingsProps) {
                     </div>
                     <div className="mode-info">
                       <span className="mode-label">{mode.label}</span>
-                      <span className="mode-description">{mode.description}</span>
+                      <span className="mode-description">
+                        {mode.description}
+                      </span>
                     </div>
                   </button>
                 ))}

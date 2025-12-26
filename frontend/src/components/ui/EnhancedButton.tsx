@@ -34,7 +34,7 @@ const EnhancedButton = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (loading || disabled) return;
-      
+
       // Create ripple effect
       const button = e.currentTarget;
       const rect = button.getBoundingClientRect();
@@ -42,18 +42,18 @@ const EnhancedButton = forwardRef<HTMLButtonElement, ButtonProps>(
       const size = Math.max(rect.width, rect.height);
       const x = e.clientX - rect.left - size / 2;
       const y = e.clientY - rect.top - size / 2;
-      
+
       ripple.style.width = ripple.style.height = size + 'px';
       ripple.style.left = x + 'px';
       ripple.style.top = y + 'px';
       ripple.classList.add('ripple');
-      
+
       button.appendChild(ripple);
-      
+
       setTimeout(() => {
         ripple.remove();
       }, 600);
-      
+
       onClick?.(e);
     };
 
@@ -64,12 +64,12 @@ const EnhancedButton = forwardRef<HTMLButtonElement, ButtonProps>(
       fullWidth && 'w-full',
       loading && 'loading',
       className,
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     const iconElement = icon && (
-      <span className={`btn-icon ${loading ? 'opacity-0' : ''}`}>
-        {icon}
-      </span>
+      <span className={`btn-icon ${loading ? 'opacity-0' : ''}`}>{icon}</span>
     );
 
     const loadingSpinner = loading && (
@@ -110,7 +110,7 @@ const EnhancedButton = forwardRef<HTMLButtonElement, ButtonProps>(
         <span className={loading ? 'opacity-0' : ''}>{children}</span>
         {iconPosition === 'right' && iconElement}
         {loadingSpinner}
-        
+
         <style jsx>{`
           .ripple {
             position: absolute;
@@ -120,19 +120,19 @@ const EnhancedButton = forwardRef<HTMLButtonElement, ButtonProps>(
             animation: ripple-animation 0.6s linear;
             pointer-events: none;
           }
-          
+
           @keyframes ripple-animation {
             to {
               transform: scale(4);
               opacity: 0;
             }
           }
-          
+
           .btn {
             position: relative;
             overflow: hidden;
           }
-          
+
           .btn.loading {
             pointer-events: none;
           }

@@ -333,10 +333,14 @@ export function AdvancedThemeProvider({
       : 'no-preference';
   });
   const [fontSize, setFontSizeState] = useState<FontSize>(() => {
-    return persistSettings ? (storage.get('echo-font-size', 'medium') as FontSize) : 'medium';
+    return persistSettings
+      ? (storage.get('echo-font-size', 'medium') as FontSize)
+      : 'medium';
   });
   const [contrast, setContrastState] = useState<Contrast>(() => {
-    return persistSettings ? (storage.get('echo-contrast', 'normal') as Contrast) : 'normal';
+    return persistSettings
+      ? (storage.get('echo-contrast', 'normal') as Contrast)
+      : 'normal';
   });
 
   const currentTheme = themes.find((t) => t.id === currentThemeId) || themes[0];

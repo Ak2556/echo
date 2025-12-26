@@ -16,15 +16,41 @@ body {
 }
 
 /* Scale all text elements proportionally */
-h1 { font-size: calc(var(--global-font-size) * 2.5); font-weight: 800; }
-h2 { font-size: calc(var(--global-font-size) * 2); font-weight: 700; }
-h3 { font-size: calc(var(--global-font-size) * 1.75); font-weight: 700; }
-h4 { font-size: calc(var(--global-font-size) * 1.5); font-weight: 600; }
-h5 { font-size: calc(var(--global-font-size) * 1.25); font-weight: 600; }
-h6 { font-size: calc(var(--global-font-size) * 1.1); font-weight: 600; }
+h1 {
+  font-size: calc(var(--global-font-size) * 2.5);
+  font-weight: 800;
+}
+h2 {
+  font-size: calc(var(--global-font-size) * 2);
+  font-weight: 700;
+}
+h3 {
+  font-size: calc(var(--global-font-size) * 1.75);
+  font-weight: 700;
+}
+h4 {
+  font-size: calc(var(--global-font-size) * 1.5);
+  font-weight: 600;
+}
+h5 {
+  font-size: calc(var(--global-font-size) * 1.25);
+  font-weight: 600;
+}
+h6 {
+  font-size: calc(var(--global-font-size) * 1.1);
+  font-weight: 600;
+}
 
 /* Ensure readable font weights for all elements */
-p, span, div, a, button, input, textarea, select, label {
+p,
+span,
+div,
+a,
+button,
+input,
+textarea,
+select,
+label {
   font-size: inherit;
   font-weight: 500; /* Minimum medium weight for better readability */
 }
@@ -67,31 +93,31 @@ nav span {
 }
 
 /* Apply reduced motion when enabled in settings */
-[data-reduced-motion="true"] *,
-[data-reduced-motion="true"] *::before,
-[data-reduced-motion="true"] *::after {
+[data-reduced-motion='true'] *,
+[data-reduced-motion='true'] *::before,
+[data-reduced-motion='true'] *::after {
   animation-duration: var(--animation-duration) !important;
   transition-duration: var(--transition-duration) !important;
 }
 
 /* High Contrast Mode */
-[data-high-contrast="true"] {
+[data-high-contrast='true'] {
   --contrast-multiplier: 1.5;
 }
 
-[data-high-contrast="true"] body {
+[data-high-contrast='true'] body {
   filter: contrast(1.2);
 }
 
-[data-high-contrast="true"] * {
+[data-high-contrast='true'] * {
   border-width: 2px !important;
 }
 
-[data-high-contrast="true"] button:focus,
-[data-high-contrast="true"] a:focus,
-[data-high-contrast="true"] input:focus,
-[data-high-contrast="true"] textarea:focus,
-[data-high-contrast="true"] select:focus {
+[data-high-contrast='true'] button:focus,
+[data-high-contrast='true'] a:focus,
+[data-high-contrast='true'] input:focus,
+[data-high-contrast='true'] textarea:focus,
+[data-high-contrast='true'] select:focus {
   outline: 3px solid currentColor !important;
   outline-offset: 3px !important;
 }
@@ -104,31 +130,31 @@ nav span {
 }
 
 /* Improve text readability */
-[data-high-contrast="true"] p,
-[data-high-contrast="true"] span,
-[data-high-contrast="true"] div,
-[data-high-contrast="true"] label {
+[data-high-contrast='true'] p,
+[data-high-contrast='true'] span,
+[data-high-contrast='true'] div,
+[data-high-contrast='true'] label {
   font-weight: 600 !important; /* Increased to semibold for high contrast */
 }
 
-[data-high-contrast="true"] h1,
-[data-high-contrast="true"] h2,
-[data-high-contrast="true"] h3,
-[data-high-contrast="true"] h4,
-[data-high-contrast="true"] h5,
-[data-high-contrast="true"] h6 {
+[data-high-contrast='true'] h1,
+[data-high-contrast='true'] h2,
+[data-high-contrast='true'] h3,
+[data-high-contrast='true'] h4,
+[data-high-contrast='true'] h5,
+[data-high-contrast='true'] h6 {
   font-weight: 900 !important; /* Extra bold for headings */
 }
 
 /* Ensure sufficient color contrast */
-[data-high-contrast="true"] a {
+[data-high-contrast='true'] a {
   text-decoration: underline;
   text-decoration-thickness: 2px;
   font-weight: 600;
 }
 
 /* Better button visibility in high contrast */
-[data-high-contrast="true"] button {
+[data-high-contrast='true'] button {
   font-weight: 700 !important; /* Bold for buttons */
   border: 2px solid currentColor !important;
 }

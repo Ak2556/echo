@@ -273,10 +273,15 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     try {
       // Check and clean up large items
-      const checkAndCleanItem = (key: string, maxSize: number = 1024 * 1024) => {
+      const checkAndCleanItem = (
+        key: string,
+        maxSize: number = 1024 * 1024
+      ) => {
         const item = localStorage.getItem(key);
         if (item && item.length > maxSize) {
-          console.warn(`Removing oversized localStorage item: ${key} (${(item.length / 1024).toFixed(2)}KB)`);
+          console.warn(
+            `Removing oversized localStorage item: ${key} (${(item.length / 1024).toFixed(2)}KB)`
+          );
           localStorage.removeItem(key);
         }
       };
@@ -350,14 +355,19 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
       return true;
     } catch (error) {
       if (error instanceof Error && error.name === 'QuotaExceededError') {
-        console.warn(`localStorage quota exceeded for ${key}, attempting cleanup`);
+        console.warn(
+          `localStorage quota exceeded for ${key}, attempting cleanup`
+        );
         // Try to clear some space by removing old notifications
         try {
           localStorage.removeItem('echo-notifications');
           localStorage.setItem(key, JSON.stringify(value));
           return true;
         } catch (retryError) {
-          console.error('Failed to save to localStorage even after cleanup:', retryError);
+          console.error(
+            'Failed to save to localStorage even after cleanup:',
+            retryError
+          );
           return false;
         }
       }

@@ -1,6 +1,13 @@
 'use client';
 
-import React, { forwardRef, ButtonHTMLAttributes, ReactNode, useRef, useEffect, useState } from 'react';
+import React, {
+  forwardRef,
+  ButtonHTMLAttributes,
+  ReactNode,
+  useRef,
+  useEffect,
+  useState,
+} from 'react';
 import { cn } from '@/lib/utils';
 import { useGSAP, gsap } from '@/hooks/useGSAP';
 import { ANIMATION } from '@/lib/animation-constants';
@@ -173,7 +180,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
       // Remove ripple after animation
       setTimeout(() => {
-        setRipples((prev) => prev.filter((ripple) => ripple.id !== newRipple.id));
+        setRipples((prev) =>
+          prev.filter((ripple) => ripple.id !== newRipple.id)
+        );
       }, 600);
     };
 
@@ -184,7 +193,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const iconElement = icon && (
-      <span ref={iconRef} className={cn('flex items-center', loading && 'opacity-0')}>
+      <span
+        ref={iconRef}
+        className={cn('flex items-center', loading && 'opacity-0')}
+      >
         {icon}
       </span>
     );

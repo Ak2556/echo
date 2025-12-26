@@ -14,7 +14,7 @@ import {
   X,
   Plus,
   Trash2,
-  MessageCircle
+  MessageCircle,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -49,7 +49,8 @@ export default function AiChat() {
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { mutate: sendChatMessage, isPending: isSendingMessage } = useSendMessage();
+  const { mutate: sendChatMessage, isPending: isSendingMessage } =
+    useSendMessage();
 
   // Load AI settings from localStorage on mount
   useEffect(() => {
@@ -97,7 +98,8 @@ export default function AiChat() {
 
   useEffect(() => {
     window.addEventListener('openAiChat' as any, handleOpenAiChat);
-    return () => window.removeEventListener('openAiChat' as any, handleOpenAiChat);
+    return () =>
+      window.removeEventListener('openAiChat' as any, handleOpenAiChat);
   }, [handleOpenAiChat]);
 
   const handleEscape = useCallback((event: KeyboardEvent) => {
@@ -156,7 +158,9 @@ export default function AiChat() {
 
       const displayedWords = words.slice(0, currentWordIndex);
       if (currentCharInWord > 0 && currentWordIndex < words.length) {
-        displayedWords.push(words[currentWordIndex].slice(0, currentCharInWord));
+        displayedWords.push(
+          words[currentWordIndex].slice(0, currentCharInWord)
+        );
       }
       const displayedText = displayedWords.join(' ');
 
@@ -217,7 +221,10 @@ export default function AiChat() {
           setMessages((prev) => {
             const newMessages = [...prev, aiMessage];
             setTimeout(() => {
-              animatedTypewriterEffect(response.response, newMessages.length - 1);
+              animatedTypewriterEffect(
+                response.response,
+                newMessages.length - 1
+              );
             }, 100);
             return newMessages;
           });
@@ -226,9 +233,11 @@ export default function AiChat() {
         },
         onError: (error) => {
           const errorMessage: TypingMessage = {
-            content: 'I encountered an unexpected error. Please try refreshing the page.',
+            content:
+              'I encountered an unexpected error. Please try refreshing the page.',
             role: 'assistant',
-            displayedContent: 'I encountered an unexpected error. Please try refreshing the page.',
+            displayedContent:
+              'I encountered an unexpected error. Please try refreshing the page.',
             isTyping: false,
           };
           setMessages((prev) => [...prev, errorMessage]);
@@ -239,12 +248,15 @@ export default function AiChat() {
     );
   };
 
-  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  }, [inputValue, isLoading]);
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    },
+    [inputValue, isLoading]
+  );
 
   const clearChat = useCallback(() => {
     if (typingIntervalRef.current) {
@@ -260,20 +272,25 @@ export default function AiChat() {
     clearChat();
     const personalityGreetings = {
       helpful: 'Welcome to Echo AI Assistant! How can I help you today?',
-      casual: "Hey there! 😊 I'm ECHO AI, and I'm super excited to chat with you! What's up?",
-      professional: "Good day! I'm ECHO AI, your professional AI assistant. How may I assist you today?",
-      creative: "Greetings, creative soul! ✨ I'm ECHO AI, your imaginative companion!",
+      casual:
+        "Hey there! 😊 I'm ECHO AI, and I'm super excited to chat with you! What's up?",
+      professional:
+        "Good day! I'm ECHO AI, your professional AI assistant. How may I assist you today?",
+      creative:
+        "Greetings, creative soul! ✨ I'm ECHO AI, your imaginative companion!",
       technical: "Hello! I'm ECHO AI, your technical AI assistant.",
     };
 
     const welcomeMessage: TypingMessage = {
       content:
-        personalityGreetings[aiSettings.personality as keyof typeof personalityGreetings] ||
-        personalityGreetings.helpful,
+        personalityGreetings[
+          aiSettings.personality as keyof typeof personalityGreetings
+        ] || personalityGreetings.helpful,
       role: 'assistant',
       displayedContent:
-        personalityGreetings[aiSettings.personality as keyof typeof personalityGreetings] ||
-        personalityGreetings.helpful,
+        personalityGreetings[
+          aiSettings.personality as keyof typeof personalityGreetings
+        ] || personalityGreetings.helpful,
       isTyping: false,
     };
     setMessages([welcomeMessage]);
@@ -341,7 +358,9 @@ export default function AiChat() {
               <h3 className="font-bold text-lg bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                 ECHO AI
               </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Always here to help</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Always here to help
+              </p>
             </div>
           </div>
 
@@ -410,7 +429,9 @@ export default function AiChat() {
               className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
               title={isMinimized ? 'Expand' : 'Minimize'}
             >
-              <Minimize2 className={`w-4 h-4 ${isMinimized ? 'rotate-180' : ''}`} />
+              <Minimize2
+                className={`w-4 h-4 ${isMinimized ? 'rotate-180' : ''}`}
+              />
             </button>
             <button
               onClick={() => setIsOpen(false)}
@@ -434,7 +455,8 @@ export default function AiChat() {
                   Welcome to ECHO AI
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-xs">
-                  Your intelligent companion powered by advanced AI. Ask me anything!
+                  Your intelligent companion powered by advanced AI. Ask me
+                  anything!
                 </p>
                 <div className="grid grid-cols-2 gap-3 w-full max-w-md">
                   <button
@@ -445,7 +467,9 @@ export default function AiChat() {
                     <div className="text-sm font-semibold">Get Help</div>
                   </button>
                   <button
-                    onClick={() => setInputValue("Tell me about Echo's features")}
+                    onClick={() =>
+                      setInputValue("Tell me about Echo's features")
+                    }
                     className="p-4 rounded-xl bg-pink-50 dark:bg-pink-900/20 hover:bg-pink-100 dark:hover:bg-pink-900/30 transition-colors text-left"
                   >
                     <div className="text-2xl mb-2">🎨</div>
@@ -504,9 +528,18 @@ export default function AiChat() {
                 </div>
                 <div className="bg-gray-100 dark:bg-gray-800 rounded-3xl rounded-tl-md px-5 py-3">
                   <div className="flex gap-2">
-                    <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <div
+                      className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"
+                      style={{ animationDelay: '0ms' }}
+                    />
+                    <div
+                      className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"
+                      style={{ animationDelay: '150ms' }}
+                    />
+                    <div
+                      className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"
+                      style={{ animationDelay: '300ms' }}
+                    />
                   </div>
                 </div>
               </div>

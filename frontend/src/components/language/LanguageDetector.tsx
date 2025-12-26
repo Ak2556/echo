@@ -37,42 +37,72 @@ export default function LanguageDetector({
     t,
   } = useEnhancedLanguage();
 
-  const [detectedLanguage, setDetectedLanguage] = useState<DetectedLanguage | null>(null);
+  const [detectedLanguage, setDetectedLanguage] =
+    useState<DetectedLanguage | null>(null);
   const [isTranslating, setIsTranslating] = useState(false);
   const [translatedText, setTranslatedText] = useState<string>('');
   const [showTranslation, setShowTranslation] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Mock language detection function
-  const detectLanguage = async (text: string): Promise<DetectedLanguage | null> => {
+  const detectLanguage = async (
+    text: string
+  ): Promise<DetectedLanguage | null> => {
     // In production, this would call a real language detection API
     return new Promise((resolve) => {
       setTimeout(() => {
         // Mock detection logic
         const textLower = text.toLowerCase();
-        
+
         // Simple heuristics for demo purposes
-        if (textLower.includes('hola') || textLower.includes('gracias') || textLower.includes('por favor')) {
+        if (
+          textLower.includes('hola') ||
+          textLower.includes('gracias') ||
+          textLower.includes('por favor')
+        ) {
           resolve({ code: 'es', name: 'Spanish', confidence: 0.95 });
-        } else if (textLower.includes('bonjour') || textLower.includes('merci') || textLower.includes('s\'il vous plaît')) {
+        } else if (
+          textLower.includes('bonjour') ||
+          textLower.includes('merci') ||
+          textLower.includes("s'il vous plaît")
+        ) {
           resolve({ code: 'fr', name: 'French', confidence: 0.92 });
-        } else if (textLower.includes('guten tag') || textLower.includes('danke') || textLower.includes('bitte')) {
+        } else if (
+          textLower.includes('guten tag') ||
+          textLower.includes('danke') ||
+          textLower.includes('bitte')
+        ) {
           resolve({ code: 'de', name: 'German', confidence: 0.88 });
-        } else if (textLower.includes('こんにちは') || textLower.includes('ありがとう')) {
+        } else if (
+          textLower.includes('こんにちは') ||
+          textLower.includes('ありがとう')
+        ) {
           resolve({ code: 'ja', name: 'Japanese', confidence: 0.98 });
         } else if (textLower.includes('你好') || textLower.includes('谢谢')) {
           resolve({ code: 'zh', name: 'Chinese', confidence: 0.96 });
         } else if (textLower.includes('مرحبا') || textLower.includes('شكرا')) {
           resolve({ code: 'ar', name: 'Arabic', confidence: 0.94 });
-        } else if (textLower.includes('привет') || textLower.includes('спасибо')) {
-          resolve({ code: 'ru', name: 'Russian', confidence: 0.90 });
+        } else if (
+          textLower.includes('привет') ||
+          textLower.includes('спасибо')
+        ) {
+          resolve({ code: 'ru', name: 'Russian', confidence: 0.9 });
         } else if (textLower.includes('ciao') || textLower.includes('grazie')) {
           resolve({ code: 'it', name: 'Italian', confidence: 0.87 });
-        } else if (textLower.includes('olá') || textLower.includes('obrigado')) {
+        } else if (
+          textLower.includes('olá') ||
+          textLower.includes('obrigado')
+        ) {
           resolve({ code: 'pt', name: 'Portuguese', confidence: 0.85 });
-        } else if (textLower.includes('안녕하세요') || textLower.includes('감사합니다')) {
+        } else if (
+          textLower.includes('안녕하세요') ||
+          textLower.includes('감사합니다')
+        ) {
           resolve({ code: 'ko', name: 'Korean', confidence: 0.93 });
-        } else if (textLower.includes('नमस्ते') || textLower.includes('धन्यवाद')) {
+        } else if (
+          textLower.includes('नमस्ते') ||
+          textLower.includes('धन्यवाद')
+        ) {
           resolve({ code: 'hi', name: 'Hindi', confidence: 0.91 });
         } else {
           // Default to English if no patterns match
@@ -111,7 +141,11 @@ export default function LanguageDetector({
     const detectAsync = async () => {
       try {
         const detected = await detectLanguage(text);
-        if (detected && detected.confidence >= minConfidence && detected.code !== currentLanguage) {
+        if (
+          detected &&
+          detected.confidence >= minConfidence &&
+          detected.code !== currentLanguage
+        ) {
           setDetectedLanguage(detected);
         } else {
           setDetectedLanguage(null);
@@ -132,7 +166,9 @@ export default function LanguageDetector({
   }
 
   return (
-    <div className={`bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 ${className}`}>
+    <div
+      className={`bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 ${className}`}
+    >
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0">
           <div className="w-8 h-8 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center">
@@ -147,15 +183,17 @@ export default function LanguageDetector({
             </h4>
             {showConfidence && (
               <span className="text-xs text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-800 px-2 py-0.5 rounded-full">
-                {Math.round(detectedLanguage.confidence * 100)}% {t('common.confidence')}
+                {Math.round(detectedLanguage.confidence * 100)}%{' '}
+                {t('common.confidence')}
               </span>
             )}
           </div>
 
           <p className="text-sm text-blue-700 dark:text-blue-300 mb-3">
-            {t('common.text_appears_to_be_in', { 
-              language: getLanguageDisplayName(detectedLanguage.code as any) 
-            })}. {t('common.would_you_like_to_translate')}?
+            {t('common.text_appears_to_be_in', {
+              language: getLanguageDisplayName(detectedLanguage.code as any),
+            })}
+            . {t('common.would_you_like_to_translate')}?
           </p>
 
           {/* Translation Result */}
@@ -164,7 +202,9 @@ export default function LanguageDetector({
               <div className="flex items-center gap-2 mb-2">
                 <Languages className="w-4 h-4 text-green-600 dark:text-green-400" />
                 <span className="text-xs font-medium text-green-700 dark:text-green-300">
-                  {t('common.translated_to', { language: getLanguageDisplayName(currentLanguage) })}
+                  {t('common.translated_to', {
+                    language: getLanguageDisplayName(currentLanguage),
+                  })}
                 </span>
               </div>
               <p className="text-sm text-gray-900 dark:text-gray-100">
@@ -176,9 +216,7 @@ export default function LanguageDetector({
           {/* Error Message */}
           {error && (
             <div className="mb-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-              <p className="text-sm text-red-700 dark:text-red-300">
-                {error}
-              </p>
+              <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
             </div>
           )}
 
@@ -226,10 +264,13 @@ export default function LanguageDetector({
       <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-700">
         <div className="flex items-center justify-between text-xs text-blue-600 dark:text-blue-400">
           <span>
-            {t('common.detected_language')}: {detectedLanguage.name} ({detectedLanguage.code.toUpperCase()})
+            {t('common.detected_language')}: {detectedLanguage.name} (
+            {detectedLanguage.code.toUpperCase()})
           </span>
           <span>
-            {t('common.target_language')}: {getLanguageDisplayName(currentLanguage)} ({currentLanguage.toUpperCase()})
+            {t('common.target_language')}:{' '}
+            {getLanguageDisplayName(currentLanguage)} (
+            {currentLanguage.toUpperCase()})
           </span>
         </div>
       </div>

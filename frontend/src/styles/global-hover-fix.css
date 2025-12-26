@@ -6,7 +6,7 @@
 /* Optimize all interactive elements for smooth hover */
 button,
 a,
-[role="button"],
+[role='button'],
 .clickable,
 .nav-item,
 .menu-item {
@@ -15,16 +15,17 @@ a,
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
   will-change: transform;
-  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
-              background-color 0.15s ease,
-              box-shadow 0.15s ease,
-              opacity 0.15s ease;
+  transition:
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
 }
 
 /* Remove scale on hover to prevent flickering */
 button:hover,
 a:hover,
-[role="button"]:hover,
+[role='button']:hover,
 .clickable:hover {
   transform: translateZ(0); /* Keep z-index trick but remove scale */
 }
@@ -97,13 +98,15 @@ input:focus,
 textarea:focus,
 select:focus {
   outline: none;
-  box-shadow: 0 0 0 3px var(--theme-primary)33;
+  box-shadow: 0 0 0 3px var(--theme-primary) 33;
   border-color: var(--theme-primary);
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
 
 /* Remove scale transforms globally for better performance */
-[class*="hover:scale"] {
+[class*='hover:scale'] {
   will-change: auto !important;
 }
 
@@ -130,11 +133,11 @@ select:focus {
 }
 
 /* Fix shadow flickering */
-[class*="hover:shadow"] {
+[class*='hover:shadow'] {
   transition: box-shadow 0.2s ease;
 }
 
-[class*="hover:shadow"]:hover {
+[class*='hover:shadow']:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -160,7 +163,7 @@ button:active {
 /* Prevent layout shifts */
 button,
 a,
-[role="button"] {
+[role='button'] {
   contain: layout style;
 }
 
@@ -168,7 +171,7 @@ a,
 @supports (backdrop-filter: blur(10px)) {
   button,
   a,
-  [role="button"] {
+  [role='button'] {
     transform: translate3d(0, 0, 0);
   }
 }
@@ -177,7 +180,7 @@ a,
 @media (prefers-reduced-motion: reduce) {
   button,
   a,
-  [role="button"],
+  [role='button'],
   nav button,
   nav a {
     transition: none !important;

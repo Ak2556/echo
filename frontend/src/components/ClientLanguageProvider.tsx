@@ -7,13 +7,15 @@ interface ClientLanguageProviderProps {
   children: React.ReactNode;
 }
 
-export default function ClientLanguageProvider({ children }: ClientLanguageProviderProps) {
+export default function ClientLanguageProvider({
+  children,
+}: ClientLanguageProviderProps) {
   const [isClient, setIsClient] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    
+
     // Initialize i18n on client side
     const initI18n = async () => {
       try {

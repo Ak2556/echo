@@ -11,7 +11,7 @@ const resources = {
       loading: 'Loading...',
       error: 'Error',
       success: 'Success',
-    }
+    },
   },
   es: {
     translation: {
@@ -20,7 +20,7 @@ const resources = {
       loading: 'Cargando...',
       error: 'Error',
       success: 'Éxito',
-    }
+    },
   },
   fr: {
     translation: {
@@ -29,7 +29,7 @@ const resources = {
       loading: 'Chargement...',
       error: 'Erreur',
       success: 'Succès',
-    }
+    },
   },
   de: {
     translation: {
@@ -38,8 +38,8 @@ const resources = {
       loading: 'Laden...',
       error: 'Fehler',
       success: 'Erfolg',
-    }
-  }
+    },
+  },
 };
 
 i18n
@@ -50,17 +50,17 @@ i18n
     lng: 'en',
     fallbackLng: 'en',
     debug: process.env.NODE_ENV === 'development',
-    
+
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
       lookupLocalStorage: 'echo-language',
       caches: ['localStorage'],
     },
-    
+
     interpolation: {
       escapeValue: false,
     },
-    
+
     react: {
       useSuspense: false,
     },

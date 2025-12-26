@@ -11,8 +11,8 @@ export const colors = {
     200: '#bae6fd',
     300: '#7dd3fc',
     400: '#38bdf8',
-    500: '#0ea5e9',  // Main brand color
-    600: '#0284c7',  // Interactive elements
+    500: '#0ea5e9', // Main brand color
+    600: '#0284c7', // Interactive elements
     700: '#0369a1',
     800: '#075985',
     900: '#0c4a6e',
@@ -22,32 +22,32 @@ export const colors = {
   // Semantic Colors (WCAG AA validated)
   semantic: {
     success: {
-      light: '#10b981',      // 4.5:1 contrast on white
-      main: '#059669',       // 7:1 contrast on white
-      dark: '#047857',       // 10:1 contrast on white
-      bg: '#d1fae5',         // Light background
-      bgDark: '#064e3b',     // Dark background
+      light: '#10b981', // 4.5:1 contrast on white
+      main: '#059669', // 7:1 contrast on white
+      dark: '#047857', // 10:1 contrast on white
+      bg: '#d1fae5', // Light background
+      bgDark: '#064e3b', // Dark background
     },
     error: {
-      light: '#f87171',      // 4.5:1 contrast on white
-      main: '#dc2626',       // 7:1 contrast on white
-      dark: '#b91c1c',       // 10:1 contrast on white
-      bg: '#fee2e2',         // Light background
-      bgDark: '#7f1d1d',     // Dark background
+      light: '#f87171', // 4.5:1 contrast on white
+      main: '#dc2626', // 7:1 contrast on white
+      dark: '#b91c1c', // 10:1 contrast on white
+      bg: '#fee2e2', // Light background
+      bgDark: '#7f1d1d', // Dark background
     },
     warning: {
-      light: '#fbbf24',      // 4.5:1 contrast on white
-      main: '#f59e0b',       // 7:1 contrast on white
-      dark: '#d97706',       // 10:1 contrast on white
-      bg: '#fef3c7',         // Light background
-      bgDark: '#78350f',     // Dark background
+      light: '#fbbf24', // 4.5:1 contrast on white
+      main: '#f59e0b', // 7:1 contrast on white
+      dark: '#d97706', // 10:1 contrast on white
+      bg: '#fef3c7', // Light background
+      bgDark: '#78350f', // Dark background
     },
     info: {
-      light: '#60a5fa',      // 4.5:1 contrast on white
-      main: '#3b82f6',       // 7:1 contrast on white
-      dark: '#2563eb',       // 10:1 contrast on white
-      bg: '#dbeafe',         // Light background
-      bgDark: '#1e3a8a',     // Dark background
+      light: '#60a5fa', // 4.5:1 contrast on white
+      main: '#3b82f6', // 7:1 contrast on white
+      dark: '#2563eb', // 10:1 contrast on white
+      bg: '#dbeafe', // Light background
+      bgDark: '#1e3a8a', // Dark background
     },
   },
 
@@ -84,15 +84,15 @@ export const typography = {
   },
 
   fontSize: {
-    xs: '0.75rem',      // 12px
-    sm: '0.875rem',     // 14px
-    base: '1rem',       // 16px
-    lg: '1.125rem',     // 18px
-    xl: '1.25rem',      // 20px
-    '2xl': '1.5rem',    // 24px
-    '3xl': '1.875rem',  // 30px
-    '4xl': '2.25rem',   // 36px
-    '5xl': '3rem',      // 48px
+    xs: '0.75rem', // 12px
+    sm: '0.875rem', // 14px
+    base: '1rem', // 16px
+    lg: '1.125rem', // 18px
+    xl: '1.25rem', // 20px
+    '2xl': '1.5rem', // 24px
+    '3xl': '1.875rem', // 30px
+    '4xl': '2.25rem', // 36px
+    '5xl': '3rem', // 48px
   },
 
   fontWeight: {
@@ -128,39 +128,39 @@ export const typography = {
 export const spacing = {
   0: '0',
   px: '1px',
-  0.5: '0.125rem',  // 2px
-  1: '0.25rem',     // 4px
-  1.5: '0.375rem',  // 6px
-  2: '0.5rem',      // 8px
-  2.5: '0.625rem',  // 10px
-  3: '0.75rem',     // 12px
-  3.5: '0.875rem',  // 14px
-  4: '1rem',        // 16px
-  5: '1.25rem',     // 20px
-  6: '1.5rem',      // 24px
-  7: '1.75rem',     // 28px
-  8: '2rem',        // 32px
-  9: '2.25rem',     // 36px
-  10: '2.5rem',     // 40px
-  11: '2.75rem',    // 44px
-  12: '3rem',       // 48px
-  14: '3.5rem',     // 56px
-  16: '4rem',       // 64px
-  20: '5rem',       // 80px
-  24: '6rem',       // 96px
-  32: '8rem',       // 128px
+  0.5: '0.125rem', // 2px
+  1: '0.25rem', // 4px
+  1.5: '0.375rem', // 6px
+  2: '0.5rem', // 8px
+  2.5: '0.625rem', // 10px
+  3: '0.75rem', // 12px
+  3.5: '0.875rem', // 14px
+  4: '1rem', // 16px
+  5: '1.25rem', // 20px
+  6: '1.5rem', // 24px
+  7: '1.75rem', // 28px
+  8: '2rem', // 32px
+  9: '2.25rem', // 36px
+  10: '2.5rem', // 40px
+  11: '2.75rem', // 44px
+  12: '3rem', // 48px
+  14: '3.5rem', // 56px
+  16: '4rem', // 64px
+  20: '5rem', // 80px
+  24: '6rem', // 96px
+  32: '8rem', // 128px
 };
 
 // Border Radius
 export const borderRadius = {
   none: '0',
-  sm: '0.25rem',    // 4px
+  sm: '0.25rem', // 4px
   base: '0.375rem', // 6px
-  md: '0.5rem',     // 8px
-  lg: '0.75rem',    // 12px
-  xl: '1rem',       // 16px
-  '2xl': '1.5rem',  // 24px
-  '3xl': '2rem',    // 32px
+  md: '0.5rem', // 8px
+  lg: '0.75rem', // 12px
+  xl: '1rem', // 16px
+  '2xl': '1.5rem', // 24px
+  '3xl': '2rem', // 32px
   full: '9999px',
 };
 
@@ -238,9 +238,9 @@ export const breakpoints = {
 
 // Touch targets (WCAG 2.1 Level AA)
 export const touchTargets = {
-  minimum: '44px',    // WCAG minimum
+  minimum: '44px', // WCAG minimum
   comfortable: '48px', // Recommended for mobile
-  large: '56px',      // For primary actions
+  large: '56px', // For primary actions
 };
 
 // Glass morphism presets

@@ -118,7 +118,16 @@ export function useThemeColors(): ThemeColors {
         info: '#60a5fa',
 
         // Chart colors
-        chart: ['#a78bfa', '#34d399', '#fbbf24', '#60a5fa', '#f87171', '#ec4899', '#8b5cf6', '#10b981'],
+        chart: [
+          '#a78bfa',
+          '#34d399',
+          '#fbbf24',
+          '#60a5fa',
+          '#f87171',
+          '#ec4899',
+          '#8b5cf6',
+          '#10b981',
+        ],
 
         // Gradients
         gradient: {
@@ -182,7 +191,16 @@ export function useThemeColors(): ThemeColors {
         info: '#3b82f6',
 
         // Chart colors
-        chart: ['#8b5cf6', '#10b981', '#f59e0b', '#3b82f6', '#ef4444', '#ec4899', '#6366f1', '#059669'],
+        chart: [
+          '#8b5cf6',
+          '#10b981',
+          '#f59e0b',
+          '#3b82f6',
+          '#ef4444',
+          '#ec4899',
+          '#6366f1',
+          '#059669',
+        ],
 
         // Gradients
         gradient: {

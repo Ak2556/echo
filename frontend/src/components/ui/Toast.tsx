@@ -239,7 +239,7 @@ const ToastItem = memo(function ToastItem({
       exit={{ opacity: 0, x: slideDirection, scale: 0.9, y: -10 }}
       transition={{
         duration: 0.4,
-        ease: [0.22, 1, 0.36, 1] // Apple easing
+        ease: [0.22, 1, 0.36, 1], // Apple easing
       }}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -268,10 +268,12 @@ const ToastItem = memo(function ToastItem({
           transition={{
             delay: 0.1,
             duration: 0.3,
-            ease: [0.22, 1, 0.36, 1]
+            ease: [0.22, 1, 0.36, 1],
           }}
         >
-          <Icon className={cn('w-5 h-5 mt-0.5 flex-shrink-0', style.iconColor)} />
+          <Icon
+            className={cn('w-5 h-5 mt-0.5 flex-shrink-0', style.iconColor)}
+          />
         </motion.div>
 
         <div className="flex-1 min-w-0">

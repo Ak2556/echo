@@ -49,7 +49,11 @@ const footerSections: FooterSection[] = [
       { label: 'Developer API', href: 'https://api.echo.app', external: true },
       { label: 'Blog', href: 'https://blog.echo.app', external: true },
       { label: 'Status', href: 'https://status.echo.app', external: true },
-      { label: 'Changelog', href: 'https://changelog.echo.app', external: true },
+      {
+        label: 'Changelog',
+        href: 'https://changelog.echo.app',
+        external: true,
+      },
     ],
   },
   {
@@ -59,7 +63,11 @@ const footerSections: FooterSection[] = [
       { label: 'Careers', href: 'https://echo.app/careers', external: true },
       { label: 'Press', href: 'https://echo.app/press', external: true },
       { label: 'Contact', href: 'https://echo.app/contact', external: true },
-      { label: 'Investors', href: 'https://echo.app/investors', external: true },
+      {
+        label: 'Investors',
+        href: 'https://echo.app/investors',
+        external: true,
+      },
     ],
   },
 ];
@@ -143,14 +151,14 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
     if (!email.trim()) return;
 
     setIsLoading(true);
-    
+
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
     setIsSubscribed(true);
     setEmail('');
     setIsLoading(false);
-    
+
     // Reset after 3 seconds
     setTimeout(() => setIsSubscribed(false), 3000);
   };
@@ -166,7 +174,14 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
           onClick={scrollToTop}
           aria-label="Scroll to top"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <polyline points="18 15 12 9 6 15" />
           </svg>
         </button>
@@ -191,7 +206,14 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
               <span className="status-text">All Systems Operational</span>
             </div>
             <div className="uptime-badge">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <polyline points="22,12 18,12 15,21 9,3 6,12 2,12" />
               </svg>
               <span>{stats.uptime} Uptime</span>
@@ -204,7 +226,14 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
           <div className="stats-grid">
             <div className="stat-item">
               <div className="stat-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
                   <circle cx="9" cy="7" r="4" />
                   <path d="M23 21v-2a4 4 0 00-3-3.87" />
@@ -216,7 +245,14 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
             </div>
             <div className="stat-item">
               <div className="stat-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                 </svg>
               </div>
@@ -225,7 +261,14 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
             </div>
             <div className="stat-item">
               <div className="stat-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <circle cx="12" cy="12" r="10" />
                   <line x1="2" y1="12" x2="22" y2="12" />
                   <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
@@ -243,15 +286,33 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
           <div className="footer-brand">
             <div className="brand-logo">
               <div className="logo-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                  <path d="M8 12l2 2 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <path
+                    d="M8 12l2 2 4-4"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </div>
               <span className="brand-text">Echo</span>
             </div>
             <p className="brand-description">
-              Connect, share, and discover with the modern social platform that brings people together through meaningful conversations and shared experiences.
+              Connect, share, and discover with the modern social platform that
+              brings people together through meaningful conversations and shared
+              experiences.
             </p>
             <div className="social-links">
               {socialLinks.map((social) => (
@@ -276,12 +337,21 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
                   {section.links.map((link) => (
                     <li key={link.label}>
                       <button
-                        onClick={() => handleNavigation(link.href, link.external)}
+                        onClick={() =>
+                          handleNavigation(link.href, link.external)
+                        }
                         className="footer-link"
                       >
                         {link.label}
                         {link.external && (
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
                             <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
                             <polyline points="15,3 21,3 21,9" />
                             <line x1="10" y1="14" x2="21" y2="3" />
@@ -301,7 +371,8 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
           <div className="newsletter-content">
             <h3 className="newsletter-title">Stay in the Loop</h3>
             <p className="newsletter-description">
-              Get the latest updates, features, and community highlights delivered to your inbox.
+              Get the latest updates, features, and community highlights
+              delivered to your inbox.
             </p>
             <form onSubmit={handleNewsletterSubmit} className="newsletter-form">
               <Input
@@ -328,18 +399,32 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
         <div className="footer-bottom">
           <div className="bottom-content">
             <div className="legal-section">
-              <p className="copyright">© {currentYear} Echo. All rights reserved.</p>
+              <p className="copyright">
+                © {currentYear} Echo. All rights reserved.
+              </p>
               <div className="legal-links">
-                <button onClick={() => handleNavigation('/privacy', true)} className="legal-link">
+                <button
+                  onClick={() => handleNavigation('/privacy', true)}
+                  className="legal-link"
+                >
                   Privacy Policy
                 </button>
-                <button onClick={() => handleNavigation('/terms', true)} className="legal-link">
+                <button
+                  onClick={() => handleNavigation('/terms', true)}
+                  className="legal-link"
+                >
                   Terms of Service
                 </button>
-                <button onClick={() => handleNavigation('/cookies', true)} className="legal-link">
+                <button
+                  onClick={() => handleNavigation('/cookies', true)}
+                  className="legal-link"
+                >
                   Cookie Policy
                 </button>
-                <button onClick={() => handleNavigation('/accessibility', true)} className="legal-link">
+                <button
+                  onClick={() => handleNavigation('/accessibility', true)}
+                  className="legal-link"
+                >
                   Accessibility
                 </button>
               </div>
@@ -734,7 +819,8 @@ export default function EnhancedFooter({ onNavigate }: FooterProps) {
         }
 
         @keyframes pulse {
-          0%, 100% {
+          0%,
+          100% {
             opacity: 1;
             transform: scale(1);
           }

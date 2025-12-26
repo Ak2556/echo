@@ -8,7 +8,12 @@ type Props = {
   onClose: () => void;
 };
 
-export default function ViewRecordModal({ visible, record, language, onClose }: Props) {
+export default function ViewRecordModal({
+  visible,
+  record,
+  language,
+  onClose,
+}: Props) {
   if (!visible) return null;
   const t = translations[language];
 
@@ -42,26 +47,63 @@ export default function ViewRecordModal({ visible, record, language, onClose }: 
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 style={{ margin: '0 0 1rem 0' }}>{language === 'english' ? 'View Cattle Record' : 'ਰਿਕਾਰਡ ਦੇ ਵੇਰਵੇ'}</h3>
+        <h3 style={{ margin: '0 0 1rem 0' }}>
+          {language === 'english' ? 'View Cattle Record' : 'ਰਿਕਾਰਡ ਦੇ ਵੇਰਵੇ'}
+        </h3>
         {!record ? (
-          <div>{language === 'english' ? 'Loading...' : 'ਲੋਡ ਕਰ ਰਿਹਾ ਹੈ...'}</div>
+          <div>
+            {language === 'english' ? 'Loading...' : 'ਲੋਡ ਕਰ ਰਿਹਾ ਹੈ...'}
+          </div>
         ) : (
           <div style={{ display: 'grid', gap: '0.5rem' }}>
-            <div><strong>{t.breed}:</strong> {record.breed}</div>
-            <div><strong>{t.tagNo}:</strong> {record.tagNo}</div>
-            <div><strong>{t.birthDate}:</strong> {record.birthDate}</div>
-            <div><strong>{t.motherCode}:</strong> {record.motherCode}</div>
-            <div><strong>{t.fatherName}:</strong> {record.fatherName}</div>
-            <div><strong>{t.lactation}:</strong> {record.lactation}</div>
-            <div><strong>{t.aiLastCheckup}:</strong> {record.aiLastCheckup}</div>
-            <div><strong>{t.heatCycle}:</strong> {record.heatCycle}</div>
-            <div><strong>{t.deworming}:</strong> {record.deworming}</div>
-            <div><strong>{t.semenDetail}:</strong> {record.semenDetail}</div>
+            <div>
+              <strong>{t.breed}:</strong> {record.breed}
+            </div>
+            <div>
+              <strong>{t.tagNo}:</strong> {record.tagNo}
+            </div>
+            <div>
+              <strong>{t.birthDate}:</strong> {record.birthDate}
+            </div>
+            <div>
+              <strong>{t.motherCode}:</strong> {record.motherCode}
+            </div>
+            <div>
+              <strong>{t.fatherName}:</strong> {record.fatherName}
+            </div>
+            <div>
+              <strong>{t.lactation}:</strong> {record.lactation}
+            </div>
+            <div>
+              <strong>{t.aiLastCheckup}:</strong> {record.aiLastCheckup}
+            </div>
+            <div>
+              <strong>{t.heatCycle}:</strong> {record.heatCycle}
+            </div>
+            <div>
+              <strong>{t.deworming}:</strong> {record.deworming}
+            </div>
+            <div>
+              <strong>{t.semenDetail}:</strong> {record.semenDetail}
+            </div>
           </div>
         )}
 
-        <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-          <button type="button" onClick={onClose} style={{ padding: '0.5rem 1rem' }}>{t.close}</button>
+        <div
+          style={{
+            marginTop: '1rem',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: '0.5rem',
+          }}
+        >
+          <button
+            type="button"
+            onClick={onClose}
+            style={{ padding: '0.5rem 1rem' }}
+          >
+            {t.close}
+          </button>
         </div>
       </div>
     </div>

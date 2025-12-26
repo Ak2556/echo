@@ -10,7 +10,10 @@ interface FooterColumnProps {
 }
 
 export function FooterColumn({ title, links }: FooterColumnProps) {
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, link: { label: string; href: string }) => {
+  const handleClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    link: { label: string; href: string }
+  ) => {
     // If it's a placeholder link (starts with #), show a toast and prevent navigation
     if (link.href.startsWith('#')) {
       e.preventDefault();

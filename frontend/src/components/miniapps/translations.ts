@@ -152,7 +152,8 @@ export const translations = {
     expectedCalves: 'Expected calves (next 3 months):',
     activeSires: 'Active sires:',
     recommendation: 'Recommendation:',
-    recommendationText: 'Plan for increased feed requirements and calving facilities for pregnant cows.',
+    recommendationText:
+      'Plan for increased feed requirements and calving facilities for pregnant cows.',
     healthyCows: 'Healthy cows:',
     dueForCheckup: 'Due for checkup:',
     healthRate: 'Health rate:',
@@ -329,7 +330,8 @@ export const translations = {
     expectedCalves: 'ਅਗਲੇ 3 ਮਹੀਨਿਆਂ ਵਿੱਚ ਵੱਛੇ:',
     activeSires: 'ਸਰਗਰਮ ਸਾਂਡ:',
     recommendation: 'ਸਿਫਾਰਸ਼:',
-    recommendationText: 'ਗਰਭਵਤੀ ਪਸ਼ੂਆਂ ਲਈ ਵਧੇ ਹੋਏ ਖੁਰਾਕ ਦੀਆਂ ਲੋੜਾਂ ਅਤੇ ਵਿਆਉਣ ਦੀਆਂ ਸਹੂਲਤਾਂ ਦੀ ਯੋਜਨਾ ਬਣਾਓ।',
+    recommendationText:
+      'ਗਰਭਵਤੀ ਪਸ਼ੂਆਂ ਲਈ ਵਧੇ ਹੋਏ ਖੁਰਾਕ ਦੀਆਂ ਲੋੜਾਂ ਅਤੇ ਵਿਆਉਣ ਦੀਆਂ ਸਹੂਲਤਾਂ ਦੀ ਯੋਜਨਾ ਬਣਾਓ।',
     healthyCows: 'ਤੰਦਰੁਸਤ ਪਸ਼ੂ:',
     dueForCheckup: 'ਜਾਂਚ ਲਈ ਬਕਾਇਆ:',
     healthRate: 'ਸਿਹਤ ਦਰ:',

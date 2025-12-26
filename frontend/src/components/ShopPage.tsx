@@ -538,276 +538,279 @@ export default function ShopPage() {
                   position: 'relative',
                 }}
               >
-              {/* Product Image */}
-              <div
-                style={{
-                  position: 'relative',
-                  paddingTop: '100%',
-                  background: 'colors.bg.tertiary',
-                }}
-              >
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-                {product.trending && (
-                  <div
+                {/* Product Image */}
+                <div
+                  style={{
+                    position: 'relative',
+                    paddingTop: '100%',
+                    background: 'colors.bg.tertiary',
+                  }}
+                >
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                  {product.trending && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        left: '12px',
+                        background: 'colors.status.error',
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <TrendingUp size={14} />
+                      {isClient
+                        ? language === 'hi'
+                          ? 'ट्रेंडिंग'
+                          : language === 'pa'
+                            ? 'ਟ੍ਰੈਂਡਿੰਗ'
+                            : 'Trending'
+                        : 'Trending'}
+                    </div>
+                  )}
+                  <button
                     style={{
                       position: 'absolute',
                       top: '12px',
-                      left: '12px',
-                      background: 'colors.status.error',
-                      color: 'white',
-                      padding: '4px 12px',
-                      borderRadius: '20px',
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
+                      right: '12px',
+                      background: 'white',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: '36px',
+                      height: '36px',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '4px',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                     }}
                   >
-                    <TrendingUp size={14} />
-                    {isClient
-                      ? language === 'hi'
-                        ? 'ट्रेंडिंग'
-                        : language === 'pa'
-                          ? 'ਟ੍ਰੈਂਡਿੰਗ'
-                          : 'Trending'
-                      : 'Trending'}
-                  </div>
-                )}
-                <button
-                  style={{
-                    position: 'absolute',
-                    top: '12px',
-                    right: '12px',
-                    background: 'white',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: '36px',
-                    height: '36px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  }}
-                >
-                  <Heart size={18} color="#666" />
-                </button>
-              </div>
+                    <Heart size={18} color="#666" />
+                  </button>
+                </div>
 
-              {/* Product Info */}
-              <div style={{ padding: '1.25rem' }}>
-                <h3
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 600,
-                    marginBottom: '0.5rem',
-                  }}
-                >
-                  {isClient ? getProductName(product) : product.name}
-                </h3>
-                <p
-                  style={{
-                    fontSize: '0.875rem',
-                    color: 'var(--muted)',
-                    marginBottom: '0.75rem',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                  }}
-                >
-                  {isClient
-                    ? getProductDescription(product)
-                    : product.description}
-                </p>
-
-                {/* Brand */}
-                {product.brand && (
-                  <p
+                {/* Product Info */}
+                <div style={{ padding: '1.25rem' }}>
+                  <h3
                     style={{
-                      fontSize: '0.8rem',
-                      color: 'var(--muted)',
+                      fontSize: '1.1rem',
+                      fontWeight: 600,
                       marginBottom: '0.5rem',
                     }}
                   >
-                    Brand: {product.brand}
+                    {isClient ? getProductName(product) : product.name}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: '0.875rem',
+                      color: 'var(--muted)',
+                      marginBottom: '0.75rem',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {isClient
+                      ? getProductDescription(product)
+                      : product.description}
                   </p>
-                )}
 
-                {/* Rating */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    marginBottom: '0.75rem',
-                  }}
-                >
+                  {/* Brand */}
+                  {product.brand && (
+                    <p
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'var(--muted)',
+                        marginBottom: '0.5rem',
+                      }}
+                    >
+                      Brand: {product.brand}
+                    </p>
+                  )}
+
+                  {/* Rating */}
                   <div
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.25rem',
+                      gap: '0.5rem',
+                      marginBottom: '0.75rem',
                     }}
                   >
-                    <Star
-                      size={16}
-                      fill="colors.status.warning"
-                      color="colors.status.warning"
-                    />
-                    <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>
-                      {product.rating}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
+                      }}
+                    >
+                      <Star
+                        size={16}
+                        fill="colors.status.warning"
+                        color="colors.status.warning"
+                      />
+                      <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>
+                        {product.rating}
+                      </span>
+                    </div>
+                    <span
+                      style={{ fontSize: '0.875rem', color: 'var(--muted)' }}
+                    >
+                      ({product.reviews}{' '}
+                      {isClient
+                        ? language === 'hi'
+                          ? 'समीक्षाएं'
+                          : language === 'pa'
+                            ? 'ਸਮੀਖਿਆਵਾਂ'
+                            : 'reviews'
+                        : 'reviews'}
+                      )
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.875rem', color: 'var(--muted)' }}>
-                    ({product.reviews}{' '}
-                    {isClient
-                      ? language === 'hi'
-                        ? 'समीक्षाएं'
-                        : language === 'pa'
-                          ? 'ਸਮੀਖਿਆਵਾਂ'
-                          : 'reviews'
-                      : 'reviews'}
-                    )
-                  </span>
-                </div>
 
-                {/* Price */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <span
+                  {/* Price */}
+                  <div
                     style={{
-                      fontSize: '1.5rem',
-                      fontWeight: 700,
-                      color: 'var(--accent)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      marginBottom: '1rem',
                     }}
                   >
-                    ₹{product.price}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '1rem',
-                      color: 'var(--muted)',
-                      textDecoration: 'line-through',
-                    }}
-                  >
-                    ₹{product.originalPrice}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '0.875rem',
-                      color: 'colors.status.success',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {Math.round(
-                      (1 - product.price / product.originalPrice) * 100
+                    <span
+                      style={{
+                        fontSize: '1.5rem',
+                        fontWeight: 700,
+                        color: 'var(--accent)',
+                      }}
+                    >
+                      ₹{product.price}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '1rem',
+                        color: 'var(--muted)',
+                        textDecoration: 'line-through',
+                      }}
+                    >
+                      ₹{product.originalPrice}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '0.875rem',
+                        color: 'colors.status.success',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {Math.round(
+                        (1 - product.price / product.originalPrice) * 100
+                      )}
+                      %{' '}
+                      {isClient
+                        ? language === 'hi'
+                          ? 'छूट'
+                          : language === 'pa'
+                            ? 'ਛੋਟ'
+                            : 'off'
+                        : 'off'}
+                    </span>
+                  </div>
+
+                  {/* Stock Status */}
+                  <div style={{ marginBottom: '1rem', fontSize: '0.875rem' }}>
+                    {product.stock > 50 ? (
+                      <span style={{ color: 'colors.status.success' }}>
+                        ✓{' '}
+                        {isClient
+                          ? language === 'hi'
+                            ? 'स्टॉक में'
+                            : language === 'pa'
+                              ? 'ਸਟਾਕ ਵਿੱਚ'
+                              : 'In stock'
+                          : 'In stock'}
+                      </span>
+                    ) : product.stock > 0 ? (
+                      <span style={{ color: 'colors.status.warning' }}>
+                        ⚠{' '}
+                        {isClient
+                          ? language === 'hi'
+                            ? `केवल ${product.stock} बचे`
+                            : language === 'pa'
+                              ? `ਸਿਰਫ਼ ${product.stock} ਬਚੇ`
+                              : `Only ${product.stock} left`
+                          : `Only ${product.stock} left`}
+                      </span>
+                    ) : (
+                      <span style={{ color: 'colors.status.error' }}>
+                        ✗{' '}
+                        {isClient
+                          ? language === 'hi'
+                            ? 'स्टॉक में नहीं'
+                            : language === 'pa'
+                              ? 'ਸਟਾਕ ਖਤਮ'
+                              : 'Out of stock'
+                          : 'Out of stock'}
+                      </span>
                     )}
-                    %{' '}
+                  </div>
+
+                  {/* Add to Cart Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart(product);
+                    }}
+                    disabled={product.stock === 0}
+                    style={{
+                      width: '100%',
+                      padding: '0.875rem',
+                      background:
+                        product.stock === 0 ? '#ccc' : 'var(--accent)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '10px',
+                      cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (product.stock > 0) {
+                        e.currentTarget.style.transform = 'scale(1.02)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                  >
+                    <ShoppingCart size={18} />
                     {isClient
                       ? language === 'hi'
-                        ? 'छूट'
+                        ? 'कार्ट में जोड़ें'
                         : language === 'pa'
-                          ? 'ਛੋਟ'
-                          : 'off'
-                      : 'off'}
-                  </span>
+                          ? 'ਕਾਰਟ ਵਿੱਚ ਜੋੜੋ'
+                          : 'Add to Cart'
+                      : 'Add to Cart'}
+                  </button>
                 </div>
-
-                {/* Stock Status */}
-                <div style={{ marginBottom: '1rem', fontSize: '0.875rem' }}>
-                  {product.stock > 50 ? (
-                    <span style={{ color: 'colors.status.success' }}>
-                      ✓{' '}
-                      {isClient
-                        ? language === 'hi'
-                          ? 'स्टॉक में'
-                          : language === 'pa'
-                            ? 'ਸਟਾਕ ਵਿੱਚ'
-                            : 'In stock'
-                        : 'In stock'}
-                    </span>
-                  ) : product.stock > 0 ? (
-                    <span style={{ color: 'colors.status.warning' }}>
-                      ⚠{' '}
-                      {isClient
-                        ? language === 'hi'
-                          ? `केवल ${product.stock} बचे`
-                          : language === 'pa'
-                            ? `ਸਿਰਫ਼ ${product.stock} ਬਚੇ`
-                            : `Only ${product.stock} left`
-                        : `Only ${product.stock} left`}
-                    </span>
-                  ) : (
-                    <span style={{ color: 'colors.status.error' }}>
-                      ✗{' '}
-                      {isClient
-                        ? language === 'hi'
-                          ? 'स्टॉक में नहीं'
-                          : language === 'pa'
-                            ? 'ਸਟਾਕ ਖਤਮ'
-                            : 'Out of stock'
-                        : 'Out of stock'}
-                    </span>
-                  )}
-                </div>
-
-                {/* Add to Cart Button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddToCart(product);
-                  }}
-                  disabled={product.stock === 0}
-                  style={{
-                    width: '100%',
-                    padding: '0.875rem',
-                    background: product.stock === 0 ? '#ccc' : 'var(--accent)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '10px',
-                    cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem',
-                    transition: 'all 0.2s',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (product.stock > 0) {
-                      e.currentTarget.style.transform = 'scale(1.02)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                  }}
-                >
-                  <ShoppingCart size={18} />
-                  {isClient
-                    ? language === 'hi'
-                      ? 'कार्ट में जोड़ें'
-                      : language === 'pa'
-                        ? 'ਕਾਰਟ ਵਿੱਚ ਜੋੜੋ'
-                        : 'Add to Cart'
-                    : 'Add to Cart'}
-                </button>
               </div>
-            </div>
             </HoverCard3D>
           ))}
         </div>

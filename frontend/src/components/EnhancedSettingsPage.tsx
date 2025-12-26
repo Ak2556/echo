@@ -28,14 +28,14 @@ interface Setting {
 }
 
 export default function EnhancedSettingsPage() {
-  const { 
-    themeMode, 
-    setThemeMode, 
-    colorMode, 
-    setColorMode, 
-    accessibility, 
+  const {
+    themeMode,
+    setThemeMode,
+    colorMode,
+    setColorMode,
+    accessibility,
     setAccessibility,
-    colors 
+    colors,
   } = useEnhancedTheme();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,25 +47,25 @@ export default function EnhancedSettingsPage() {
     reducedMotion: accessibility.reducedMotion,
     highContrast: accessibility.highContrast,
     fontSize: accessibility.fontSize,
-    
+
     // App settings
     notifications: true,
     soundEffects: true,
     autoPlay: false,
     dataUsage: 'standard',
     language: 'en',
-    
+
     // Privacy settings
     profileVisibility: 'public',
     activityStatus: true,
     readReceipts: true,
     analytics: true,
-    
+
     // Content settings
     contentFilter: 'moderate',
     autoDownload: 'wifi',
     videoQuality: 'auto',
-    
+
     // Security settings
     twoFactor: false,
     loginAlerts: true,
@@ -78,7 +78,14 @@ export default function EnhancedSettingsPage() {
       title: 'Appearance',
       description: 'Customize the look and feel of Echo',
       icon: (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <circle cx="12" cy="12" r="5" />
           <line x1="12" y1="1" x2="12" y2="3" />
           <line x1="12" y1="21" x2="12" y2="23" />
@@ -135,7 +142,14 @@ export default function EnhancedSettingsPage() {
       title: 'Accessibility',
       description: 'Make Echo work better for you',
       icon: (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <circle cx="12" cy="12" r="10" />
           <circle cx="12" cy="10" r="3" />
           <path d="M7 20.662V19a2 2 0 012-2h6a2 2 0 012 2v1.662" />
@@ -163,7 +177,14 @@ export default function EnhancedSettingsPage() {
       title: 'Notifications',
       description: 'Control how Echo notifies you',
       icon: (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
           <path d="M13.73 21a2 2 0 01-3.46 0" />
         </svg>
@@ -190,7 +211,14 @@ export default function EnhancedSettingsPage() {
       title: 'Privacy & Safety',
       description: 'Control your privacy and safety settings',
       icon: (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
       ),
@@ -210,14 +238,14 @@ export default function EnhancedSettingsPage() {
         {
           id: 'activityStatus',
           label: 'Activity Status',
-          description: 'Show when you\'re online',
+          description: "Show when you're online",
           type: 'toggle',
           value: settings.activityStatus,
         },
         {
           id: 'readReceipts',
           label: 'Read Receipts',
-          description: 'Let others know when you\'ve read their messages',
+          description: "Let others know when you've read their messages",
           type: 'toggle',
           value: settings.readReceipts,
         },
@@ -228,7 +256,14 @@ export default function EnhancedSettingsPage() {
       title: 'Content & Media',
       description: 'Manage how content is displayed and downloaded',
       icon: (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
           <circle cx="8.5" cy="8.5" r="1.5" />
           <polyline points="21,15 16,10 5,21" />
@@ -274,7 +309,14 @@ export default function EnhancedSettingsPage() {
       title: 'Security',
       description: 'Keep your account secure',
       icon: (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
           <circle cx="12" cy="16" r="1" />
           <path d="M7 11V7a5 5 0 0110 0v4" />
@@ -310,7 +352,7 @@ export default function EnhancedSettingsPage() {
   ];
 
   const handleSettingChange = (settingId: string, value: any) => {
-    setSettings(prev => ({ ...prev, [settingId]: value }));
+    setSettings((prev) => ({ ...prev, [settingId]: value }));
 
     // Apply theme changes immediately
     switch (settingId) {
@@ -328,14 +370,16 @@ export default function EnhancedSettingsPage() {
     }
   };
 
-  const filteredSections = settingSections.filter(section =>
-    searchQuery === '' ||
-    section.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    section.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    section.settings.some(setting =>
-      setting.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      setting.description?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+  const filteredSections = settingSections.filter(
+    (section) =>
+      searchQuery === '' ||
+      section.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      section.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      section.settings.some(
+        (setting) =>
+          setting.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          setting.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
   );
 
   const renderSetting = (setting: Setting) => {
@@ -346,7 +390,9 @@ export default function EnhancedSettingsPage() {
             <input
               type="checkbox"
               checked={setting.value}
-              onChange={(e) => handleSettingChange(setting.id, e.target.checked)}
+              onChange={(e) =>
+                handleSettingChange(setting.id, e.target.checked)
+              }
               className="toggle-input"
             />
             <span className="toggle-slider" />
@@ -377,7 +423,9 @@ export default function EnhancedSettingsPage() {
               max={setting.max}
               step={setting.step}
               value={setting.value}
-              onChange={(e) => handleSettingChange(setting.id, parseInt(e.target.value))}
+              onChange={(e) =>
+                handleSettingChange(setting.id, parseInt(e.target.value))
+              }
               className="slider-input"
             />
             <span className="slider-value">{setting.value}</span>
@@ -404,15 +452,20 @@ export default function EnhancedSettingsPage() {
       <div className="settings-header">
         <div className="header-content">
           <h1 className="settings-title">Settings</h1>
-          <p className="settings-subtitle">
-            Customize your Echo experience
-          </p>
+          <p className="settings-subtitle">Customize your Echo experience</p>
         </div>
-        
+
         {/* Search */}
         <div className="search-container">
           <div className="search-wrapper">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
@@ -433,12 +486,12 @@ export default function EnhancedSettingsPage() {
           <Card
             key={section.id}
             className={`setting-section ${activeSection === section.id ? 'active' : ''}`}
-            onClick={() => setActiveSection(activeSection === section.id ? null : section.id)}
+            onClick={() =>
+              setActiveSection(activeSection === section.id ? null : section.id)
+            }
           >
             <div className="section-header">
-              <div className="section-icon">
-                {section.icon}
-              </div>
+              <div className="section-icon">{section.icon}</div>
               <div className="section-info">
                 <h3 className="section-title">{section.title}</h3>
                 <p className="section-description">{section.description}</p>
@@ -458,14 +511,18 @@ export default function EnhancedSettingsPage() {
               </button>
             </div>
 
-            <div className={`section-content ${activeSection === section.id ? 'expanded' : ''}`}>
+            <div
+              className={`section-content ${activeSection === section.id ? 'expanded' : ''}`}
+            >
               <div className="settings-list">
                 {section.settings.map((setting) => (
                   <div key={setting.id} className="setting-item">
                     <div className="setting-info">
                       <label className="setting-label">{setting.label}</label>
                       {setting.description && (
-                        <p className="setting-description">{setting.description}</p>
+                        <p className="setting-description">
+                          {setting.description}
+                        </p>
                       )}
                     </div>
                     <div className="setting-control">

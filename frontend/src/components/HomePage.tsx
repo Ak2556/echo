@@ -94,7 +94,11 @@ export default function HomePage() {
       <div className="container">
         <div ref={heroRef} className="hero">
           {/* Parallax container for hero (empty; dotted global background handles aesthetics) */}
-          <div ref={parallaxBgRef} className="parallax-bg" aria-hidden="true"></div>
+          <div
+            ref={parallaxBgRef}
+            className="parallax-bg"
+            aria-hidden="true"
+          ></div>
           <h1>Connect. Share. Discover.</h1>
           <p>
             Experience a new way to engage with your community. Real-time
