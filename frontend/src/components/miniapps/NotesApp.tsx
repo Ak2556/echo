@@ -39,7 +39,14 @@ interface WritingStats {
   mostUsedCategory: string;
 }
 
-const NOTE_COLORS = ['#FFD700', '#87CEEB', '#98FB98', '#FFB6C1', '#DDA0DD', '#F0E68C'];
+const NOTE_COLORS = [
+  '#FFD700',
+  '#87CEEB',
+  '#98FB98',
+  '#FFB6C1',
+  '#DDA0DD',
+  '#F0E68C',
+];
 
 export default function NotesApp({ isVisible, onClose }: NotesAppProps) {
   const colors = useThemeColors();

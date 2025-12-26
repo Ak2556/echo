@@ -58,7 +58,9 @@ export default function LiveFeedPage() {
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [newPostContent, setNewPostContent] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [sortBy, setSortBy] = useState<'recent' | 'popular' | 'following'>('recent');
+  const [sortBy, setSortBy] = useState<'recent' | 'popular' | 'following'>(
+    'recent'
+  );
   const [activeUsers, setActiveUsers] = useState(1247);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -74,7 +76,8 @@ export default function LiveFeedPage() {
           avatar: '👩‍💼',
           verified: true,
         },
-        content: 'Just deployed a major update to our platform! 🚀 The new features include real-time collaboration, AI-powered insights, and enhanced security. Excited to see what you all build with it!',
+        content:
+          'Just deployed a major update to our platform! 🚀 The new features include real-time collaboration, AI-powered insights, and enhanced security. Excited to see what you all build with it!',
         likes: 342,
         comments: 56,
         shares: 23,
@@ -94,7 +97,8 @@ export default function LiveFeedPage() {
           avatar: '👨‍💻',
           verified: false,
         },
-        content: 'Working on something exciting! Check out this new UI design for our upcoming app. What do you think? Feedback appreciated! 🎨',
+        content:
+          'Working on something exciting! Check out this new UI design for our upcoming app. What do you think? Feedback appreciated! 🎨',
         image: '🎨',
         likes: 189,
         comments: 34,
@@ -115,7 +119,8 @@ export default function LiveFeedPage() {
           avatar: '👩‍🔬',
           verified: true,
         },
-        content: 'Mind-blowing research results! Our AI model achieved 98.7% accuracy on the benchmark. Full paper coming soon. This could change everything in the field! 🧠',
+        content:
+          'Mind-blowing research results! Our AI model achieved 98.7% accuracy on the benchmark. Full paper coming soon. This could change everything in the field! 🧠',
         likes: 567,
         comments: 89,
         shares: 45,
@@ -135,7 +140,8 @@ export default function LiveFeedPage() {
           avatar: '👨‍🎤',
           verified: false,
         },
-        content: 'Quick tip: Using React Server Components can dramatically improve your Next.js app performance. Here\'s what I learned after migrating our entire codebase...',
+        content:
+          "Quick tip: Using React Server Components can dramatically improve your Next.js app performance. Here's what I learned after migrating our entire codebase...",
         likes: 234,
         comments: 45,
         shares: 19,
@@ -152,7 +158,7 @@ export default function LiveFeedPage() {
   // Simulate real-time updates
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveUsers(prev => prev + Math.floor(Math.random() * 10) - 5);
+      setActiveUsers((prev) => prev + Math.floor(Math.random() * 10) - 5);
     }, 5000);
 
     return () => clearInterval(interval);
@@ -161,13 +167,13 @@ export default function LiveFeedPage() {
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsRefreshing(false);
   }, []);
 
   const handleLike = useCallback((postId: string) => {
-    setPosts(prev =>
-      prev.map(post =>
+    setPosts((prev) =>
+      prev.map((post) =>
         post.id === postId
           ? {
               ...post,
@@ -180,8 +186,8 @@ export default function LiveFeedPage() {
   }, []);
 
   const handleBookmark = useCallback((postId: string) => {
-    setPosts(prev =>
-      prev.map(post =>
+    setPosts((prev) =>
+      prev.map((post) =>
         post.id === postId
           ? { ...post, isBookmarked: !post.isBookmarked }
           : post
@@ -213,7 +219,7 @@ export default function LiveFeedPage() {
       type: 'text',
     };
 
-    setPosts(prev => [newPost, ...prev]);
+    setPosts((prev) => [newPost, ...prev]);
     setNewPostContent('');
   }, [newPostContent]);
 
@@ -271,7 +277,11 @@ export default function LiveFeedPage() {
                 size="sm"
                 onClick={handleRefresh}
                 disabled={isRefreshing}
-                leftIcon={<RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />}
+                leftIcon={
+                  <RefreshCw
+                    className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`}
+                  />
+                }
               >
                 Refresh
               </Button>
@@ -296,7 +306,9 @@ export default function LiveFeedPage() {
                     {stat.value.toLocaleString()}
                   </span>
                   {stat.trend === 'up' && (
-                    <span className="text-xs text-green-600 dark:text-green-400">↗</span>
+                    <span className="text-xs text-green-600 dark:text-green-400">
+                      ↗
+                    </span>
                   )}
                 </div>
               </div>
@@ -325,7 +337,10 @@ export default function LiveFeedPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6" ref={scrollRef}>
+      <main
+        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+        ref={scrollRef}
+      >
         {/* Create Post Card */}
         <div className="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
           <div className="flex gap-3">
@@ -385,7 +400,10 @@ export default function LiveFeedPage() {
                         {post.author.name}
                       </h3>
                       {post.author.verified && (
-                        <span className="text-blue-600 dark:text-blue-400" title="Verified">
+                        <span
+                          className="text-blue-600 dark:text-blue-400"
+                          title="Verified"
+                        >
                           ✓
                         </span>
                       )}
@@ -456,7 +474,9 @@ export default function LiveFeedPage() {
                         : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                     }`}
                   >
-                    <Heart className={`w-5 h-5 ${post.isLiked ? 'fill-current' : ''}`} />
+                    <Heart
+                      className={`w-5 h-5 ${post.isLiked ? 'fill-current' : ''}`}
+                    />
                     <span className="text-sm font-medium">{post.likes}</span>
                   </button>
                   <button className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
@@ -476,7 +496,9 @@ export default function LiveFeedPage() {
                       : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                   }`}
                 >
-                  <Bookmark className={`w-5 h-5 ${post.isBookmarked ? 'fill-current' : ''}`} />
+                  <Bookmark
+                    className={`w-5 h-5 ${post.isBookmarked ? 'fill-current' : ''}`}
+                  />
                 </button>
               </div>
             </article>

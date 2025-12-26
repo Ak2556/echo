@@ -37,7 +37,7 @@ const mockResizeEvent = async (width: number, height: number) => {
     await act(async () => {
       window.dispatchEvent(new Event('resize'));
       // Wait for requestAnimationFrame to complete
-      await new Promise(resolve => requestAnimationFrame(resolve));
+      await new Promise((resolve) => requestAnimationFrame(resolve));
     });
   }
 };

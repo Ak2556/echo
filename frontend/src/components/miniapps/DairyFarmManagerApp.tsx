@@ -1,6 +1,12 @@
 'use client';
 
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import EditRecordModal from './EditRecordModal';
 import ViewRecordModal from './ViewRecordModal';
 import { translations } from './translations';
@@ -323,11 +329,7 @@ export default function DairyFarmManagerApp({
   }
 
   const [activeTab, setActiveTab] = useState<
-    | 'dashboard'
-    | 'cows'
-    | 'records'
-    | 'health'
-    | 'videos'
+    'dashboard' | 'cows' | 'records' | 'health' | 'videos'
   >('dashboard');
   const [language, setLanguage] = useState<'english' | 'punjabi'>('english');
   const [showLanguageModal, setShowLanguageModal] = useState(false);
@@ -335,11 +337,17 @@ export default function DairyFarmManagerApp({
   const [showModal, setShowModal] = useState<string | null>(null);
   const [selectedBreed, setSelectedBreed] = useState<BreedInfo | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState<CattleRecord | null>(null);
+  const [selectedRecord, setSelectedRecord] = useState<CattleRecord | null>(
+    null
+  );
   const [addForm, setAddForm] = useState<Partial<CattleRecord>>({});
-  const [recordsViewMode, setRecordsViewMode] = useState<'cards' | 'table'>('cards');
+  const [recordsViewMode, setRecordsViewMode] = useState<'cards' | 'table'>(
+    'cards'
+  );
   const [editingRecordId, setEditingRecordId] = useState<string | null>(null);
-  const [editingRecordData, setEditingRecordData] = useState<Partial<CattleRecord>>({});
+  const [editingRecordData, setEditingRecordData] = useState<
+    Partial<CattleRecord>
+  >({});
   const addModalFirstRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -353,14 +361,21 @@ export default function DairyFarmManagerApp({
     console.log('Records view mode changed to:', recordsViewMode);
   }, [recordsViewMode]);
 
-  const updateCattleRecord = useCallback((id: string, updates: Partial<CattleRecord>) => {
-    setCattleRecords((prev) => prev.map((r) => (r.id === id ? { ...r, ...updates } : r)));
-  }, []);
+  const updateCattleRecord = useCallback(
+    (id: string, updates: Partial<CattleRecord>) => {
+      setCattleRecords((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, ...updates } : r))
+      );
+    },
+    []
+  );
 
   const deleteCattleRecord = useCallback((id: string) => {
     setCattleRecords((prev) => prev.filter((r) => r.id !== id));
     setSelectedRecord((prev) => (prev && prev.id === id ? null : prev));
-    setShowModal((prev) => (prev === 'viewRecord' || prev === 'editRecord' ? null : prev));
+    setShowModal((prev) =>
+      prev === 'viewRecord' || prev === 'editRecord' ? null : prev
+    );
   }, []);
 
   // Enhanced state management
@@ -524,7 +539,8 @@ export default function DairyFarmManagerApp({
     {
       id: 'V001',
       title: 'Proper Milking Technique for Holstein',
-      description: 'Learn the correct way to milk cattle for maximum yield and hygiene',
+      description:
+        'Learn the correct way to milk cattle for maximum yield and hygiene',
       uploadedBy: 'Farm Expert Punjab',
       uploadDate: '2024-01-20',
       category: 'training',
@@ -536,7 +552,8 @@ export default function DairyFarmManagerApp({
     {
       id: 'V002',
       title: 'Identifying Heat Signs in Sahiwal Cattle',
-      description: 'Essential guide to recognize breeding readiness in desi breeds',
+      description:
+        'Essential guide to recognize breeding readiness in desi breeds',
       uploadedBy: 'Vet Dr. Singh',
       uploadDate: '2024-01-18',
       category: 'breeding',
@@ -548,7 +565,8 @@ export default function DairyFarmManagerApp({
     {
       id: 'V003',
       title: 'Common Health Issues in Dairy Cattle',
-      description: 'Prevention and treatment of mastitis, fever, and digestive problems',
+      description:
+        'Prevention and treatment of mastitis, fever, and digestive problems',
       uploadedBy: 'Dr. Kaur Veterinary',
       uploadDate: '2024-01-15',
       category: 'health',
@@ -3208,9 +3226,10 @@ export default function DairyFarmManagerApp({
                   color: 'var(--muted)',
                 }}
               >
-                <strong>{t.registration}:</strong> {cow.pedigree.registrationNumber}{' '}
-                |<strong> {t.sire}:</strong> {cow.pedigree.sireName} |
-                <strong> {t.dam}:</strong> {cow.pedigree.damName}
+                <strong>{t.registration}:</strong>{' '}
+                {cow.pedigree.registrationNumber} |<strong> {t.sire}:</strong>{' '}
+                {cow.pedigree.sireName} |<strong> {t.dam}:</strong>{' '}
+                {cow.pedigree.damName}
               </div>
             )}
           </div>
@@ -3766,7 +3785,9 @@ export default function DairyFarmManagerApp({
           >
             {cows.filter((c) => c.healthStatus === 'dry').length}
           </div>
-          <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>{t.dry}</div>
+          <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
+            {t.dry}
+          </div>
         </div>
       </div>
 
@@ -3801,8 +3822,12 @@ export default function DairyFarmManagerApp({
                   <div>
                     <strong>{vaccination.name}:</strong>
                   </div>
-                  <div>{t.last}: {vaccination.date}</div>
-                  <div>{t.next}: {vaccination.nextDue}</div>
+                  <div>
+                    {t.last}: {vaccination.date}
+                  </div>
+                  <div>
+                    {t.next}: {vaccination.nextDue}
+                  </div>
                 </div>
               ))}
             </div>
@@ -4374,18 +4399,43 @@ export default function DairyFarmManagerApp({
 
   const renderRecordsTab = () => (
     <div style={{ padding: '1rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h3 style={{ margin: 0, color: 'var(--fg)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '1.5rem',
+        }}
+      >
+        <h3
+          style={{
+            margin: 0,
+            color: 'var(--fg)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
           <Icon name="ClipboardList" size={24} />
-          {language === 'english' ? 'Cattle Breeding & Health Records' : 'ਪਸ਼ੂ ਪ੍ਰਜਨਨ ਅਤੇ ਸਿਹਤ ਰਿਕਾਰਡ'}
+          {language === 'english'
+            ? 'Cattle Breeding & Health Records'
+            : 'ਪਸ਼ੂ ਪ੍ਰਜਨਨ ਅਤੇ ਸਿਹਤ ਰਿਕਾਰਡ'}
         </h3>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           {/* View Toggle Buttons */}
-          <div style={{ display: 'flex', background: 'var(--surface, #f0f0f0)', borderRadius: '8px', padding: '4px' }}>
+          <div
+            style={{
+              display: 'flex',
+              background: 'var(--surface, #f0f0f0)',
+              borderRadius: '8px',
+              padding: '4px',
+            }}
+          >
             <button
               onClick={() => setRecordsViewMode('cards')}
               style={{
-                background: recordsViewMode === 'cards' ? 'var(--accent)' : 'transparent',
+                background:
+                  recordsViewMode === 'cards' ? 'var(--accent)' : 'transparent',
                 color: recordsViewMode === 'cards' ? 'white' : 'var(--fg)',
                 border: 'none',
                 padding: '0.5rem 1rem',
@@ -4408,7 +4458,8 @@ export default function DairyFarmManagerApp({
                 setRecordsViewMode('table');
               }}
               style={{
-                background: recordsViewMode === 'table' ? 'var(--accent)' : 'transparent',
+                background:
+                  recordsViewMode === 'table' ? 'var(--accent)' : 'transparent',
                 color: recordsViewMode === 'table' ? 'white' : 'var(--fg)',
                 border: 'none',
                 padding: '0.5rem 1rem',
@@ -4428,18 +4479,21 @@ export default function DairyFarmManagerApp({
           </div>
 
           <button
-            onClick={() => { setAddForm({
-              breed: 'Gir',
-              tagNo: '',
-              birthDate: new Date().toISOString().split('T')[0],
-              motherCode: '',
-              fatherName: '',
-              lactation: 1,
-              aiLastCheckup: '',
-              heatCycle: 'Regular - 21 days',
-              deworming: '',
-              semenDetail: '',
-            }); setShowModal('addRecord'); }}
+            onClick={() => {
+              setAddForm({
+                breed: 'Gir',
+                tagNo: '',
+                birthDate: new Date().toISOString().split('T')[0],
+                motherCode: '',
+                fatherName: '',
+                lactation: 1,
+                aiLastCheckup: '',
+                heatCycle: 'Regular - 21 days',
+                deworming: '',
+                semenDetail: '',
+              });
+              setShowModal('addRecord');
+            }}
             style={{
               background: 'var(--accent)',
               color: 'white',
@@ -4465,378 +4519,639 @@ export default function DairyFarmManagerApp({
         /* Cards View */
         <div style={{ display: 'grid', gap: '1rem' }}>
           {cattleRecords.map((record) => (
-          <div
-            key={record.id}
-            style={{
-              background: 'var(--surface, #f8f9fa)',
-              border: '2px solid var(--border, #e0e0e0)',
-              borderRadius: '12px',
-              overflow: 'hidden',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = 'var(--accent)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'var(--border, #e0e0e0)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            {/* Record Header */}
-            <div style={{
-              background: 'linear-gradient(135deg, var(--accent) 0%, #667eea 100%)',
-              padding: '1rem 1.5rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-              <div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white', marginBottom: '0.25rem' }}>
-                  🐄 {record.breed}
+            <div
+              key={record.id}
+              style={{
+                background: 'var(--surface, #f8f9fa)',
+                border: '2px solid var(--border, #e0e0e0)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'var(--accent)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--border, #e0e0e0)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              {/* Record Header */}
+              <div
+                style={{
+                  background:
+                    'linear-gradient(135deg, var(--accent) 0%, #667eea 100%)',
+                  padding: '1rem 1.5rem',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: '1.2rem',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      marginBottom: '0.25rem',
+                    }}
+                  >
+                    🐄 {record.breed}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'rgba(255,255,255,0.9)',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    {language === 'english' ? 'Tag:' : 'ਟੈਗ:'} {record.tagNo}
+                  </div>
                 </div>
-                <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.9)', fontFamily: 'monospace' }}>
-                  {language === 'english' ? 'Tag:' : 'ਟੈਗ:'} {record.tagNo}
+                <div
+                  style={{
+                    background: 'rgba(255,255,255,0.2)',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '20px',
+                    fontSize: '0.9rem',
+                    fontWeight: 'bold',
+                    color: 'white',
+                  }}
+                >
+                  {language === 'english' ? 'Lactation' : 'ਦੁੱਧ ਦੀ ਮਿਆਦ'}:{' '}
+                  {record.lactation}
                 </div>
               </div>
-              <div style={{
-                background: 'rgba(255,255,255,0.2)',
-                padding: '0.5rem 1rem',
-                borderRadius: '20px',
-                fontSize: '0.9rem',
-                fontWeight: 'bold',
-                color: 'white',
-              }}>
-                {language === 'english' ? 'Lactation' : 'ਦੁੱਧ ਦੀ ਮਿਆਦ'}: {record.lactation}
+
+              {/* Record Details - Button-Style Cells */}
+              <div
+                style={{
+                  padding: '1.5rem',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '1rem',
+                }}
+              >
+                {/* Birth Date Cell */}
+                <button
+                  type="button"
+                  style={{
+                    background: 'var(--bg)',
+                    border: '2px solid var(--border)',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                  }}
+                  onClick={() => {
+                    setSelectedRecord(record);
+                    setShowModal('viewRecord');
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--accent)';
+                    e.currentTarget.style.background =
+                      'var(--accent-light, #f0f4ff)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--border)';
+                    e.currentTarget.style.background = 'var(--bg)';
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--muted)',
+                      fontWeight: 'bold',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    🎂 {language === 'english' ? 'BIRTH DATE' : 'ਜਨਮ ਤਾਰੀਖ'}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: 'bold',
+                      color: 'var(--fg)',
+                    }}
+                  >
+                    {record.birthDate}
+                  </div>
+                </button>
+
+                {/* Mother Code Cell */}
+                <button
+                  type="button"
+                  style={{
+                    background: 'var(--bg)',
+                    border: '2px solid var(--border)',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                  }}
+                  onClick={() => {
+                    setSelectedRecord(record);
+                    setShowModal('viewRecord');
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--accent)';
+                    e.currentTarget.style.background =
+                      'var(--accent-light, #f0f4ff)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--border)';
+                    e.currentTarget.style.background = 'var(--bg)';
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--muted)',
+                      fontWeight: 'bold',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    👩 {language === 'english' ? 'MOTHER CODE' : 'ਮਾਂ ਕੋਡ'}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: 'bold',
+                      color: 'var(--fg)',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    {record.motherCode}
+                  </div>
+                </button>
+
+                {/* Father Name Cell */}
+                <button
+                  type="button"
+                  style={{
+                    background: 'var(--bg)',
+                    border: '2px solid var(--border)',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                  }}
+                  onClick={() => {
+                    setSelectedRecord(record);
+                    setShowModal('viewRecord');
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--accent)';
+                    e.currentTarget.style.background =
+                      'var(--accent-light, #f0f4ff)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--border)';
+                    e.currentTarget.style.background = 'var(--bg)';
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--muted)',
+                      fontWeight: 'bold',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    👨 {language === 'english' ? 'FATHER NAME' : 'ਪਿਤਾ ਨਾਮ'}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: 'bold',
+                      color: 'var(--fg)',
+                    }}
+                  >
+                    {record.fatherName}
+                  </div>
+                </button>
+
+                {/* AI Checkup Cell */}
+                <button
+                  type="button"
+                  style={{
+                    background: 'var(--bg)',
+                    border: '2px solid var(--border)',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                  }}
+                  onClick={() => {
+                    setSelectedRecord(record);
+                    setShowModal('viewRecord');
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--accent)';
+                    e.currentTarget.style.background =
+                      'var(--accent-light, #f0f4ff)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--border)';
+                    e.currentTarget.style.background = 'var(--bg)';
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--muted)',
+                      fontWeight: 'bold',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    💉{' '}
+                    {language === 'english'
+                      ? 'AI (LAST CHECKUP)'
+                      : 'AI (ਆਖਰੀ ਜਾਂਚ)'}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: 'bold',
+                      color: 'var(--fg)',
+                    }}
+                  >
+                    {record.aiLastCheckup}
+                  </div>
+                </button>
+
+                {/* Heat Cycle Cell */}
+                <button
+                  type="button"
+                  style={{
+                    background: 'var(--bg)',
+                    border: '2px solid var(--border)',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                  }}
+                  onClick={() => {
+                    setSelectedRecord(record);
+                    setShowModal('viewRecord');
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--accent)';
+                    e.currentTarget.style.background =
+                      'var(--accent-light, #f0f4ff)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--border)';
+                    e.currentTarget.style.background = 'var(--bg)';
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--muted)',
+                      fontWeight: 'bold',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    🔄 {language === 'english' ? 'HEAT CYCLE' : 'ਗਰਮੀ ਚੱਕਰ'}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: 'bold',
+                      color: record.heatCycle.includes('Pregnant')
+                        ? '#ff6b6b'
+                        : record.heatCycle.includes('Dry')
+                          ? '#868e96'
+                          : '#51cf66',
+                    }}
+                  >
+                    {record.heatCycle}
+                  </div>
+                </button>
+
+                {/* Deworming Cell */}
+                <button
+                  style={{
+                    background: 'var(--bg)',
+                    border: '2px solid var(--border)',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--accent)';
+                    e.currentTarget.style.background =
+                      'var(--accent-light, #f0f4ff)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--border)';
+                    e.currentTarget.style.background = 'var(--bg)';
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--muted)',
+                      fontWeight: 'bold',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    💊 {language === 'english' ? 'DEWORMING' : 'ਕੀੜੇ ਮਾਰੂ ਦਵਾਈ'}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: 'bold',
+                      color: 'var(--fg)',
+                    }}
+                  >
+                    {record.deworming}
+                  </div>
+                </button>
+
+                {/* Semen Detail Cell */}
+                <button
+                  type="button"
+                  style={{
+                    background: 'var(--bg)',
+                    border: '2px solid var(--border)',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                    gridColumn: 'span 1',
+                  }}
+                  onClick={() => {
+                    setSelectedRecord(record);
+                    setShowModal('viewRecord');
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--accent)';
+                    e.currentTarget.style.background =
+                      'var(--accent-light, #f0f4ff)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--border)';
+                    e.currentTarget.style.background = 'var(--bg)';
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--muted)',
+                      fontWeight: 'bold',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    🧬 {language === 'english' ? 'SEMEN DETAIL' : 'ਵੀਰਜ ਵੇਰਵਾ'}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      fontWeight: 'bold',
+                      color: 'var(--fg)',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    {record.semenDetail}
+                  </div>
+                </button>
+              </div>
+
+              {/* Action Buttons */}
+              <div
+                style={{
+                  padding: '1rem 1.5rem',
+                  borderTop: '1px solid var(--border)',
+                  background: 'var(--bg)',
+                  display: 'flex',
+                  gap: '0.75rem',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedRecord(record);
+                    setShowModal('viewRecord');
+                  }}
+                  style={{
+                    background: 'var(--accent)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.6rem 1.25rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                >
+                  <Icon name="Eye" size={16} />
+                  {language === 'english' ? 'View Details' : 'ਵੇਰਵੇ ਦੇਖੋ'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedRecord(record);
+                    setShowModal('editRecord');
+                  }}
+                  style={{
+                    background: '#4dabf7',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.6rem 1.25rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                >
+                  <Icon name="Pencil" size={16} />
+                  {language === 'english' ? 'Edit' : 'ਸੋਧੋ'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (
+                      confirm(
+                        language === 'english'
+                          ? 'Delete this record?'
+                          : 'ਕੀ ਤੁਸੀਂ ਇਹ ਰਿਕਾਰਡ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?'
+                      )
+                    ) {
+                      deleteCattleRecord(record.id);
+                    }
+                  }}
+                  style={{
+                    background: '#ff6b6b',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.6rem 1.25rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                >
+                  <Icon name="Trash2" size={16} />
+                  {language === 'english' ? 'Delete' : 'ਮਿਟਾਓ'}
+                </button>
               </div>
             </div>
-
-            {/* Record Details - Button-Style Cells */}
-            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
-              {/* Birth Date Cell */}
-              <button
-                type="button"
-                style={{
-                  background: 'var(--bg)',
-                  border: '2px solid var(--border)',
-                  borderRadius: '8px',
-                  padding: '1rem',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.2s',
-                }}
-                onClick={() => { setSelectedRecord(record); setShowModal('viewRecord'); }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--accent)';
-                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border)';
-                  e.currentTarget.style.background = 'var(--bg)';
-                }}
-              >
-                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  🎂 {language === 'english' ? 'BIRTH DATE' : 'ਜਨਮ ਤਾਰੀਖ'}
-                </div>
-                <div style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--fg)' }}>
-                  {record.birthDate}
-                </div>
-              </button>
-
-              {/* Mother Code Cell */}
-              <button
-                type="button"
-                style={{
-                  background: 'var(--bg)',
-                  border: '2px solid var(--border)',
-                  borderRadius: '8px',
-                  padding: '1rem',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.2s',
-                }}
-                onClick={() => { setSelectedRecord(record); setShowModal('viewRecord'); }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--accent)';
-                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border)';
-                  e.currentTarget.style.background = 'var(--bg)';
-                }}
-              >
-                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  👩 {language === 'english' ? 'MOTHER CODE' : 'ਮਾਂ ਕੋਡ'}
-                </div>
-                <div style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--fg)', fontFamily: 'monospace' }}>
-                  {record.motherCode}
-                </div>
-              </button>
-
-              {/* Father Name Cell */}
-              <button
-                type="button"
-                style={{
-                  background: 'var(--bg)',
-                  border: '2px solid var(--border)',
-                  borderRadius: '8px',
-                  padding: '1rem',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.2s',
-                }}
-                onClick={() => { setSelectedRecord(record); setShowModal('viewRecord'); }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--accent)';
-                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border)';
-                  e.currentTarget.style.background = 'var(--bg)';
-                }}
-              >
-                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  👨 {language === 'english' ? 'FATHER NAME' : 'ਪਿਤਾ ਨਾਮ'}
-                </div>
-                <div style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--fg)' }}>
-                  {record.fatherName}
-                </div>
-              </button>
-
-              {/* AI Checkup Cell */}
-              <button
-                type="button"
-                style={{
-                  background: 'var(--bg)',
-                  border: '2px solid var(--border)',
-                  borderRadius: '8px',
-                  padding: '1rem',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.2s',
-                }}
-                onClick={() => { setSelectedRecord(record); setShowModal('viewRecord'); }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--accent)';
-                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border)';
-                  e.currentTarget.style.background = 'var(--bg)';
-                }}
-              >
-                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  💉 {language === 'english' ? 'AI (LAST CHECKUP)' : 'AI (ਆਖਰੀ ਜਾਂਚ)'}
-                </div>
-                <div style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--fg)' }}>
-                  {record.aiLastCheckup}
-                </div>
-              </button>
-
-              {/* Heat Cycle Cell */}
-              <button
-                type="button"
-                style={{
-                  background: 'var(--bg)',
-                  border: '2px solid var(--border)',
-                  borderRadius: '8px',
-                  padding: '1rem',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.2s',
-                }}
-                onClick={() => { setSelectedRecord(record); setShowModal('viewRecord'); }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--accent)';
-                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border)';
-                  e.currentTarget.style.background = 'var(--bg)';
-                }}
-              >
-                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  🔄 {language === 'english' ? 'HEAT CYCLE' : 'ਗਰਮੀ ਚੱਕਰ'}
-                </div>
-                <div style={{
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
-                  color: record.heatCycle.includes('Pregnant') ? '#ff6b6b' :
-                         record.heatCycle.includes('Dry') ? '#868e96' : '#51cf66',
-                }}>
-                  {record.heatCycle}
-                </div>
-              </button>
-
-              {/* Deworming Cell */}
-              <button
-                style={{
-                  background: 'var(--bg)',
-                  border: '2px solid var(--border)',
-                  borderRadius: '8px',
-                  padding: '1rem',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--accent)';
-                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border)';
-                  e.currentTarget.style.background = 'var(--bg)';
-                }}
-              >
-                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  💊 {language === 'english' ? 'DEWORMING' : 'ਕੀੜੇ ਮਾਰੂ ਦਵਾਈ'}
-                </div>
-                <div style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--fg)' }}>
-                  {record.deworming}
-                </div>
-              </button>
-
-              {/* Semen Detail Cell */}
-              <button
-                type="button"
-                style={{
-                  background: 'var(--bg)',
-                  border: '2px solid var(--border)',
-                  borderRadius: '8px',
-                  padding: '1rem',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.2s',
-                  gridColumn: 'span 1',
-                }}
-                onClick={() => { setSelectedRecord(record); setShowModal('viewRecord'); }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--accent)';
-                  e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border)';
-                  e.currentTarget.style.background = 'var(--bg)';
-                }}
-              >
-                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  🧬 {language === 'english' ? 'SEMEN DETAIL' : 'ਵੀਰਜ ਵੇਰਵਾ'}
-                </div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--fg)', fontFamily: 'monospace' }}>
-                  {record.semenDetail}
-                </div>
-              </button>
-            </div>
-
-            {/* Action Buttons */}
-            <div style={{
-              padding: '1rem 1.5rem',
-              borderTop: '1px solid var(--border)',
-              background: 'var(--bg)',
-              display: 'flex',
-              gap: '0.75rem',
-              justifyContent: 'flex-end',
-            }}>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedRecord(record);
-                  setShowModal('viewRecord');
-                }}
-                style={{
-                  background: 'var(--accent)',
-                  color: 'white',
-                  border: 'none',
-                  padding: '0.6rem 1.25rem',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  fontWeight: 'bold',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                }}
-              >
-                <Icon name="Eye" size={16} />
-                {language === 'english' ? 'View Details' : 'ਵੇਰਵੇ ਦੇਖੋ'}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedRecord(record);
-                  setShowModal('editRecord');
-                }}
-                style={{
-                  background: '#4dabf7',
-                  color: 'white',
-                  border: 'none',
-                  padding: '0.6rem 1.25rem',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  fontWeight: 'bold',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                }}
-              >
-                <Icon name="Pencil" size={16} />
-                {language === 'english' ? 'Edit' : 'ਸੋਧੋ'}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (confirm(language === 'english' ? 'Delete this record?' : 'ਕੀ ਤੁਸੀਂ ਇਹ ਰਿਕਾਰਡ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?')) {
-                    deleteCattleRecord(record.id);
-                  }
-                }}
-                style={{
-                  background: '#ff6b6b',
-                  color: 'white',
-                  border: 'none',
-                  padding: '0.6rem 1.25rem',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  fontWeight: 'bold',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                }}
-              >
-                <Icon name="Trash2" size={16} />
-                {language === 'english' ? 'Delete' : 'ਮਿਟਾਓ'}
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
         </div>
       ) : (
         /* Table View with Inline Editing */
         <div style={{ overflowX: 'auto' }}>
-          <table style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            background: 'var(--bg)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            borderRadius: '8px',
-            overflow: 'hidden',
-          }}>
+          <table
+            style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              background: 'var(--bg)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              borderRadius: '8px',
+              overflow: 'hidden',
+            }}
+          >
             <thead>
-              <tr style={{ background: 'linear-gradient(135deg, var(--accent) 0%, #667eea 100%)', color: 'white' }}>
-                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.breed}</th>
-                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.tagNo}</th>
-                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.birthDate}</th>
-                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.motherCode}</th>
-                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.fatherName}</th>
-                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.lactation}</th>
-                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.aiLastCheckup}</th>
-                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.heatCycle}</th>
-                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.deworming}</th>
-                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold', fontSize: '0.9rem' }}>{t.semenDetail}</th>
-                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>{language === 'english' ? 'Actions' : 'ਕਾਰਵਾਈਆਂ'}</th>
+              <tr
+                style={{
+                  background:
+                    'linear-gradient(135deg, var(--accent) 0%, #667eea 100%)',
+                  color: 'white',
+                }}
+              >
+                <th
+                  style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {t.breed}
+                </th>
+                <th
+                  style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {t.tagNo}
+                </th>
+                <th
+                  style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {t.birthDate}
+                </th>
+                <th
+                  style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {t.motherCode}
+                </th>
+                <th
+                  style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {t.fatherName}
+                </th>
+                <th
+                  style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {t.lactation}
+                </th>
+                <th
+                  style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {t.aiLastCheckup}
+                </th>
+                <th
+                  style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {t.heatCycle}
+                </th>
+                <th
+                  style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {t.deworming}
+                </th>
+                <th
+                  style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {t.semenDetail}
+                </th>
+                <th
+                  style={{
+                    padding: '1rem',
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {language === 'english' ? 'Actions' : 'ਕਾਰਵਾਈਆਂ'}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -4848,15 +5163,24 @@ export default function DairyFarmManagerApp({
                   <tr
                     key={record.id}
                     style={{
-                      background: index % 2 === 0 ? 'var(--bg)' : 'var(--surface, #f8f9fa)',
+                      background:
+                        index % 2 === 0
+                          ? 'var(--bg)'
+                          : 'var(--surface, #f8f9fa)',
                       borderBottom: '1px solid var(--border, #e0e0e0)',
                       transition: 'background 0.2s',
                     }}
                     onMouseEnter={(e) => {
-                      if (!isEditing) e.currentTarget.style.background = 'var(--accent-light, #f0f4ff)';
+                      if (!isEditing)
+                        e.currentTarget.style.background =
+                          'var(--accent-light, #f0f4ff)';
                     }}
                     onMouseLeave={(e) => {
-                      if (!isEditing) e.currentTarget.style.background = index % 2 === 0 ? 'var(--bg)' : 'var(--surface, #f8f9fa)';
+                      if (!isEditing)
+                        e.currentTarget.style.background =
+                          index % 2 === 0
+                            ? 'var(--bg)'
+                            : 'var(--surface, #f8f9fa)';
                     }}
                   >
                     {/* Breed */}
@@ -4864,18 +5188,34 @@ export default function DairyFarmManagerApp({
                       {isEditing ? (
                         <select
                           value={editData.breed || ''}
-                          onChange={(e) => setEditingRecordData({...editingRecordData, breed: e.target.value})}
-                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                          onChange={(e) =>
+                            setEditingRecordData({
+                              ...editingRecordData,
+                              breed: e.target.value,
+                            })
+                          }
+                          style={{
+                            width: '100%',
+                            padding: '0.4rem',
+                            border: '1px solid var(--accent)',
+                            borderRadius: '4px',
+                            background: 'var(--bg)',
+                            color: 'var(--fg)',
+                          }}
                         >
                           <option value="Gir">Gir</option>
                           <option value="Sahiwal">Sahiwal</option>
-                          <option value="Holstein Friesian">Holstein Friesian</option>
+                          <option value="Holstein Friesian">
+                            Holstein Friesian
+                          </option>
                           <option value="Jersey">Jersey</option>
                           <option value="Red Sindhi">Red Sindhi</option>
                           <option value="Tharparkar">Tharparkar</option>
                         </select>
                       ) : (
-                        <span style={{ fontWeight: '500' }}>{record.breed}</span>
+                        <span style={{ fontWeight: '500' }}>
+                          {record.breed}
+                        </span>
                       )}
                     </td>
 
@@ -4885,11 +5225,30 @@ export default function DairyFarmManagerApp({
                         <input
                           type="text"
                           value={editData.tagNo || ''}
-                          onChange={(e) => setEditingRecordData({...editingRecordData, tagNo: e.target.value})}
-                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                          onChange={(e) =>
+                            setEditingRecordData({
+                              ...editingRecordData,
+                              tagNo: e.target.value,
+                            })
+                          }
+                          style={{
+                            width: '100%',
+                            padding: '0.4rem',
+                            border: '1px solid var(--accent)',
+                            borderRadius: '4px',
+                            background: 'var(--bg)',
+                            color: 'var(--fg)',
+                          }}
                         />
                       ) : (
-                        <span style={{ fontFamily: 'monospace', fontSize: '0.9rem' }}>{record.tagNo}</span>
+                        <span
+                          style={{
+                            fontFamily: 'monospace',
+                            fontSize: '0.9rem',
+                          }}
+                        >
+                          {record.tagNo}
+                        </span>
                       )}
                     </td>
 
@@ -4899,8 +5258,20 @@ export default function DairyFarmManagerApp({
                         <input
                           type="date"
                           value={editData.birthDate || ''}
-                          onChange={(e) => setEditingRecordData({...editingRecordData, birthDate: e.target.value})}
-                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                          onChange={(e) =>
+                            setEditingRecordData({
+                              ...editingRecordData,
+                              birthDate: e.target.value,
+                            })
+                          }
+                          style={{
+                            width: '100%',
+                            padding: '0.4rem',
+                            border: '1px solid var(--accent)',
+                            borderRadius: '4px',
+                            background: 'var(--bg)',
+                            color: 'var(--fg)',
+                          }}
                         />
                       ) : (
                         <span>{record.birthDate}</span>
@@ -4913,11 +5284,30 @@ export default function DairyFarmManagerApp({
                         <input
                           type="text"
                           value={editData.motherCode || ''}
-                          onChange={(e) => setEditingRecordData({...editingRecordData, motherCode: e.target.value})}
-                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                          onChange={(e) =>
+                            setEditingRecordData({
+                              ...editingRecordData,
+                              motherCode: e.target.value,
+                            })
+                          }
+                          style={{
+                            width: '100%',
+                            padding: '0.4rem',
+                            border: '1px solid var(--accent)',
+                            borderRadius: '4px',
+                            background: 'var(--bg)',
+                            color: 'var(--fg)',
+                          }}
                         />
                       ) : (
-                        <span style={{ fontFamily: 'monospace', fontSize: '0.9rem' }}>{record.motherCode}</span>
+                        <span
+                          style={{
+                            fontFamily: 'monospace',
+                            fontSize: '0.9rem',
+                          }}
+                        >
+                          {record.motherCode}
+                        </span>
                       )}
                     </td>
 
@@ -4927,8 +5317,20 @@ export default function DairyFarmManagerApp({
                         <input
                           type="text"
                           value={editData.fatherName || ''}
-                          onChange={(e) => setEditingRecordData({...editingRecordData, fatherName: e.target.value})}
-                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                          onChange={(e) =>
+                            setEditingRecordData({
+                              ...editingRecordData,
+                              fatherName: e.target.value,
+                            })
+                          }
+                          style={{
+                            width: '100%',
+                            padding: '0.4rem',
+                            border: '1px solid var(--accent)',
+                            borderRadius: '4px',
+                            background: 'var(--bg)',
+                            color: 'var(--fg)',
+                          }}
                         />
                       ) : (
                         <span>{record.fatherName}</span>
@@ -4942,11 +5344,27 @@ export default function DairyFarmManagerApp({
                           type="number"
                           min="1"
                           value={editData.lactation || 1}
-                          onChange={(e) => setEditingRecordData({...editingRecordData, lactation: parseInt(e.target.value) || 1})}
-                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                          onChange={(e) =>
+                            setEditingRecordData({
+                              ...editingRecordData,
+                              lactation: parseInt(e.target.value) || 1,
+                            })
+                          }
+                          style={{
+                            width: '100%',
+                            padding: '0.4rem',
+                            border: '1px solid var(--accent)',
+                            borderRadius: '4px',
+                            background: 'var(--bg)',
+                            color: 'var(--fg)',
+                          }}
                         />
                       ) : (
-                        <span style={{ fontWeight: '500', color: 'var(--accent)' }}>{record.lactation}</span>
+                        <span
+                          style={{ fontWeight: '500', color: 'var(--accent)' }}
+                        >
+                          {record.lactation}
+                        </span>
                       )}
                     </td>
 
@@ -4956,8 +5374,20 @@ export default function DairyFarmManagerApp({
                         <input
                           type="date"
                           value={editData.aiLastCheckup || ''}
-                          onChange={(e) => setEditingRecordData({...editingRecordData, aiLastCheckup: e.target.value})}
-                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                          onChange={(e) =>
+                            setEditingRecordData({
+                              ...editingRecordData,
+                              aiLastCheckup: e.target.value,
+                            })
+                          }
+                          style={{
+                            width: '100%',
+                            padding: '0.4rem',
+                            border: '1px solid var(--accent)',
+                            borderRadius: '4px',
+                            background: 'var(--bg)',
+                            color: 'var(--fg)',
+                          }}
                         />
                       ) : (
                         <span>{record.aiLastCheckup}</span>
@@ -4969,27 +5399,57 @@ export default function DairyFarmManagerApp({
                       {isEditing ? (
                         <select
                           value={editData.heatCycle || ''}
-                          onChange={(e) => setEditingRecordData({...editingRecordData, heatCycle: e.target.value})}
-                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                          onChange={(e) =>
+                            setEditingRecordData({
+                              ...editingRecordData,
+                              heatCycle: e.target.value,
+                            })
+                          }
+                          style={{
+                            width: '100%',
+                            padding: '0.4rem',
+                            border: '1px solid var(--accent)',
+                            borderRadius: '4px',
+                            background: 'var(--bg)',
+                            color: 'var(--fg)',
+                          }}
                         >
-                          <option value="Regular - 21 days">{t.regular21days}</option>
-                          <option value="Regular - 19 days">{t.regular19days}</option>
-                          <option value="Regular - 20 days">{t.regular20days}</option>
-                          <option value="Regular - 22 days">{t.regular22days}</option>
-                          <option value="Pregnant - Due 2024-04-15">{t.pregnantDue}</option>
+                          <option value="Regular - 21 days">
+                            {t.regular21days}
+                          </option>
+                          <option value="Regular - 19 days">
+                            {t.regular19days}
+                          </option>
+                          <option value="Regular - 20 days">
+                            {t.regular20days}
+                          </option>
+                          <option value="Regular - 22 days">
+                            {t.regular22days}
+                          </option>
+                          <option value="Pregnant - Due 2024-04-15">
+                            {t.pregnantDue}
+                          </option>
                           <option value="Dry period">{t.dryOption}</option>
                           <option value="Irregular">{t.irregular}</option>
                         </select>
                       ) : (
-                        <span style={{
-                          padding: '0.25rem 0.5rem',
-                          borderRadius: '4px',
-                          fontSize: '0.85rem',
-                          background: record.heatCycle.includes('Pregnant') ? '#ffe8e8' :
-                                     record.heatCycle.includes('Dry') ? '#f0f0f0' : '#e8f5e9',
-                          color: record.heatCycle.includes('Pregnant') ? '#c92a2a' :
-                                record.heatCycle.includes('Dry') ? '#495057' : '#2b8a3e',
-                        }}>
+                        <span
+                          style={{
+                            padding: '0.25rem 0.5rem',
+                            borderRadius: '4px',
+                            fontSize: '0.85rem',
+                            background: record.heatCycle.includes('Pregnant')
+                              ? '#ffe8e8'
+                              : record.heatCycle.includes('Dry')
+                                ? '#f0f0f0'
+                                : '#e8f5e9',
+                            color: record.heatCycle.includes('Pregnant')
+                              ? '#c92a2a'
+                              : record.heatCycle.includes('Dry')
+                                ? '#495057'
+                                : '#2b8a3e',
+                          }}
+                        >
                           {record.heatCycle}
                         </span>
                       )}
@@ -5001,8 +5461,20 @@ export default function DairyFarmManagerApp({
                         <input
                           type="date"
                           value={editData.deworming || ''}
-                          onChange={(e) => setEditingRecordData({...editingRecordData, deworming: e.target.value})}
-                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                          onChange={(e) =>
+                            setEditingRecordData({
+                              ...editingRecordData,
+                              deworming: e.target.value,
+                            })
+                          }
+                          style={{
+                            width: '100%',
+                            padding: '0.4rem',
+                            border: '1px solid var(--accent)',
+                            borderRadius: '4px',
+                            background: 'var(--bg)',
+                            color: 'var(--fg)',
+                          }}
                         />
                       ) : (
                         <span>{record.deworming}</span>
@@ -5015,22 +5487,50 @@ export default function DairyFarmManagerApp({
                         <input
                           type="text"
                           value={editData.semenDetail || ''}
-                          onChange={(e) => setEditingRecordData({...editingRecordData, semenDetail: e.target.value})}
-                          style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--accent)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--fg)' }}
+                          onChange={(e) =>
+                            setEditingRecordData({
+                              ...editingRecordData,
+                              semenDetail: e.target.value,
+                            })
+                          }
+                          style={{
+                            width: '100%',
+                            padding: '0.4rem',
+                            border: '1px solid var(--accent)',
+                            borderRadius: '4px',
+                            background: 'var(--bg)',
+                            color: 'var(--fg)',
+                          }}
                         />
                       ) : (
-                        <span style={{ fontSize: '0.85rem', fontFamily: 'monospace' }}>{record.semenDetail}</span>
+                        <span
+                          style={{
+                            fontSize: '0.85rem',
+                            fontFamily: 'monospace',
+                          }}
+                        >
+                          {record.semenDetail}
+                        </span>
                       )}
                     </td>
 
                     {/* Actions */}
                     <td style={{ padding: '0.75rem', textAlign: 'center' }}>
-                      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '0.5rem',
+                          justifyContent: 'center',
+                        }}
+                      >
                         {isEditing ? (
                           <>
                             <button
                               onClick={() => {
-                                updateCattleRecord(record.id, editingRecordData);
+                                updateCattleRecord(
+                                  record.id,
+                                  editingRecordData
+                                );
                                 setEditingRecordId(null);
                                 setEditingRecordData({});
                               }}
@@ -5093,11 +5593,17 @@ export default function DairyFarmManagerApp({
                               }}
                             >
                               <Icon name="Pencil" size={16} />
-                {language === 'english' ? 'Edit' : 'ਸੋਧੋ'}
+                              {language === 'english' ? 'Edit' : 'ਸੋਧੋ'}
                             </button>
                             <button
                               onClick={() => {
-                                if (confirm(language === 'english' ? 'Delete this record?' : 'ਕੀ ਤੁਸੀਂ ਇਹ ਰਿਕਾਰਡ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?')) {
+                                if (
+                                  confirm(
+                                    language === 'english'
+                                      ? 'Delete this record?'
+                                      : 'ਕੀ ਤੁਸੀਂ ਇਹ ਰਿਕਾਰਡ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?'
+                                  )
+                                ) {
                                   deleteCattleRecord(record.id);
                                 }
                               }}
@@ -5113,7 +5619,7 @@ export default function DairyFarmManagerApp({
                               }}
                             >
                               <Icon name="Trash2" size={16} />
-                {language === 'english' ? 'Delete' : 'ਮਿਟਾਓ'}
+                              {language === 'english' ? 'Delete' : 'ਮਿਟਾਓ'}
                             </button>
                           </>
                         )}
@@ -5228,7 +5734,9 @@ export default function DairyFarmManagerApp({
           borderRadius: '8px',
         }}
       >
-        <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>{t.legend}</h4>
+        <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>
+          {t.legend}
+        </h4>
         <div
           style={{
             display: 'flex',
@@ -5503,10 +6011,15 @@ export default function DairyFarmManagerApp({
   // Render Videos Tab
   const renderVideosTab = () => (
     <div style={{ padding: '1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h3 style={{ margin: 0, color: 'var(--fg)' }}>
-          🎥 {t.videoLibrary}
-        </h3>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '1rem',
+        }}
+      >
+        <h3 style={{ margin: 0, color: 'var(--fg)' }}>🎥 {t.videoLibrary}</h3>
         <button
           onClick={() => setShowModal('uploadVideo')}
           style={{
@@ -5524,7 +6037,13 @@ export default function DairyFarmManagerApp({
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+          gap: '1rem',
+        }}
+      >
         {cattleVideos.map((video) => (
           <div
             key={video.id}
@@ -5536,20 +6055,54 @@ export default function DairyFarmManagerApp({
               cursor: 'pointer',
               transition: 'transform 0.2s',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-4px)')}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.transform = 'translateY(-4px)')
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.transform = 'translateY(0)')
+            }
           >
-            <div style={{ background: '#ddd', height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>
+            <div
+              style={{
+                background: '#ddd',
+                height: '180px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '3rem',
+              }}
+            >
               🎥
             </div>
             <div style={{ padding: '1rem' }}>
-              <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--fg)', marginBottom: '0.5rem' }}>
+              <div
+                style={{
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  color: 'var(--fg)',
+                  marginBottom: '0.5rem',
+                }}
+              >
                 {video.title}
               </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--muted)', marginBottom: '0.75rem' }}>
+              <div
+                style={{
+                  fontSize: '0.85rem',
+                  color: 'var(--muted)',
+                  marginBottom: '0.75rem',
+                }}
+              >
                 {video.description}
               </div>
-              <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '1rem',
+                  fontSize: '0.8rem',
+                  color: 'var(--muted)',
+                  marginBottom: '0.5rem',
+                }}
+              >
                 <span>⏱️ {video.duration}</span>
                 <span>👁️ {video.views}</span>
                 <span>👍 {video.likes}</span>
@@ -5558,17 +6111,25 @@ export default function DairyFarmManagerApp({
                 By {video.uploadedBy} • {video.uploadDate}
               </div>
               <div style={{ marginTop: '0.75rem' }}>
-                <span style={{
-                  background: video.category === 'health' ? '#ff6b6b' :
-                    video.category === 'breeding' ? '#51cf66' :
-                    video.category === 'training' ? '#4dabf7' :
-                    video.category === 'feeding' ? '#ffd43b' : '#868e96',
-                  color: 'white',
-                  padding: '0.25rem 0.75rem',
-                  borderRadius: '12px',
-                  fontSize: '0.75rem',
-                  fontWeight: 'bold',
-                }}>
+                <span
+                  style={{
+                    background:
+                      video.category === 'health'
+                        ? '#ff6b6b'
+                        : video.category === 'breeding'
+                          ? '#51cf66'
+                          : video.category === 'training'
+                            ? '#4dabf7'
+                            : video.category === 'feeding'
+                              ? '#ffd43b'
+                              : '#868e96',
+                    color: 'white',
+                    padding: '0.25rem 0.75rem',
+                    borderRadius: '12px',
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
+                  }}
+                >
                   {video.category.toUpperCase()}
                 </span>
               </div>
@@ -5626,9 +6187,7 @@ export default function DairyFarmManagerApp({
         }}
       >
         <div>
-          <h2 style={{ margin: 0, color: 'var(--fg)' }}>
-            🐄 {t.appTitle}
-          </h2>
+          <h2 style={{ margin: 0, color: 'var(--fg)' }}>🐄 {t.appTitle}</h2>
           <div style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>
             {t.appSubtitle}
           </div>
@@ -5745,7 +6304,7 @@ export default function DairyFarmManagerApp({
           }}
           onClick={() => setShowModal(null)}
         >
-              <div
+          <div
             style={{
               background: 'var(--bg)',
               padding: '2rem',
@@ -5760,7 +6319,9 @@ export default function DairyFarmManagerApp({
             aria-labelledby="addRecordHeading"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 id="addRecordHeading" style={{ margin: '0 0 1rem 0' }}>{t.addNewRecord}</h3>
+            <h3 id="addRecordHeading" style={{ margin: '0 0 1rem 0' }}>
+              {t.addNewRecord}
+            </h3>
             <div
               style={{
                 display: 'grid',
@@ -5779,9 +6340,13 @@ export default function DairyFarmManagerApp({
                   {t.breed}
                 </label>
                 <select
-                  ref={(el) => { addModalFirstRef.current = el; }}
+                  ref={(el) => {
+                    addModalFirstRef.current = el;
+                  }}
                   value={addForm.breed || ''}
-                  onChange={(e) => setAddForm((p) => ({ ...p, breed: e.target.value }))}
+                  onChange={(e) =>
+                    setAddForm((p) => ({ ...p, breed: e.target.value }))
+                  }
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5813,7 +6378,9 @@ export default function DairyFarmManagerApp({
                   type="text"
                   placeholder="e.g., 007-NEW-2024"
                   value={addForm.tagNo || ''}
-                  onChange={(e) => setAddForm((p) => ({ ...p, tagNo: e.target.value }))}
+                  onChange={(e) =>
+                    setAddForm((p) => ({ ...p, tagNo: e.target.value }))
+                  }
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5837,7 +6404,9 @@ export default function DairyFarmManagerApp({
                 <input
                   type="date"
                   value={addForm.birthDate || ''}
-                  onChange={(e) => setAddForm((p) => ({ ...p, birthDate: e.target.value }))}
+                  onChange={(e) =>
+                    setAddForm((p) => ({ ...p, birthDate: e.target.value }))
+                  }
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5862,7 +6431,9 @@ export default function DairyFarmManagerApp({
                   type="text"
                   placeholder="e.g., MOTHER-CODE-001"
                   value={addForm.motherCode || ''}
-                  onChange={(e) => setAddForm((p) => ({ ...p, motherCode: e.target.value }))}
+                  onChange={(e) =>
+                    setAddForm((p) => ({ ...p, motherCode: e.target.value }))
+                  }
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5887,7 +6458,9 @@ export default function DairyFarmManagerApp({
                   type="text"
                   placeholder="e.g., Elite Bull-001"
                   value={addForm.fatherName || ''}
-                  onChange={(e) => setAddForm((p) => ({ ...p, fatherName: e.target.value }))}
+                  onChange={(e) =>
+                    setAddForm((p) => ({ ...p, fatherName: e.target.value }))
+                  }
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5914,7 +6487,12 @@ export default function DairyFarmManagerApp({
                   max="10"
                   placeholder="1"
                   value={addForm.lactation ?? ''}
-                  onChange={(e) => setAddForm((p) => ({ ...p, lactation: parseInt(e.target.value || '0') || 0 }))}
+                  onChange={(e) =>
+                    setAddForm((p) => ({
+                      ...p,
+                      lactation: parseInt(e.target.value || '0') || 0,
+                    }))
+                  }
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5938,7 +6516,9 @@ export default function DairyFarmManagerApp({
                 <input
                   type="date"
                   value={addForm.aiLastCheckup || ''}
-                  onChange={(e) => setAddForm((p) => ({ ...p, aiLastCheckup: e.target.value }))}
+                  onChange={(e) =>
+                    setAddForm((p) => ({ ...p, aiLastCheckup: e.target.value }))
+                  }
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5961,7 +6541,9 @@ export default function DairyFarmManagerApp({
                 </label>
                 <select
                   value={addForm.heatCycle || ''}
-                  onChange={(e) => setAddForm((p) => ({ ...p, heatCycle: e.target.value }))}
+                  onChange={(e) =>
+                    setAddForm((p) => ({ ...p, heatCycle: e.target.value }))
+                  }
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -5993,7 +6575,9 @@ export default function DairyFarmManagerApp({
                 <input
                   type="date"
                   value={addForm.deworming || ''}
-                  onChange={(e) => setAddForm((p) => ({ ...p, deworming: e.target.value }))}
+                  onChange={(e) =>
+                    setAddForm((p) => ({ ...p, deworming: e.target.value }))
+                  }
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -6018,7 +6602,9 @@ export default function DairyFarmManagerApp({
                   type="text"
                   placeholder="e.g., ELITE-001 (Batch: E-2024-01)"
                   value={addForm.semenDetail || ''}
-                  onChange={(e) => setAddForm((p) => ({ ...p, semenDetail: e.target.value }))}
+                  onChange={(e) =>
+                    setAddForm((p) => ({ ...p, semenDetail: e.target.value }))
+                  }
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -6058,14 +6644,21 @@ export default function DairyFarmManagerApp({
                   const record = {
                     breed: addForm.breed || 'Gir',
                     tagNo: addForm.tagNo || `NEW-TAG-${Date.now()}`,
-                    birthDate: addForm.birthDate || new Date().toISOString().split('T')[0],
+                    birthDate:
+                      addForm.birthDate ||
+                      new Date().toISOString().split('T')[0],
                     motherCode: addForm.motherCode || 'MOTHER-CODE-001',
                     fatherName: addForm.fatherName || 'Elite Bull-001',
                     lactation: addForm.lactation ?? 1,
-                    aiLastCheckup: addForm.aiLastCheckup || new Date().toISOString().split('T')[0],
+                    aiLastCheckup:
+                      addForm.aiLastCheckup ||
+                      new Date().toISOString().split('T')[0],
                     heatCycle: addForm.heatCycle || 'Regular - 21 days',
-                    deworming: addForm.deworming || new Date().toISOString().split('T')[0],
-                    semenDetail: addForm.semenDetail || 'ELITE-001 (Batch: E-2024-01)',
+                    deworming:
+                      addForm.deworming ||
+                      new Date().toISOString().split('T')[0],
+                    semenDetail:
+                      addForm.semenDetail || 'ELITE-001 (Batch: E-2024-01)',
                   };
 
                   addCattleRecord(record);
@@ -6278,15 +6871,20 @@ export default function DairyFarmManagerApp({
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ margin: '0 0 1.5rem 0', color: 'var(--fg)' }}>{t.selectLanguage}</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <h3 style={{ margin: '0 0 1.5rem 0', color: 'var(--fg)' }}>
+              {t.selectLanguage}
+            </h3>
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+            >
               <button
                 onClick={() => {
                   setLanguage('english');
                   setShowLanguageModal(false);
                 }}
                 style={{
-                  background: language === 'english' ? 'var(--accent)' : 'var(--surface)',
+                  background:
+                    language === 'english' ? 'var(--accent)' : 'var(--surface)',
                   color: language === 'english' ? 'white' : 'var(--fg)',
                   border: `2px solid ${language === 'english' ? 'var(--accent)' : 'var(--border)'}`,
                   padding: '1rem 1.5rem',
@@ -6305,7 +6903,8 @@ export default function DairyFarmManagerApp({
                   setShowLanguageModal(false);
                 }}
                 style={{
-                  background: language === 'punjabi' ? 'var(--accent)' : 'var(--surface)',
+                  background:
+                    language === 'punjabi' ? 'var(--accent)' : 'var(--surface)',
                   color: language === 'punjabi' ? 'white' : 'var(--fg)',
                   border: `2px solid ${language === 'punjabi' ? 'var(--accent)' : 'var(--border)'}`,
                   padding: '1rem 1.5rem',
@@ -6319,7 +6918,13 @@ export default function DairyFarmManagerApp({
                 🇮🇳 ਪੰਜਾਬੀ (Punjabi)
               </button>
             </div>
-            <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+            <div
+              style={{
+                marginTop: '1.5rem',
+                display: 'flex',
+                justifyContent: 'flex-end',
+              }}
+            >
               <button
                 onClick={() => setShowLanguageModal(false)}
                 style={{
@@ -6367,8 +6972,12 @@ export default function DairyFarmManagerApp({
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ margin: '0 0 1.5rem 0', color: 'var(--fg)' }}>🎥 {t.uploadVideo}</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <h3 style={{ margin: '0 0 1.5rem 0', color: 'var(--fg)' }}>
+              🎥 {t.uploadVideo}
+            </h3>
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+            >
               <div>
                 <label
                   style={{
@@ -6382,7 +6991,11 @@ export default function DairyFarmManagerApp({
                 </label>
                 <input
                   type="text"
-                  placeholder={language === 'english' ? 'e.g., Milking Techniques for Sahiwal' : 'ਉਦਾਹਰਨ: ਸਾਹੀਵਾਲ ਲਈ ਦੁੱਧ ਕੱਢਣ ਦੀਆਂ ਤਕਨੀਕਾਂ'}
+                  placeholder={
+                    language === 'english'
+                      ? 'e.g., Milking Techniques for Sahiwal'
+                      : 'ਉਦਾਹਰਨ: ਸਾਹੀਵਾਲ ਲਈ ਦੁੱਧ ਕੱਢਣ ਦੀਆਂ ਤਕਨੀਕਾਂ'
+                  }
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -6405,7 +7018,11 @@ export default function DairyFarmManagerApp({
                   {language === 'english' ? 'Description' : 'ਵਰਣਨ'}
                 </label>
                 <textarea
-                  placeholder={language === 'english' ? 'Describe what your video covers...' : 'ਆਪਣੇ ਵੀਡੀਓ ਵਿੱਚ ਕੀ ਹੈ ਦੱਸੋ...'}
+                  placeholder={
+                    language === 'english'
+                      ? 'Describe what your video covers...'
+                      : 'ਆਪਣੇ ਵੀਡੀਓ ਵਿੱਚ ਕੀ ਹੈ ਦੱਸੋ...'
+                  }
                   rows={4}
                   style={{
                     width: '100%',
@@ -6439,11 +7056,21 @@ export default function DairyFarmManagerApp({
                     color: 'var(--fg)',
                   }}
                 >
-                  <option value="training">{language === 'english' ? 'Training' : 'ਸਿਖਲਾਈ'}</option>
-                  <option value="health">{language === 'english' ? 'Health' : 'ਸਿਹਤ'}</option>
-                  <option value="breeding">{language === 'english' ? 'Breeding' : 'ਪ੍ਰਜਨਨ'}</option>
-                  <option value="feeding">{language === 'english' ? 'Feeding' : 'ਖੁਰਾਕ'}</option>
-                  <option value="general">{language === 'english' ? 'General' : 'ਆਮ'}</option>
+                  <option value="training">
+                    {language === 'english' ? 'Training' : 'ਸਿਖਲਾਈ'}
+                  </option>
+                  <option value="health">
+                    {language === 'english' ? 'Health' : 'ਸਿਹਤ'}
+                  </option>
+                  <option value="breeding">
+                    {language === 'english' ? 'Breeding' : 'ਪ੍ਰਜਨਨ'}
+                  </option>
+                  <option value="feeding">
+                    {language === 'english' ? 'Feeding' : 'ਖੁਰਾਕ'}
+                  </option>
+                  <option value="general">
+                    {language === 'english' ? 'General' : 'ਆਮ'}
+                  </option>
                 </select>
               </div>
               <div>
@@ -6467,17 +7094,37 @@ export default function DairyFarmManagerApp({
                     background: 'var(--surface)',
                     transition: 'all 0.2s',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--accent)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.borderColor = 'var(--accent)')
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.borderColor = 'var(--border)')
+                  }
                 >
-                  <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📹</div>
-                  <div style={{ color: 'var(--fg)', fontWeight: 'bold', marginBottom: '0.25rem' }}>
-                    {language === 'english' ? 'Click to upload or drag and drop' : 'ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ'}
+                  <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>
+                    📹
+                  </div>
+                  <div
+                    style={{
+                      color: 'var(--fg)',
+                      fontWeight: 'bold',
+                      marginBottom: '0.25rem',
+                    }}
+                  >
+                    {language === 'english'
+                      ? 'Click to upload or drag and drop'
+                      : 'ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ'}
                   </div>
                   <div style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
-                    {language === 'english' ? 'MP4, MOV, AVI (Max 500MB)' : 'MP4, MOV, AVI (ਵੱਧ ਤੋਂ ਵੱਧ 500MB)'}
+                    {language === 'english'
+                      ? 'MP4, MOV, AVI (Max 500MB)'
+                      : 'MP4, MOV, AVI (ਵੱਧ ਤੋਂ ਵੱਧ 500MB)'}
                   </div>
-                  <input type="file" accept="video/*" style={{ display: 'none' }} />
+                  <input
+                    type="file"
+                    accept="video/*"
+                    style={{ display: 'none' }}
+                  />
                 </div>
               </div>
               <div
@@ -6516,7 +7163,9 @@ export default function DairyFarmManagerApp({
                     fontWeight: 'bold',
                   }}
                 >
-                  {language === 'english' ? '📤 Upload Video' : '📤 ਵੀਡੀਓ ਅੱਪਲੋਡ ਕਰੋ'}
+                  {language === 'english'
+                    ? '📤 Upload Video'
+                    : '📤 ਵੀਡੀਓ ਅੱਪਲੋਡ ਕਰੋ'}
                 </button>
               </div>
             </div>
@@ -6696,14 +7345,20 @@ export default function DairyFarmManagerApp({
         visible={showModal === 'viewRecord'}
         record={selectedRecord}
         language={language}
-        onClose={() => { setShowModal(null); setSelectedRecord(null); }}
+        onClose={() => {
+          setShowModal(null);
+          setSelectedRecord(null);
+        }}
       />
 
       <EditRecordModal
         visible={showModal === 'editRecord'}
         record={selectedRecord}
         language={language}
-        onClose={() => { setShowModal(null); setSelectedRecord(null); }}
+        onClose={() => {
+          setShowModal(null);
+          setSelectedRecord(null);
+        }}
         onSave={(updates) => {
           if (!selectedRecord) return;
           updateCattleRecord(selectedRecord.id, updates);

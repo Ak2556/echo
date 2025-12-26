@@ -154,12 +154,19 @@ export default function ProfilePage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: colors.background }}>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: colors.background }}
+      >
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 rounded-full animate-spin" style={{ borderColor: colors.primary, borderTopColor: 'transparent' }} />
-          <p style={{ color: colors.textSecondary }}>
-            Loading your profile...
-          </p>
+          <div
+            className="w-12 h-12 border-4 rounded-full animate-spin"
+            style={{
+              borderColor: colors.primary,
+              borderTopColor: 'transparent',
+            }}
+          />
+          <p style={{ color: colors.textSecondary }}>Loading your profile...</p>
         </div>
       </div>
     );
@@ -200,7 +207,10 @@ export default function ProfilePage() {
         }}
       />
 
-      <div className="min-h-screen p-4 py-12" style={{ background: colors.background }}>
+      <div
+        className="min-h-screen p-4 py-12"
+        style={{ background: colors.background }}
+      >
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <motion.div
@@ -212,8 +222,10 @@ export default function ProfilePage() {
               href="/"
               className="flex items-center gap-2 transition-all duration-200 hover:gap-3"
               style={{ color: colors.textSecondary }}
-              onMouseEnter={(e) => e.currentTarget.style.color = colors.text}
-              onMouseLeave={(e) => e.currentTarget.style.color = colors.textSecondary}
+              onMouseEnter={(e) => (e.currentTarget.style.color = colors.text)}
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.color = colors.textSecondary)
+              }
             >
               <ArrowLeft size={20} />
               <span>Back to Home</span>
@@ -229,14 +241,25 @@ export default function ProfilePage() {
             style={{
               background: `${colors.surface}cc`,
               boxShadow: colors.shadowLarge,
-              border: `1px solid ${colors.border}80`
+              border: `1px solid ${colors.border}80`,
             }}
           >
             {/* Header Section with Avatar */}
-            <div className="relative h-32 bg-gradient-to-r" style={{ backgroundImage: `linear-gradient(to right, ${colors.primary}, ${colors.secondary}, ${colors.accent})` }}>
+            <div
+              className="relative h-32 bg-gradient-to-r"
+              style={{
+                backgroundImage: `linear-gradient(to right, ${colors.primary}, ${colors.secondary}, ${colors.accent})`,
+              }}
+            >
               <div className="absolute -bottom-16 left-8">
                 <div className="relative">
-                  <div className="w-32 h-32 rounded-full border-4 shadow-xl overflow-hidden" style={{ borderColor: colors.surface, background: colors.surfaceElevated }}>
+                  <div
+                    className="w-32 h-32 rounded-full border-4 shadow-xl overflow-hidden"
+                    style={{
+                      borderColor: colors.surface,
+                      background: colors.surfaceElevated,
+                    }}
+                  >
                     {avatarPreview ? (
                       <img
                         src={avatarPreview}
@@ -244,7 +267,12 @@ export default function ProfilePage() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br" style={{ backgroundImage: `linear-gradient(to bottom right, ${colors.primary}, ${colors.accent})` }}>
+                      <div
+                        className="w-full h-full flex items-center justify-center bg-gradient-to-br"
+                        style={{
+                          backgroundImage: `linear-gradient(to bottom right, ${colors.primary}, ${colors.accent})`,
+                        }}
+                      >
                         <User size={48} className="text-white" />
                       </div>
                     )}
@@ -275,12 +303,13 @@ export default function ProfilePage() {
             <div className="pt-20 px-8 pb-8">
               <div className="flex items-start justify-between mb-8">
                 <div>
-                  <h1 className="text-3xl font-bold mb-2" style={{ color: colors.text }}>
+                  <h1
+                    className="text-3xl font-bold mb-2"
+                    style={{ color: colors.text }}
+                  >
                     {user.full_name || 'Your Profile'}
                   </h1>
-                  <p style={{ color: colors.textSecondary }}>
-                    {user.email}
-                  </p>
+                  <p style={{ color: colors.textSecondary }}>{user.email}</p>
                 </div>
                 {!isEditing ? (
                   <Button
@@ -363,7 +392,10 @@ export default function ProfilePage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1.5" style={{ color: colors.textSecondary }}>
+                      <label
+                        className="block text-sm font-medium mb-1.5"
+                        style={{ color: colors.textSecondary }}
+                      >
                         Bio
                       </label>
                       <textarea
@@ -376,15 +408,28 @@ export default function ProfilePage() {
                           borderColor: colors.border,
                           background: colors.surface,
                           color: colors.text,
-                          ...(isSubmitting ? {} : { ':focus': { borderColor: colors.primary, boxShadow: `0 0 0 3px ${colors.primary}20` } })
+                          ...(isSubmitting
+                            ? {}
+                            : {
+                                ':focus': {
+                                  borderColor: colors.primary,
+                                  boxShadow: `0 0 0 3px ${colors.primary}20`,
+                                },
+                              }),
                         }}
                       />
                       {errors.bio && (
-                        <p className="mt-1.5 text-sm" style={{ color: colors.error }}>
+                        <p
+                          className="mt-1.5 text-sm"
+                          style={{ color: colors.error }}
+                        >
                           {errors.bio.message}
                         </p>
                       )}
-                      <p className="mt-1.5 text-xs" style={{ color: colors.textTertiary }}>
+                      <p
+                        className="mt-1.5 text-xs"
+                        style={{ color: colors.textTertiary }}
+                      >
                         {watchedFields.bio?.length || 0}/200 characters
                       </p>
                     </div>
@@ -399,7 +444,10 @@ export default function ProfilePage() {
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium" style={{ color: colors.textTertiary }}>
+                        <label
+                          className="text-sm font-medium"
+                          style={{ color: colors.textTertiary }}
+                        >
                           Full Name
                         </label>
                         <p className="text-lg" style={{ color: colors.text }}>
@@ -408,7 +456,10 @@ export default function ProfilePage() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium" style={{ color: colors.textTertiary }}>
+                        <label
+                          className="text-sm font-medium"
+                          style={{ color: colors.textTertiary }}
+                        >
                           Email
                         </label>
                         <p className="text-lg" style={{ color: colors.text }}>
@@ -417,7 +468,10 @@ export default function ProfilePage() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium" style={{ color: colors.textTertiary }}>
+                        <label
+                          className="text-sm font-medium"
+                          style={{ color: colors.textTertiary }}
+                        >
                           Username
                         </label>
                         <p className="text-lg" style={{ color: colors.text }}>
@@ -428,10 +482,16 @@ export default function ProfilePage() {
 
                     {user.bio && (
                       <div className="space-y-2">
-                        <label className="text-sm font-medium" style={{ color: colors.textTertiary }}>
+                        <label
+                          className="text-sm font-medium"
+                          style={{ color: colors.textTertiary }}
+                        >
                           Bio
                         </label>
-                        <p className="leading-relaxed" style={{ color: colors.text }}>
+                        <p
+                          className="leading-relaxed"
+                          style={{ color: colors.text }}
+                        >
                           {user.bio}
                         </p>
                       </div>
@@ -441,27 +501,42 @@ export default function ProfilePage() {
               </AnimatePresence>
 
               {/* Quick Actions */}
-              <div className="mt-8 pt-8" style={{ borderTop: `1px solid ${colors.border}` }}>
-                <h3 className="text-lg font-semibold mb-4" style={{ color: colors.text }}>
+              <div
+                className="mt-8 pt-8"
+                style={{ borderTop: `1px solid ${colors.border}` }}
+              >
+                <h3
+                  className="text-lg font-semibold mb-4"
+                  style={{ color: colors.text }}
+                >
                   Quick Actions
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Link
                     href="/settings"
                     className="flex items-center gap-3 p-4 rounded-xl border-2 transition-all group hover:scale-[1.02]"
-                    style={{ borderColor: colors.border, background: colors.surfaceElevated }}
+                    style={{
+                      borderColor: colors.border,
+                      background: colors.surfaceElevated,
+                    }}
                   >
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: `${colors.primary}20` }}>
-                      <Shield
-                        size={20}
-                        style={{ color: colors.primary }}
-                      />
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center"
+                      style={{ background: `${colors.primary}20` }}
+                    >
+                      <Shield size={20} style={{ color: colors.primary }} />
                     </div>
                     <div>
-                      <h4 className="font-medium" style={{ color: colors.text }}>
+                      <h4
+                        className="font-medium"
+                        style={{ color: colors.text }}
+                      >
                         Account Settings
                       </h4>
-                      <p className="text-sm" style={{ color: colors.textSecondary }}>
+                      <p
+                        className="text-sm"
+                        style={{ color: colors.textSecondary }}
+                      >
                         Manage security and preferences
                       </p>
                     </div>
@@ -470,19 +545,28 @@ export default function ProfilePage() {
                   <button
                     onClick={handleLogout}
                     className="flex items-center gap-3 p-4 rounded-xl border-2 transition-all group hover:scale-[1.02]"
-                    style={{ borderColor: `${colors.error}40`, background: `${colors.error}10` }}
+                    style={{
+                      borderColor: `${colors.error}40`,
+                      background: `${colors.error}10`,
+                    }}
                   >
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: `${colors.error}20` }}>
-                      <LogOut
-                        size={20}
-                        style={{ color: colors.error }}
-                      />
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center"
+                      style={{ background: `${colors.error}20` }}
+                    >
+                      <LogOut size={20} style={{ color: colors.error }} />
                     </div>
                     <div className="text-left">
-                      <h4 className="font-medium" style={{ color: colors.text }}>
+                      <h4
+                        className="font-medium"
+                        style={{ color: colors.text }}
+                      >
                         Logout
                       </h4>
-                      <p className="text-sm" style={{ color: colors.textSecondary }}>
+                      <p
+                        className="text-sm"
+                        style={{ color: colors.textSecondary }}
+                      >
                         Sign out of your account
                       </p>
                     </div>

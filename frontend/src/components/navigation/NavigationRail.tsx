@@ -41,10 +41,7 @@ export function NavigationRail({
 }: NavigationRailProps) {
   const { colors, colorMode, actualMode, toggleMode } = useModernTheme();
   const { language, setLanguage, supportedLanguages } = useLanguage();
-  const {
-    user = null,
-    logout = async () => {},
-  } = useAuth() || {};
+  const { user = null, logout = async () => {} } = useAuth() || {};
 
   const [showMiniApps, setShowMiniApps] = useState(false);
   const [showLanguages, setShowLanguages] = useState(false);
@@ -57,7 +54,12 @@ export function NavigationRail({
     { id: 'shop', icon: ShoppingBag, label: 'Shop' },
     { id: 'tuition', icon: GraduationCap, label: 'Tuition' },
     { id: 'live', icon: Radio, label: 'Live' },
-    { id: 'messages', icon: MessageCircle, label: 'Messages', badge: unreadMessages },
+    {
+      id: 'messages',
+      icon: MessageCircle,
+      label: 'Messages',
+      badge: unreadMessages,
+    },
     { id: 'profile', icon: User, label: 'Profile' },
     { id: 'settings', icon: Settings, label: 'Settings' },
   ];
@@ -170,8 +172,14 @@ export function NavigationRail({
             e.currentTarget.style.background = colors.surface;
           }}
         >
-          <Bell className="w-5 h-5 flex-shrink-0 transition-colors" style={{ color: colors.textSecondary }} />
-          <span className="text-sm font-semibold flex-1" style={{ color: colors.text }}>
+          <Bell
+            className="w-5 h-5 flex-shrink-0 transition-colors"
+            style={{ color: colors.textSecondary }}
+          />
+          <span
+            className="text-sm font-semibold flex-1"
+            style={{ color: colors.text }}
+          >
             Notifications
           </span>
           <NotificationBell />
@@ -191,8 +199,14 @@ export function NavigationRail({
             e.currentTarget.style.background = colors.surface;
           }}
         >
-          <Grid3x3 className="w-5 h-5 flex-shrink-0 transition-colors" style={{ color: colors.textSecondary }} />
-          <span className="text-sm font-semibold flex-1" style={{ color: colors.text }}>
+          <Grid3x3
+            className="w-5 h-5 flex-shrink-0 transition-colors"
+            style={{ color: colors.textSecondary }}
+          />
+          <span
+            className="text-sm font-semibold flex-1"
+            style={{ color: colors.text }}
+          >
             Mini Apps
           </span>
           <ChevronDown
@@ -211,7 +225,10 @@ export function NavigationRail({
             }}
           >
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: colors.textTertiary }} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
+                style={{ color: colors.textTertiary }}
+              />
               <input
                 type="text"
                 placeholder="Search apps..."
@@ -252,8 +269,13 @@ export function NavigationRail({
                     e.currentTarget.style.background = 'transparent';
                   }}
                 >
-                  <span className="text-xl group-hover:scale-110 transition-transform">{app.icon}</span>
-                  <span className="text-xs font-medium" style={{ color: colors.text }}>
+                  <span className="text-xl group-hover:scale-110 transition-transform">
+                    {app.icon}
+                  </span>
+                  <span
+                    className="text-xs font-medium"
+                    style={{ color: colors.text }}
+                  >
                     {app.name}
                   </span>
                 </button>
@@ -276,8 +298,14 @@ export function NavigationRail({
             e.currentTarget.style.background = colors.surface;
           }}
         >
-          <Globe className="w-5 h-5 flex-shrink-0 transition-colors" style={{ color: colors.textSecondary }} />
-          <span className="text-sm font-semibold flex-1" style={{ color: colors.text }}>
+          <Globe
+            className="w-5 h-5 flex-shrink-0 transition-colors"
+            style={{ color: colors.textSecondary }}
+          />
+          <span
+            className="text-sm font-semibold flex-1"
+            style={{ color: colors.text }}
+          >
             Language
           </span>
           <ChevronDown
@@ -309,7 +337,8 @@ export function NavigationRail({
                       ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`
                       : 'transparent',
                   color: language === lang.code ? 'white' : colors.text,
-                  transform: language === lang.code ? 'scale(1.05)' : 'scale(1)',
+                  transform:
+                    language === lang.code ? 'scale(1.05)' : 'scale(1)',
                 }}
                 onMouseEnter={(e) => {
                   if (language !== lang.code) {
@@ -344,12 +373,25 @@ export function NavigationRail({
           }}
         >
           {actualMode === 'dark' ? (
-            <Sun className="w-5 h-5 flex-shrink-0 transition-colors" style={{ color: colors.textSecondary }} />
+            <Sun
+              className="w-5 h-5 flex-shrink-0 transition-colors"
+              style={{ color: colors.textSecondary }}
+            />
           ) : (
-            <Moon className="w-5 h-5 flex-shrink-0 transition-colors" style={{ color: colors.textSecondary }} />
+            <Moon
+              className="w-5 h-5 flex-shrink-0 transition-colors"
+              style={{ color: colors.textSecondary }}
+            />
           )}
-          <span className="text-sm font-semibold flex-1" style={{ color: colors.text }}>
-            {colorMode === 'auto' ? `Auto (${actualMode === 'dark' ? 'Dark' : 'Light'})` : actualMode === 'dark' ? 'Switch to Light' : 'Switch to Dark'}
+          <span
+            className="text-sm font-semibold flex-1"
+            style={{ color: colors.text }}
+          >
+            {colorMode === 'auto'
+              ? `Auto (${actualMode === 'dark' ? 'Dark' : 'Light'})`
+              : actualMode === 'dark'
+                ? 'Switch to Light'
+                : 'Switch to Dark'}
           </span>
         </button>
       </div>
@@ -384,10 +426,16 @@ export function NavigationRail({
             <User className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold truncate" style={{ color: colors.text }}>
+            <div
+              className="text-sm font-semibold truncate"
+              style={{ color: colors.text }}
+            >
               {user?.full_name || 'Guest User'}
             </div>
-            <div className="text-xs truncate" style={{ color: colors.textSecondary }}>
+            <div
+              className="text-xs truncate"
+              style={{ color: colors.textSecondary }}
+            >
               {user?.email || 'Not logged in'}
             </div>
           </div>
@@ -422,8 +470,14 @@ export function NavigationRail({
                     e.currentTarget.style.background = 'transparent';
                   }}
                 >
-                  <User className="w-4 h-4 transition-colors" style={{ color: colors.textSecondary }} />
-                  <span className="text-sm font-medium" style={{ color: colors.text }}>
+                  <User
+                    className="w-4 h-4 transition-colors"
+                    style={{ color: colors.textSecondary }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: colors.text }}
+                  >
                     View Profile
                   </span>
                 </button>
@@ -441,8 +495,14 @@ export function NavigationRail({
                     e.currentTarget.style.background = 'transparent';
                   }}
                 >
-                  <Settings className="w-4 h-4 transition-colors" style={{ color: colors.textSecondary }} />
-                  <span className="text-sm font-medium" style={{ color: colors.text }}>
+                  <Settings
+                    className="w-4 h-4 transition-colors"
+                    style={{ color: colors.textSecondary }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: colors.text }}
+                  >
                     Settings
                   </span>
                 </button>
@@ -466,8 +526,14 @@ export function NavigationRail({
                     e.currentTarget.style.background = 'transparent';
                   }}
                 >
-                  <LogOut className="w-4 h-4 transition-colors" style={{ color: colors.error }} />
-                  <span className="text-sm font-medium" style={{ color: colors.error }}>
+                  <LogOut
+                    className="w-4 h-4 transition-colors"
+                    style={{ color: colors.error }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: colors.error }}
+                  >
                     Logout
                   </span>
                 </button>
@@ -485,8 +551,14 @@ export function NavigationRail({
                     e.currentTarget.style.background = 'transparent';
                   }}
                 >
-                  <User className="w-4 h-4 transition-colors" style={{ color: colors.textSecondary }} />
-                  <span className="text-sm font-medium" style={{ color: colors.text }}>
+                  <User
+                    className="w-4 h-4 transition-colors"
+                    style={{ color: colors.textSecondary }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: colors.text }}
+                  >
                     Login
                   </span>
                 </a>
@@ -501,8 +573,14 @@ export function NavigationRail({
                     e.currentTarget.style.background = 'transparent';
                   }}
                 >
-                  <User className="w-4 h-4 transition-colors" style={{ color: colors.textSecondary }} />
-                  <span className="text-sm font-medium" style={{ color: colors.text }}>
+                  <User
+                    className="w-4 h-4 transition-colors"
+                    style={{ color: colors.textSecondary }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: colors.text }}
+                  >
                     Sign Up
                   </span>
                 </a>

@@ -13,7 +13,8 @@ export function HeroMetrics() {
             Join the Echo Community
           </h2>
           <p className="text-lg text-[var(--echo-text-secondary)] max-w-2xl mx-auto">
-            Connect with millions of users worldwide, share your voice, and discover amazing content
+            Connect with millions of users worldwide, share your voice, and
+            discover amazing content
           </p>
         </div>
 

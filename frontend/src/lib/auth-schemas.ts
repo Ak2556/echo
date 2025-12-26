@@ -92,23 +92,34 @@ export interface Setup2FAResponse {
 }
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email('Invalid email address')
-});
-
-export const resetPasswordSchema = z.object({
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string().min(8, 'Password must be at least 8 characters')
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword']
-});
-
-export const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
-  username: z.string().min(3, 'Username must be at least 3 characters').max(30, 'Username must be at most 30 characters'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string().min(8, 'Password must be at least 8 characters')
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword']
 });
+
+export const resetPasswordSchema = z
+  .object({
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z
+      .string()
+      .min(8, 'Password must be at least 8 characters'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
+export const registerSchema = z
+  .object({
+    email: z.string().email('Invalid email address'),
+    username: z
+      .string()
+      .min(3, 'Username must be at least 3 characters')
+      .max(30, 'Username must be at most 30 characters'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z
+      .string()
+      .min(8, 'Password must be at least 8 characters'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });

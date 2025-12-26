@@ -37,7 +37,9 @@ export const getUser = () => {
  * @deprecated Use httpOnly cookies instead
  */
 export const getAccessToken = (): string | null => {
-  console.warn('getAccessToken is deprecated. Tokens are now in httpOnly cookies.');
+  console.warn(
+    'getAccessToken is deprecated. Tokens are now in httpOnly cookies.'
+  );
   return null;
 };
 

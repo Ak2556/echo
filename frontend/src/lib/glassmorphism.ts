@@ -20,13 +20,15 @@ export const glassmorphismClasses = {
   nav: 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-white/10 dark:border-gray-800/50',
 
   // Modal/Dialog specific
-  modal: 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-2xl border border-white/20 dark:border-gray-800/50',
+  modal:
+    'bg-white/90 dark:bg-gray-900/90 backdrop-blur-2xl border border-white/20 dark:border-gray-800/50',
 
   // Card specific
   card: 'bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg border border-white/20 dark:border-gray-700/50',
 
   // Floating elements (tooltips, dropdowns)
-  floating: 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-white/30 dark:border-gray-700/50 shadow-2xl',
+  floating:
+    'bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-white/30 dark:border-gray-700/50 shadow-2xl',
 };
 
 /**
@@ -36,7 +38,14 @@ export const glassmorphismClasses = {
  * @returns CSS properties object
  */
 export function getGlassStyles(
-  variant: 'light' | 'medium' | 'dark' | 'nav' | 'modal' | 'card' | 'floating' = 'medium',
+  variant:
+    | 'light'
+    | 'medium'
+    | 'dark'
+    | 'nav'
+    | 'modal'
+    | 'card'
+    | 'floating' = 'medium',
   customBlur?: number
 ): React.CSSProperties {
   const blurAmount = customBlur || 16;

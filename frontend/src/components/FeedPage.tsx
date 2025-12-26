@@ -325,7 +325,10 @@ const PostCard = memo(function PostCard({
         )}
 
         {/* Tags */}
-        <div className="post-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+        <div
+          className="post-tags"
+          style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}
+        >
           {post.tags.map((tag: string, tagIndex: number) => (
             <span
               key={tagIndex}
@@ -356,7 +359,9 @@ const PostCard = memo(function PostCard({
           marginTop: '0.75rem',
         }}
       >
-        <span className="stat">❤️ {post.stats.likes.toLocaleString()} likes</span>
+        <span className="stat">
+          ❤️ {post.stats.likes.toLocaleString()} likes
+        </span>
         <span className="stat">💬 {post.stats.comments} comments</span>
         <span className="stat">🔄 {post.stats.shares} shares</span>
       </div>
@@ -378,7 +383,9 @@ const PostCard = memo(function PostCard({
           style={{
             padding: '0.75rem',
             borderRadius: '12px',
-            background: post.liked ? 'rgba(239,68,68,0.12)' : 'rgba(255,255,255,0.03)',
+            background: post.liked
+              ? 'rgba(239,68,68,0.12)'
+              : 'rgba(255,255,255,0.03)',
             border: post.liked
               ? `1px solid ${colors.status.error}`
               : `1px solid ${colors.border}`,
@@ -1483,8 +1490,7 @@ export default function FeedPage() {
           post.media &&
           (post.media.type === 'image' ||
             post.media.type === 'carousel' ||
-            post.media.type === 'carousel' // carousel
-          )
+            post.media.type === 'carousel') // carousel
         );
       }
       if (filter === 'videos') {

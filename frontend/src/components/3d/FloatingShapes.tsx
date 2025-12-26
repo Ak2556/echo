@@ -78,7 +78,8 @@ export default function FloatingShapes({
     ];
 
     for (let i = 0; i < count; i++) {
-      const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+      const geometry =
+        geometries[Math.floor(Math.random() * geometries.length)];
       const material = new THREE.MeshStandardMaterial({
         color: colors[Math.floor(Math.random() * colors.length)],
         metalness: 0.3,
@@ -115,7 +116,8 @@ export default function FloatingShapes({
 
     // Animation loop
     const animate = () => {
-      if (!sceneRef.current || !cameraRef.current || !rendererRef.current) return;
+      if (!sceneRef.current || !cameraRef.current || !rendererRef.current)
+        return;
 
       animationIdRef.current = requestAnimationFrame(animate);
 
@@ -144,7 +146,8 @@ export default function FloatingShapes({
 
     // Handle resize
     const handleResize = () => {
-      if (!containerRef.current || !cameraRef.current || !rendererRef.current) return;
+      if (!containerRef.current || !cameraRef.current || !rendererRef.current)
+        return;
 
       const width = containerRef.current.clientWidth;
       const height = containerRef.current.clientHeight;

@@ -13,30 +13,46 @@ export const SUPPORTED_LANGUAGES = [
   { code: 'pa', name: 'ਪੰਜਾਬੀ', nativeName: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
 ];
 
-export type LanguageCode = 'en' | 'es' | 'fr' | 'de' | 'zh' | 'ja' | 'hi' | 'pa';
+export type LanguageCode =
+  | 'en'
+  | 'es'
+  | 'fr'
+  | 'de'
+  | 'zh'
+  | 'ja'
+  | 'hi'
+  | 'pa';
 
 export function getDefaultLanguage(): LanguageCode {
   if (typeof navigator === 'undefined') return 'en';
   const lang = navigator.language.split('-')[0];
-  return SUPPORTED_LANGUAGES.find(l => l.code === lang)?.code as LanguageCode || 'en';
+  return (
+    (SUPPORTED_LANGUAGES.find((l) => l.code === lang)?.code as LanguageCode) ||
+    'en'
+  );
 }
 
-export type LanguageInfo = { code: string; name: string; nativeName: string; flag: string };
+export type LanguageInfo = {
+  code: string;
+  name: string;
+  nativeName: string;
+  flag: string;
+};
 
 export function getLanguage(code?: string): LanguageInfo | undefined {
   if (!code) {
     if (typeof window === 'undefined') {
       const defaultCode = getDefaultLanguage();
-      return SUPPORTED_LANGUAGES.find(l => l.code === defaultCode);
+      return SUPPORTED_LANGUAGES.find((l) => l.code === defaultCode);
     }
     const stored = localStorage.getItem('language');
     if (stored) {
-      return SUPPORTED_LANGUAGES.find(l => l.code === stored);
+      return SUPPORTED_LANGUAGES.find((l) => l.code === stored);
     }
     const defaultCode = getDefaultLanguage();
-    return SUPPORTED_LANGUAGES.find(l => l.code === defaultCode);
+    return SUPPORTED_LANGUAGES.find((l) => l.code === defaultCode);
   }
-  return SUPPORTED_LANGUAGES.find(l => l.code === code);
+  return SUPPORTED_LANGUAGES.find((l) => l.code === code);
 }
 
 export function isRTL(lang: string): boolean {
@@ -53,5 +69,5 @@ export default {
   languages,
   getDefaultLanguage,
   getLanguage,
-  isRTL
+  isRTL,
 };

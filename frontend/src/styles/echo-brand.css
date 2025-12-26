@@ -10,42 +10,48 @@
 
 :root {
   /* Primary Brand Colors */
-  --echo-primary: #0066FF;
-  --echo-primary-light: #3385FF;
-  --echo-primary-dark: #0052CC;
-  --echo-accent: #00D9FF;
-  --echo-accent-glow: #00FFFF;
+  --echo-primary: #0066ff;
+  --echo-primary-light: #3385ff;
+  --echo-primary-dark: #0052cc;
+  --echo-accent: #00d9ff;
+  --echo-accent-glow: #00ffff;
 
   /* Secondary Palette - Resonance */
-  --echo-purple: #7C3AED;
-  --echo-pink: #EC4899;
+  --echo-purple: #7c3aed;
+  --echo-pink: #ec4899;
 
   /* Gradients */
-  --echo-gradient-primary: linear-gradient(135deg, #0066FF 0%, #00D9FF 100%);
-  --echo-gradient-accent: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
-  --echo-gradient-hero: linear-gradient(135deg, #0066FF 0%, #7C3AED 50%, #EC4899 100%);
+  --echo-gradient-primary: linear-gradient(135deg, #0066ff 0%, #00d9ff 100%);
+  --echo-gradient-accent: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+  --echo-gradient-hero: linear-gradient(
+    135deg,
+    #0066ff 0%,
+    #7c3aed 50%,
+    #ec4899 100%
+  );
 
   /* Light Mode - Space */
-  --echo-bg-primary: #FFFFFF;
-  --echo-bg-secondary: #F8FAFC;
-  --echo-bg-tertiary: #F1F5F9;
-  --echo-text-primary: #0F172A;
+  --echo-bg-primary: #ffffff;
+  --echo-bg-secondary: #f8fafc;
+  --echo-bg-tertiary: #f1f5f9;
+  --echo-text-primary: #0f172a;
   --echo-text-secondary: #475569;
-  --echo-text-tertiary: #94A3B8;
+  --echo-text-tertiary: #94a3b8;
 
   /* Borders & Dividers */
   --echo-border-light: rgba(0, 0, 0, 0.08);
   --echo-border-medium: rgba(0, 0, 0, 0.12);
 }
 
-[data-theme="dark"], .dark {
+[data-theme='dark'],
+.dark {
   /* Dark Mode - Deep Space */
-  --echo-bg-primary: #0A0E1A;
+  --echo-bg-primary: #0a0e1a;
   --echo-bg-secondary: #111827;
-  --echo-bg-tertiary: #1F2937;
-  --echo-text-primary: #F8FAFC;
-  --echo-text-secondary: #CBD5E1;
-  --echo-text-tertiary: #64748B;
+  --echo-bg-tertiary: #1f2937;
+  --echo-text-primary: #f8fafc;
+  --echo-text-secondary: #cbd5e1;
+  --echo-text-tertiary: #64748b;
 
   /* Dark Mode Borders */
   --echo-border-light: rgba(255, 255, 255, 0.08);
@@ -85,19 +91,19 @@
 
 :root {
   --echo-space-0: 0;
-  --echo-space-1: 0.25rem;   /* 4px */
-  --echo-space-2: 0.5rem;    /* 8px */
-  --echo-space-3: 0.75rem;   /* 12px */
-  --echo-space-4: 1rem;      /* 16px */
-  --echo-space-5: 1.25rem;   /* 20px */
-  --echo-space-6: 1.5rem;    /* 24px */
-  --echo-space-8: 2rem;      /* 32px */
-  --echo-space-10: 2.5rem;   /* 40px */
-  --echo-space-12: 3rem;     /* 48px */
-  --echo-space-16: 4rem;     /* 64px */
-  --echo-space-20: 5rem;     /* 80px */
-  --echo-space-24: 6rem;     /* 96px */
-  --echo-space-32: 8rem;     /* 128px */
+  --echo-space-1: 0.25rem; /* 4px */
+  --echo-space-2: 0.5rem; /* 8px */
+  --echo-space-3: 0.75rem; /* 12px */
+  --echo-space-4: 1rem; /* 16px */
+  --echo-space-5: 1.25rem; /* 20px */
+  --echo-space-6: 1.5rem; /* 24px */
+  --echo-space-8: 2rem; /* 32px */
+  --echo-space-10: 2.5rem; /* 40px */
+  --echo-space-12: 3rem; /* 48px */
+  --echo-space-16: 4rem; /* 64px */
+  --echo-space-20: 5rem; /* 80px */
+  --echo-space-24: 6rem; /* 96px */
+  --echo-space-32: 8rem; /* 128px */
 }
 
 /* ============================================================================
@@ -105,12 +111,12 @@
    ========================================================================= */
 
 :root {
-  --echo-radius-sm: 0.375rem;   /* 6px */
-  --echo-radius-md: 0.5rem;     /* 8px */
-  --echo-radius-lg: 0.75rem;    /* 12px */
-  --echo-radius-xl: 1rem;       /* 16px */
-  --echo-radius-2xl: 1.5rem;    /* 24px */
-  --echo-radius-full: 9999px;   /* Pills */
+  --echo-radius-sm: 0.375rem; /* 6px */
+  --echo-radius-md: 0.5rem; /* 8px */
+  --echo-radius-lg: 0.75rem; /* 12px */
+  --echo-radius-xl: 1rem; /* 16px */
+  --echo-radius-2xl: 1.5rem; /* 24px */
+  --echo-radius-full: 9999px; /* Pills */
 }
 
 /* ============================================================================
@@ -119,19 +125,26 @@
 
 :root {
   --echo-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --echo-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --echo-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --echo-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --echo-shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --echo-shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --echo-shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --echo-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   --echo-shadow-glow: 0 0 20px rgba(0, 102, 255, 0.3);
   --echo-shadow-glow-lg: 0 0 40px rgba(0, 102, 255, 0.4);
 }
 
-[data-theme="dark"], .dark {
+[data-theme='dark'],
+.dark {
   --echo-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --echo-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --echo-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
-  --echo-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+  --echo-shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --echo-shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --echo-shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
   --echo-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
 }
 
@@ -141,10 +154,10 @@
 
 :root {
   /* Timing Functions */
-  --echo-ease-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --echo-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   --echo-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   --echo-ease-wave: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --echo-ease-snap: cubic-bezier(0.4, 0.0, 0.6, 1);
+  --echo-ease-snap: cubic-bezier(0.4, 0, 0.6, 1);
 
   /* Duration Scale */
   --echo-duration-instant: 100ms;
@@ -189,7 +202,8 @@
 
 /* Float - Hover States */
 @keyframes echo-float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -199,7 +213,8 @@
 
 /* Glow Pulse - Active/Focus States */
 @keyframes echo-glow-pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(0, 102, 255, 0.3);
   }
   50% {
@@ -219,7 +234,8 @@
 
 /* Scale Bounce - Success/Confirmation */
 @keyframes echo-scale-bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -251,7 +267,7 @@
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
 }
 
-[data-theme="dark"] .echo-glass,
+[data-theme='dark'] .echo-glass,
 .dark .echo-glass {
   background: rgba(10, 14, 26, 0.7);
   backdrop-filter: blur(12px) saturate(180%);
@@ -266,7 +282,8 @@
 
 /* Wave In Animation */
 .echo-animate-wave-in {
-  animation: echo-wave-in var(--echo-duration-slow) var(--echo-ease-wave) forwards;
+  animation: echo-wave-in var(--echo-duration-slow) var(--echo-ease-wave)
+    forwards;
 }
 
 /* Ripple Effect */
@@ -322,17 +339,34 @@
 
 /* Staggered Children Animation */
 .echo-stagger-children > * {
-  animation: echo-fade-slide-up var(--echo-duration-normal) var(--echo-ease-smooth) backwards;
+  animation: echo-fade-slide-up var(--echo-duration-normal)
+    var(--echo-ease-smooth) backwards;
 }
 
-.echo-stagger-children > *:nth-child(1) { animation-delay: 0ms; }
-.echo-stagger-children > *:nth-child(2) { animation-delay: 50ms; }
-.echo-stagger-children > *:nth-child(3) { animation-delay: 100ms; }
-.echo-stagger-children > *:nth-child(4) { animation-delay: 150ms; }
-.echo-stagger-children > *:nth-child(5) { animation-delay: 200ms; }
-.echo-stagger-children > *:nth-child(6) { animation-delay: 250ms; }
-.echo-stagger-children > *:nth-child(7) { animation-delay: 300ms; }
-.echo-stagger-children > *:nth-child(8) { animation-delay: 350ms; }
+.echo-stagger-children > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.echo-stagger-children > *:nth-child(2) {
+  animation-delay: 50ms;
+}
+.echo-stagger-children > *:nth-child(3) {
+  animation-delay: 100ms;
+}
+.echo-stagger-children > *:nth-child(4) {
+  animation-delay: 150ms;
+}
+.echo-stagger-children > *:nth-child(5) {
+  animation-delay: 200ms;
+}
+.echo-stagger-children > *:nth-child(6) {
+  animation-delay: 250ms;
+}
+.echo-stagger-children > *:nth-child(7) {
+  animation-delay: 300ms;
+}
+.echo-stagger-children > *:nth-child(8) {
+  animation-delay: 350ms;
+}
 
 /* ============================================================================
    10. COMPONENT PATTERNS
@@ -437,9 +471,15 @@
   gap: var(--echo-space-6);
 }
 
-.echo-stack-sm { gap: var(--echo-space-3); }
-.echo-stack-md { gap: var(--echo-space-6); }
-.echo-stack-lg { gap: var(--echo-space-12); }
+.echo-stack-sm {
+  gap: var(--echo-space-3);
+}
+.echo-stack-md {
+  gap: var(--echo-space-6);
+}
+.echo-stack-lg {
+  gap: var(--echo-space-12);
+}
 
 /* ============================================================================
    12. ACCESSIBILITY - Reduced Motion

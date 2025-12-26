@@ -23,7 +23,14 @@ const navigationItems: NavigationItem[] = [
     id: 'feed',
     label: 'Feed',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
       </svg>
     ),
@@ -33,7 +40,14 @@ const navigationItems: NavigationItem[] = [
     id: 'discover',
     label: 'Discover',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <circle cx="11" cy="11" r="8" />
         <path d="m21 21-4.35-4.35" />
       </svg>
@@ -44,7 +58,14 @@ const navigationItems: NavigationItem[] = [
     id: 'shop',
     label: 'Shop',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
         <line x1="3" y1="6" x2="21" y2="6" />
         <path d="M16 10a4 4 0 01-8 0" />
@@ -56,7 +77,14 @@ const navigationItems: NavigationItem[] = [
     id: 'tuition',
     label: 'Learn',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
         <path d="M6 12v5c3 3 9 3 12 0v-5" />
       </svg>
@@ -67,7 +95,14 @@ const navigationItems: NavigationItem[] = [
     id: 'live',
     label: 'Live',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <circle cx="12" cy="12" r="10" />
         <polygon points="10,8 16,12 10,16 10,8" />
       </svg>
@@ -79,7 +114,14 @@ const navigationItems: NavigationItem[] = [
     id: 'messages',
     label: 'Messages',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
       </svg>
     ),
@@ -90,7 +132,14 @@ const navigationItems: NavigationItem[] = [
     id: 'profile',
     label: 'Profile',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
         <circle cx="12" cy="7" r="4" />
       </svg>
@@ -101,7 +150,14 @@ const navigationItems: NavigationItem[] = [
     id: 'settings',
     label: 'Settings',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <circle cx="12" cy="12" r="3" />
         <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
       </svg>
@@ -110,10 +166,13 @@ const navigationItems: NavigationItem[] = [
   },
 ];
 
-export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigationProps) {
+export default function EnhancedNavigation({
+  onOpenMiniApp,
+}: EnhancedNavigationProps) {
   const { colors, themeMode, accessibility } = useEnhancedTheme();
   const { currentRoute, navigate } = useNavigation();
-  const [activeIndicatorStyle, setActiveIndicatorStyle] = useState<React.CSSProperties>({});
+  const [activeIndicatorStyle, setActiveIndicatorStyle] =
+    useState<React.CSSProperties>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
@@ -126,7 +185,7 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
       const nav = navRef.current;
       const navRect = nav.getBoundingClientRect();
       const itemRect = activeItem.getBoundingClientRect();
-      
+
       setActiveIndicatorStyle({
         left: itemRect.left - navRect.left,
         width: itemRect.width,
@@ -138,7 +197,7 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
 
   const handleNavigation = (route: string) => {
     navigate(route);
-    
+
     // Add haptic feedback on supported devices
     if ('vibrate' in navigator) {
       navigator.vibrate(10);
@@ -150,7 +209,9 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
     if (searchQuery.trim()) {
       navigate('discover');
       // Dispatch search event
-      window.dispatchEvent(new CustomEvent('globalSearch', { detail: searchQuery }));
+      window.dispatchEvent(
+        new CustomEvent('globalSearch', { detail: searchQuery })
+      );
       setSearchQuery('');
       setShowSearch(false);
     }
@@ -162,9 +223,25 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
       <div className="nav-brand">
         <div className="brand-logo">
           <div className="logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-              <path d="M8 12l2 2 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
+              <path
+                d="M8 12l2 2 4-4"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </div>
           <span className="brand-text">Echo</span>
@@ -175,14 +252,11 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
       <div className="nav-items">
         <div className="nav-list">
           {/* Active indicator */}
-          <div 
-            className="active-indicator"
-            style={activeIndicatorStyle}
-          />
-          
+          <div className="active-indicator" style={activeIndicatorStyle} />
+
           {navigationItems.map((item) => {
             const isActive = currentRoute === item.route;
-            
+
             return (
               <button
                 key={item.id}
@@ -193,12 +267,8 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
                 aria-current={isActive ? 'page' : undefined}
                 title={item.label}
               >
-                <span className="nav-icon">
-                  {item.icon}
-                </span>
-                <span className="nav-label">
-                  {item.label}
-                </span>
+                <span className="nav-icon">{item.icon}</span>
+                <span className="nav-label">{item.label}</span>
                 {item.badge && item.badge > 0 && (
                   <span className="nav-badge">
                     {item.badge > 99 ? '99+' : item.badge}
@@ -218,7 +288,14 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
           onClick={() => setShowSearch(!showSearch)}
           aria-label="Toggle search"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <circle cx="11" cy="11" r="8" />
             <path d="m21 21-4.35-4.35" />
           </svg>
@@ -230,7 +307,14 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
           onClick={() => onOpenMiniApp?.('mini-apps')}
           aria-label="Open mini apps"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <rect x="3" y="3" width="7" height="7" />
             <rect x="14" y="3" width="7" height="7" />
             <rect x="14" y="14" width="7" height="7" />
@@ -239,11 +323,15 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
         </button>
 
         {/* Notifications */}
-        <button
-          className="action-btn notifications"
-          aria-label="Notifications"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <button className="action-btn notifications" aria-label="Notifications">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 01-3.46 0" />
           </svg>
@@ -256,7 +344,14 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
         <div className="search-overlay">
           <form onSubmit={handleSearch} className="search-form">
             <div className="search-input-wrapper">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.35-4.35" />
               </svg>
@@ -274,7 +369,14 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
                 className="search-close"
                 aria-label="Close search"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
@@ -567,7 +669,8 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
         }
 
         @keyframes pulse {
-          0%, 100% {
+          0%,
+          100% {
             opacity: 1;
             transform: scale(1);
           }
@@ -579,7 +682,9 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
 
         /* Theme-specific enhancements */
         .theme-electric .nav-list {
-          box-shadow: var(--shadow-sm), 0 0 20px rgba(139, 92, 246, 0.1);
+          box-shadow:
+            var(--shadow-sm),
+            0 0 20px rgba(139, 92, 246, 0.1);
         }
 
         .theme-professional .enhanced-navigation {
@@ -587,11 +692,15 @@ export default function EnhancedNavigation({ onOpenMiniApp }: EnhancedNavigation
         }
 
         .theme-modern .nav-list {
-          box-shadow: var(--shadow-sm), 0 0 20px rgba(239, 68, 68, 0.1);
+          box-shadow:
+            var(--shadow-sm),
+            0 0 20px rgba(239, 68, 68, 0.1);
         }
 
         .theme-creator .nav-list {
-          box-shadow: var(--shadow-sm), 0 0 20px rgba(249, 115, 22, 0.1);
+          box-shadow:
+            var(--shadow-sm),
+            0 0 20px rgba(249, 115, 22, 0.1);
         }
 
         /* Responsive Design */

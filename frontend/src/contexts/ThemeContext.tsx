@@ -22,4 +22,11 @@ export { useTheme } from '@/hooks/useTheme';
 
 // Export types for compatibility
 export type ColorMode = 'light' | 'dark' | 'auto';
-export type Theme = 'nothing' | 'default' | 'ocean' | 'sunset' | 'forest' | 'lavender' | 'rose';
+export type Theme =
+  | 'nothing'
+  | 'default'
+  | 'ocean'
+  | 'sunset'
+  | 'forest'
+  | 'lavender'
+  | 'rose';

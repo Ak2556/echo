@@ -145,7 +145,7 @@ a:not(.no-theme):hover {
 }
 
 /* Form Elements */
-input:not([type="checkbox"]):not([type="radio"]),
+input:not([type='checkbox']):not([type='radio']),
 textarea,
 select {
   background-color: var(--theme-surface);
@@ -162,7 +162,7 @@ select:focus {
 
 /* Cards */
 .card,
-[class*="card"] {
+[class*='card'] {
   background-color: var(--theme-surface);
   border-color: var(--theme-border);
 }
@@ -170,7 +170,7 @@ select:focus {
 /* Modals & Overlays */
 .modal,
 .overlay,
-[role="dialog"] {
+[role='dialog'] {
   background-color: var(--theme-surface);
   color: var(--theme-text);
 }
@@ -178,8 +178,9 @@ select:focus {
 /* Shadows with Theme Colors */
 .shadow-blue-500 {
   --tw-shadow-color: var(--theme-primary);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
-    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  box-shadow:
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
+    var(--tw-shadow);
 }
 
 /* Status Colors - Keep independent */
@@ -280,7 +281,7 @@ tr:hover {
 
 /* Tooltips */
 .tooltip,
-[role="tooltip"] {
+[role='tooltip'] {
   background-color: var(--theme-text);
   color: var(--theme-textInverse);
 }
@@ -383,6 +384,6 @@ hr,
   transition-duration: 300ms;
 }
 
-[data-reduced-motion="true"] * {
+[data-reduced-motion='true'] * {
   transition-duration: 0.01ms !important;
 }

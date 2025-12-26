@@ -23,7 +23,8 @@ const colorClasses = {
   secondary: 'text-purple-600',
   accent: 'text-cyan-600',
   white: 'text-white',
-  gradient: 'text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text',
+  gradient:
+    'text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text',
 };
 
 export default function LoadingSpinner({
@@ -38,7 +39,9 @@ export default function LoadingSpinner({
   // Dots variant
   if (variant === 'dots') {
     return (
-      <div className={`flex flex-col items-center justify-center space-y-3 ${className}`}>
+      <div
+        className={`flex flex-col items-center justify-center space-y-3 ${className}`}
+      >
         <div className="flex gap-2">
           {[0, 1, 2].map((i) => (
             <motion.div
@@ -74,7 +77,9 @@ export default function LoadingSpinner({
   // Pulse variant
   if (variant === 'pulse') {
     return (
-      <div className={`flex flex-col items-center justify-center space-y-3 ${className}`}>
+      <div
+        className={`flex flex-col items-center justify-center space-y-3 ${className}`}
+      >
         <motion.div
           className={`${sizeClasses[size]} rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600`}
           animate={{
@@ -127,7 +132,13 @@ export default function LoadingSpinner({
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
-              <linearGradient id="spinnerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient
+                id="spinnerGradient"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
                 <stop offset="0%" stopColor="#3b82f6" />
                 <stop offset="50%" stopColor="#a855f7" />
                 <stop offset="100%" stopColor="#ec4899" />

@@ -33,7 +33,12 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useModernTheme } from '@/contexts/ModernThemeContext';
 import { useSettings } from '@/hooks/useSettings';
-import { changePassword, enable2FA, verify2FA, deleteAccount } from '@/lib/api/settings';
+import {
+  changePassword,
+  enable2FA,
+  verify2FA,
+  deleteAccount,
+} from '@/lib/api/settings';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import Input from '@/components/ui/Input';
@@ -55,7 +60,14 @@ type PasswordForm = z.infer<typeof passwordSchema>;
 export default function SettingsPage() {
   const router = useRouter();
   const { user, loading: authLoading, logout } = useAuth();
-  const { colors, colorMode, setColorMode, variant, setVariant, THEME_VARIANTS } = useModernTheme() as any;
+  const {
+    colors,
+    colorMode,
+    setColorMode,
+    variant,
+    setVariant,
+    THEME_VARIANTS,
+  } = useModernTheme() as any;
   const { settings, updateNotifications, updateSecurity } = useSettings();
   const [activeSection, setActiveSection] = useState('account');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -137,7 +149,9 @@ export default function SettingsPage() {
       setVerificationCode('');
       toast.success('2FA enabled successfully!', { id: toastId });
     } catch (error: any) {
-      toast.error(error.message || 'Invalid verification code', { id: toastId });
+      toast.error(error.message || 'Invalid verification code', {
+        id: toastId,
+      });
     }
   };
 
@@ -164,12 +178,19 @@ export default function SettingsPage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: colors.background }}>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: colors.background }}
+      >
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 rounded-full animate-spin" style={{ borderColor: colors.primary, borderTopColor: 'transparent' }} />
-          <p style={{ color: colors.textSecondary }}>
-            Loading settings...
-          </p>
+          <div
+            className="w-12 h-12 border-4 rounded-full animate-spin"
+            style={{
+              borderColor: colors.primary,
+              borderTopColor: 'transparent',
+            }}
+          />
+          <p style={{ color: colors.textSecondary }}>Loading settings...</p>
         </div>
       </div>
     );
@@ -210,7 +231,10 @@ export default function SettingsPage() {
         }}
       />
 
-      <div className="min-h-screen p-4 py-12" style={{ background: colors.background }}>
+      <div
+        className="min-h-screen p-4 py-12"
+        style={{ background: colors.background }}
+      >
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <motion.div
@@ -223,8 +247,12 @@ export default function SettingsPage() {
                 href="/profile"
                 className="flex items-center gap-2 transition-all duration-200 hover:gap-3"
                 style={{ color: colors.textSecondary }}
-                onMouseEnter={(e) => e.currentTarget.style.color = colors.text}
-                onMouseLeave={(e) => e.currentTarget.style.color = colors.textSecondary}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.color = colors.text)
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.color = colors.textSecondary)
+                }
               >
                 <ArrowLeft size={20} />
                 <span>Back to Profile</span>
@@ -240,8 +268,18 @@ export default function SettingsPage() {
           >
             {/* Sidebar Navigation */}
             <div className="lg:col-span-1">
-              <div className="backdrop-blur-xl rounded-2xl p-4" style={{ background: `${colors.surface}cc`, boxShadow: colors.shadowLarge, border: `1px solid ${colors.border}80` }}>
-                <h2 className="text-xl font-bold mb-4 px-2" style={{ color: colors.text }}>
+              <div
+                className="backdrop-blur-xl rounded-2xl p-4"
+                style={{
+                  background: `${colors.surface}cc`,
+                  boxShadow: colors.shadowLarge,
+                  border: `1px solid ${colors.border}80`,
+                }}
+              >
+                <h2
+                  className="text-xl font-bold mb-4 px-2"
+                  style={{ color: colors.text }}
+                >
                   Settings
                 </h2>
                 <nav className="space-y-1">
@@ -255,8 +293,12 @@ export default function SettingsPage() {
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:scale-[1.02]"
                         style={{
                           background: isActive ? colors.primary : 'transparent',
-                          color: isActive ? colors.textInverse : section.id === 'danger' && !isActive ? colors.error : colors.textSecondary,
-                          boxShadow: isActive ? colors.shadow : 'none'
+                          color: isActive
+                            ? colors.textInverse
+                            : section.id === 'danger' && !isActive
+                              ? colors.error
+                              : colors.textSecondary,
+                          boxShadow: isActive ? colors.shadow : 'none',
                         }}
                       >
                         <Icon size={18} />
@@ -270,7 +312,14 @@ export default function SettingsPage() {
 
             {/* Content Area */}
             <div className="lg:col-span-3">
-              <div className="backdrop-blur-xl rounded-2xl p-8" style={{ background: `${colors.surface}cc`, boxShadow: colors.shadowLarge, border: `1px solid ${colors.border}80` }}>
+              <div
+                className="backdrop-blur-xl rounded-2xl p-8"
+                style={{
+                  background: `${colors.surface}cc`,
+                  boxShadow: colors.shadowLarge,
+                  border: `1px solid ${colors.border}80`,
+                }}
+              >
                 <AnimatePresence mode="wait">
                   {/* Account Section */}
                   {activeSection === 'account' && (
@@ -282,7 +331,10 @@ export default function SettingsPage() {
                       className="space-y-6"
                     >
                       <div>
-                        <h3 className="text-2xl font-bold mb-2" style={{ color: colors.text }}>
+                        <h3
+                          className="text-2xl font-bold mb-2"
+                          style={{ color: colors.text }}
+                        >
                           Account Settings
                         </h3>
                         <p style={{ color: colors.textSecondary }}>
@@ -290,8 +342,14 @@ export default function SettingsPage() {
                         </p>
                       </div>
 
-                      <div className="pt-6" style={{ borderTop: `1px solid ${colors.border}` }}>
-                        <h4 className="text-lg font-semibold mb-4" style={{ color: colors.text }}>
+                      <div
+                        className="pt-6"
+                        style={{ borderTop: `1px solid ${colors.border}` }}
+                      >
+                        <h4
+                          className="text-lg font-semibold mb-4"
+                          style={{ color: colors.text }}
+                        >
                           Change Password
                         </h4>
                         <form
@@ -357,7 +415,10 @@ export default function SettingsPage() {
                       className="space-y-6"
                     >
                       <div>
-                        <h3 className="text-2xl font-bold mb-2" style={{ color: colors.text }}>
+                        <h3
+                          className="text-2xl font-bold mb-2"
+                          style={{ color: colors.text }}
+                        >
                           Security Settings
                         </h3>
                         <p style={{ color: colors.textSecondary }}>
@@ -366,28 +427,52 @@ export default function SettingsPage() {
                         </p>
                       </div>
 
-                      <div className="pt-6 space-y-6" style={{ borderTop: `1px solid ${colors.border}` }}>
+                      <div
+                        className="pt-6 space-y-6"
+                        style={{ borderTop: `1px solid ${colors.border}` }}
+                      >
                         {/* 2FA */}
-                        <div className="flex items-start justify-between p-5 rounded-xl" style={{ background: colors.surfaceElevated }}>
+                        <div
+                          className="flex items-start justify-between p-5 rounded-xl"
+                          style={{ background: colors.surfaceElevated }}
+                        >
                           <div className="flex gap-4">
-                            <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ background: `${colors.success}20` }}>
+                            <div
+                              className="w-12 h-12 rounded-lg flex items-center justify-center"
+                              style={{ background: `${colors.success}20` }}
+                            >
                               <Smartphone
                                 size={24}
                                 style={{ color: colors.success }}
                               />
                             </div>
                             <div>
-                              <h4 className="font-semibold mb-1" style={{ color: colors.text }}>
+                              <h4
+                                className="font-semibold mb-1"
+                                style={{ color: colors.text }}
+                              >
                                 Two-Factor Authentication
                               </h4>
-                              <p className="text-sm" style={{ color: colors.textSecondary }}>
+                              <p
+                                className="text-sm"
+                                style={{ color: colors.textSecondary }}
+                              >
                                 Add an extra layer of security to your account
                               </p>
-                              <span className="inline-block mt-2 text-xs font-medium px-2 py-1 rounded" style={{
-                                background: settings.security.twoFactorEnabled ? `${colors.success}20` : colors.border,
-                                color: settings.security.twoFactorEnabled ? colors.success : colors.textSecondary
-                              }}>
-                                {settings.security.twoFactorEnabled ? 'Enabled' : 'Not enabled'}
+                              <span
+                                className="inline-block mt-2 text-xs font-medium px-2 py-1 rounded"
+                                style={{
+                                  background: settings.security.twoFactorEnabled
+                                    ? `${colors.success}20`
+                                    : colors.border,
+                                  color: settings.security.twoFactorEnabled
+                                    ? colors.success
+                                    : colors.textSecondary,
+                                }}
+                              >
+                                {settings.security.twoFactorEnabled
+                                  ? 'Enabled'
+                                  : 'Not enabled'}
                               </span>
                             </div>
                           </div>
@@ -415,26 +500,44 @@ export default function SettingsPage() {
 
                         {/* Active Sessions */}
                         <div>
-                          <h4 className="text-lg font-semibold mb-4" style={{ color: colors.text }}>
+                          <h4
+                            className="text-lg font-semibold mb-4"
+                            style={{ color: colors.text }}
+                          >
                             Active Sessions
                           </h4>
                           <div className="space-y-3">
-                            <div className="flex items-center justify-between p-4 rounded-lg" style={{ border: `1px solid ${colors.border}` }}>
+                            <div
+                              className="flex items-center justify-between p-4 rounded-lg"
+                              style={{ border: `1px solid ${colors.border}` }}
+                            >
                               <div className="flex items-center gap-3">
                                 <Monitor
                                   size={20}
                                   style={{ color: colors.textSecondary }}
                                 />
                                 <div>
-                                  <p className="font-medium" style={{ color: colors.text }}>
+                                  <p
+                                    className="font-medium"
+                                    style={{ color: colors.text }}
+                                  >
                                     Current Session
                                   </p>
-                                  <p className="text-sm" style={{ color: colors.textTertiary }}>
+                                  <p
+                                    className="text-sm"
+                                    style={{ color: colors.textTertiary }}
+                                  >
                                     macOS • Chrome • Active now
                                   </p>
                                 </div>
                               </div>
-                              <span className="text-xs font-medium px-2 py-1 rounded" style={{ background: `${colors.success}20`, color: colors.success }}>
+                              <span
+                                className="text-xs font-medium px-2 py-1 rounded"
+                                style={{
+                                  background: `${colors.success}20`,
+                                  color: colors.success,
+                                }}
+                              >
                                 Active
                               </span>
                             </div>
@@ -454,7 +557,10 @@ export default function SettingsPage() {
                       className="space-y-6"
                     >
                       <div>
-                        <h3 className="text-2xl font-bold mb-2" style={{ color: colors.text }}>
+                        <h3
+                          className="text-2xl font-bold mb-2"
+                          style={{ color: colors.text }}
+                        >
                           Preferences
                         </h3>
                         <p style={{ color: colors.textSecondary }}>
@@ -462,22 +568,40 @@ export default function SettingsPage() {
                         </p>
                       </div>
 
-                      <div className="pt-6 space-y-6" style={{ borderTop: `1px solid ${colors.border}` }}>
+                      <div
+                        className="pt-6 space-y-6"
+                        style={{ borderTop: `1px solid ${colors.border}` }}
+                      >
                         {/* Color Mode */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             {colorMode === 'light' ? (
-                              <Sun size={20} style={{ color: colors.textSecondary }} />
+                              <Sun
+                                size={20}
+                                style={{ color: colors.textSecondary }}
+                              />
                             ) : colorMode === 'dark' ? (
-                              <Moon size={20} style={{ color: colors.textSecondary }} />
+                              <Moon
+                                size={20}
+                                style={{ color: colors.textSecondary }}
+                              />
                             ) : (
-                              <Globe size={20} style={{ color: colors.textSecondary }} />
+                              <Globe
+                                size={20}
+                                style={{ color: colors.textSecondary }}
+                              />
                             )}
                             <div>
-                              <h4 className="font-semibold" style={{ color: colors.text }}>
+                              <h4
+                                className="font-semibold"
+                                style={{ color: colors.text }}
+                              >
                                 Color Mode
                               </h4>
-                              <p className="text-sm" style={{ color: colors.textSecondary }}>
+                              <p
+                                className="text-sm"
+                                style={{ color: colors.textSecondary }}
+                              >
                                 Choose light, dark, or auto mode
                               </p>
                             </div>
@@ -486,13 +610,15 @@ export default function SettingsPage() {
                             value={colorMode}
                             onChange={(e) => {
                               setColorMode(e.target.value as any);
-                              toast.success(`Color mode changed to ${e.target.value}`);
+                              toast.success(
+                                `Color mode changed to ${e.target.value}`
+                              );
                             }}
                             className="px-4 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all"
                             style={{
                               borderColor: colors.border,
                               background: colors.surface,
-                              color: colors.text
+                              color: colors.text,
                             }}
                           >
                             <option value="light">Light</option>
@@ -504,10 +630,16 @@ export default function SettingsPage() {
                         {/* Theme Variant */}
                         <div className="flex items-center justify-between">
                           <div>
-                            <h4 className="font-semibold" style={{ color: colors.text }}>
+                            <h4
+                              className="font-semibold"
+                              style={{ color: colors.text }}
+                            >
                               Theme Variant
                             </h4>
-                            <p className="text-sm" style={{ color: colors.textSecondary }}>
+                            <p
+                              className="text-sm"
+                              style={{ color: colors.textSecondary }}
+                            >
                               Choose your color palette
                             </p>
                           </div>
@@ -515,13 +647,15 @@ export default function SettingsPage() {
                             value={variant}
                             onChange={(e) => {
                               setVariant(e.target.value as any);
-                              toast.success(`Theme changed to ${e.target.value}`);
+                              toast.success(
+                                `Theme changed to ${e.target.value}`
+                              );
                             }}
                             className="px-4 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all capitalize"
                             style={{
                               borderColor: colors.border,
                               background: colors.surface,
-                              color: colors.text
+                              color: colors.text,
                             }}
                           >
                             <option value="default">Default</option>
@@ -535,21 +669,33 @@ export default function SettingsPage() {
 
                         {/* Notifications */}
                         <div className="space-y-4">
-                          <h4 className="text-lg font-semibold" style={{ color: colors.text }}>
+                          <h4
+                            className="text-lg font-semibold"
+                            style={{ color: colors.text }}
+                          >
                             Notifications
                           </h4>
 
-                          <div className="flex items-center justify-between p-4 rounded-lg" style={{ background: colors.surfaceElevated }}>
+                          <div
+                            className="flex items-center justify-between p-4 rounded-lg"
+                            style={{ background: colors.surfaceElevated }}
+                          >
                             <div className="flex items-center gap-3">
                               <Bell
                                 size={20}
                                 style={{ color: colors.textSecondary }}
                               />
                               <div>
-                                <h5 className="font-medium" style={{ color: colors.text }}>
+                                <h5
+                                  className="font-medium"
+                                  style={{ color: colors.text }}
+                                >
                                   Email Notifications
                                 </h5>
-                                <p className="text-sm" style={{ color: colors.textSecondary }}>
+                                <p
+                                  className="text-sm"
+                                  style={{ color: colors.textSecondary }}
+                                >
                                   Receive updates via email
                                 </p>
                               </div>
@@ -563,7 +709,11 @@ export default function SettingsPage() {
                                 );
                               }}
                               className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-                              style={{ background: settings.notifications.email ? colors.primary : colors.border }}
+                              style={{
+                                background: settings.notifications.email
+                                  ? colors.primary
+                                  : colors.border,
+                              }}
                             >
                               <span
                                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.notifications.email ? 'translate-x-6' : 'translate-x-1'}`}
@@ -571,17 +721,26 @@ export default function SettingsPage() {
                             </button>
                           </div>
 
-                          <div className="flex items-center justify-between p-4 rounded-lg" style={{ background: colors.surfaceElevated }}>
+                          <div
+                            className="flex items-center justify-between p-4 rounded-lg"
+                            style={{ background: colors.surfaceElevated }}
+                          >
                             <div className="flex items-center gap-3">
                               <Smartphone
                                 size={20}
                                 style={{ color: colors.textSecondary }}
                               />
                               <div>
-                                <h5 className="font-medium" style={{ color: colors.text }}>
+                                <h5
+                                  className="font-medium"
+                                  style={{ color: colors.text }}
+                                >
                                   Push Notifications
                                 </h5>
-                                <p className="text-sm" style={{ color: colors.textSecondary }}>
+                                <p
+                                  className="text-sm"
+                                  style={{ color: colors.textSecondary }}
+                                >
                                   Get notifications on your device
                                 </p>
                               </div>
@@ -595,7 +754,11 @@ export default function SettingsPage() {
                                 );
                               }}
                               className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-                              style={{ background: settings.notifications.push ? colors.primary : colors.border }}
+                              style={{
+                                background: settings.notifications.push
+                                  ? colors.primary
+                                  : colors.border,
+                              }}
                             >
                               <span
                                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.notifications.push ? 'translate-x-6' : 'translate-x-1'}`}
@@ -617,7 +780,10 @@ export default function SettingsPage() {
                       className="space-y-6"
                     >
                       <div>
-                        <h3 className="text-2xl font-bold mb-2" style={{ color: colors.text }}>
+                        <h3
+                          className="text-2xl font-bold mb-2"
+                          style={{ color: colors.text }}
+                        >
                           Privacy Settings
                         </h3>
                         <p style={{ color: colors.textSecondary }}>
@@ -625,9 +791,18 @@ export default function SettingsPage() {
                         </p>
                       </div>
 
-                      <div className="pt-6" style={{ borderTop: `1px solid ${colors.border}` }}>
+                      <div
+                        className="pt-6"
+                        style={{ borderTop: `1px solid ${colors.border}` }}
+                      >
                         <div className="space-y-4">
-                          <div className="p-5 rounded-xl" style={{ background: `${colors.info}10`, border: `1px solid ${colors.info}40` }}>
+                          <div
+                            className="p-5 rounded-xl"
+                            style={{
+                              background: `${colors.info}10`,
+                              border: `1px solid ${colors.info}40`,
+                            }}
+                          >
                             <div className="flex gap-3">
                               <Eye
                                 size={20}
@@ -635,10 +810,16 @@ export default function SettingsPage() {
                                 style={{ color: colors.info }}
                               />
                               <div>
-                                <h4 className="font-semibold mb-2" style={{ color: colors.text }}>
+                                <h4
+                                  className="font-semibold mb-2"
+                                  style={{ color: colors.text }}
+                                >
                                   Profile Visibility
                                 </h4>
-                                <p className="text-sm mb-4" style={{ color: colors.textSecondary }}>
+                                <p
+                                  className="text-sm mb-4"
+                                  style={{ color: colors.textSecondary }}
+                                >
                                   Your profile is currently visible to all Echo
                                   users. You can change this in your privacy
                                   settings.
@@ -650,11 +831,20 @@ export default function SettingsPage() {
                             </div>
                           </div>
 
-                          <div className="p-5 rounded-xl" style={{ background: colors.surfaceElevated }}>
-                            <h4 className="font-semibold mb-3" style={{ color: colors.text }}>
+                          <div
+                            className="p-5 rounded-xl"
+                            style={{ background: colors.surfaceElevated }}
+                          >
+                            <h4
+                              className="font-semibold mb-3"
+                              style={{ color: colors.text }}
+                            >
                               Data & Privacy
                             </h4>
-                            <ul className="space-y-2 text-sm" style={{ color: colors.textSecondary }}>
+                            <ul
+                              className="space-y-2 text-sm"
+                              style={{ color: colors.textSecondary }}
+                            >
                               <li className="flex items-center gap-2">
                                 <CheckCircle
                                   size={16}
@@ -693,7 +883,10 @@ export default function SettingsPage() {
                       className="space-y-6"
                     >
                       <div>
-                        <h3 className="text-2xl font-bold mb-2" style={{ color: colors.error }}>
+                        <h3
+                          className="text-2xl font-bold mb-2"
+                          style={{ color: colors.error }}
+                        >
                           Danger Zone
                         </h3>
                         <p style={{ color: colors.textSecondary }}>
@@ -701,20 +894,38 @@ export default function SettingsPage() {
                         </p>
                       </div>
 
-                      <div className="pt-6" style={{ borderTop: `1px solid ${colors.error}40` }}>
-                        <div className="p-6 border-2 rounded-xl" style={{ background: `${colors.error}10`, borderColor: `${colors.error}40` }}>
+                      <div
+                        className="pt-6"
+                        style={{ borderTop: `1px solid ${colors.error}40` }}
+                      >
+                        <div
+                          className="p-6 border-2 rounded-xl"
+                          style={{
+                            background: `${colors.error}10`,
+                            borderColor: `${colors.error}40`,
+                          }}
+                        >
                           <div className="flex items-start gap-4">
-                            <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${colors.error}20` }}>
+                            <div
+                              className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                              style={{ background: `${colors.error}20` }}
+                            >
                               <Trash2
                                 size={24}
                                 style={{ color: colors.error }}
                               />
                             </div>
                             <div className="flex-1">
-                              <h4 className="text-lg font-semibold mb-2" style={{ color: colors.text }}>
+                              <h4
+                                className="text-lg font-semibold mb-2"
+                                style={{ color: colors.text }}
+                              >
                                 Delete Account
                               </h4>
-                              <p className="text-sm mb-4" style={{ color: colors.textSecondary }}>
+                              <p
+                                className="text-sm mb-4"
+                                style={{ color: colors.textSecondary }}
+                              >
                                 Once you delete your account, there is no going
                                 back. All your data will be permanently removed.
                                 This action cannot be undone.
@@ -757,20 +968,29 @@ export default function SettingsPage() {
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
               className="rounded-2xl p-6 max-w-md w-full"
-              style={{ background: colors.surface, boxShadow: colors.shadowLarge }}
+              style={{
+                background: colors.surface,
+                boxShadow: colors.shadowLarge,
+              }}
             >
               <div className="flex items-start gap-4 mb-6">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${colors.error}20` }}>
-                  <AlertTriangle
-                    size={24}
-                    style={{ color: colors.error }}
-                  />
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ background: `${colors.error}20` }}
+                >
+                  <AlertTriangle size={24} style={{ color: colors.error }} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold mb-2" style={{ color: colors.text }}>
+                  <h3
+                    className="text-xl font-bold mb-2"
+                    style={{ color: colors.text }}
+                  >
                     Delete Account?
                   </h3>
-                  <p className="text-sm" style={{ color: colors.textSecondary }}>
+                  <p
+                    className="text-sm"
+                    style={{ color: colors.textSecondary }}
+                  >
                     Are you absolutely sure? This action cannot be undone. All
                     your data will be permanently deleted.
                   </p>
@@ -824,35 +1044,55 @@ export default function SettingsPage() {
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
               className="rounded-2xl p-6 max-w-md w-full"
-              style={{ background: colors.surface, boxShadow: colors.shadowLarge }}
+              style={{
+                background: colors.surface,
+                boxShadow: colors.shadowLarge,
+              }}
             >
               <div className="mb-6">
-                <h3 className="text-xl font-bold mb-2" style={{ color: colors.text }}>
+                <h3
+                  className="text-xl font-bold mb-2"
+                  style={{ color: colors.text }}
+                >
                   Setup Two-Factor Authentication
                 </h3>
                 <p className="text-sm" style={{ color: colors.textSecondary }}>
-                  Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
+                  Scan this QR code with your authenticator app (Google
+                  Authenticator, Authy, etc.)
                 </p>
               </div>
 
               {/* QR Code Display */}
               <div className="flex flex-col items-center gap-4 mb-6">
                 {twoFactorQR && (
-                  <div className="p-4 rounded-lg" style={{ background: colors.surfaceElevated }}>
-                    <img src={twoFactorQR} alt="2FA QR Code" className="w-48 h-48" />
+                  <div
+                    className="p-4 rounded-lg"
+                    style={{ background: colors.surfaceElevated }}
+                  >
+                    <img
+                      src={twoFactorQR}
+                      alt="2FA QR Code"
+                      className="w-48 h-48"
+                    />
                   </div>
                 )}
 
                 {twoFactorSecret && (
                   <div className="w-full">
-                    <p className="text-xs mb-2" style={{ color: colors.textTertiary }}>
+                    <p
+                      className="text-xs mb-2"
+                      style={{ color: colors.textTertiary }}
+                    >
                       Manual entry code:
                     </p>
-                    <code className="block p-3 rounded text-sm break-all" style={{
-                      background: colors.surfaceElevated,
-                      color: colors.text,
-                      fontFamily: 'monospace'
-                    }}>
+                    <code
+                      className="block p-3 rounded text-sm break-all"
+                      style={{
+                        background: colors.surfaceElevated,
+                        color: colors.text,
+                        fontFamily: 'monospace',
+                      }}
+                    >
                       {twoFactorSecret}
                     </code>
                   </div>
@@ -866,7 +1106,11 @@ export default function SettingsPage() {
                   label="Enter 6-digit code"
                   placeholder="000000"
                   value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onChange={(e) =>
+                    setVerificationCode(
+                      e.target.value.replace(/\D/g, '').slice(0, 6)
+                    )
+                  }
                   maxLength={6}
                 />
               </div>

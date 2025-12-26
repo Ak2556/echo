@@ -9,7 +9,11 @@
  * - import { useModernTheme } from '@/contexts/ModernThemeContext'
  */
 
-import { ModernThemeProvider, useModernTheme, THEME_VARIANTS } from './ModernThemeContext';
+import {
+  ModernThemeProvider,
+  useModernTheme,
+  THEME_VARIANTS,
+} from './ModernThemeContext';
 
 // Re-export the provider for compatibility
 export { ModernThemeProvider as EnhancedThemeProvider };
@@ -67,5 +71,15 @@ export function useEnhancedTheme() {
 export { THEME_VARIANTS as THEME_DEFINITIONS };
 
 // Export types for compatibility
-export type ThemeMode = 'electric' | 'professional' | 'modern' | 'creator' | 'default' | 'ocean' | 'sunset' | 'forest' | 'lavender' | 'rose';
+export type ThemeMode =
+  | 'electric'
+  | 'professional'
+  | 'modern'
+  | 'creator'
+  | 'default'
+  | 'ocean'
+  | 'sunset'
+  | 'forest'
+  | 'lavender'
+  | 'rose';
 export type ColorMode = 'light' | 'dark' | 'auto';

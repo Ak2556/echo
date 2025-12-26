@@ -348,7 +348,11 @@ export default function AccessibilityPanel({
                     disabled={isAnalyzing}
                     className="flex items-center gap-2"
                   >
-                    {isAnalyzing ? <RefreshCw size={18} className="animate-spin" /> : <Search size={18} />}
+                    {isAnalyzing ? (
+                      <RefreshCw size={18} className="animate-spin" />
+                    ) : (
+                      <Search size={18} />
+                    )}
                     {isAnalyzing ? 'Analyzing...' : 'Run Analysis'}
                   </Button>
                 </div>
@@ -381,7 +385,11 @@ export default function AccessibilityPanel({
                               ),
                             }}
                           >
-                            {report.compliance.wcagA ? <Check size={28} /> : <XCircle size={28} />}
+                            {report.compliance.wcagA ? (
+                              <Check size={28} />
+                            ) : (
+                              <XCircle size={28} />
+                            )}
                           </div>
                           <div className="text-sm text-muted">WCAG A</div>
                         </CardContent>
@@ -397,7 +405,11 @@ export default function AccessibilityPanel({
                               ),
                             }}
                           >
-                            {report.compliance.wcagAA ? <Check size={28} /> : <XCircle size={28} />}
+                            {report.compliance.wcagAA ? (
+                              <Check size={28} />
+                            ) : (
+                              <XCircle size={28} />
+                            )}
                           </div>
                           <div className="text-sm text-muted">WCAG AA</div>
                         </CardContent>
@@ -413,7 +425,11 @@ export default function AccessibilityPanel({
                               ),
                             }}
                           >
-                            {report.compliance.wcagAAA ? <Check size={28} /> : <XCircle size={28} />}
+                            {report.compliance.wcagAAA ? (
+                              <Check size={28} />
+                            ) : (
+                              <XCircle size={28} />
+                            )}
                           </div>
                           <div className="text-sm text-muted">WCAG AAA</div>
                         </CardContent>

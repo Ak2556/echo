@@ -28,7 +28,7 @@ export function usePWA() {
     isInstallationSupported,
     getIOSInstallInstructions,
     updateServiceWorker,
-    skipWaiting
+    skipWaiting,
   };
 }
 
@@ -39,11 +39,16 @@ export async function cacheImportantUrls(): Promise<void> {
 }
 
 export async function requestPersistentStorage(): Promise<boolean> {
-  if (typeof navigator === 'undefined' || !('storage' in navigator)) return false;
+  if (typeof navigator === 'undefined' || !('storage' in navigator))
+    return false;
   return await navigator.storage.persist();
 }
 
-export async function getStorageUsage(): Promise<{ used: number; quota: number; usage: number }> {
+export async function getStorageUsage(): Promise<{
+  used: number;
+  quota: number;
+  usage: number;
+}> {
   if (typeof navigator === 'undefined' || !('storage' in navigator)) {
     return { used: 0, quota: 0, usage: 0 };
   }
@@ -53,7 +58,7 @@ export async function getStorageUsage(): Promise<{ used: number; quota: number; 
   return {
     used,
     quota,
-    usage: used
+    usage: used,
   };
 }
 
@@ -62,13 +67,19 @@ export async function showInstallPrompt(): Promise<boolean> {
   return true;
 }
 
-export function getInstallationState(): { isInstalled: boolean; platform: string } {
+export function getInstallationState(): {
+  isInstalled: boolean;
+  platform: string;
+} {
   const isInstalled = isPWAInstalled();
-  const platform = typeof navigator !== 'undefined'
-    ? /iPhone|iPad|iPod/.test(navigator.userAgent) ? 'ios'
-    : /Android/.test(navigator.userAgent) ? 'android'
-    : 'desktop'
-    : 'unknown';
+  const platform =
+    typeof navigator !== 'undefined'
+      ? /iPhone|iPad|iPod/.test(navigator.userAgent)
+        ? 'ios'
+        : /Android/.test(navigator.userAgent)
+          ? 'android'
+          : 'desktop'
+      : 'unknown';
 
   return { isInstalled, platform };
 }
@@ -81,13 +92,13 @@ export function getIOSInstallInstructions(): string[] {
   return [
     'Tap the Share button',
     'Scroll down and tap "Add to Home Screen"',
-    'Tap "Add" to confirm'
+    'Tap "Add" to confirm',
   ];
 }
 
 export function updateServiceWorker(): void {
   if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistration().then(reg => {
+    navigator.serviceWorker.getRegistration().then((reg) => {
       if (reg) reg.update();
     });
   }
@@ -112,5 +123,5 @@ export const pwaManager = {
   isInstallationSupported,
   getIOSInstallInstructions,
   updateServiceWorker,
-  skipWaiting
+  skipWaiting,
 };

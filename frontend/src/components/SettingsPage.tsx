@@ -80,7 +80,8 @@ export default function SettingsPage() {
             <div>
               <h1 className="echo-settings-title">Settings</h1>
               <p className="echo-settings-description">
-                Manage your account preferences and customize your Echo experience
+                Manage your account preferences and customize your Echo
+                experience
               </p>
             </div>
           </div>
@@ -104,10 +105,13 @@ export default function SettingsPage() {
         {/* Info Panel */}
         <div className="echo-settings-info-panel">
           <div className="echo-settings-info-icon">⚙️</div>
-          <h3 className="echo-settings-info-title">Modern Settings Experience</h3>
+          <h3 className="echo-settings-info-title">
+            Modern Settings Experience
+          </h3>
           <p className="echo-settings-info-description">
-            Click any category card above to access detailed settings for that section.
-            Each category provides comprehensive controls tailored to your needs.
+            Click any category card above to access detailed settings for that
+            section. Each category provides comprehensive controls tailored to
+            your needs.
           </p>
 
           {/* Stats Grid */}

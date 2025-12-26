@@ -58,7 +58,8 @@ export function FloatingHeader({
     });
 
     // Dark mode support
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const isDark =
+      document.documentElement.getAttribute('data-theme') === 'dark';
     if (isDark && headerRef.current) {
       gsap.to(headerRef.current, {
         backgroundColor: scrolled
@@ -78,12 +79,11 @@ export function FloatingHeader({
         height: scrolled ? '64px' : '72px',
         zIndex: zIndex.sticky,
         borderBottom: scrolled ? '1px solid rgba(0, 0, 0, 0.05)' : 'none',
-        transition: 'height 200ms cubic-bezier(0.22, 1, 0.36, 1), border-bottom 200ms cubic-bezier(0.22, 1, 0.36, 1)',
+        transition:
+          'height 200ms cubic-bezier(0.22, 1, 0.36, 1), border-bottom 200ms cubic-bezier(0.22, 1, 0.36, 1)',
       }}
     >
-      <div
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between"
-      >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
         {children}
       </div>
     </header>

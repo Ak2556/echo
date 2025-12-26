@@ -73,7 +73,9 @@ export function SettingsSubPage({
 
         <div>
           <h1 className="echo-settings-title">{title}</h1>
-          {description && <p className="echo-settings-description">{description}</p>}
+          {description && (
+            <p className="echo-settings-description">{description}</p>
+          )}
         </div>
       </div>
 
@@ -97,7 +99,10 @@ export function SettingsSection({
   children,
 }: SettingsSectionProps) {
   return (
-    <div className="settings-section" style={{ marginBottom: 'var(--settings-space-12)' }}>
+    <div
+      className="settings-section"
+      style={{ marginBottom: 'var(--settings-space-12)' }}
+    >
       <div style={{ marginBottom: 'var(--settings-space-4)' }}>
         <h2
           style={{

@@ -17,7 +17,7 @@ export function trackPageView(path: string): void {
   trackEvent({
     name: 'page_view',
     properties: { path },
-    timestamp: Date.now()
+    timestamp: Date.now(),
   });
 }
 
@@ -34,7 +34,7 @@ export const analytics = {
   trackEvent,
   trackPageView,
   setUserProperties,
-  track
+  track,
 };
 
 export function getAnalytics() {

@@ -309,8 +309,9 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({
     if (!settings.soundEffects) return;
 
     try {
-      const audioContext = new (window.AudioContext ||
-        window.webkitAudioContext)();
+      const audioContext = new (
+        window.AudioContext || window.webkitAudioContext
+      )();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 

@@ -244,7 +244,11 @@ export const animations = {
    * @param distance - Distance to move (default: -50px)
    * @param trigger - Trigger element (default: same as target)
    */
-  parallax: (element: gsap.TweenTarget, distance = -50, trigger?: gsap.DOMTarget) => {
+  parallax: (
+    element: gsap.TweenTarget,
+    distance = -50,
+    trigger?: gsap.DOMTarget
+  ) => {
     return gsap.to(element, {
       y: distance,
       ease: 'none',
@@ -329,7 +333,9 @@ export const killAnimations = (element: gsap.TweenTarget) => {
 export const respectReducedMotion = () => {
   if (typeof window === 'undefined') return;
 
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReducedMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)'
+  ).matches;
 
   if (prefersReducedMotion) {
     gsap.config({
@@ -348,7 +354,9 @@ if (typeof window !== 'undefined') {
   respectReducedMotion();
 
   // Listen for changes in motion preference
-  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', respectReducedMotion);
+  window
+    .matchMedia('(prefers-reduced-motion: reduce)')
+    .addEventListener('change', respectReducedMotion);
 }
 
 /**

@@ -3,7 +3,14 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-type Micro3DShape = 'cube' | 'sphere' | 'torus' | 'cone' | 'cylinder' | 'octahedron' | 'dodecahedron';
+type Micro3DShape =
+  | 'cube'
+  | 'sphere'
+  | 'torus'
+  | 'cone'
+  | 'cylinder'
+  | 'octahedron'
+  | 'dodecahedron';
 type AnimationType = 'rotate' | 'float' | 'pulse' | 'bounce' | 'spin' | 'none';
 
 interface Micro3DProps {
@@ -121,7 +128,13 @@ export default function Micro3D({
 
     // Animation loop
     const animate = () => {
-      if (!sceneRef.current || !cameraRef.current || !rendererRef.current || !meshRef.current) return;
+      if (
+        !sceneRef.current ||
+        !cameraRef.current ||
+        !rendererRef.current ||
+        !meshRef.current
+      )
+        return;
 
       animationIdRef.current = requestAnimationFrame(animate);
 
@@ -142,7 +155,8 @@ export default function Micro3D({
             meshRef.current.scale.set(scale, scale, scale);
             break;
           case 'bounce':
-            meshRef.current.position.y = Math.abs(Math.sin(timeRef.current)) * 0.3;
+            meshRef.current.position.y =
+              Math.abs(Math.sin(timeRef.current)) * 0.3;
             meshRef.current.rotation.y += 0.02 * speed;
             break;
           case 'spin':
@@ -171,7 +185,18 @@ export default function Micro3D({
       material.dispose();
       rendererRef.current?.dispose();
     };
-  }, [shape, color, size, animation, speed, wireframe, metalness, roughness, opacity, autoStart]);
+  }, [
+    shape,
+    color,
+    size,
+    animation,
+    speed,
+    wireframe,
+    metalness,
+    roughness,
+    opacity,
+    autoStart,
+  ]);
 
   return (
     <div

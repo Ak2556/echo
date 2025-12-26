@@ -9,7 +9,12 @@ describe('DairyFarmManagerApp - Records flows', () => {
 
     // Click the Records tab to render the records list
     const recordsTabs = screen.getAllByText(/Records/i);
-    const recordsTab = recordsTabs.find((el) => (el.textContent || '').trim().startsWith('📋') && !(el.textContent || '').includes('View')) || recordsTabs[0];
+    const recordsTab =
+      recordsTabs.find(
+        (el) =>
+          (el.textContent || '').trim().startsWith('📋') &&
+          !(el.textContent || '').includes('View')
+      ) || recordsTabs[0];
     fireEvent.click(recordsTab);
 
     // Confirm at least one record (by tag) is visible
@@ -22,7 +27,12 @@ describe('DairyFarmManagerApp - Records flows', () => {
 
     // Click the Records tab to render the records list
     const recordsTabs = screen.getAllByText(/Records/i);
-    const recordsTab = recordsTabs.find((el) => (el.textContent || '').trim().startsWith('📋') && !(el.textContent || '').includes('View')) || recordsTabs[0];
+    const recordsTab =
+      recordsTabs.find(
+        (el) =>
+          (el.textContent || '').trim().startsWith('📋') &&
+          !(el.textContent || '').includes('View')
+      ) || recordsTabs[0];
     fireEvent.click(recordsTab);
 
     // Find all delete buttons

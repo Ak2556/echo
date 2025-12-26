@@ -82,12 +82,15 @@ export default function HoverCard3D({
       <div
         style={{
           transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale(${isHovering ? 1.02 : 1})`,
-          transition: isHovering ? 'transform 0.1s ease-out' : 'transform 0.3s ease-out',
+          transition: isHovering
+            ? 'transform 0.1s ease-out'
+            : 'transform 0.3s ease-out',
           transformStyle: 'preserve-3d',
           position: 'relative',
-          boxShadow: isHovering && enableGlow
-            ? `0 10px 30px ${glowColor}, 0 0 20px ${glowColor}`
-            : '0 2px 8px rgba(0,0,0,0.1)',
+          boxShadow:
+            isHovering && enableGlow
+              ? `0 10px 30px ${glowColor}, 0 0 20px ${glowColor}`
+              : '0 2px 8px rgba(0,0,0,0.1)',
         }}
       >
         {children}

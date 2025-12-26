@@ -32,5 +32,5 @@ export const validateInput = {
   },
   temperature: (input: number): boolean => {
     return typeof input === 'number' && input >= 0 && input <= 2;
-  }
+  },
 };

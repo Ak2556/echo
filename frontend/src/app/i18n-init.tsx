@@ -14,7 +14,7 @@ export default function I18nInit() {
         console.error('Failed to initialize i18n:', error);
       }
     };
-    
+
     initI18n();
   }, []);
 

@@ -56,83 +56,98 @@ interface DiscoverPost {
 }
 
 export default function DiscoverPage() {
-  const [activeTab, setActiveTab] = useState<'trending' | 'people' | 'topics'>('trending');
+  const [activeTab, setActiveTab] = useState<'trending' | 'people' | 'topics'>(
+    'trending'
+  );
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'images' | 'videos' | 'articles'>('all');
+  const [selectedFilter, setSelectedFilter] = useState<
+    'all' | 'images' | 'videos' | 'articles'
+  >('all');
 
   // Mock data
-  const trendingTopics: TrendingTopic[] = useMemo(() => [
-    { id: '1', tag: '#WebDevelopment', posts: 15420, growth: 23.5 },
-    { id: '2', tag: '#AI', posts: 28900, growth: 45.2 },
-    { id: '3', tag: '#React', posts: 12100, growth: 18.7 },
-    { id: '4', tag: '#Design', posts: 19800, growth: 31.4 },
-    { id: '5', tag: '#Startups', posts: 8500, growth: 12.3 },
-  ], []);
+  const trendingTopics: TrendingTopic[] = useMemo(
+    () => [
+      { id: '1', tag: '#WebDevelopment', posts: 15420, growth: 23.5 },
+      { id: '2', tag: '#AI', posts: 28900, growth: 45.2 },
+      { id: '3', tag: '#React', posts: 12100, growth: 18.7 },
+      { id: '4', tag: '#Design', posts: 19800, growth: 31.4 },
+      { id: '5', tag: '#Startups', posts: 8500, growth: 12.3 },
+    ],
+    []
+  );
 
-  const suggestedUsers: SuggestedUser[] = useMemo(() => [
-    {
-      id: '1',
-      name: 'Sarah Chen',
-      username: '@sarahchen',
-      avatar: '👩‍💻',
-      bio: 'Full-stack developer | React enthusiast | Building in public',
-      followers: 12500,
-      isFollowing: false,
-    },
-    {
-      id: '2',
-      name: 'Alex Kumar',
-      username: '@alexkumar',
-      avatar: '👨‍🎨',
-      bio: 'UI/UX Designer | Creating delightful experiences',
-      followers: 8900,
-      isFollowing: false,
-    },
-    {
-      id: '3',
-      name: 'Maria Garcia',
-      username: '@mariagarcia',
-      avatar: '👩‍🔬',
-      bio: 'AI Researcher | ML Engineer | Tech for good',
-      followers: 15200,
-      isFollowing: false,
-    },
-  ], []);
+  const suggestedUsers: SuggestedUser[] = useMemo(
+    () => [
+      {
+        id: '1',
+        name: 'Sarah Chen',
+        username: '@sarahchen',
+        avatar: '👩‍💻',
+        bio: 'Full-stack developer | React enthusiast | Building in public',
+        followers: 12500,
+        isFollowing: false,
+      },
+      {
+        id: '2',
+        name: 'Alex Kumar',
+        username: '@alexkumar',
+        avatar: '👨‍🎨',
+        bio: 'UI/UX Designer | Creating delightful experiences',
+        followers: 8900,
+        isFollowing: false,
+      },
+      {
+        id: '3',
+        name: 'Maria Garcia',
+        username: '@mariagarcia',
+        avatar: '👩‍🔬',
+        bio: 'AI Researcher | ML Engineer | Tech for good',
+        followers: 15200,
+        isFollowing: false,
+      },
+    ],
+    []
+  );
 
-  const discoverPosts: DiscoverPost[] = useMemo(() => [
-    {
-      id: '1',
-      author: { name: 'John Doe', username: '@johndoe', avatar: '👨‍💼' },
-      content: 'Just launched my new project! Check out this amazing React component library 🚀',
-      image: '🎨',
-      likes: 234,
-      comments: 45,
-      views: 1200,
-      timestamp: '2h ago',
-      tags: ['#React', '#OpenSource'],
-    },
-    {
-      id: '2',
-      author: { name: 'Jane Smith', username: '@janesmith', avatar: '👩‍🚀' },
-      content: 'AI is transforming the way we build products. Here\'s what I learned this week...',
-      likes: 567,
-      comments: 89,
-      views: 2400,
-      timestamp: '4h ago',
-      tags: ['#AI', '#MachineLearning'],
-    },
-    {
-      id: '3',
-      author: { name: 'Mike Johnson', username: '@mikej', avatar: '👨‍🎓' },
-      content: 'New blog post: 10 Tips for Better Code Reviews 📝',
-      likes: 189,
-      comments: 23,
-      views: 890,
-      timestamp: '6h ago',
-      tags: ['#Coding', '#BestPractices'],
-    },
-  ], []);
+  const discoverPosts: DiscoverPost[] = useMemo(
+    () => [
+      {
+        id: '1',
+        author: { name: 'John Doe', username: '@johndoe', avatar: '👨‍💼' },
+        content:
+          'Just launched my new project! Check out this amazing React component library 🚀',
+        image: '🎨',
+        likes: 234,
+        comments: 45,
+        views: 1200,
+        timestamp: '2h ago',
+        tags: ['#React', '#OpenSource'],
+      },
+      {
+        id: '2',
+        author: { name: 'Jane Smith', username: '@janesmith', avatar: '👩‍🚀' },
+        content:
+          "AI is transforming the way we build products. Here's what I learned this week...",
+        likes: 567,
+        comments: 89,
+        views: 2400,
+        timestamp: '4h ago',
+        tags: ['#AI', '#MachineLearning'],
+      },
+      {
+        id: '3',
+        author: { name: 'Mike Johnson', username: '@mikej', avatar: '👨‍🎓' },
+        content: 'New blog post: 10 Tips for Better Code Reviews 📝',
+        likes: 189,
+        comments: 23,
+        views: 890,
+        timestamp: '6h ago',
+        tags: ['#Coding', '#BestPractices'],
+      },
+    ],
+    []
+  );
 
   const handleFollow = useCallback((userId: string) => {
     // Implement follow logic
@@ -145,10 +160,13 @@ export default function DiscoverPage() {
   }, []);
 
   const filteredPosts = useMemo(() => {
-    return discoverPosts.filter(post => {
-      const matchesSearch = searchQuery === '' ||
+    return discoverPosts.filter((post) => {
+      const matchesSearch =
+        searchQuery === '' ||
         post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+        post.tags.some((tag) =>
+          tag.toLowerCase().includes(searchQuery.toLowerCase())
+        );
 
       return matchesSearch;
     });
@@ -214,7 +232,9 @@ export default function DiscoverPage() {
             <div className="flex gap-2">
               <select
                 value={selectedFilter}
-                onChange={(e) => setSelectedFilter(e.target.value as typeof selectedFilter)}
+                onChange={(e) =>
+                  setSelectedFilter(e.target.value as typeof selectedFilter)
+                }
                 className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Content</option>
@@ -276,7 +296,13 @@ export default function DiscoverPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === 'trending' && (
-          <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
+          <div
+            className={
+              viewMode === 'grid'
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                : 'space-y-4'
+            }
+          >
             {filteredPosts.map((post) => (
               <article
                 key={post.id}

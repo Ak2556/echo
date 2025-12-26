@@ -759,8 +759,7 @@ export default function DiscoverPage() {
               fontSize: '2.5rem',
               fontWeight: 700,
               marginBottom: '0.5rem',
-              background:
-                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -768,10 +767,12 @@ export default function DiscoverPage() {
           >
             Discover Amazing Creators
           </h1>
-          <p style={{
-            color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
-            fontSize: '1.1rem'
-          }}>
+          <p
+            style={{
+              color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+              fontSize: '1.1rem',
+            }}
+          >
             Find and follow talented creators from around the world
           </p>
         </div>
@@ -828,10 +829,12 @@ export default function DiscoverPage() {
               >
                 +
               </div>
-              <span style={{
-                fontSize: '0.75rem',
-                color: colorMode === 'dark' ? '#9ca3af' : '#6b7280'
-              }}>
+              <span
+                style={{
+                  fontSize: '0.75rem',
+                  color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                }}
+              >
                 Add Story
               </span>
             </div>
@@ -901,8 +904,12 @@ export default function DiscoverPage() {
                   style={{
                     fontSize: '0.75rem',
                     color: story.hasNew
-                      ? (colorMode === 'dark' ? '#fff' : '#000')
-                      : (colorMode === 'dark' ? '#9ca3af' : '#6b7280'),
+                      ? colorMode === 'dark'
+                        ? '#fff'
+                        : '#000'
+                      : colorMode === 'dark'
+                        ? '#9ca3af'
+                        : '#6b7280',
                     maxWidth: '68px',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -982,9 +989,12 @@ export default function DiscoverPage() {
                       : 'rgba(255, 255, 255, 0.9)',
                 border: `2px solid ${activeTab === tab.id ? 'transparent' : colorMode === 'dark' ? '#333' : '#e0e0e0'}`,
                 borderRadius: '999px',
-                color: activeTab === tab.id
-                  ? 'white'
-                  : (colorMode === 'dark' ? '#e5e7eb' : '#374151'),
+                color:
+                  activeTab === tab.id
+                    ? 'white'
+                    : colorMode === 'dark'
+                      ? '#e5e7eb'
+                      : '#374151',
                 fontSize: '0.95rem',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -1269,7 +1279,8 @@ export default function DiscoverPage() {
                           <div
                             style={{
                               fontSize: '0.85rem',
-                              color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                              color:
+                                colorMode === 'dark' ? '#9ca3af' : '#6b7280',
                             }}
                           >
                             {item.username}
@@ -1277,7 +1288,8 @@ export default function DiscoverPage() {
                           <div
                             style={{
                               fontSize: '0.75rem',
-                              color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
+                              color:
+                                colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
                               marginTop: '0.25rem',
                             }}
                           >
@@ -1330,7 +1342,8 @@ export default function DiscoverPage() {
                           <div
                             style={{
                               fontSize: '0.85rem',
-                              color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                              color:
+                                colorMode === 'dark' ? '#9ca3af' : '#6b7280',
                             }}
                           >
                             {item.posts} posts
@@ -1489,14 +1502,21 @@ export default function DiscoverPage() {
                       >
                         <div style={{ fontSize: '0.85rem' }}>
                           <span
-                            style={{ color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed', fontWeight: 600 }}
+                            style={{
+                              color:
+                                colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
+                              fontWeight: 600,
+                            }}
                           >
                             {event.date}
                           </span>{' '}
                           • {event.time}
                         </div>
                         <div
-                          style={{ fontSize: '0.8rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}
+                          style={{
+                            fontSize: '0.8rem',
+                            color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                          }}
                         >
                           {event.attendees.toLocaleString()} interested
                         </div>
@@ -1620,7 +1640,10 @@ export default function DiscoverPage() {
                           {creator.name}
                         </div>
                         <div
-                          style={{ fontSize: '0.85rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}
+                          style={{
+                            fontSize: '0.85rem',
+                            color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                          }}
                         >
                           {creator.username}
                         </div>
@@ -1756,7 +1779,10 @@ export default function DiscoverPage() {
                           {event.title}
                         </h3>
                         <div
-                          style={{ fontSize: '0.85rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}
+                          style={{
+                            fontSize: '0.85rem',
+                            color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                          }}
                         >
                           by {event.host}
                         </div>
@@ -1922,7 +1948,10 @@ export default function DiscoverPage() {
                     {creator.name}
                     {creator.verified && (
                       <span
-                        style={{ color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed', fontSize: '1.1rem' }}
+                        style={{
+                          color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
+                          fontSize: '1.1rem',
+                        }}
                       >
                         ✓
                       </span>
@@ -1968,7 +1997,10 @@ export default function DiscoverPage() {
                         {creator.followers}
                       </div>
                       <div
-                        style={{ fontSize: '0.75rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}
+                        style={{
+                          fontSize: '0.75rem',
+                          color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                        }}
                       >
                         Followers
                       </div>
@@ -1984,7 +2016,10 @@ export default function DiscoverPage() {
                         {creator.posts}
                       </div>
                       <div
-                        style={{ fontSize: '0.75rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}
+                        style={{
+                          fontSize: '0.75rem',
+                          color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                        }}
                       >
                         Posts
                       </div>
@@ -2010,7 +2045,9 @@ export default function DiscoverPage() {
                       width: '100%',
                       padding: '0.75rem 1.5rem',
                       background: followedCreators.includes(creator.id)
-                        ? (colorMode === 'dark' ? '#374151' : '#9ca3af')
+                        ? colorMode === 'dark'
+                          ? '#374151'
+                          : '#9ca3af'
                         : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                       color: 'white',
                       border: 'none',
@@ -2093,7 +2130,12 @@ export default function DiscoverPage() {
                     <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>
                       {hashtag.posts}
                     </div>
-                    <div style={{ fontSize: '0.85rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}>
+                    <div
+                      style={{
+                        fontSize: '0.85rem',
+                        color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                      }}
+                    >
                       Posts
                     </div>
                   </div>
@@ -2123,12 +2165,14 @@ export default function DiscoverPage() {
                     transition: 'all 0.2s',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = colorMode === 'dark' ? '#a78bfa' : '#7c3aed';
+                    e.currentTarget.style.background =
+                      colorMode === 'dark' ? '#a78bfa' : '#7c3aed';
                     e.currentTarget.style.color = '#fff';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = colorMode === 'dark' ? '#a78bfa' : '#7c3aed';
+                    e.currentTarget.style.color =
+                      colorMode === 'dark' ? '#a78bfa' : '#7c3aed';
                   }}
                 >
                   Explore Posts
@@ -2636,10 +2680,20 @@ export default function DiscoverPage() {
                   }}
                 >
                   <span style={{ fontSize: '2.5rem' }}>🖼️</span>
-                  <span style={{ fontWeight: 600, color: colorMode === 'dark' ? '#f3f4f6' : '#111827' }}>
+                  <span
+                    style={{
+                      fontWeight: 600,
+                      color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
+                    }}
+                  >
                     Choose from Gallery
                   </span>
-                  <span style={{ fontSize: '0.8rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}>
+                  <span
+                    style={{
+                      fontSize: '0.8rem',
+                      color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                    }}
+                  >
                     Select photo or video
                   </span>
                 </button>
@@ -2679,10 +2733,20 @@ export default function DiscoverPage() {
                   }}
                 >
                   <span style={{ fontSize: '2.5rem' }}>📸</span>
-                  <span style={{ fontWeight: 600, color: colorMode === 'dark' ? '#f3f4f6' : '#111827' }}>
+                  <span
+                    style={{
+                      fontWeight: 600,
+                      color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
+                    }}
+                  >
                     Take Photo
                   </span>
-                  <span style={{ fontSize: '0.8rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}>
+                  <span
+                    style={{
+                      fontSize: '0.8rem',
+                      color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                    }}
+                  >
                     Use camera
                   </span>
                 </button>
@@ -2901,10 +2965,20 @@ export default function DiscoverPage() {
                   }}
                 >
                   <span style={{ fontSize: '2.5rem' }}>🎬</span>
-                  <span style={{ fontWeight: 600, color: colorMode === 'dark' ? '#f3f4f6' : '#111827' }}>
+                  <span
+                    style={{
+                      fontWeight: 600,
+                      color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
+                    }}
+                  >
                     Choose Video
                   </span>
-                  <span style={{ fontSize: '0.8rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}>
+                  <span
+                    style={{
+                      fontSize: '0.8rem',
+                      color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                    }}
+                  >
                     Select from gallery
                   </span>
                 </button>
@@ -2943,10 +3017,20 @@ export default function DiscoverPage() {
                   }}
                 >
                   <span style={{ fontSize: '2.5rem' }}>🎥</span>
-                  <span style={{ fontWeight: 600, color: colorMode === 'dark' ? '#f3f4f6' : '#111827' }}>
+                  <span
+                    style={{
+                      fontWeight: 600,
+                      color: colorMode === 'dark' ? '#f3f4f6' : '#111827',
+                    }}
+                  >
                     Record Video
                   </span>
-                  <span style={{ fontSize: '0.8rem', color: colorMode === 'dark' ? '#9ca3af' : '#6b7280' }}>
+                  <span
+                    style={{
+                      fontSize: '0.8rem',
+                      color: colorMode === 'dark' ? '#9ca3af' : '#6b7280',
+                    }}
+                  >
                     Use camera
                   </span>
                 </button>
@@ -2970,7 +3054,13 @@ export default function DiscoverPage() {
                       margin: 0,
                     }}
                   >
-                    <strong style={{ color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed' }}>Tips:</strong>{' '}
+                    <strong
+                      style={{
+                        color: colorMode === 'dark' ? '#a78bfa' : '#7c3aed',
+                      }}
+                    >
+                      Tips:
+                    </strong>{' '}
                     Best echoes are 15-60 seconds. Vertical videos work best!
                   </p>
                 </div>

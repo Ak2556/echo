@@ -9,7 +9,8 @@
 
 import { getCSRFToken } from './csrf';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
 interface RequestOptions extends RequestInit {
   requiresAuth?: boolean;
@@ -39,7 +40,9 @@ class APIClient {
    * @deprecated Use httpOnly cookies instead
    */
   getAccessToken(): string | null {
-    console.warn('getAccessToken is deprecated. Tokens are now in httpOnly cookies.');
+    console.warn(
+      'getAccessToken is deprecated. Tokens are now in httpOnly cookies.'
+    );
     return null;
   }
 
@@ -48,7 +51,9 @@ class APIClient {
    * @deprecated Use httpOnly cookies instead
    */
   setAccessToken(token: string | null): void {
-    console.warn('setAccessToken is deprecated. Tokens are now in httpOnly cookies.');
+    console.warn(
+      'setAccessToken is deprecated. Tokens are now in httpOnly cookies.'
+    );
     // No-op: tokens are managed by backend via httpOnly cookies
   }
 
@@ -67,9 +72,10 @@ class APIClient {
   ): Promise<T> {
     const { requiresAuth = false, headers = {}, ...restOptions } = options;
 
-    const headersObj = headers instanceof Headers
-      ? Object.fromEntries(headers.entries())
-      : headers || {};
+    const headersObj =
+      headers instanceof Headers
+        ? Object.fromEntries(headers.entries())
+        : headers || {};
 
     const requestHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -102,7 +108,8 @@ class APIClient {
       if (isJSON) {
         try {
           const errorData = await response.json();
-          errorMessage = errorData.message || errorData.detail || response.statusText;
+          errorMessage =
+            errorData.message || errorData.detail || response.statusText;
           errorDetail = errorData.detail;
         } catch {
           // If JSON parsing fails, use statusText
@@ -119,7 +126,11 @@ class APIClient {
     return this.request<T>(endpoint, { ...options, method: 'GET' });
   }
 
-  async post<T>(endpoint: string, data?: unknown, options?: RequestOptions): Promise<T> {
+  async post<T>(
+    endpoint: string,
+    data?: unknown,
+    options?: RequestOptions
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: 'POST',
@@ -127,7 +138,11 @@ class APIClient {
     });
   }
 
-  async put<T>(endpoint: string, data?: unknown, options?: RequestOptions): Promise<T> {
+  async put<T>(
+    endpoint: string,
+    data?: unknown,
+    options?: RequestOptions
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PUT',
@@ -161,7 +176,11 @@ class APIClient {
 
   async logout(everywhere: boolean = false): Promise<void> {
     try {
-      await this.post('/api/auth/logout', { everywhere }, { requiresAuth: true });
+      await this.post(
+        '/api/auth/logout',
+        { everywhere },
+        { requiresAuth: true }
+      );
     } finally {
       this.setAccessToken(null);
       if (typeof window !== 'undefined') {
@@ -172,11 +191,16 @@ class APIClient {
   }
 
   async refreshToken(): Promise<any> {
-    const refreshToken = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null;
+    const refreshToken =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('refresh_token')
+        : null;
     if (!refreshToken) {
       throw new Error('No refresh token available');
     }
-    const response = await this.post<any>('/api/auth/refresh', { refresh_token: refreshToken });
+    const response = await this.post<any>('/api/auth/refresh', {
+      refresh_token: refreshToken,
+    });
     if (response.access_token) {
       this.setAccessToken(response.access_token);
     }
@@ -204,7 +228,9 @@ class APIClient {
   }
 
   async verify2FASetup(data: { code: string }): Promise<any> {
-    return this.post('/api/auth/totp/verify-setup', data, { requiresAuth: true });
+    return this.post('/api/auth/totp/verify-setup', data, {
+      requiresAuth: true,
+    });
   }
 
   async getSessions(): Promise<any> {
