@@ -1,0 +1,208 @@
+a7ce1b4f02e42dd7c1118e0b480ab04e
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return ViewRecordModal;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const _react = /*#__PURE__*/ _interop_require_default(require("react"));
+const _translations = require("./translations");
+function _interop_require_default(obj) {
+    return obj && obj.__esModule ? obj : {
+        default: obj
+    };
+}
+function ViewRecordModal({ visible, record, language, onClose }) {
+    if (!visible) return null;
+    const t = _translations.translations[language];
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)("div", {
+        style: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+        },
+        onClick: onClose,
+        children: /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+            role: "dialog",
+            "aria-modal": "true",
+            style: {
+                background: 'var(--bg)',
+                padding: '1.5rem',
+                borderRadius: '12px',
+                maxWidth: '600px',
+                width: '90%',
+                maxHeight: '90vh',
+                overflowY: 'auto'
+            },
+            onClick: (e)=>e.stopPropagation(),
+            children: [
+                /*#__PURE__*/ (0, _jsxruntime.jsx)("h3", {
+                    style: {
+                        margin: '0 0 1rem 0'
+                    },
+                    children: language === 'english' ? 'View Cattle Record' : 'ਰਿਕਾਰਡ ਦੇ ਵੇਰਵੇ'
+                }),
+                !record ? /*#__PURE__*/ (0, _jsxruntime.jsx)("div", {
+                    children: language === 'english' ? 'Loading...' : 'ਲੋਡ ਕਰ ਰਿਹਾ ਹੈ...'
+                }) : /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                    style: {
+                        display: 'grid',
+                        gap: '0.5rem'
+                    },
+                    children: [
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsxs)("strong", {
+                                    children: [
+                                        t.breed,
+                                        ":"
+                                    ]
+                                }),
+                                " ",
+                                record.breed
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsxs)("strong", {
+                                    children: [
+                                        t.tagNo,
+                                        ":"
+                                    ]
+                                }),
+                                " ",
+                                record.tagNo
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsxs)("strong", {
+                                    children: [
+                                        t.birthDate,
+                                        ":"
+                                    ]
+                                }),
+                                " ",
+                                record.birthDate
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsxs)("strong", {
+                                    children: [
+                                        t.motherCode,
+                                        ":"
+                                    ]
+                                }),
+                                " ",
+                                record.motherCode
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsxs)("strong", {
+                                    children: [
+                                        t.fatherName,
+                                        ":"
+                                    ]
+                                }),
+                                " ",
+                                record.fatherName
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsxs)("strong", {
+                                    children: [
+                                        t.lactation,
+                                        ":"
+                                    ]
+                                }),
+                                " ",
+                                record.lactation
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsxs)("strong", {
+                                    children: [
+                                        t.aiLastCheckup,
+                                        ":"
+                                    ]
+                                }),
+                                " ",
+                                record.aiLastCheckup
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsxs)("strong", {
+                                    children: [
+                                        t.heatCycle,
+                                        ":"
+                                    ]
+                                }),
+                                " ",
+                                record.heatCycle
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsxs)("strong", {
+                                    children: [
+                                        t.deworming,
+                                        ":"
+                                    ]
+                                }),
+                                " ",
+                                record.deworming
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsxs)("strong", {
+                                    children: [
+                                        t.semenDetail,
+                                        ":"
+                                    ]
+                                }),
+                                " ",
+                                record.semenDetail
+                            ]
+                        })
+                    ]
+                }),
+                /*#__PURE__*/ (0, _jsxruntime.jsx)("div", {
+                    style: {
+                        marginTop: '1rem',
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        gap: '0.5rem'
+                    },
+                    children: /*#__PURE__*/ (0, _jsxruntime.jsx)("button", {
+                        type: "button",
+                        onClick: onClose,
+                        style: {
+                            padding: '0.5rem 1rem'
+                        },
+                        children: t.close
+                    })
+                })
+            ]
+        })
+    });
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3JrL2VjaG8vZWNoby9mcm9udGVuZC9zcmMvY29tcG9uZW50cy9taW5pYXBwcy9WaWV3UmVjb3JkTW9kYWwudHN4Il0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBSZWFjdCBmcm9tICdyZWFjdCc7XG5pbXBvcnQgeyB0cmFuc2xhdGlvbnMgfSBmcm9tICcuL3RyYW5zbGF0aW9ucyc7XG5cbnR5cGUgUHJvcHMgPSB7XG4gIHZpc2libGU6IGJvb2xlYW47XG4gIHJlY29yZDogYW55IHwgbnVsbDtcbiAgbGFuZ3VhZ2U6ICdlbmdsaXNoJyB8ICdwdW5qYWJpJztcbiAgb25DbG9zZTogKCkgPT4gdm9pZDtcbn07XG5cbmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIFZpZXdSZWNvcmRNb2RhbCh7XG4gIHZpc2libGUsXG4gIHJlY29yZCxcbiAgbGFuZ3VhZ2UsXG4gIG9uQ2xvc2UsXG59OiBQcm9wcykge1xuICBpZiAoIXZpc2libGUpIHJldHVybiBudWxsO1xuICBjb25zdCB0ID0gdHJhbnNsYXRpb25zW2xhbmd1YWdlXTtcblxuICByZXR1cm4gKFxuICAgIDxkaXZcbiAgICAgIHN0eWxlPXt7XG4gICAgICAgIHBvc2l0aW9uOiAnZml4ZWQnLFxuICAgICAgICB0b3A6IDAsXG4gICAgICAgIGxlZnQ6IDAsXG4gICAgICAgIHJpZ2h0OiAwLFxuICAgICAgICBib3R0b206IDAsXG4gICAgICAgIGJhY2tncm91bmQ6ICdyZ2JhKDAsIDAsIDAsIDAuNSknLFxuICAgICAgICBkaXNwbGF5OiAnZmxleCcsXG4gICAgICAgIGFsaWduSXRlbXM6ICdjZW50ZXInLFxuICAgICAgICBqdXN0aWZ5Q29udGVudDogJ2NlbnRlcicsXG4gICAgICAgIHpJbmRleDogMTAwMCxcbiAgICAgIH19XG4gICAgICBvbkNsaWNrPXtvbkNsb3NlfVxuICAgID5cbiAgICAgIDxkaXZcbiAgICAgICAgcm9sZT1cImRpYWxvZ1wiXG4gICAgICAgIGFyaWEtbW9kYWw9XCJ0cnVlXCJcbiAgICAgICAgc3R5bGU9e3tcbiAgICAgICAgICBiYWNrZ3JvdW5kOiAndmFyKC0tYmcpJyxcbiAgICAgICAgICBwYWRkaW5nOiAnMS41cmVtJyxcbiAgICAgICAgICBib3JkZXJSYWRpdXM6ICcxMnB4JyxcbiAgICAgICAgICBtYXhXaWR0aDogJzYwMHB4JyxcbiAgICAgICAgICB3aWR0aDogJzkwJScsXG4gICAgICAgICAgbWF4SGVpZ2h0OiAnOTB2aCcsXG4gICAgICAgICAgb3ZlcmZsb3dZOiAnYXV0bycsXG4gICAgICAgIH19XG4gICAgICAgIG9uQ2xpY2s9eyhlKSA9PiBlLnN0b3BQcm9wYWdhdGlvbigpfVxuICAgICAgPlxuICAgICAgICA8aDMgc3R5bGU9e3sgbWFyZ2luOiAnMCAwIDFyZW0gMCcgfX0+XG4gICAgICAgICAge2xhbmd1YWdlID09PSAnZW5nbGlzaCcgPyAnVmlldyBDYXR0bGUgUmVjb3JkJyA6ICfgqLDgqL/gqJXgqL7gqLDgqKEg4Kim4KmHIOCoteCph+CosOCoteCphyd9XG4gICAgICAgIDwvaDM+XG4gICAgICAgIHshcmVjb3JkID8gKFxuICAgICAgICAgIDxkaXY+XG4gICAgICAgICAgICB7bGFuZ3VhZ2UgPT09ICdlbmdsaXNoJyA/ICdMb2FkaW5nLi4uJyA6ICfgqLLgqYvgqKEg4KiV4KiwIOCosOCov+CoueCoviDgqLngqYguLi4nfVxuICAgICAgICAgIDwvZGl2PlxuICAgICAgICApIDogKFxuICAgICAgICAgIDxkaXYgc3R5bGU9e3sgZGlzcGxheTogJ2dyaWQnLCBnYXA6ICcwLjVyZW0nIH19PlxuICAgICAgICAgICAgPGRpdj5cbiAgICAgICAgICAgICAgPHN0cm9uZz57dC5icmVlZH06PC9zdHJvbmc+IHtyZWNvcmQuYnJlZWR9XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDxkaXY+XG4gICAgICAgICAgICAgIDxzdHJvbmc+e3QudGFnTm99Ojwvc3Ryb25nPiB7cmVjb3JkLnRhZ05vfVxuICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgICA8c3Ryb25nPnt0LmJpcnRoRGF0ZX06PC9zdHJvbmc+IHtyZWNvcmQuYmlydGhEYXRlfVxuICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgICA8c3Ryb25nPnt0Lm1vdGhlckNvZGV9Ojwvc3Ryb25nPiB7cmVjb3JkLm1vdGhlckNvZGV9XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDxkaXY+XG4gICAgICAgICAgICAgIDxzdHJvbmc+e3QuZmF0aGVyTmFtZX06PC9zdHJvbmc+IHtyZWNvcmQuZmF0aGVyTmFtZX1cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgPGRpdj5cbiAgICAgICAgICAgICAgPHN0cm9uZz57dC5sYWN0YXRpb259Ojwvc3Ryb25nPiB7cmVjb3JkLmxhY3RhdGlvbn1cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgPGRpdj5cbiAgICAgICAgICAgICAgPHN0cm9uZz57dC5haUxhc3RDaGVja3VwfTo8L3N0cm9uZz4ge3JlY29yZC5haUxhc3RDaGVja3VwfVxuICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgICA8c3Ryb25nPnt0LmhlYXRDeWNsZX06PC9zdHJvbmc+IHtyZWNvcmQuaGVhdEN5Y2xlfVxuICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgICA8c3Ryb25nPnt0LmRld29ybWluZ306PC9zdHJvbmc+IHtyZWNvcmQuZGV3b3JtaW5nfVxuICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgICA8c3Ryb25nPnt0LnNlbWVuRGV0YWlsfTo8L3N0cm9uZz4ge3JlY29yZC5zZW1lbkRldGFpbH1cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgIDwvZGl2PlxuICAgICAgICApfVxuXG4gICAgICAgIDxkaXZcbiAgICAgICAgICBzdHlsZT17e1xuICAgICAgICAgICAgbWFyZ2luVG9wOiAnMXJlbScsXG4gICAgICAgICAgICBkaXNwbGF5OiAnZmxleCcsXG4gICAgICAgICAgICBqdXN0aWZ5Q29udGVudDogJ2ZsZXgtZW5kJyxcbiAgICAgICAgICAgIGdhcDogJzAuNXJlbScsXG4gICAgICAgICAgfX1cbiAgICAgICAgPlxuICAgICAgICAgIDxidXR0b25cbiAgICAgICAgICAgIHR5cGU9XCJidXR0b25cIlxuICAgICAgICAgICAgb25DbGljaz17b25DbG9zZX1cbiAgICAgICAgICAgIHN0eWxlPXt7IHBhZGRpbmc6ICcwLjVyZW0gMXJlbScgfX1cbiAgICAgICAgICA+XG4gICAgICAgICAgICB7dC5jbG9zZX1cbiAgICAgICAgICA8L2J1dHRvbj5cbiAgICAgICAgPC9kaXY+XG4gICAgICA8L2Rpdj5cbiAgICA8L2Rpdj5cbiAgKTtcbn1cbiJdLCJuYW1lcyI6WyJWaWV3UmVjb3JkTW9kYWwiLCJ2aXNpYmxlIiwicmVjb3JkIiwibGFuZ3VhZ2UiLCJvbkNsb3NlIiwidCIsInRyYW5zbGF0aW9ucyIsImRpdiIsInN0eWxlIiwicG9zaXRpb24iLCJ0b3AiLCJsZWZ0IiwicmlnaHQiLCJib3R0b20iLCJiYWNrZ3JvdW5kIiwiZGlzcGxheSIsImFsaWduSXRlbXMiLCJqdXN0aWZ5Q29udGVudCIsInpJbmRleCIsIm9uQ2xpY2siLCJyb2xlIiwiYXJpYS1tb2RhbCIsInBhZGRpbmciLCJib3JkZXJSYWRpdXMiLCJtYXhXaWR0aCIsIndpZHRoIiwibWF4SGVpZ2h0Iiwib3ZlcmZsb3dZIiwiZSIsInN0b3BQcm9wYWdhdGlvbiIsImgzIiwibWFyZ2luIiwiZ2FwIiwic3Ryb25nIiwiYnJlZWQiLCJ0YWdObyIsImJpcnRoRGF0ZSIsIm1vdGhlckNvZGUiLCJmYXRoZXJOYW1lIiwibGFjdGF0aW9uIiwiYWlMYXN0Q2hlY2t1cCIsImhlYXRDeWNsZSIsImRld29ybWluZyIsInNlbWVuRGV0YWlsIiwibWFyZ2luVG9wIiwi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

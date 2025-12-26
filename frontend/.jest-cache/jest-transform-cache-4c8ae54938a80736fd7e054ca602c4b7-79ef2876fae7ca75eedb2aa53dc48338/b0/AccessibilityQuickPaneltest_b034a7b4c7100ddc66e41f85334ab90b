@@ -1,0 +1,148 @@
+be644740209bbb49e7939a96259c9e26
+/**
+ * Tests for AccessibilityQuickPanel component
+ */ "use strict";
+// Mock the AccessibilityQuickPanel component since it has complex dependencies
+jest.mock('../AccessibilityQuickPanel', ()=>{
+    return function MockAccessibilityQuickPanel({ isOpen, onClose }) {
+        if (!isOpen) return null;
+        return /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+            "data-testid": "accessibility-panel",
+            children: [
+                /*#__PURE__*/ (0, _jsxruntime.jsx)("h2", {
+                    children: "Accessibility"
+                }),
+                /*#__PURE__*/ (0, _jsxruntime.jsx)("p", {
+                    children: "Score: 85%"
+                }),
+                /*#__PURE__*/ (0, _jsxruntime.jsx)("button", {
+                    onClick: onClose,
+                    "aria-label": "Close accessibility panel",
+                    children: "Close"
+                }),
+                /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                    children: [
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)("button", {
+                            children: "Visual"
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)("button", {
+                            children: "Audio"
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)("button", {
+                            children: "Keyboard"
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)("button", {
+                            children: "Test"
+                        })
+                    ]
+                }),
+                /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                    children: [
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)("p", {
+                            children: "High Contrast Mode"
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)("p", {
+                            children: "Large Text"
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)("p", {
+                            children: "Reduce Motion"
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)("p", {
+                            children: "Font Size"
+                        })
+                    ]
+                }),
+                /*#__PURE__*/ (0, _jsxruntime.jsxs)("div", {
+                    children: [
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)("button", {
+                            children: "Reset"
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)("button", {
+                            children: "Export"
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)("button", {
+                            children: "Settings"
+                        })
+                    ]
+                })
+            ]
+        });
+    };
+});
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+const _jsxruntime = require("react/jsx-runtime");
+const _react = /*#__PURE__*/ _interop_require_default(require("react"));
+const _react1 = require("@testing-library/react");
+require("@testing-library/jest-dom");
+const _AccessibilityQuickPanel = /*#__PURE__*/ _interop_require_default(require("../AccessibilityQuickPanel"));
+function _interop_require_default(obj) {
+    return obj && obj.__esModule ? obj : {
+        default: obj
+    };
+}
+describe('AccessibilityQuickPanel', ()=>{
+    const defaultProps = {
+        isOpen: true,
+        onClose: jest.fn()
+    };
+    beforeEach(()=>{
+        jest.clearAllMocks();
+    });
+    it('renders when open', ()=>{
+        (0, _react1.render)(/*#__PURE__*/ (0, _jsxruntime.jsx)(_AccessibilityQuickPanel.default, {
+            ...defaultProps
+        }));
+        expect(_react1.screen.getByText('Accessibility')).toBeInTheDocument();
+        expect(_react1.screen.getByText('Score: 85%')).toBeInTheDocument();
+    });
+    it('does not render when closed', ()=>{
+        (0, _react1.render)(/*#__PURE__*/ (0, _jsxruntime.jsx)(_AccessibilityQuickPanel.default, {
+            ...defaultProps,
+            isOpen: false
+        }));
+        expect(_react1.screen.queryByText('Accessibility')).not.toBeInTheDocument();
+    });
+    it('displays all tabs', ()=>{
+        (0, _react1.render)(/*#__PURE__*/ (0, _jsxruntime.jsx)(_AccessibilityQuickPanel.default, {
+            ...defaultProps
+        }));
+        expect(_react1.screen.getByText('Visual')).toBeInTheDocument();
+        expect(_react1.screen.getByText('Audio')).toBeInTheDocument();
+        expect(_react1.screen.getByText('Keyboard')).toBeInTheDocument();
+        expect(_react1.screen.getByText('Test')).toBeInTheDocument();
+    });
+    it('displays visual accessibility controls', ()=>{
+        (0, _react1.render)(/*#__PURE__*/ (0, _jsxruntime.jsx)(_AccessibilityQuickPanel.default, {
+            ...defaultProps
+        }));
+        expect(_react1.screen.getByText('High Contrast Mode')).toBeInTheDocument();
+        expect(_react1.screen.getByText('Large Text')).toBeInTheDocument();
+        expect(_react1.screen.getByText('Reduce Motion')).toBeInTheDocument();
+        expect(_react1.screen.getByText('Font Size')).toBeInTheDocument();
+    });
+    it('has proper ARIA attributes', ()=>{
+        (0, _react1.render)(/*#__PURE__*/ (0, _jsxruntime.jsx)(_AccessibilityQuickPanel.default, {
+            ...defaultProps
+        }));
+        const closeButton = _react1.screen.getByLabelText('Close accessibility panel');
+        expect(closeButton).toHaveAttribute('aria-label', 'Close accessibility panel');
+    });
+    it('displays accessibility score', ()=>{
+        (0, _react1.render)(/*#__PURE__*/ (0, _jsxruntime.jsx)(_AccessibilityQuickPanel.default, {
+            ...defaultProps
+        }));
+        expect(_react1.screen.getByText('Score: 85%')).toBeInTheDocument();
+    });
+    it('shows footer action buttons', ()=>{
+        (0, _react1.render)(/*#__PURE__*/ (0, _jsxruntime.jsx)(_AccessibilityQuickPanel.default, {
+            ...defaultProps
+        }));
+        expect(_react1.screen.getByText('Reset')).toBeInTheDocument();
+        expect(_react1.screen.getByText('Export')).toBeInTheDocument();
+        expect(_react1.screen.getByText('Settings')).toBeInTheDocument();
+    });
+});
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3JrL2VjaG8vZWNoby9mcm9udGVuZC9zcmMvY29tcG9uZW50cy9fX3Rlc3RzX18vQWNjZXNzaWJpbGl0eVF1aWNrUGFuZWwudGVzdC50c3giXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBUZXN0cyBmb3IgQWNjZXNzaWJpbGl0eVF1aWNrUGFuZWwgY29tcG9uZW50XG4gKi9cblxuaW1wb3J0IFJlYWN0IGZyb20gJ3JlYWN0JztcbmltcG9ydCB7IHJlbmRlciwgc2NyZWVuIH0gZnJvbSAnQHRlc3RpbmctbGlicmFyeS9yZWFjdCc7XG5pbXBvcnQgJ0B0ZXN0aW5nLWxpYnJhcnkvamVzdC1kb20nO1xuXG4vLyBNb2NrIHRoZSBBY2Nlc3NpYmlsaXR5UXVpY2tQYW5lbCBjb21wb25lbnQgc2luY2UgaXQgaGFzIGNvbXBsZXggZGVwZW5kZW5jaWVzXG5qZXN0Lm1vY2soJy4uL0FjY2Vzc2liaWxpdHlRdWlja1BhbmVsJywgKCkgPT4ge1xuICByZXR1cm4gZnVuY3Rpb24gTW9ja0FjY2Vzc2liaWxpdHlRdWlja1BhbmVsKHtcbiAgICBpc09wZW4sXG4gICAgb25DbG9zZSxcbiAgfToge1xuICAgIGlzT3BlbjogYm9vbGVhbjtcbiAgICBvbkNsb3NlOiAoKSA9PiB2b2lkO1xuICB9KSB7XG4gICAgaWYgKCFpc09wZW4pIHJldHVybiBudWxsO1xuXG4gICAgcmV0dXJuIChcbiAgICAgIDxkaXYgZGF0YS10ZXN0aWQ9XCJhY2Nlc3NpYmlsaXR5LXBhbmVsXCI+XG4gICAgICAgIDxoMj5BY2Nlc3NpYmlsaXR5PC9oMj5cbiAgICAgICAgPHA+U2NvcmU6IDg1JTwvcD5cbiAgICAgICAgPGJ1dHRvbiBvbkNsaWNrPXtvbkNsb3NlfSBhcmlhLWxhYmVsPVwiQ2xvc2UgYWNjZXNzaWJpbGl0eSBwYW5lbFwiPlxuICAgICAgICAgIENsb3NlXG4gICAgICAgIDwvYnV0dG9uPlxuICAgICAgICA8ZGl2PlxuICAgICAgICAgIDxidXR0b24+VmlzdWFsPC9idXR0b24+XG4gICAgICAgICAgPGJ1dHRvbj5BdWRpbzwvYnV0dG9uPlxuICAgICAgICAgIDxidXR0b24+S2V5Ym9hcmQ8L2J1dHRvbj5cbiAgICAgICAgICA8YnV0dG9uPlRlc3Q8L2J1dHRvbj5cbiAgICAgICAgPC9kaXY+XG4gICAgICAgIDxkaXY+XG4gICAgICAgICAgPHA+SGlnaCBDb250cmFzdCBNb2RlPC9wPlxuICAgICAgICAgIDxwPkxhcmdlIFRleHQ8L3A+XG4gICAgICAgICAgPHA+UmVkdWNlIE1vdGlvbjwvcD5cbiAgICAgICAgICA8cD5Gb250IFNpemU8L3A+XG4gICAgICAgIDwvZGl2PlxuICAgICAgICA8ZGl2PlxuICAgICAgICAgIDxidXR0b24+UmVzZXQ8L2J1dHRvbj5cbiAgICAgICAgICA8YnV0dG9uPkV4cG9ydDwvYnV0dG9uPlxuICAgICAgICAgIDxidXR0b24+U2V0dGluZ3M8L2J1dHRvbj5cbiAgICAgICAgPC9kaXY+XG4gICAgICA8L2Rpdj5cbiAgICApO1xuICB9O1xufSk7XG5cbi8vIEltcG9ydCB0aGUgbW9ja2VkIGNvbXBvbmVudFxuaW1wb3J0IEFjY2Vzc2liaWxpdHlRdWlja1BhbmVsIGZyb20gJy4uL0FjY2Vzc2liaWxpdHlRdWlja1BhbmVsJztcblxuZGVzY3JpYmUoJ0FjY2Vzc2liaWxpdHlRdWlja1BhbmVsJywgKCkgPT4ge1xuICBjb25zdCBkZWZhdWx0UHJvcHMgPSB7XG4gICAgaXNPcGVuOiB0cnVlLFxuICAgIG9uQ2xvc2U6IGplc3QuZm4oKSxcbiAgfTtcblxuICBiZWZvcmVFYWNoKCgpID0+IHtcbiAgICBqZXN0LmNsZWFyQWxsTW9ja3MoKTtcbiAgfSk7XG5cbiAgaXQoJ3JlbmRlcnMgd2hlbiBvcGVuJywgKCkgPT4ge1xuICAgIHJlbmRlcig8QWNjZXNzaWJpbGl0eVF1aWNrUGFuZWwgey4uLmRlZmF1bHRQcm9wc30gLz4pO1xuXG4gICAgZXhwZWN0KHNjcmVlbi5nZXRCeVRleHQoJ0FjY2Vzc2liaWxpdHknKSkudG9CZUluVGhlRG9jdW1lbnQoKTtcbiAgICBleHBlY3Qoc2NyZWVuLmdldEJ5VGV4dCgnU2NvcmU6IDg1JScpKS50b0JlSW5UaGVEb2N1bWVudCgpO1xuICB9KTtcblxuICBpdCgnZG9lcyBub3QgcmVuZGVyIHdoZW4gY2xvc2VkJywgKCkgPT4ge1xuICAgIHJlbmRlcig8QWNjZXNzaWJpbGl0eVF1aWNrUGFuZWwgey4uLmRlZmF1bHRQcm9wc30gaXNPcGVuPXtmYWxzZX0gLz4pO1xuXG4gICAgZXhwZWN0KHNjcmVlbi5xdWVyeUJ5VGV4dCgnQWNjZXNzaWJpbGl0eScpKS5ub3QudG9CZUluVGhlRG9jdW1lbnQoKTtcbiAgfSk7XG5cbiAgaXQoJ2Rpc3BsYXlzIGFsbCB0YWJzJywgKCkgPT4ge1xuICAgIHJlbmRlcig8QWNjZXNzaWJpbGl0eVF1aWNrUGFuZWwgey4uLmRlZmF1bHRQcm9wc30gLz4pO1xuXG4gICAgZXhwZWN0KHNjcmVlbi5nZXRCeVRleHQoJ1Zpc3VhbCcpKS50b0JlSW5UaGVEb2N1bWVudCgpO1xuICAgIGV4cGVjdChzY3JlZW4uZ2V0QnlUZXh0KCdBdWRpbycpKS50b0JlSW5UaGVEb2N1bWVudCgpO1xuICAgIGV4cGVjdChzY3JlZW4uZ2V0QnlUZXh0KCdLZXlib2FyZCcpKS50b0JlSW5UaGVEb2N1bWVudCgpO1xuICAgIGV4cGVjdChzY3JlZW4uZ2V0QnlUZXh0KCdUZXN0JykpLnRvQmVJblRoZURvY3VtZW50KCk7XG4gIH0pO1xuXG4gIGl0KCdkaXNwbGF5cyB2aXN1YWwgYWNjZXNzaWJpbGl0eSBjb250cm9scycsICgpID0+IHtcbiAgICByZW5kZXIoPEFjY2Vzc2liaWxpdHlRdWlja1BhbmVsIHsuLi5kZWZhdWx0UHJvcHN9IC8+KTtcblxuICAgIGV4cGVjdChzY3JlZW4uZ2V0QnlUZXh0KCdIaWdoIENvbnRyYXN0IE1vZGUnKSkudG9CZUluVGhlRG9jdW1lbnQoKTtcbiAgICBleHBlY3Qoc2NyZWVuLmdldEJ5VGV4dCgnTGFyZ2UgVGV4dCcpKS50b0JlSW5UaGVEb2N1bWVudCgpO1xuICAgIGV4cGVjdChzY3JlZW4uZ2V0QnlUZXh0KCdSZWR1Y2UgTW90aW9uJykpLnRvQmVJblRoZURvY3VtZW50KCk7XG4gICAgZXhwZWN0KHNjcmVlbi5nZXRCeVRleHQoJ0ZvbnQgU2l6ZScpKS50b0JlSW5UaGVEb2N1bWVudCgpO1xuICB9KTtcblxuICBpdCgnaGFzIHByb3BlciBBUklBIGF0dHJpYnV0ZXMnLCAoKSA9PiB7XG4gICAgcmVuZGVyKDxBY2Nlc3NpYmlsaXR5UXVpY2tQYW5lbCB7Li4uZGVmYXVsdFByb3BzfSAvPik7XG5cbiAgICBjb25zdCBjbG9zZUJ1dHRvbiA9IHNjcmVlbi5nZXRCeUxhYmVsVGV4dCgnQ2xvc2UgYWNjZXNzaWJpbGl0eSBwYW5lbCcpO1xuICAgIGV4cGVjdChjbG9zZUJ1dHRvbikudG9IYXZlQXR0cmlidXRlKFxuICAgICAgJ2FyaWEtbGFiZWwnLFxuICAgICAgJ0Nsb3NlIGFjY2Vzc2liaWxpdHkgcGFuZWwnXG4gICAgKTtcbiAgfSk7XG5cbiAgaXQoJ2Rpc3BsYXlzIGFjY2Vzc2liaWxpdHkgc2NvcmUnLCAoKSA9PiB7XG4gICAgcmVuZGVyKDxBY2Nlc3NpYmlsaXR5UXVpY2tQYW5lbCB7Li4uZGVmYXVsdFByb3BzfSAvPik7XG5cbiAgICBleHBlY3Qoc2NyZWVuLmdldEJ5VGV4dCgnU2NvcmU6IDg1JScpKS50b0JlSW5UaGVEb2N1bWVudCgpO1xuICB9KTtcblxuICBpdCgnc2hvd3MgZm9vdGVyIGFjdGlvbiBidXR0b25zJywgKCkgPT4ge1xuICAgIHJlbmRlcig8QWNjZXNzaWJpbGl0eVF1aWNrUGFuZWwgey4uLmRlZmF1bHRQcm9wc30gLz4pO1xuXG4gICAgZXhwZWN0KHNjcmVlbi5nZXRCeVRleHQoJ1Jlc2V0JykpLnRvQmVJblRoZURvY3VtZW50KCk7XG4gICAgZXhwZWN0KHNjcmVlbi5nZXRCeVRleHQoJ0V4cG9ydCcpKS50b0JlSW5UaGVEb2N1bWVudCgpO1xuICAgIGV4cGVjdChzY3JlZW4uZ2V0QnlUZXh0KCdTZXR0aW5ncycpKS50b0JlSW5UaGVEb2N1bWVudCgpO1xuICB9KTtcbn0pO1xuIl0sIm5hbWVzIjpbImplc3QiLCJtb2NrIiwiTW9ja0FjY2Vzc2liaWxpdHlRdWlja1BhbmVsIiwiaXNPcGVuIiwib25DbG9zZSIsImRpdiIsImRhdGEtdGVzdGlkIiwiaDIiLCJwIiwiYnV0dG9uIiwib25DbGljayIsImFyaWEtbGFiZWwiLCJkZXNjcmliZSIsImRlZmF1bHRQcm9wcyIsImZuIiwiYmVmb3JlRWFjaCIsImNsZWFyQWxsTW9ja3MiLCJpdCIsInJlbmRlciIsIkFjY2Vzc2liaWxpdHlRdWlja1BhbmVsIiwiZXhwZWN0Iiwic2NyZWVuIiwiZ2V0QnlUZXh0IiwidG9CZUluVGhlRG9jdW1lbnQiLCJxdWVyeUJ5VGV4dCIsIm5vdCIsImNsb3NlQnV0dG9uIiwiZ2V0QnlMYWJlbFRleHQiLCJ0b0hhdmVBdHRyaWJ1dGUiXSwibWFwcGluZ3MiOiJBQUFBOztDQUVDO0FBTUQsK0VBQStFO0FBQy9FQSxLQUFLQyxJQUFJLENBQUMsOEJBQThCO0lBQ3RDLE9BQU8sU0FBU0MsNEJBQTRCLEVBQzFDQyxNQUFNLEVBQ05DLE9BQU8sRUFJUjtRQUNDLElBQUksQ0FBQ0QsUUFBUSxPQUFPO1FBRXBCLHFCQUNFLHNCQUFDRTtZQUFJQyxlQUFZOzs4QkFDZixxQkFBQ0M7OEJBQUc7OzhCQUNKLHFCQUFDQzs4QkFBRTs7OEJBQ0gscUJBQUNDO29CQUFPQyxTQUFTTjtvQkFBU08sY0FBVzs4QkFBNEI7OzhCQUdqRSxzQkFBQ047O3NDQUNDLHFCQUFDSTtzQ0FBTzs7c0NBQ1IscUJBQUNBO3NDQUFPOztzQ0FDUixxQkFBQ0E7c0NBQU87O3NDQUNSLHFCQUFDQTtzQ0FBTzs7Ozs4QkFFVixzQkFBQ0o7O3NDQUNDLHFCQUFDRztzQ0FBRTs7c0NBQ0gscUJBQUNBO3NDQUFFOztzQ0FDSCxxQkFBQ0E7c0NBQUU7O3NDQUNILHFCQUFDQTtzQ0FBRTs7Ozs4QkFFTCxzQkFBQ0g7O3NDQUNDLHFCQUFDSTtzQ0FBTzs7c0NBQ1IscUJBQUNBO3NDQUFPOztzQ0FDUixxQkFBQ0E7c0NBQU87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
