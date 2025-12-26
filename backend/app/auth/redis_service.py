@@ -245,6 +245,13 @@ redis_service: Optional[RedisService] = None
 async def init_redis_service(redis_url: str) -> RedisService:
     """Initialize the global Redis service."""
     global redis_service
+    if redis_service and getattr(redis_service, "redis_url", None) == redis_url and redis_service.client:
+        # Reuse existing connection to avoid reconnect overhead in hot paths/tests
+        return redis_service
+
+    if redis_service and redis_service.client:
+        await redis_service.disconnect()
+
     redis_service = RedisService(redis_url)
     await redis_service.connect()
     return redis_service

@@ -692,6 +692,35 @@ class TestGlobalInstance:
             MockRedisService.assert_called_once_with(redis_url)
             mock_service.connect.assert_called_once()
 
+    @pytest.mark.asyncio
+    async def test_init_redis_service_reuses_existing_instance(self):
+        """Ensure repeated initialization avoids reconnecting when already set."""
+        redis_url = "fakeredis://localhost:6379"
+
+        with patch("app.auth.redis_service.RedisService") as MockRedisService:
+            mock_service = AsyncMock()
+            mock_service.redis_url = redis_url
+            mock_service.client = object()
+            MockRedisService.return_value = mock_service
+
+            first = await init_redis_service(redis_url)
+            assert first is mock_service
+
+            # Second call should reuse the same instance without constructing again
+            MockRedisService.reset_mock()
+            mock_service.connect.reset_mock()
+
+            reused = await init_redis_service(redis_url)
+
+            assert reused is mock_service
+            MockRedisService.assert_not_called()
+            mock_service.connect.assert_not_called()
+
+        # Reset global for other tests
+        import app.auth.redis_service as redis_mod
+
+        redis_mod.redis_service = None
+
     def test_get_redis_service(self):
         """Test getting global Redis service instance."""
         # The function simply returns the global redis_service variable

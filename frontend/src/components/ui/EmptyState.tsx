@@ -95,12 +95,20 @@ export function EmptyState({
  * Predefined Empty States
  */
 
-export function NoPostsEmptyState({ onCreate }: { onCreate?: () => void }) {
+export function NoPostsEmptyState({
+  onCreate,
+  title = 'No Posts Yet',
+  description = 'Be the first to share something amazing with your community!',
+}: {
+  onCreate?: () => void;
+  title?: string;
+  description?: string;
+}) {
   return (
     <EmptyState
       icon="✍️"
-      title="No Posts Yet"
-      description="Be the first to share something amazing with your community!"
+      title={title}
+      description={description}
       action={
         onCreate && (
           <button
